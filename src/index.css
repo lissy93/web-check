@@ -18,3 +18,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+#fancy-background { color: var(--background, #141d2b); }
+
+
+::selection {
+  background: var(--primary, #9fef00);
+  color: var(--background, #141d2b);
+}

@@ -51,7 +51,7 @@ const Home = (): JSX.Element => {
       setErrMsg('Must be a valid URL, IPv4 or IPv6 Address');
     } else {
       const resultRouteParams: NavigateOptions = { state: { address, addressType } };
-      navigate('/results', resultRouteParams);
+      navigate(`/results/${encodeURIComponent(address)}`, resultRouteParams);
     }
   };
 
