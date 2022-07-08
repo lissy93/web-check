@@ -10,6 +10,7 @@ interface Props {
   value: string,
   label?: string,
   placeholder?: string,
+  disabled?: boolean,
   size?: InputSize,
   orientation?: Orientation;
   handleChange: (nweVal: React.ChangeEvent<HTMLInputElement>) => void,
@@ -47,7 +48,7 @@ const StyledLabel = styled.label<StyledInputTypes>`
 
 const Input = (inputProps: Props): JSX.Element => {
 
-  const { id, value, label, placeholder, size, orientation, handleChange } = inputProps;
+  const { id, value, label, placeholder, disabled, size, orientation, handleChange } = inputProps;
 
   return (
   <InputContainer orientation={orientation}>
@@ -56,6 +57,7 @@ const Input = (inputProps: Props): JSX.Element => {
       id={id}
       value={value}
       placeholder={placeholder}
+      disabled={disabled}
       onChange={handleChange}
       inputSize={size}
     />

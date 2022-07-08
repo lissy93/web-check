@@ -1,23 +1,25 @@
 import styled from 'styled-components';
 import colors from 'styles/colors';
+import { TextSizes } from 'styles/typography';
 
 interface HeadingProps {
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'p';
   align?: 'left' | 'center' | 'right';
   color?: string;
-  size?: 'small' | 'medium' | 'large';
+  size?: 'xSmall' | 'small' | 'medium' | 'large';
   inline?: boolean;
   children: React.ReactNode;
 };
 
 const StyledHeading = styled.h1<HeadingProps>`
-  margin: 0.5rem;
+  margin: 0.5rem 0;
   text-shadow: 2px 2px 0px ${colors.bgShadowColor};
   ${props => {
     switch (props.size) {
-      case 'small': return 'font-size: 1rem;';
-      case 'medium': return 'font-size: 2rem;';
-      case 'large': return 'font-size: 3rem;';
+      case 'xSmall': return `font-size: ${TextSizes.small};`;
+      case 'small': return `font-size: ${TextSizes.medium};`;
+      case 'medium': return `font-size: ${TextSizes.large};`;
+      case 'large': return `font-size: ${TextSizes.xLarge};`;
     }
   }};
   ${props => {
@@ -30,7 +32,6 @@ const StyledHeading = styled.h1<HeadingProps>`
   ${props => props.color ? `color: ${props.color};` : '' }
   ${props => props.inline ? 'display: inline;' : '' }
 `;
-
 
 const Heading = (props: HeadingProps): JSX.Element => {
   const { children, as, size, align, color, inline } = props;
