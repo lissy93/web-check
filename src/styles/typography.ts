@@ -1,4 +1,14 @@
+
+export const TextSizes = {
+  xSmall: '0.75rem',
+  small: '1rem',
+  medium: '1.5rem',
+  large: '2rem',
+  xLarge: '3rem',
+};
+
 export const TextReset = `
+  font-size: ${TextSizes.small};
   font-family: PTMono, Helvetica, Arial, sans-serif;
   font-weight: 400;
   font-style: normal;
