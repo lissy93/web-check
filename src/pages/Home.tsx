@@ -30,14 +30,26 @@ const UserInputMain = styled.form`
   margin: 1rem;
 `;
 
+const FindIpButton = styled.a`
+  margin: 0.5rem;
+  cursor: pointer;
+  display: block;
+  text-align: center;
+  color: ${colors.primary};
+  text-decoration: underline;
+`;
+
 const ErrorMessage = styled.p`
   color: ${colors.danger};
   margin: 0.5rem;
 `;
 
 const Home = (): JSX.Element => {
+  const defaultPlaceholder = 'e.g. https://duck.com/';
   const [userInput, setUserInput] = useState('');
   const [errorMsg, setErrMsg] = useState('');
+  const [placeholder, setPlaceholder] = useState(defaultPlaceholder);
+  const [inputDisabled, setInputDisabled] = useState(false);
   const navigate = useNavigate();
 
   /* Check is valid address, either show err or redirect to results page */
@@ -62,6 +74,24 @@ const Home = (): JSX.Element => {
     if (!isError) setErrMsg('');
   };
 
+  const findIpAddress = () => {
+    setUserInput('');
+    setPlaceholder('Looking up your IP...');
+    setInputDisabled(true);
+    fetch('https://ipapi.co/json/')
+      .then(function(response) {
+        response.json().then(jsonData => {
+          console.log(jsonData);
+          setUserInput(jsonData.ip);
+          setPlaceholder(defaultPlaceholder);
+          setInputDisabled(true);
+        });
+      })
+      .catch(function(error) {
+        console.log(error)
+      });
+  };
+
   const formSubmitEvent = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     submit();
@@ -78,9 +108,11 @@ const Home = (): JSX.Element => {
           label="Enter an IP or URL"
           size="large"
           orientation="vertical"
-          placeholder="e.g. https://duck.com"
+          placeholder={placeholder}
+          disabled={inputDisabled}
           handleChange={inputChange}
         />
+        <FindIpButton onClick={findIpAddress}>Or, find my IP</FindIpButton>
         { errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
         <Button size="large" onClick={submit}>Analyze!</Button>
       </UserInputMain>

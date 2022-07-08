@@ -25,3 +25,9 @@ code {
   background: var(--primary, #9fef00);
   color: var(--background, #141d2b);
 }
+
+
+svg.rsm-svg {
+  background: #2a3240;
+  border-radius: 6px;
+}
