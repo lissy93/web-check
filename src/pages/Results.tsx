@@ -9,7 +9,7 @@ import ServerLocationCard from 'components/Results/ServerLocation';
 import ServerInfoCard from 'components/Results/ServerInfo';
 import HostNamesCard from 'components/Results/HostNames';
 import keys from 'utils/get-keys';
-import { determineAddressType } from 'utils/address-type-checker';
+import { determineAddressType, AddressType } from 'utils/address-type-checker';
 
 import {
   getLocation, ServerLocation,
@@ -45,48 +45,78 @@ interface ResultsType {
 const Results = (): JSX.Element => {
   const [ results, setResults ] = useState<ResultsType>({});
   const [ locationResults, setLocationResults ] = useState<ServerLocation>();
+  const [ ipAddress, setIpAddress ] = useState<undefined | string>(undefined);
+  const [ addressType, setAddressType ] = useState<AddressType>('empt');
   const { address } = useParams();
-  if (address) {
-    console.log(decodeURIComponent(address));
-  }
-
+  
 
   useEffect(() => {
-    fetch(`https://ipapi.co/${address}/json/`)
-    .then(function(response) {
-      response.json().then(jsonData => {
-        console.log(jsonData);
-        setLocationResults(getLocation(jsonData));
-      });
-    })
-    .catch(function(error) {
-      console.log(error)
-    });
+    setAddressType(determineAddressType(address || ''));
+    if (addressType === 'ipV4') {
+      setIpAddress(address);
+    }
   }, []);
 
+  /* Get IP address from URL */
+  useEffect(() => {
+    const fetchIpAddress = () => {
+      fetch(`/find-url-ip?address=${address}`)
+      .then(function(response) {
+        console.log(response);
+        response.json().then(jsonData => {
+          console.log('Get IP Address', jsonData);
+          setIpAddress(jsonData.ip);
+        });
+      })
+      .catch(function(error) {
+        console.log(error)
+      });
+    };
+    if (!ipAddress) {
+      fetchIpAddress();
+    }
+  }, [address]);
+
+  /* Get IP address location info */
+  useEffect(() => {
+    const fetchIpLocation = () => {
+      fetch(`https://ipapi.co/${ipAddress}/json/`)
+      .then(function(response) {
+        response.json().then(jsonData => {
+          setLocationResults(getLocation(jsonData));
+        });
+      })
+      .catch(function(error) {
+        console.log(error)
+      });
+    };
+    if (ipAddress) {
+      fetchIpLocation();
+    }
+  }, [ipAddress]);
+
+  /* Get hostnames and server info from Shodan */
   useEffect(() => {
     const applyShodanResults = (response: any) => {
-      // const serverLocation = getLocation(response);
       const serverInfo = getServerInfo(response);
       const hostNames = getHostNames(response);
       setResults({...results, serverInfo, hostNames });
     }
     const fetchShodanData = () => {
       const apiKey = keys.shodan;
-      fetch(`https://api.shodan.io/shodan/host/${address}?key=${apiKey}`)
+      fetch(`https://api.shodan.io/shodan/host/${ipAddress}?key=${apiKey}`)
         .then(response => response.json())
         .then(response => {
           if (!response.error) applyShodanResults(response)
         })
         .catch(err => console.error(err));
     };
-    const addressType = determineAddressType(address || '');
-    if (addressType !== 'ipV4') {
-      // Not an IP address, get IP from URL
-    } else {
+    
+
+    if (ipAddress) {
       fetchShodanData();
     }
-  }, []);
+  }, [ipAddress]);
 
   return (
     <ResultsOuter>
