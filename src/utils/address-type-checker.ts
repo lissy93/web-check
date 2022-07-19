@@ -8,7 +8,7 @@ export type AddressType = 'ipV4' | 'ipV6' | 'url' | 'err' | 'empt';
 /* Checks if a given string looks like a URL */
 const isUrl = (value: string):boolean => {
   const urlRegex= new RegExp(''
-    + /(?:(?:(https?|ftp):)?\/\/)/.source
+    // + /(?:(?:(https?|ftp):)?\/\/)/.source
     + /(?:([^:\n\r]+):([^@\n\r]+)@)?/.source
     + /(?:(?:www\.)?([^/\n\r]+))/.source
     + /(\/[^?\n\r]+)?/.source

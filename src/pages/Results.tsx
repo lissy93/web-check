@@ -117,6 +117,26 @@ const Results = (): JSX.Element => {
       fetchShodanData();
     }
   }, [ipAddress]);
+  
+  /* Get WhoIs info for a given domain name */
+  useEffect(() => {
+    const applyWhoIsResults = (response: any) => {
+      console.log('WhoIs Response', response);
+    }
+    const fetchWhoIsData = () => {
+      const apiKey = keys.whoApi;
+      fetch(`https://api.whoapi.com/?domain=${address}&r=whois&apikey=${apiKey}`)
+        .then(response => response.json())
+        .then(response => {
+          if (!response.error) applyWhoIsResults(response)
+        })
+        .catch(err => console.error(err));
+    };
+    
+    if (addressType === 'url') {
+      fetchWhoIsData();
+    }
+  }, [addressType, address]);
 
   return (
     <ResultsOuter>

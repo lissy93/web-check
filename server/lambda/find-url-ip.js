@@ -7,7 +7,6 @@ exports.handler = function (event, context, callback) {
   .replaceAll('https://', '')
   .replaceAll('http://', '');
   dns.lookup(address, (err, ip, family) => {
-    console.log(err);
     if (err) {
       callback(null, {
         statusCode: 405,
