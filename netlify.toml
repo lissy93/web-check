@@ -39,6 +39,11 @@
   to = "/.netlify/functions/find-url-ip"
   status = 301
   force = true
+[[redirects]]
+  from = "/lighthouse-report"
+  to = "/.netlify/functions/lighthouse-report"
+  status = 301
+  force = true
   
 # For router history mode, ensure pages land on index
 [[redirects]]

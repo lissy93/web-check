@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@netlify/functions": "^1.6.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
@@ -12,8 +13,12 @@
     "@types/react-dom": "^18.0.5",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.25",
+    "axios": "^1.4.0",
+    "chrome-aws-lambda": "^10.1.0",
     "jest-styled-components": "^7.0.8",
+    "lighthouse": "^10.3.0",
     "node-fetch": "2.6.1",
+    "puppeteer-core": "^20.7.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-router-dom": "^6.3.0",
@@ -51,5 +56,9 @@
   },
   "devDependencies": {
     "@types/react-simple-maps": "^1.0.8"
+  },
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "./dist"
   }
 }

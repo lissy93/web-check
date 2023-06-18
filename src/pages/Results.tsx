@@ -10,6 +10,8 @@ import ServerInfoCard from 'components/Results/ServerInfo';
 import HostNamesCard from 'components/Results/HostNames';
 import WhoIsCard from 'components/Results/WhoIs';
 import BuiltWithCard from 'components/Results/BuiltWith';
+import LighthouseCard from 'components/Results/Lighthouse';
+import ScreenshotCard from 'components/Results/Screenshot';
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
 
@@ -57,6 +59,8 @@ const Results = (): JSX.Element => {
   const [ locationResults, setLocationResults ] = useState<ServerLocation>();
   const [ whoIsResults, setWhoIsResults ] = useState<Whois>();
   const [ technologyResults, setTechnologyResults ] = useState<TechnologyGroup[]>();
+  const [ lighthouseResults, setLighthouseResults ] = useState<any>();
+  const [ screenshotResult, setScreenshotResult ] = useState<string>();
   const [ ipAddress, setIpAddress ] = useState<undefined | string>(undefined);
   const [ addressType, setAddressType ] = useState<AddressType>('empt');
   const { address } = useParams();
@@ -75,7 +79,6 @@ const Results = (): JSX.Element => {
       fetch(`/find-url-ip?address=${address}`)
       .then(function(response) {
         response.json().then(jsonData => {
-          console.log('Get IP Address', jsonData);
           setIpAddress(jsonData.ip);
         });
       })
@@ -87,6 +90,17 @@ const Results = (): JSX.Element => {
       fetchIpAddress();
     }
   }, [address]);
+
+  /* Get Lighthouse report */
+  useEffect(() => {
+    fetch(`/lighthouse-report?url=${address}`)
+      .then(response => response.json())
+      .then(response => {
+        setLighthouseResults(response.lighthouseResult);
+        setScreenshotResult(response.lighthouseResult?.fullPageScreenshot?.screenshot?.data);
+      })
+      .catch(err => console.error(err));
+  }, [address])
 
   /* Get IP address location info */
   useEffect(() => {
@@ -118,7 +132,6 @@ const Results = (): JSX.Element => {
       fetch(`https://api.shodan.io/shodan/host/${ipAddress}?key=${apiKey}`)
         .then(response => response.json())
         .then(response => {
-          console.log(response);
           if (!response.error) applyShodanResults(response)
         })
         .catch(err => console.error(err));
@@ -137,7 +150,6 @@ const Results = (): JSX.Element => {
     fetch(endpoint)
       .then(response => response.json())
       .then(response => {
-        console.log(response);
         setTechnologyResults(makeTechnologies(response));
       });
   }, [address]);
@@ -179,6 +191,8 @@ const Results = (): JSX.Element => {
         { results.serverInfo && <ServerInfoCard {...results.serverInfo} />}
         { results.hostNames && <HostNamesCard hosts={results.hostNames} />}
         { whoIsResults && <WhoIsCard {...whoIsResults} />}
+        { lighthouseResults && <LighthouseCard lighthouse={lighthouseResults} />}
+        { screenshotResult && <ScreenshotCard screenshot={screenshotResult} />}
         { technologyResults && <BuiltWithCard technologies={technologyResults} />}
       </ResultsContent>
     </ResultsOuter>
