@@ -19,6 +19,13 @@ export interface ServerLocation {
   countryPopulation: number,
 };
 
+export interface Whois {
+  created: string,
+  expires: string,
+  updated: string,
+  nameservers: string[],
+}
+
 export const getLocation = (response: any): ServerLocation => {
   return {
     city: response.city,
@@ -48,6 +55,8 @@ export interface ServerInfo {
   asn: string,
   isp: string,
   os?: string,
+  ip?: string,
+  ports?: string,
 };
 
 export const getServerInfo = (response: any): ServerInfo => {
@@ -56,6 +65,8 @@ export const getServerInfo = (response: any): ServerInfo => {
     asn: response.asn,
     isp: response.isp,
     os: response.os,
+    ip: response.ip_str,
+    ports: response.ports.toString(),
   };
 };
 
@@ -67,17 +78,37 @@ export interface HostNames {
 export const getHostNames = (response: any): HostNames => {
   const { hostnames, domains } = response;
   const results: HostNames = {
-    domains: [],
-    hostnames: [],
+    domains: domains || [],
+    hostnames: hostnames || [],
   };
-  if (!hostnames || !domains) return results;
-  hostnames.forEach((host: string) => {
-    if (domains.includes(host)) {
-      results.domains.push(host);
-    } else {
-      results.hostnames.push(host);
-    }
-  });
-
   return results;
+};
+
+export interface Technology {
+  Categories?: string[];
+  Parent?: string;
+  Name: string;
+  Description: string;
+  Link: string;
+  Tag: string;
+  FirstDetected: number;
+  LastDetected: number;
+  IsPremium: string;
+}
+
+export interface TechnologyGroup {
+  tag: string;
+  technologies: Technology[];
+}
+
+export const makeTechnologies = (response: any): TechnologyGroup[] => {
+  let flatArray = response.Results[0].Result.Paths
+    .reduce((accumulator: any, obj: any) => accumulator.concat(obj.Technologies), []);
+  let technologies = flatArray.reduce((groups: any, item: any) => {
+    let tag = item.Tag;
+    if (!groups[tag]) groups[tag] = [];
+    groups[tag].push(item);
+    return groups;
+  }, {});
+  return technologies;
 };

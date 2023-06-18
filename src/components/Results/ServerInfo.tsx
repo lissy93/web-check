@@ -5,9 +5,7 @@ import colors from 'styles/colors';
 import Card from 'components/Form/Card';
 import Heading from 'components/Form/Heading';
 
-const Outer = styled(Card)`
-  max-width: 24rem;
-`;
+const Outer = styled(Card)``;
 
 const Row = styled.div`
   display: flex;
@@ -34,7 +32,7 @@ const DataRow = (props: { lbl: string, val: string }) => {
 };
 
 const ServerInfoCard = (info: ServerInfo): JSX.Element => {
-  const { org, asn, isp, os } = info;
+  const { org, asn, isp, os, ports } = info;
   return (
     <Outer>
       <Heading as="h3" size="small" align="left" color={colors.primary}>Server Info</Heading>
@@ -42,6 +40,7 @@ const ServerInfoCard = (info: ServerInfo): JSX.Element => {
       { (isp && isp !== org) && <DataRow lbl="Service Provider" val={isp} /> }
       { os && <DataRow lbl="Operating System" val={os} /> }
       { asn && <DataRow lbl="ASN Code" val={asn} /> }
+      { ports && <DataRow lbl="Ports" val={ports} /> }
     </Outer>
   );
 }

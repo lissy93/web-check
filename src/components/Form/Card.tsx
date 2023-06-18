@@ -8,7 +8,6 @@ export const Card = styled.section`
   box-shadow: 4px 4px 0px ${colors.bgShadowColor};
   border-radius: 8px;
   padding: 1rem;
-  margin: 1rem;
 `;
 
 // interface CardProps {

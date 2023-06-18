@@ -6,7 +6,8 @@ import Card from 'components/Form/Card';
 import Heading from 'components/Form/Heading';
 
 const Outer = styled(Card)`
-  max-width: 24rem;
+  max-height: 20rem;
+  overflow: auto;
 `;
 
 const Row = styled.div`

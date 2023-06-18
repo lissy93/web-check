@@ -8,6 +8,8 @@ import Card from 'components/Form/Card';
 import ServerLocationCard from 'components/Results/ServerLocation';
 import ServerInfoCard from 'components/Results/ServerInfo';
 import HostNamesCard from 'components/Results/HostNames';
+import WhoIsCard from 'components/Results/WhoIs';
+import BuiltWithCard from 'components/Results/BuiltWith';
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
 
@@ -15,6 +17,8 @@ import {
   getLocation, ServerLocation,
   getServerInfo, ServerInfo,
   getHostNames, HostNames,
+  makeTechnologies, TechnologyGroup,
+  Whois,
 } from 'utils/result-processor';
 
 const ResultsOuter = styled.div`
@@ -24,13 +28,19 @@ const ResultsOuter = styled.div`
 
 const ResultsContent = styled.section`
   width: 95vw;
-  display: flex;
-  flex-wrap: wrap;
+
+  display: grid;
+  grid-auto-flow: dense;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1rem;
+  margin: auto;
+  width: calc(100% - 2rem);
 `;
 
 const Header = styled(Card)`
   margin: 1rem;
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   padding: 0.5rem 1rem;
@@ -45,6 +55,8 @@ interface ResultsType {
 const Results = (): JSX.Element => {
   const [ results, setResults ] = useState<ResultsType>({});
   const [ locationResults, setLocationResults ] = useState<ServerLocation>();
+  const [ whoIsResults, setWhoIsResults ] = useState<Whois>();
+  const [ technologyResults, setTechnologyResults ] = useState<TechnologyGroup[]>();
   const [ ipAddress, setIpAddress ] = useState<undefined | string>(undefined);
   const [ addressType, setAddressType ] = useState<AddressType>('empt');
   const { address } = useParams();
@@ -62,7 +74,6 @@ const Results = (): JSX.Element => {
     const fetchIpAddress = () => {
       fetch(`/find-url-ip?address=${address}`)
       .then(function(response) {
-        console.log(response);
         response.json().then(jsonData => {
           console.log('Get IP Address', jsonData);
           setIpAddress(jsonData.ip);
@@ -107,6 +118,7 @@ const Results = (): JSX.Element => {
       fetch(`https://api.shodan.io/shodan/host/${ipAddress}?key=${apiKey}`)
         .then(response => response.json())
         .then(response => {
+          console.log(response);
           if (!response.error) applyShodanResults(response)
         })
         .catch(err => console.error(err));
@@ -117,11 +129,29 @@ const Results = (): JSX.Element => {
       fetchShodanData();
     }
   }, [ipAddress]);
+
+  /* Get BuiltWith tech stack */
+  useEffect(() => {
+    const apiKey = keys.builtWith;
+    const endpoint = `https://api.builtwith.com/v21/api.json?KEY=${apiKey}&LOOKUP=${address}`;
+    fetch(endpoint)
+      .then(response => response.json())
+      .then(response => {
+        console.log(response);
+        setTechnologyResults(makeTechnologies(response));
+      });
+  }, [address]);
   
   /* Get WhoIs info for a given domain name */
   useEffect(() => {
     const applyWhoIsResults = (response: any) => {
-      console.log('WhoIs Response', response);
+      const whoIsResults: Whois = {
+        created: response.date_created,
+        expires: response.date_expires,
+        updated: response.date_updated,
+        nameservers: response.nameservers,
+      };
+      setWhoIsResults(whoIsResults);
     }
     const fetchWhoIsData = () => {
       const apiKey = keys.whoApi;
@@ -148,6 +178,8 @@ const Results = (): JSX.Element => {
         { locationResults && <ServerLocationCard {...locationResults} />}
         { results.serverInfo && <ServerInfoCard {...results.serverInfo} />}
         { results.hostNames && <HostNamesCard hosts={results.hostNames} />}
+        { whoIsResults && <WhoIsCard {...whoIsResults} />}
+        { technologyResults && <BuiltWithCard technologies={technologyResults} />}
       </ResultsContent>
     </ResultsOuter>
   );

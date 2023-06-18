@@ -9,7 +9,7 @@ import Flag from 'components/misc/Flag';
 import { TextSizes } from 'styles/typography';
 
 const Outer = styled(Card)`
-  max-width: 24rem;
+  grid-row: span 2
 `;
 
 const Row = styled.div`
