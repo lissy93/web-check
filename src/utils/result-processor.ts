@@ -75,8 +75,11 @@ export interface HostNames {
   hostnames: string[],
 };
 
-export const getHostNames = (response: any): HostNames => {
+export const getHostNames = (response: any): HostNames | null => {
   const { hostnames, domains } = response;
+  if ((!domains || domains.length < 1) && (!hostnames || hostnames.length < 1)) {
+    return null;
+  }
   const results: HostNames = {
     domains: domains || [],
     hostnames: hostnames || [],

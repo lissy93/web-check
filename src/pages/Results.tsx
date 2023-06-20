@@ -12,6 +12,7 @@ import WhoIsCard from 'components/Results/WhoIs';
 import BuiltWithCard from 'components/Results/BuiltWith';
 import LighthouseCard from 'components/Results/Lighthouse';
 import ScreenshotCard from 'components/Results/Screenshot';
+import SslCertCard from 'components/Results/SslCert';
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
 
@@ -51,7 +52,7 @@ const Header = styled(Card)`
 interface ResultsType {
   serverLocation?: ServerLocation,
   serverInfo?: ServerInfo,
-  hostNames?: HostNames,
+  hostNames?: HostNames | null,
 };
 
 const Results = (): JSX.Element => {
@@ -60,6 +61,7 @@ const Results = (): JSX.Element => {
   const [ whoIsResults, setWhoIsResults ] = useState<Whois>();
   const [ technologyResults, setTechnologyResults ] = useState<TechnologyGroup[]>();
   const [ lighthouseResults, setLighthouseResults ] = useState<any>();
+  const [ sslResults, setSslResults ] = useState<any>();
   const [ screenshotResult, setScreenshotResult ] = useState<string>();
   const [ ipAddress, setIpAddress ] = useState<undefined | string>(undefined);
   const [ addressType, setAddressType ] = useState<AddressType>('empt');
@@ -90,6 +92,17 @@ const Results = (): JSX.Element => {
       fetchIpAddress();
     }
   }, [address]);
+
+  /* Get SSL info */
+  useEffect(() => {
+    fetch(`/ssl-check?url=${address}`)
+      .then(response => response.json())
+      .then(response => {
+        console.log(response);
+        setSslResults(response);
+      })
+      .catch(err => console.error(err));
+  }, [address])
 
   /* Get Lighthouse report */
   useEffect(() => {
@@ -184,16 +197,20 @@ const Results = (): JSX.Element => {
     <ResultsOuter>
       <Header as="header">
         <Heading color={colors.primary} size="large">Results</Heading>
-        <Heading color={colors.textColor} size="medium">{address}</Heading>
+        <Heading color={colors.textColor} size="medium">
+          { address && <img width="32px" src={`https://icon.horse/icon/${new URL(address).hostname}`} alt="" /> }
+          {address}
+        </Heading>
       </Header>
       <ResultsContent>
         { locationResults && <ServerLocationCard {...locationResults} />}
         { results.serverInfo && <ServerInfoCard {...results.serverInfo} />}
-        { results.hostNames && <HostNamesCard hosts={results.hostNames} />}
+        { results?.hostNames && <HostNamesCard hosts={results?.hostNames} />}
         { whoIsResults && <WhoIsCard {...whoIsResults} />}
         { lighthouseResults && <LighthouseCard lighthouse={lighthouseResults} />}
         { screenshotResult && <ScreenshotCard screenshot={screenshotResult} />}
         { technologyResults && <BuiltWithCard technologies={technologyResults} />}
+        { sslResults && <SslCertCard sslCert={sslResults} />}
       </ResultsContent>
     </ResultsOuter>
   );
