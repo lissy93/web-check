@@ -14,6 +14,13 @@ interface HeadingProps {
 const StyledHeading = styled.h1<HeadingProps>`
   margin: 0.5rem 0;
   text-shadow: 2px 2px 0px ${colors.bgShadowColor};
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  img {
+    width: 2rem;
+    border-radius: 4px;
+  }
   ${props => {
     switch (props.size) {
       case 'xSmall': return `font-size: ${TextSizes.small};`;
