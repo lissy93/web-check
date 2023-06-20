@@ -44,6 +44,11 @@
   to = "/.netlify/functions/lighthouse-report"
   status = 301
   force = true
+[[redirects]]
+  from = "/ssl-check"
+  to = "/.netlify/functions/ssl-check"
+  status = 301
+  force = true
   
 # For router history mode, ensure pages land on index
 [[redirects]]
