@@ -48,6 +48,16 @@
   from = "/ssl-check"
   to = "/.netlify/functions/ssl-check"
   status = 301
+  force = true  
+[[redirects]]
+  from = "/get-headers"
+  to = "/.netlify/functions/get-headers"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/get-cookies"
+  to = "/.netlify/functions/get-cookies"
+  status = 301
   force = true
   
 # For router history mode, ensure pages land on index
