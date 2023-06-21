@@ -60,7 +60,6 @@ interface Audit {
 
 const ScoreItem = (props: { scoreId: any, audits: Audit[] }) => {
   const { scoreId, audits } = props;
-  console.log('Audits: ', props.audits)
   const audit = audits[scoreId];
   if (!audit.score) return null;
 
@@ -99,7 +98,6 @@ const ExpandableRow = (props: { lbl: string, val: string, list: string[], audits
 };
 
 const LighthouseCard = (props: { lighthouse: any }): JSX.Element => {
-  console.log('Props:', props.lighthouse);
   const categories = props.lighthouse?.categories || {};
   const audits = props.lighthouse?.audits || [];
 

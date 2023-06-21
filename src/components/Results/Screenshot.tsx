@@ -10,7 +10,6 @@ max-height: 20rem;
 `;
 
 const ScreenshotCard = (props: { screenshot: string }): JSX.Element => {
-  console.log('Props:', props.screenshot);
   return (
     <Outer>
       <Heading as="h3" size="small" align="left" color={colors.primary}>Screenshot</Heading>
