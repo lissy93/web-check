@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import colors from 'styles/colors';
 import Card from 'components/Form/Card';
 import Heading from 'components/Form/Heading';
+import { ExpandableRow } from 'components/Form/Row';
 
 const processScore = (percentile: number) => {
   return `${Math.round(percentile * 100)}%`;
@@ -78,23 +79,14 @@ const ScoreItem = (props: { scoreId: any, audits: Audit[] }) => {
   );
 };
 
-const ExpandableRow = (props: { lbl: string, val: string, list: string[], audits: Audit[] }) => {
-  const { lbl, val, list, audits } = props;
-  return (
-  <Row>
-    <details>
-      <summary>
-        <span className="lbl">{lbl}</span>
-        <span className="val" title={val}>{val}</span>
-      </summary>
-      <ScoreList>
-        { list.map((li: string) => {
-          return <ScoreItem scoreId={li} audits={audits} />
-        }) }
-      </ScoreList>
-    </details>  
-  </Row>
-  );
+const makeValue = (audit: Audit) => {
+  let score = audit.score;
+  if (audit.displayValue) {
+    score = audit.displayValue;
+  } else if (audit.scoreDisplayMode) {
+    score = audit.score === 1 ? '✅ Pass' : '❌ Fail'; 
+  }
+  return score;
 };
 
 const LighthouseCard = (props: { lighthouse: any }): JSX.Element => {
@@ -106,13 +98,15 @@ const LighthouseCard = (props: { lighthouse: any }): JSX.Element => {
       <Heading as="h3" size="small" align="left" color={colors.primary}>Performance</Heading>
       { Object.keys(categories).map((title: string, index: number) => {
         const scoreIds = categories[title].auditRefs.map((ref: { id: string }) => ref.id);
+        const scoreList = scoreIds.map((id: string) => {
+          return { lbl: audits[id].title, val: makeValue(audits[id]), title: audits[id].description, key: id }
+        })
         return (
           <ExpandableRow
             key={`lighthouse-${index}`}
             lbl={title}
             val={processScore(categories[title].score)}
-            list={scoreIds}
-            audits={audits}
+            rowList={scoreList}
           />
         );
       }) }

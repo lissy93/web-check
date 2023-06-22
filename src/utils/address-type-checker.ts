@@ -7,16 +7,28 @@ export type AddressType = 'ipV4' | 'ipV6' | 'url' | 'err' | 'empt';
 
 /* Checks if a given string looks like a URL */
 const isUrl = (value: string):boolean => {
-  const urlRegex= new RegExp(''
-    // + /(?:(?:(https?|ftp):)?\/\/)/.source
-    + /(?:([^:\n\r]+):([^@\n\r]+)@)?/.source
-    + /(?:(?:www\.)?([^/\n\r]+))/.source
-    + /(\/[^?\n\r]+)?/.source
-    + /(\?[^#\n\r]*)?/.source
-    + /(#?[^\n\r]*)?/.source
+  const urlPattern = new RegExp(
+    '^(https?:\\/\\/)?' + 
+    '(?!([0-9]{1,3}\\.){3}[0-9]{1,3})' + // Exclude IP addresses
+    '(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*' + // Domain name or a subdomain
+    '([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$', // Second level domain
+    'i' // Case-insensitive
   );
-  return urlRegex.test(value);
+  return urlPattern.test(value);
 };
+
+// /* Checks if a given string looks like a URL */
+// const isUrl = (value: string):boolean => {
+//   const urlRegex= new RegExp(''
+//     // + /(?:(?:(https?|ftp):)?\/\/)/.source
+//     + /(?:([^:\n\r]+):([^@\n\r]+)@)?/.source
+//     + /(?:(?:www\.)?([^/\n\r]+))/.source
+//     + /(\/[^?\n\r]+)?/.source
+//     + /(\?[^#\n\r]*)?/.source
+//     + /(#?[^\n\r]*)?/.source
+//   );
+//   return urlRegex.test(value);
+// };
 
 /* Checks if a given string looks like an IP Version 4 Address */
 const isIpV4 = (value: string): boolean => {
@@ -51,7 +63,8 @@ const isShort = (value: string): boolean => {
 };
 
 /* Returns the address type for a given address */
-export const determineAddressType = (address: string): AddressType => {
+export const determineAddressType = (address: string | undefined): AddressType => {
+  if (!address) return 'err';
   if (isShort(address)) return 'empt';
   if (isUrl(address)) return 'url';
   if (isIpV4(address)) return 'ipV4';

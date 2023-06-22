@@ -7,25 +7,10 @@ import Heading from 'components/Form/Heading';
 import LocationMap from 'components/misc/LocationMap';
 import Flag from 'components/misc/Flag';
 import { TextSizes } from 'styles/typography';
+import Row, { StyledRow } from 'components/Form/Row';
 
 const Outer = styled(Card)`
   grid-row: span 2
-`;
-
-const Row = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 0.25rem;
-  &:not(:last-child) { border-bottom: 1px solid ${colors.primary}; }
-`;
-
-const RowLabel = styled.span`
-  font-weight: bold;
-`;
-
-const RowValue = styled.span`
-  display: flex;
-  img { margin-left: 0.5rem; }
 `;
 
 const SmallText = styled.span`
@@ -35,8 +20,14 @@ const SmallText = styled.span`
   display: block;
 `;
 
-const MapRow = styled(Row)`
+const MapRow = styled(StyledRow)`
+  padding-top: 1rem;
   flex-direction: column;
+`;
+
+const CountryValue = styled.span`
+  display: flex;
+  gap: 0.5rem;
 `;
 
 const ServerLocationCard = (location: ServerLocation): JSX.Element => {
@@ -50,28 +41,17 @@ const ServerLocationCard = (location: ServerLocation): JSX.Element => {
   return (
     <Outer>
       <Heading as="h3" size="small" align="left" color={colors.primary}>Location</Heading>
-      <Row>
-        <RowLabel>City</RowLabel>
-        <RowValue>
-          {postCode}, { city }, { region }
-        </RowValue>
-      </Row>
-      <Row>
-        <RowLabel>Country</RowLabel>
-        <RowValue>
+      <Row lbl="City" val={`${postCode}, ${city}, ${region}`} />
+      <Row lbl="" val="">
+        <b>Country</b>
+        <CountryValue>
           {country}
           { countryCode && <Flag countryCode={countryCode} width={28} /> }
-        </RowValue>
+        </CountryValue>
       </Row>
-      { timezone && <Row>
-        <RowLabel>Timezone</RowLabel><RowValue>{timezone}</RowValue>
-      </Row>}
-      { languages && <Row>
-        <RowLabel>Languages</RowLabel><RowValue>{languages}</RowValue>
-      </Row>}
-      { currency && <Row>
-        <RowLabel>Currency</RowLabel><RowValue>{currency} ({currencyCode})</RowValue>
-      </Row>}
+      <Row lbl="Timezone" val={timezone} />
+      <Row lbl="Languages" val={languages} />
+      <Row lbl="Currency" val={`${currency} (${currencyCode})`} />
       <MapRow>
         <LocationMap lat={coords.latitude} lon={coords.longitude} label={`Server (${isp})`} />
         <SmallText>Latitude: {coords.latitude}, Longitude: {coords.longitude} </SmallText>

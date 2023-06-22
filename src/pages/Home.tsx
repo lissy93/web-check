@@ -81,7 +81,6 @@ const Home = (): JSX.Element => {
     fetch('https://ipapi.co/json/')
       .then(function(response) {
         response.json().then(jsonData => {
-          console.log(jsonData);
           setUserInput(jsonData.ip);
           setPlaceholder(defaultPlaceholder);
           setInputDisabled(true);

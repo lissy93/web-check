@@ -59,6 +59,16 @@
   to = "/.netlify/functions/get-cookies"
   status = 301
   force = true
+[[redirects]]
+  from = "/get-dns"
+  to = "/.netlify/functions/get-dns"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/read-robots-txt"
+  to = "/.netlify/functions/read-robots-txt"
+  status = 301
+  force = true
   
 # For router history mode, ensure pages land on index
 [[redirects]]

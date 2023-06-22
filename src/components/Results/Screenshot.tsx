@@ -6,7 +6,11 @@ import Heading from 'components/Form/Heading';
 
 const Outer = styled(Card)`
 overflow: auto;
-max-height: 20rem;
+max-height: 28rem;
+img {
+  border-radius: 6px;
+  width: 100%;
+}
 `;
 
 const ScreenshotCard = (props: { screenshot: string }): JSX.Element => {

@@ -57,6 +57,8 @@ export interface ServerInfo {
   os?: string,
   ip?: string,
   ports?: string,
+  loc?: string,
+  type?: string,
 };
 
 export const getServerInfo = (response: any): ServerInfo => {
@@ -67,6 +69,8 @@ export const getServerInfo = (response: any): ServerInfo => {
     os: response.os,
     ip: response.ip_str,
     ports: response.ports.toString(),
+    loc: response.city ? `${response.city}, ${response.country_name}` : '',
+    type: response.tags ? response.tags.toString() : '',
   };
 };
 
@@ -115,3 +119,45 @@ export const makeTechnologies = (response: any): TechnologyGroup[] => {
   }, {});
   return technologies;
 };
+
+export type Cookie = {
+  name: string;
+  value: string;
+  attributes: Record<string, string>;
+};
+
+export const parseCookies = (cookiesHeader: string): Cookie[] => {
+  if (!cookiesHeader) return [];
+  return cookiesHeader.split(/,(?=\s[A-Za-z0-9]+=)/).map(cookieString => {
+    const [nameValuePair, ...attributePairs] = cookieString.split('; ').map(part => part.trim());
+    const [name, value] = nameValuePair.split('=');
+    const attributes: Record<string, string> = {};
+    attributePairs.forEach(pair => {
+      const [attributeName, attributeValue = ''] = pair.split('=');
+      attributes[attributeName] = attributeValue;
+    });
+    return { name, value, attributes };
+  });
+}
+
+type RobotsRule = {
+  lbl: string;
+  val: string;
+};
+
+export const parseRobotsTxt = (content: string): RobotsRule[] => {
+  const lines = content.split('\n');
+  const rules: RobotsRule[] = [];
+  lines.forEach(line => {
+    const match = line.match(/^(Allow|Disallow):\s*(\S*)$/);
+    if (match) {
+      const rule: RobotsRule = {
+        lbl: match[1],
+        val: match[2],
+      };
+      
+      rules.push(rule);
+    }
+  });
+  return rules;
+}

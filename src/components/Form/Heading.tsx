@@ -17,9 +17,13 @@ const StyledHeading = styled.h1<HeadingProps>`
   display: flex;
   gap: 1rem;
   align-items: center;
-  img {
+  img { // Some titles have an icon
     width: 2rem;
     border-radius: 4px;
+  }
+  a { // If a title is a link, keep title styles
+    color: inherit;
+    text-decoration: none;
   }
   ${props => {
     switch (props.size) {

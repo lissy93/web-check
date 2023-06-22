@@ -1,21 +1,23 @@
 import styled from 'styled-components';
 import colors from 'styles/colors';
 
-interface RowProps {
+export interface RowProps {
   lbl: string,
   val: string,
   key?: string,
+  children?: JSX.Element[],
   rowList?: RowProps[],
+  title?: string,
 }
 
-const StyledRow = styled.div`
+export const StyledRow = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 0.25rem;
   &:not(:last-child) { border-bottom: 1px solid ${colors.primary}; }
   span.lbl { font-weight: bold; }
   span.val {
-    max-width: 200px;
+    max-width: 16rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -64,7 +66,6 @@ const formatDate = (dateString: string): string => {
 const formatValue = (value: any): string => {
   const isValidDate = (date: any) => date instanceof Date && !isNaN(date as any as number);
   if (isValidDate(new Date(value))) return formatDate(value);
-  if (typeof value === 'object') return JSON.stringify(value);
   if (typeof value === 'boolean') return value ? '✅' : '❌';
   return value;
 };
@@ -74,11 +75,11 @@ const copyToClipboard = (text: string) => {
 }
 
 export const ExpandableRow = (props: RowProps) => {
-  const { lbl, val, rowList } = props;
+  const { lbl, val, key, title, rowList } = props;
   return (
     <Details>
-      <StyledExpandableRow>
-        <span className="lbl">{lbl}</span>
+      <StyledExpandableRow key={key}>
+        <span className="lbl" title={title}>{lbl}</span>
         <span className="val" title={val}>{val}</span>
       </StyledExpandableRow>
       { rowList &&
@@ -86,7 +87,7 @@ export const ExpandableRow = (props: RowProps) => {
           { rowList?.map((row: RowProps, index: number) => {
             return (
               <SubRow key={row.key || `${row.lbl}-${index}`}>
-                <span className="lbl">{row.lbl}</span>
+                <span className="lbl" title={row.title}>{row.lbl}</span>
                 <span className="val" title={row.val} onClick={() => copyToClipboard(row.val)}>
                   {formatValue(row.val)}
                 </span>
@@ -100,10 +101,11 @@ export const ExpandableRow = (props: RowProps) => {
 };
 
 const Row = (props: RowProps) => {
-  const { lbl, val, key } = props;
+  const { lbl, val, key, title, children } = props;
+  if (children) return <StyledRow key={key}>{children}</StyledRow>;
   return (
   <StyledRow key={key}>
-    <span className="lbl">{lbl}</span>
+    <span className="lbl" title={title}>{lbl}</span>
     <span className="val" title={val} onClick={() => copyToClipboard(val)}>
       {formatValue(val)}
     </span>
