@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {   useParams } from "react-router-dom";
 import styled from 'styled-components';
 
@@ -17,6 +17,7 @@ import HeadersCard from 'components/Results/Headers';
 import CookiesCard from 'components/Results/Cookies';
 import RobotsTxtCard from 'components/Results/RobotsTxt';
 import DnsRecordsCard from 'components/Results/DnsRecords';
+import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
 
@@ -37,7 +38,6 @@ const ResultsOuter = styled.div`
 
 const ResultsContent = styled.section`
   width: 95vw;
-
   display: grid;
   grid-auto-flow: dense;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -57,6 +57,8 @@ const Header = styled(Card)`
 `;
 
 const Results = (): JSX.Element => {
+  const startTime = new Date().getTime();
+
   const [ serverInfo, setServerInfo ] = useState<ServerInfo>();
   const [ hostNames, setHostNames ] = useState<HostNames | null>();
   const [ locationResults, setLocationResults ] = useState<ServerLocation>();
@@ -73,41 +75,14 @@ const Results = (): JSX.Element => {
   const [ addressType, setAddressType ] = useState<AddressType>('empt');
   const { address } = useParams();
 
-  type LoadingState = 'loading' | 'skipped' | 'success' | 'error';
-
-  interface LoadingJob {
-    name: string,
-    state: LoadingState,
-    error?: string,
-  }
-
-  const jobNames = [
-    'get-ip',
-    'ssl',
-    'dns',
-    'cookies',
-    'robots-txt',
-    'headers',
-    'lighthouse',
-    'location',
-    'server-info',
-    'whois',
-  ] as const;
-
-  const initialJobs = jobNames.map((job: string) => {
-    return {
-      name: job,
-      state: 'loading' as LoadingState,
-    }
-  });
-
   const [ loadingJobs, setLoadingJobs ] = useState<LoadingJob[]>(initialJobs);
 
-  const updateLoadingJobs = (job: string, newState: LoadingState, error?: string) => {
+  const updateLoadingJobs = useCallback((job: string, newState: LoadingState, error?: string) => {
+    const timeTaken = new Date().getTime() - startTime;
     setLoadingJobs((prevJobs) => {
       const newJobs = prevJobs.map((loadingJob: LoadingJob) => {
         if (loadingJob.name === job) {
-          return { ...loadingJob, error, state: newState };
+          return { ...loadingJob, error, state: newState, timeTaken };
         }
         return loadingJob;
       });
@@ -118,9 +93,22 @@ const Results = (): JSX.Element => {
   
       return newJobs;
     });
-  };
-  
-  
+  }, []);
+
+  /* Cancel remaining jobs after  20 second timeout */
+  useEffect(() => {
+    const checkJobs = () => {
+      loadingJobs.forEach(job => {
+        if (job.state === 'loading') {
+          updateLoadingJobs(job.name, 'timed-out');
+        }
+      });
+    };
+    const timeoutId = setTimeout(checkJobs, 10000);
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [loadingJobs, updateLoadingJobs]); // dependencies for the effect
 
   useEffect(() => {
     setAddressType(determineAddressType(address || ''));
@@ -347,6 +335,7 @@ const Results = (): JSX.Element => {
         </Heading>
         }
       </Header>
+      <ProgressBar loadStatus={loadingJobs} />
       <ResultsContent>
         { locationResults && <ServerLocationCard {...locationResults} />}
         { sslResults && <SslCertCard sslCert={sslResults} />}
@@ -360,7 +349,6 @@ const Results = (): JSX.Element => {
         { technologyResults && <BuiltWithCard technologies={technologyResults} />}
         { robotsTxtResults && <RobotsTxtCard robotTxt={robotsTxtResults} />}
         { serverInfo && <ServerInfoCard {...serverInfo} />}
-        
       </ResultsContent>
     </ResultsOuter>
   );
