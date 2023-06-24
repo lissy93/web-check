@@ -1,11 +1,13 @@
+import { ReactNode } from 'react';
 import styled from 'styled-components';
 import colors from 'styles/colors';
+import Heading from 'components/Form/Heading';
 
 export interface RowProps {
   lbl: string,
   val: string,
   key?: string,
-  children?: JSX.Element[],
+  children?: ReactNode,
   rowList?: RowProps[],
   title?: string,
 }
@@ -100,12 +102,28 @@ export const ExpandableRow = (props: RowProps) => {
   );
 };
 
+export const ListRow = (props: { list: string[], title: string }) => {
+  const { list, title } = props;
+  return (
+  <>
+    <Heading as="h4" size="small" align="left" color={colors.primary}>{title}</Heading>
+    { list.map((entry: string, index: number) => {
+      return (
+      <Row lbl="" val="" key={`${title.toLocaleLowerCase()}-${index}`}>
+        <span>{ entry }</span>
+      </Row>
+      )}
+    )}
+  </>
+);
+}
+
 const Row = (props: RowProps) => {
   const { lbl, val, key, title, children } = props;
   if (children) return <StyledRow key={key}>{children}</StyledRow>;
   return (
   <StyledRow key={key}>
-    <span className="lbl" title={title}>{lbl}</span>
+    { lbl && <span className="lbl" title={title}>{lbl}</span> }
     <span className="val" title={val} onClick={() => copyToClipboard(val)}>
       {formatValue(val)}
     </span>

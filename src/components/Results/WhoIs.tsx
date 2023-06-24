@@ -59,7 +59,7 @@ const ServerInfoCard = (whois: Whois): JSX.Element => {
   const { created, updated, expires, nameservers } = whois;
   return (
     <Outer>
-      <Heading as="h3" size="small" align="left" color={colors.primary}>Who Is Info</Heading>
+      <Heading as="h3" align="left" color={colors.primary}>Who Is Info</Heading>
       { created && <DataRow lbl="Created" val={formatDate(created)} /> }
       { updated && <DataRow lbl="Updated" val={formatDate(updated)} /> }
       { expires && <DataRow lbl="Expires" val={formatDate(expires)} /> }

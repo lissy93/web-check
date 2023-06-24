@@ -7,7 +7,7 @@ import Row, { RowProps }  from 'components/Form/Row';
 
 const Outer = styled(Card)`
   .content {
-    max-height: 20rem;
+    max-height: 28rem;
     overflow-y: auto;
   }
 `;
@@ -15,7 +15,7 @@ const Outer = styled(Card)`
 const RobotsTxtCard = (props: { robotTxt: RowProps[] }): JSX.Element => {
   return (
     <Outer>
-      <Heading as="h3" size="small" align="left" color={colors.primary}>Crawl Rules</Heading>
+      <Heading as="h3" align="left" color={colors.primary}>Crawl Rules</Heading>
       <div className="content">
       {
         props.robotTxt.length === 0 && <p>No crawl rules found.</p>

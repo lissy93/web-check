@@ -37,7 +37,7 @@ const ListRow = (props: { list: Technology[], title: string }) => {
   const { list, title } = props;
   return (
   <>
-    <Heading as="h3" size="small" align="left" color={colors.primary}>{title}</Heading>
+    <Heading as="h3" align="left" color={colors.primary}>{title}</Heading>
     { list.map((entry: Technology, index: number) => {
       return (
       <Row key={`${title.toLocaleLowerCase()}-${index}`}><span>{ entry.Name }</span></Row>
@@ -52,7 +52,7 @@ const BuiltWithCard = (props: { technologies: TechnologyGroup[] }): JSX.Element 
   const { technologies } = props;
   return (
     <Outer>
-      <Heading as="h3" size="small" align="left" color={colors.primary}>Technologies</Heading>
+      <Heading as="h3" align="left" color={colors.primary}>Technologies</Heading>
       { technologies.map((group: TechnologyGroup) => {
         return (
           <ListRow key={group.tag} title={group.tag} list={group.technologies} />

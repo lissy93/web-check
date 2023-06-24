@@ -40,7 +40,7 @@ const ServerLocationCard = (location: ServerLocation): JSX.Element => {
 
   return (
     <Outer>
-      <Heading as="h3" size="small" align="left" color={colors.primary}>Location</Heading>
+      <Heading as="h3" align="left" color={colors.primary}>Location</Heading>
       <Row lbl="City" val={`${postCode}, ${city}, ${region}`} />
       <Row lbl="" val="">
         <b>Country</b>

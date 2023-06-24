@@ -13,7 +13,7 @@ const HeadersCard = (props: { headers: any }): JSX.Element => {
   const headers = props.headers;
   return (
     <Outer>
-      <Heading as="h3" size="small" align="left" color={colors.primary}>Headers</Heading>
+      <Heading as="h3" align="left" color={colors.primary}>Headers</Heading>
       {
         Object.keys(headers).map((header: string, index: number) => {
           return (

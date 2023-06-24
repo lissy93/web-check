@@ -11,7 +11,7 @@ const CookiesCard = (props: { cookies: any }): JSX.Element => {
   const cookies = props.cookies;
   return (
     <Outer>
-      <Heading as="h3" size="small" align="left" color={colors.primary}>Cookies</Heading>
+      <Heading as="h3" align="left" color={colors.primary}>Cookies</Heading>
       {
         cookies.length === 0 && <p>No cookies found.</p>
       }

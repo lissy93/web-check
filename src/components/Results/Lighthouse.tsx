@@ -95,7 +95,7 @@ const LighthouseCard = (props: { lighthouse: any }): JSX.Element => {
 
   return (
     <Outer>
-      <Heading as="h3" size="small" align="left" color={colors.primary}>Performance</Heading>
+      <Heading as="h3" align="left" color={colors.primary}>Performance</Heading>
       { Object.keys(categories).map((title: string, index: number) => {
         const scoreIds = categories[title].auditRefs.map((ref: { id: string }) => ref.id);
         const scoreList = scoreIds.map((id: string) => {

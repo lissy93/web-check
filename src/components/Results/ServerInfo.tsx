@@ -12,7 +12,7 @@ const ServerInfoCard = (info: ServerInfo): JSX.Element => {
   const { org, asn, isp, os, ports, ip, loc, type } = info;
   return (
     <Outer>
-      <Heading as="h3" size="small" align="left" color={colors.primary}>Server Info</Heading>
+      <Heading as="h3" align="left" color={colors.primary}>Server Info</Heading>
       { org && <Row lbl="Organization" val={org} /> }
       { (isp && isp !== org) && <Row lbl="Service Provider" val={isp} /> }
       { os && <Row lbl="Operating System" val={os} /> }

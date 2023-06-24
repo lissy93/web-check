@@ -70,7 +70,7 @@ const ListRow = (props: { list: string[], title: string }) => {
   const { list, title } = props;
   return (
   <>
-    <Heading as="h3" size="small" align="left" color={colors.primary}>{title}</Heading>
+    <Heading as="h3" align="left" color={colors.primary}>{title}</Heading>
     { list.map((entry: string, index: number) => {
       return (
       <Row key={`${title.toLocaleLowerCase()}-${index}`}><span>{ entry }</span></Row>
@@ -84,7 +84,7 @@ const SslCertCard = (props: { sslCert: any }): JSX.Element => {
   const { subject, issuer, fingerprint, serialNumber, asn1Curve, nistCurve, valid_to, valid_from, ext_key_usage } = props.sslCert;
   return (
     <Outer>
-      <Heading as="h3" size="small" align="left" color={colors.primary}>SSL Info</Heading>
+      <Heading as="h3" align="left" color={colors.primary}>SSL Info</Heading>
       { subject && <DataRow lbl="Subject" val={subject?.CN} /> }
       { issuer?.O && <DataRow lbl="Issuer" val={issuer.O} /> }
       

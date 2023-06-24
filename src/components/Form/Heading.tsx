@@ -17,6 +17,7 @@ const StyledHeading = styled.h1<HeadingProps>`
   display: flex;
   gap: 1rem;
   align-items: center;
+  font-size: ${TextSizes.medium};
   img { // Some titles have an icon
     width: 2rem;
     border-radius: 4px;
@@ -27,8 +28,8 @@ const StyledHeading = styled.h1<HeadingProps>`
   }
   ${props => {
     switch (props.size) {
-      case 'xSmall': return `font-size: ${TextSizes.small};`;
-      case 'small': return `font-size: ${TextSizes.medium};`;
+      case 'xSmall': return `font-size: ${TextSizes.xSmall};`;
+      case 'small': return `font-size: ${TextSizes.small};`;
       case 'medium': return `font-size: ${TextSizes.large};`;
       case 'large': return `font-size: ${TextSizes.xLarge};`;
     }
