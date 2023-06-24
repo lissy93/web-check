@@ -148,8 +148,11 @@ type RobotsRule = {
 export const parseRobotsTxt = (content: string): RobotsRule[] => {
   const lines = content.split('\n');
   const rules: RobotsRule[] = [];
+
   lines.forEach(line => {
-    const match = line.match(/^(Allow|Disallow):\s*(\S*)$/);
+    line = line.trim();  // This removes trailing and leading whitespaces
+
+    let match = line.match(/^(Allow|Disallow):\s*(\S*)$/i);
     if (match) {
       const rule: RobotsRule = {
         lbl: match[1],
@@ -157,7 +160,20 @@ export const parseRobotsTxt = (content: string): RobotsRule[] => {
       };
       
       rules.push(rule);
+    } else {
+      match = line.match(/^(User-agent):\s*(\S*)$/i);
+      if (match) {
+        const rule: RobotsRule = {
+          lbl: match[1],
+          val: match[2],
+        };
+        
+        rules.push(rule);
+      }
     }
   });
+
   return rules;
 }
+
+

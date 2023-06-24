@@ -16,6 +16,7 @@ import SslCertCard from 'components/Results/SslCert';
 import HeadersCard from 'components/Results/Headers';
 import CookiesCard from 'components/Results/Cookies';
 import RobotsTxtCard from 'components/Results/RobotsTxt';
+import DnsRecordsCard from 'components/Results/DnsRecords';
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
 
@@ -43,6 +44,7 @@ const ResultsContent = styled.section`
   gap: 1rem;
   margin: auto;
   width: calc(100% - 2rem);
+  padding-bottom: 1rem;
 `;
 
 const Header = styled(Card)`
@@ -63,6 +65,7 @@ const Results = (): JSX.Element => {
   const [ lighthouseResults, setLighthouseResults ] = useState<any>();
   const [ sslResults, setSslResults ] = useState<any>();
   const [ headersResults, setHeadersResults ] = useState<any>();
+  const [ dnsResults, setDnsResults ] = useState<any>();
   const [ robotsTxtResults, setRobotsTxtResults ] = useState<any>();
   const [ cookieResults, setCookieResults ] = useState<Cookie[] | null>(null);
   const [ screenshotResult, setScreenshotResult ] = useState<string>();
@@ -81,6 +84,7 @@ const Results = (): JSX.Element => {
   const jobNames = [
     'get-ip',
     'ssl',
+    'dns',
     'cookies',
     'robots-txt',
     'headers',
@@ -195,6 +199,18 @@ const Results = (): JSX.Element => {
         updateLoadingJobs('headers', 'success');
       })
       .catch(err => updateLoadingJobs('headers', 'error', err));
+  }, [address, addressType])
+
+  /* Get DNS records */
+  useEffect(() => {
+    if (addressType !== 'url') return;
+    fetch(`/get-dns?url=${address}`)
+      .then(response => response.json())
+      .then(response => {
+        setDnsResults(response);
+        updateLoadingJobs('dns', 'success');
+      })
+      .catch(err => updateLoadingJobs('dns', 'error', err));
   }, [address, addressType])
 
   /* Get Lighthouse report */
@@ -337,6 +353,7 @@ const Results = (): JSX.Element => {
         { headersResults && <HeadersCard headers={headersResults} />}
         { hostNames && <HostNamesCard hosts={hostNames} />}
         { whoIsResults && <WhoIsCard {...whoIsResults} />}
+        { dnsResults && <DnsRecordsCard dnsRecords={dnsResults} />}
         { lighthouseResults && <LighthouseCard lighthouse={lighthouseResults} />}
         { cookieResults && <CookiesCard cookies={cookieResults} />}
         { screenshotResult && <ScreenshotCard screenshot={screenshotResult} />}
