@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import colors from 'styles/colors';
 import Heading from 'components/Form/Heading';
 import Card from 'components/Form/Card';
+import ErrorBoundary from 'components/misc/ErrorBoundary';
 import ServerLocationCard from 'components/Results/ServerLocation';
 import ServerInfoCard from 'components/Results/ServerInfo';
 import HostNamesCard from 'components/Results/HostNames';
@@ -119,7 +120,10 @@ const Results = (): JSX.Element => {
 
   /* Get IP address from URL */
   useEffect(() => {
-    if (addressType !== 'url') return;
+    if (addressType !== 'url') {
+      updateLoadingJobs('get-ip', 'skipped');
+      return;
+    }
     const fetchIpAddress = () => {
       fetch(`/find-url-ip?address=${address}`)
       .then(function(response) {
@@ -139,7 +143,10 @@ const Results = (): JSX.Element => {
 
   /* Get SSL info */
   useEffect(() => {
-    if (addressType !== 'url') return;
+    if (addressType !== 'url') {
+      updateLoadingJobs('ssl', 'skipped');
+      return;
+    }
     fetch(`/ssl-check?url=${address}`)
       .then(response => response.json())
       .then(response => {
@@ -155,7 +162,10 @@ const Results = (): JSX.Element => {
 
   /* Get Cookies */
   useEffect(() => {
-    if (addressType !== 'url') return;
+    if (addressType !== 'url') {
+      updateLoadingJobs('cookies', 'skipped');
+      return;
+    }
     fetch(`/get-cookies?url=${address}`)
       .then(response => response.json())
       .then(response => {
@@ -167,7 +177,10 @@ const Results = (): JSX.Element => {
 
   /* Get Robots.txt */
   useEffect(() => {
-    if (addressType !== 'url') return;
+    if (addressType !== 'url') {
+      updateLoadingJobs('robots-txt', 'skipped');
+      return;
+    }
     fetch(`/read-robots-txt?url=${address}`)
       .then(response => response.text())
       .then(response => {
@@ -179,7 +192,10 @@ const Results = (): JSX.Element => {
 
   /* Get Headers */
   useEffect(() => {
-    if (addressType !== 'url') return;
+    if (addressType !== 'url') {
+      updateLoadingJobs('headers', 'skipped');
+      return;
+    }
     fetch(`/get-headers?url=${address}`)
       .then(response => response.json())
       .then(response => {
@@ -191,7 +207,10 @@ const Results = (): JSX.Element => {
 
   /* Get DNS records */
   useEffect(() => {
-    if (addressType !== 'url') return;
+    if (addressType !== 'url') {
+      updateLoadingJobs('dns', 'skipped');
+      return;
+    }
     fetch(`/get-dns?url=${address}`)
       .then(response => response.json())
       .then(response => {
@@ -203,7 +222,10 @@ const Results = (): JSX.Element => {
 
   /* Get Lighthouse report */
   useEffect(() => {
-    if (addressType !== 'url') return;
+    if (addressType !== 'url') {
+      updateLoadingJobs('lighthouse', 'skipped');
+      return;
+    }
     fetch(`/lighthouse-report?url=${address}`)
       .then(response => response.json())
       .then(response => {
@@ -274,7 +296,10 @@ const Results = (): JSX.Element => {
 
   /* Get BuiltWith tech stack */
   useEffect(() => {
-    if (addressType !== 'url') return;
+    if (addressType !== 'url') {
+      updateLoadingJobs('built-with', 'skipped');
+      return;
+    }
     const apiKey = keys.builtWith;
     const endpoint = `https://api.builtwith.com/v21/api.json?KEY=${apiKey}&LOOKUP=${address}`;
     fetch(endpoint)
@@ -288,7 +313,10 @@ const Results = (): JSX.Element => {
   
   /* Get WhoIs info for a given domain name */
   useEffect(() => {
-    if (addressType !== 'url') return;
+    if (addressType !== 'url') {
+      updateLoadingJobs('whois', 'skipped');
+      return;
+    }
     const applyWhoIsResults = (response: any) => {
       const whoIsResults: Whois = {
         created: response.date_created,
@@ -337,18 +365,42 @@ const Results = (): JSX.Element => {
       </Header>
       <ProgressBar loadStatus={loadingJobs} />
       <ResultsContent>
-        { locationResults && <ServerLocationCard {...locationResults} />}
-        { sslResults && <SslCertCard sslCert={sslResults} />}
-        { headersResults && <HeadersCard headers={headersResults} />}
-        { hostNames && <HostNamesCard hosts={hostNames} />}
-        { whoIsResults && <WhoIsCard {...whoIsResults} />}
-        { dnsResults && <DnsRecordsCard dnsRecords={dnsResults} />}
-        { lighthouseResults && <LighthouseCard lighthouse={lighthouseResults} />}
-        { cookieResults && <CookiesCard cookies={cookieResults} />}
-        { screenshotResult && <ScreenshotCard screenshot={screenshotResult} />}
-        { technologyResults && <BuiltWithCard technologies={technologyResults} />}
-        { robotsTxtResults && <RobotsTxtCard robotTxt={robotsTxtResults} />}
-        { serverInfo && <ServerInfoCard {...serverInfo} />}
+        <ErrorBoundary title="Server Location">
+          { locationResults && <ServerLocationCard {...locationResults} />}
+        </ErrorBoundary>
+        <ErrorBoundary title="SSL Info">
+          { sslResults && <SslCertCard sslCert={sslResults} />}
+        </ErrorBoundary>
+        <ErrorBoundary title="Headers">
+          { headersResults && <HeadersCard headers={headersResults} />}
+        </ErrorBoundary>
+        <ErrorBoundary title="Host Names">
+          { hostNames && <HostNamesCard hosts={hostNames} />}
+        </ErrorBoundary>
+        <ErrorBoundary title="Domain Info">
+          { whoIsResults && <WhoIsCard {...whoIsResults} />}
+        </ErrorBoundary>
+        <ErrorBoundary title="DNS Records">
+          { dnsResults && <DnsRecordsCard dnsRecords={dnsResults} />}
+        </ErrorBoundary>
+        <ErrorBoundary title="Performance">
+          { lighthouseResults && <LighthouseCard lighthouse={lighthouseResults} />}
+        </ErrorBoundary>
+        <ErrorBoundary title="Cookies">
+          { cookieResults && <CookiesCard cookies={cookieResults} />}
+        </ErrorBoundary>
+        <ErrorBoundary title="Screenshot">
+          { screenshotResult && <ScreenshotCard screenshot={screenshotResult} />}
+        </ErrorBoundary>
+        <ErrorBoundary title="Technologies">
+          { technologyResults && <BuiltWithCard technologies={technologyResults} />}
+        </ErrorBoundary>
+        <ErrorBoundary title="Crawl Rules">
+          { robotsTxtResults && <RobotsTxtCard robotTxt={robotsTxtResults} />}
+        </ErrorBoundary>
+        <ErrorBoundary title="Server Info">
+          { serverInfo && <ServerInfoCard {...serverInfo} />}
+        </ErrorBoundary>
       </ResultsContent>
     </ResultsOuter>
   );
