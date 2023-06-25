@@ -1,46 +1,94 @@
-# Getting Started with Create React App
+<h1 align="center">Web-Check</h1>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<p align="center">
+	<b><i>Comprehensive, on-demand open source intelligence for any website</i></b>
+  <br />
+  <b>🌐 <a href="https://web-check.as93.net/">web-check.as93.net</a></b>
+</p>
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## About
 
-### `npm start`
+_Get info on a websites SSL certs, domain, headers, cookies, DNS records, technologies used, performance, hostnames, crawl rules, server info and more_
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+#### Screenshot
+<a href="https://web-check.as93.net/">
+<img width="700" src="https://i.ibb.co/9ZcMVbP/web-check-screenshot3.png" />
+</a>
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+#### Live Demo
 
-### `npm test`
+A hosted version can be accessed at: **[web-check.as93.net](https://web-check.as93.net)**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Building
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Deploying
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Contributing
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## License
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+> _**[Lissy93/Web-Check](https://github.com/Lissy93/web-check)** is licensed under [MIT](https://github.com/Lissy93/web-check/blob/HEAD/LICENSE) © [Alicia Sykes](https://aliciasykes.com) 2023._<br>
+> <sup align="right">For information, see <a href="https://tldrlegal.com/license/mit-license">TLDR Legal > MIT</a></sup>
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+<details>
+<summary>Expand License</summary>
+
+```
+The MIT License (MIT)
+Copyright (c) Alicia Sykes <alicia@omg.com> 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy 
+of this software and associated documentation files (the "Software"), to deal 
+in the Software without restriction, including without limitation the rights 
+to use, copy, modify, merge, publish, distribute, sub-license, and/or sell 
+copies of the Software, and to permit persons to whom the Software is furnished 
+to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included install 
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANT ABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
+
+</details>
+
+<!-- License + Copyright -->
+<p  align="center">
+  <i>© <a href="https://aliciasykes.com">Alicia Sykes</a> 2023</i><br>
+  <i>Licensed under <a href="https://gist.github.com/Lissy93/143d2ee01ccc5c052a17">MIT</a></i><br>
+  <a href="https://github.com/lissy93"><img src="https://i.ibb.co/4KtpYxb/octocat-clean-mini.png" /></a><br>
+  <sup>Thanks for visiting :)</sup>
+</p>
+
+<!-- Dinosaur -->
+<!-- 
+                        . - ~ ~ ~ - .
+      ..     _      .-~               ~-.
+     //|     \ `..~                      `.
+    || |      }  }              /       \  \
+(\   \\ \~^..'                 |         }  \
+ \`.-~  o      /       }       |        /    \
+ (__          |       /        |       /      `.
+  `- - ~ ~ -._|      /_ - ~ ~ ^|      /- _      `.
+              |     /          |     /     ~-.     ~- _
+              |_____|          |_____|         ~ - . _ _~_-_
+-->
+
