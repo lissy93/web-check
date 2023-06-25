@@ -5,6 +5,7 @@ import { useNavigate, NavigateOptions } from 'react-router-dom';
 import Heading from 'components/Form/Heading';
 import Input from 'components/Form/Input'
 import Button from 'components/Form/Button';
+import Footer from 'components/misc/Footer';
 import FancyBackground from 'components/misc/FancyBackground';
 
 import colors from 'styles/colors';
@@ -54,18 +55,23 @@ const Home = (): JSX.Element => {
 
   /* Check is valid address, either show err or redirect to results page */
   const submit = () => {
-    const address = userInput;
+    let address = userInput;
     const addressType = determineAddressType(address);
-
+  
     if (addressType === 'empt') {
       setErrMsg('Field must not be empty');
     } else if (addressType === 'err') {
       setErrMsg('Must be a valid URL, IPv4 or IPv6 Address');
     } else {
+      // if the addressType is 'url' and address doesn't start with 'http://' or 'https://', prepend 'https://'
+      if (addressType === 'url' && !/^https?:\/\//i.test(address)) {
+        address = 'https://' + address;
+      }
       const resultRouteParams: NavigateOptions = { state: { address, addressType } };
       navigate(`/results/${encodeURIComponent(address)}`, resultRouteParams);
     }
   };
+  
 
   /* Update user input state, and hide error message if field is valid */
   const inputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -104,7 +110,7 @@ const Home = (): JSX.Element => {
         <Input
           id="user-input"
           value={userInput}
-          label="Enter an IP or URL"
+          label="Enter a URL"
           size="large"
           orientation="vertical"
           placeholder={placeholder}
@@ -115,6 +121,7 @@ const Home = (): JSX.Element => {
         { errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
         <Button size="large" onClick={submit}>Analyze!</Button>
       </UserInputMain>
+      <Footer isFixed={true} />
     </HomeContainer>
   );
 }

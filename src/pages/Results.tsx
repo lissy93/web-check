@@ -6,6 +6,8 @@ import colors from 'styles/colors';
 import Heading from 'components/Form/Heading';
 import Card from 'components/Form/Card';
 import ErrorBoundary from 'components/misc/ErrorBoundary';
+import Footer from 'components/misc/Footer';
+
 import ServerLocationCard from 'components/Results/ServerLocation';
 import ServerInfoCard from 'components/Results/ServerInfo';
 import HostNamesCard from 'components/Results/HostNames';
@@ -402,6 +404,7 @@ const Results = (): JSX.Element => {
           { serverInfo && <ServerInfoCard {...serverInfo} />}
         </ErrorBoundary>
       </ResultsContent>
+      <Footer />
     </ResultsOuter>
   );
 }
