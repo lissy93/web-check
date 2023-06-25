@@ -2,33 +2,20 @@
 [build]
   base = "/"
   command = "yarn build"
-  publish = "dist"
+  publish = "build"
   functions = "server/lambda"
 
 [build.environment]
-  GO_IMPORT_PATH="github.com/netlify/next-function"
-  GO_VERSION="1.15"
   NODE_VERSION = "16.13.2"
 
     
 # Site info, used for the 1-Click deploy page
 [template.environment]
-  # STATUSKIT_PAGE_TITLE = "Web Check"
-  # STATUSKIT_COMPANY_LOGO = "https://raw.githubusercontent.com/Lissy93/dashy/master/docs/assets/logo.png"
-  # STATUSKIT_SUPPORT_CONTACT_LINK = "https://github.com/lissy93/dashy"
-  # STATUSKIT_RESOURCES_LINK = "https://dashy.to/docs"
+  STATUSKIT_PAGE_TITLE = "Web Check"
+  STATUSKIT_COMPANY_LOGO = "https://raw.githubusercontent.com/Lissy93/web-check/master/public/apple-touch-icon.png"
+  STATUSKIT_SUPPORT_CONTACT_LINK = "https://github.com/lissy93/web-check"
 
 # Redirect the Node endpoints to serverless functions
-# [[redirects]]
-#   from = "/status-check"
-#   to = "/.netlify/functions/cloud-status-check"
-#   status = 301
-#   force = true
-# [[redirects]]
-#   from = "/config-manager/*"
-#   to = "/.netlify/functions/not-supported"
-#   status = 301
-#   force = true
 [[redirects]]
   from = "/api"
   to = "/.netlify/functions/web-check"
