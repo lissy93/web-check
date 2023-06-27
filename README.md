@@ -65,6 +65,8 @@ You'll need [Node.js](https://nodejs.org/en) (V 18.16.1 or later) installed.
 
 ### Deploying
 
+Click the button below, to deploy to Netlify 👇
+
 [![Deploy to Netlify](https://img.shields.io/badge/Deploy-Netlify-%2330c8c9?style=for-the-badge&logo=netlify&labelColor=1e0e41 'Deploy Web-Check to Netlify, via 1-Click Script')](https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check)
 
 ---
@@ -81,7 +83,7 @@ To get started, fork the repo, make your changes, add, commit and push the code,
 [![Submit a PR](https://img.shields.io/badge/Submit_a_PR-GitHub-%23060606?style=for-the-badge&logo=github&logoColor=fff)](https://github.com/Lissy93/web-check/compare)
 
 
-### Found a Bug
+### Reporting Bugs
 
 If you've found something that doesn't work as it should, or would like to suggest a new feature, then go ahead and raise a ticket on GitHub.
 For bugs, please outline the steps needed to reproduce, and include relevant info like system info and resulting logs.
