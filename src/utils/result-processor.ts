@@ -1,3 +1,5 @@
+import { RowProps }  from 'components/Form/Row';
+
 export interface ServerLocation {
   city: string,
   region: string,
@@ -68,7 +70,7 @@ export const getServerInfo = (response: any): ServerInfo => {
     isp: response.isp,
     os: response.os,
     ip: response.ip_str,
-    ports: response.ports.toString(),
+    ports: response?.ports?.toString(),
     loc: response.city ? `${response.city}, ${response.country_name}` : '',
     type: response.tags ? response.tags.toString() : '',
   };
@@ -90,6 +92,18 @@ export const getHostNames = (response: any): HostNames | null => {
   };
   return results;
 };
+
+export interface ShodanResults {
+  hostnames: HostNames | null,
+  serverInfo: ServerInfo,
+}
+
+export const parseShodanResults = (response: any): ShodanResults => {
+  return {
+    hostnames: getHostNames(response),
+    serverInfo: getServerInfo(response),
+  };
+}
 
 export interface Technology {
   Categories?: string[];
@@ -140,21 +154,16 @@ export const parseCookies = (cookiesHeader: string): Cookie[] => {
   });
 }
 
-type RobotsRule = {
-  lbl: string;
-  val: string;
-};
-
-export const parseRobotsTxt = (content: string): RobotsRule[] => {
+export const parseRobotsTxt = (content: string): RowProps[] => {
   const lines = content.split('\n');
-  const rules: RobotsRule[] = [];
+  const rules: RowProps[] = [];
 
   lines.forEach(line => {
     line = line.trim();  // This removes trailing and leading whitespaces
 
     let match = line.match(/^(Allow|Disallow):\s*(\S*)$/i);
     if (match) {
-      const rule: RobotsRule = {
+      const rule: RowProps = {
         lbl: match[1],
         val: match[2],
       };
@@ -163,7 +172,7 @@ export const parseRobotsTxt = (content: string): RobotsRule[] => {
     } else {
       match = line.match(/^(User-agent):\s*(\S*)$/i);
       if (match) {
-        const rule: RobotsRule = {
+        const rule: RowProps = {
           lbl: match[1],
           val: match[2],
         };
@@ -176,4 +185,13 @@ export const parseRobotsTxt = (content: string): RobotsRule[] => {
   return rules;
 }
 
+export const applyWhoIsResults = (response: any) => {
+  const whoIsResults: Whois = {
+    created: response.date_created,
+    expires: response.date_expires,
+    updated: response.date_updated,
+    nameservers: response.nameservers,
+  };
+  return whoIsResults;
+}
 

@@ -125,14 +125,17 @@ const FancyBackground = (): JSX.Element => {
     var time2 = performance.now();
   
     // Update UI
-    document.getElementsByClassName('dead')[0].textContent = this.deathCount;
-    document.getElementsByClassName('alive')[0].textContent =
-      this.particles.length;
-    document.getElementsByClassName('fps')[0].textContent = Math.floor(
-      1000 / (time2 - time1)
-    ).toString();
-    document.getElementsByClassName('drawn')[0].textContent =
-      this.drawnInLastFrame;
+    const elemDead = document.getElementsByClassName('dead');
+    if (elemDead && elemDead.length > 0) elemDead[0].textContent = this.deathCount;
+
+    const elemAlive = document.getElementsByClassName('alive');
+    if (elemAlive && elemAlive.length > 0) elemAlive[0].textContent = this.particles.length;
+    
+    const elemFPS = document.getElementsByClassName('fps');
+    if (elemFPS && elemFPS.length > 0) elemFPS[0].textContent = Math.round(1000 / (time2 - time1)).toString();
+    
+    const elemDrawn = document.getElementsByClassName('drawn');
+    if (elemDrawn && elemDrawn.length > 0) elemDrawn[0].textContent = this.drawnInLastFrame;
   };
   App.birth = function () {
     var x, y;

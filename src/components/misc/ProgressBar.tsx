@@ -140,6 +140,7 @@ const jobNames = [
   'headers',
   'lighthouse',
   'location',
+  'shodan',
   // 'server-info',
   'whois',
 ] as const;
@@ -307,6 +308,7 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[] }): JSX.Element => {
           color2={barColors[state][1]} 
           title={`${state} (${Math.round(percentages[state])}%)`}
           width={percentages[state]}
+          key={`progress-bar-${state}`}
         />
       )}
     </ProgressBarContainer>

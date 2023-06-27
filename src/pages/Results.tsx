@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, SetStateAction, Dispatch } from 'react';
 import {   useParams } from "react-router-dom";
 import styled from 'styled-components';
 
@@ -7,6 +7,8 @@ import Heading from 'components/Form/Heading';
 import Card from 'components/Form/Card';
 import ErrorBoundary from 'components/misc/ErrorBoundary';
 import Footer from 'components/misc/Footer';
+import { RowProps }  from 'components/Form/Row';
+
 
 import ServerLocationCard from 'components/Results/ServerLocation';
 import ServerInfoCard from 'components/Results/ServerInfo';
@@ -24,14 +26,16 @@ import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/m
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
 
+import useMotherHook from 'hooks/motherOfAllHooks';
+
+
 import {
   getLocation, ServerLocation,
-  getServerInfo, ServerInfo,
-  getHostNames, HostNames,
   makeTechnologies, TechnologyGroup,
   parseCookies, Cookie,
   parseRobotsTxt,
-  Whois,
+  applyWhoIsResults, Whois,
+  parseShodanResults, ShodanResults
 } from 'utils/result-processor';
 
 const ResultsOuter = styled.div`
@@ -62,19 +66,6 @@ const Header = styled(Card)`
 const Results = (): JSX.Element => {
   const startTime = new Date().getTime();
 
-  const [ serverInfo, setServerInfo ] = useState<ServerInfo>();
-  const [ hostNames, setHostNames ] = useState<HostNames | null>();
-  const [ locationResults, setLocationResults ] = useState<ServerLocation>();
-  const [ whoIsResults, setWhoIsResults ] = useState<Whois>();
-  const [ technologyResults, setTechnologyResults ] = useState<TechnologyGroup[]>();
-  const [ lighthouseResults, setLighthouseResults ] = useState<any>();
-  const [ sslResults, setSslResults ] = useState<any>();
-  const [ headersResults, setHeadersResults ] = useState<any>();
-  const [ dnsResults, setDnsResults ] = useState<any>();
-  const [ robotsTxtResults, setRobotsTxtResults ] = useState<any>();
-  const [ cookieResults, setCookieResults ] = useState<Cookie[] | null>(null);
-  const [ screenshotResult, setScreenshotResult ] = useState<string>();
-  const [ ipAddress, setIpAddress ] = useState<undefined | string>(undefined);
   const [ addressType, setAddressType ] = useState<AddressType>('empt');
   const { address } = useParams();
 
@@ -91,14 +82,132 @@ const Results = (): JSX.Element => {
       });
   
       if (newState === 'error') {
-        console.warn(`Error in ${job}: ${error}`);
+        console.log(
+          `%cWeb-Check Fetch Error - ${job}%c\n\nThe ${job} job failed with the following error:%c\n${error}`,
+          `background: ${colors.danger}; padding: 4px 8px; font-size: 16px;`,
+          `color: ${colors.danger};`,
+          `color: ${colors.warning};`,
+        );
       }
-  
       return newJobs;
     });
   }, []);
 
-  /* Cancel remaining jobs after  20 second timeout */
+  useEffect(() => {
+    setAddressType(determineAddressType(address || ''));
+    if (addressType === 'ipV4' && address) {
+      setIpAddress(address);
+    }
+  }, []);
+
+  const urlTypeOnly = ['url'] as AddressType[]; // Many jobs only run with these address types
+
+  // Fetch and parse IP address for given URL
+  const [ipAddress, setIpAddress] = useMotherHook({
+    jobId: 'get-ip',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`http://localhost:8888/.netlify/functions/find-url-ip?address=${address}`)
+    .then(res => res.json())
+    .then(res => res.ip),
+  });
+
+  // Fetch and parse SSL certificate info
+  const [sslResults] = useMotherHook({
+    jobId: 'ssl',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/ssl-check?url=${address}`).then((res) => res.json()),
+  });
+
+  // Fetch and parse cookies info
+  const [cookieResults] = useMotherHook<Cookie[]>({
+    jobId: 'cookies',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/get-cookies?url=${address}`)
+      .then(res => res.json())
+      .then(res => parseCookies(res.cookies)),
+  });
+
+  // Fetch and parse crawl rules from robots.txt
+  const [robotsTxtResults] = useMotherHook<RowProps[]>({
+    jobId: 'robots-txt',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/read-robots-txt?url=${address}`)
+      .then(res => res.text())
+      .then(res => parseRobotsTxt(res)),
+  });
+
+  // Fetch and parse headers
+  const [headersResults] = useMotherHook({
+    jobId: 'headers',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/get-headers?url=${address}`).then(res => res.json()),
+  });
+
+  // Fetch and parse DNS records
+  const [dnsResults] = useMotherHook({
+    jobId: 'dns',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/get-dns?url=${address}`).then(res => res.json()),
+  });
+
+  // Fetch and parse Lighthouse performance data
+  const [lighthouseResults] = useMotherHook({
+    jobId: 'lighthouse',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/lighthouse-report?url=${address}`)
+      .then(res => res.json())
+      .then(res => res.lighthouseResult),
+  });
+
+  // Get IP address location info
+  const [locationResults] = useMotherHook<ServerLocation>({
+    jobId: 'location',
+    updateLoadingJobs,
+    addressInfo: { address: ipAddress, addressType: 'ipV4', expectedAddressTypes: ['ipV4', 'ipV6'] },
+    fetchRequest: () => fetch(`https://ipapi.co/${ipAddress}/json/`)
+      .then(res => res.json())
+      .then(res => getLocation(res)),
+  });
+
+
+  // Get hostnames and associated domains from Shodan
+  const [shoadnResults] = useMotherHook<ShodanResults>({
+    jobId: 'shodan',
+    updateLoadingJobs,
+    addressInfo: { address: ipAddress, addressType: 'ipV4', expectedAddressTypes: ['ipV4', 'ipV6'] },
+    fetchRequest: () => fetch(`https://api.shodan.io/shodan/host/${ipAddress}?key=${keys.shodan}`)
+      .then(res => res.json())
+      .then(res => parseShodanResults(res)),
+  });
+
+  // Fetch and parse domain whois results
+  const [whoIsResults] = useMotherHook<Whois>({
+    jobId: 'whois',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`https://api.whoapi.com/?domain=${address}&r=whois&apikey=${keys.whoApi}`)
+      .then(res => res.json())
+      .then(res => applyWhoIsResults(res)),
+  });
+
+  // Fetch and parse built-with results
+  const [technologyResults] = useMotherHook<TechnologyGroup[]>({
+    jobId: 'built-with',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`https://api.builtwith.com/v21/api.json?KEY=${keys.builtWith}&LOOKUP=${address}`)
+      .then(res => res.json())
+      .then(res => makeTechnologies(res)),
+  });
+
+  /* Cancel remaining jobs after  10 second timeout */
   useEffect(() => {
     const checkJobs = () => {
       loadingJobs.forEach(job => {
@@ -112,237 +221,6 @@ const Results = (): JSX.Element => {
       clearTimeout(timeoutId);
     };
   }, [loadingJobs, updateLoadingJobs]); // dependencies for the effect
-
-  useEffect(() => {
-    setAddressType(determineAddressType(address || ''));
-    if (addressType === 'ipV4') {
-      setIpAddress(address);
-    }
-  }, []);
-
-  /* Get IP address from URL */
-  useEffect(() => {
-    if (addressType !== 'url') {
-      updateLoadingJobs('get-ip', 'skipped');
-      return;
-    }
-    const fetchIpAddress = () => {
-      fetch(`/find-url-ip?address=${address}`)
-      .then(function(response) {
-        response.json().then(jsonData => {
-          setIpAddress(jsonData.ip);
-          updateLoadingJobs('get-ip', 'success');
-        });
-      })
-      .catch(function(error) {
-        updateLoadingJobs('get-ip', 'error', error);
-      });
-    };
-    if (!ipAddress) {
-      fetchIpAddress();
-    }
-  }, [address, addressType]);
-
-  /* Get SSL info */
-  useEffect(() => {
-    if (addressType !== 'url') {
-      updateLoadingJobs('ssl', 'skipped');
-      return;
-    }
-    fetch(`/ssl-check?url=${address}`)
-      .then(response => response.json())
-      .then(response => {
-        if (Object.keys(response).length > 0) {
-          setSslResults(response);
-          updateLoadingJobs('ssl', 'success');
-        } else {
-          updateLoadingJobs('ssl', 'error', 'No SSL Cert found');
-        }
-      })
-      .catch(err => updateLoadingJobs('ssl', 'error', err));
-  }, [address, addressType])
-
-  /* Get Cookies */
-  useEffect(() => {
-    if (addressType !== 'url') {
-      updateLoadingJobs('cookies', 'skipped');
-      return;
-    }
-    fetch(`/get-cookies?url=${address}`)
-      .then(response => response.json())
-      .then(response => {
-        setCookieResults(parseCookies(response.cookies));
-        updateLoadingJobs('cookies', 'success');
-      })
-      .catch(err => updateLoadingJobs('cookies', 'error', err));
-  }, [address, addressType])
-
-  /* Get Robots.txt */
-  useEffect(() => {
-    if (addressType !== 'url') {
-      updateLoadingJobs('robots-txt', 'skipped');
-      return;
-    }
-    fetch(`/read-robots-txt?url=${address}`)
-      .then(response => response.text())
-      .then(response => {
-        setRobotsTxtResults(parseRobotsTxt(response));
-        updateLoadingJobs('robots-txt', 'success');
-      })
-      .catch(err => updateLoadingJobs('robots-txt', 'error', err));
-  }, [address, addressType])
-
-  /* Get Headers */
-  useEffect(() => {
-    if (addressType !== 'url') {
-      updateLoadingJobs('headers', 'skipped');
-      return;
-    }
-    fetch(`/get-headers?url=${address}`)
-      .then(response => response.json())
-      .then(response => {
-        setHeadersResults(response);
-        updateLoadingJobs('headers', 'success');
-      })
-      .catch(err => updateLoadingJobs('headers', 'error', err));
-  }, [address, addressType])
-
-  /* Get DNS records */
-  useEffect(() => {
-    if (addressType !== 'url') {
-      updateLoadingJobs('dns', 'skipped');
-      return;
-    }
-    fetch(`/get-dns?url=${address}`)
-      .then(response => response.json())
-      .then(response => {
-        setDnsResults(response);
-        updateLoadingJobs('dns', 'success');
-      })
-      .catch(err => updateLoadingJobs('dns', 'error', err));
-  }, [address, addressType])
-
-  /* Get Lighthouse report */
-  useEffect(() => {
-    if (addressType !== 'url') {
-      updateLoadingJobs('lighthouse', 'skipped');
-      return;
-    }
-    fetch(`/lighthouse-report?url=${address}`)
-      .then(response => response.json())
-      .then(response => {
-        setLighthouseResults(response.lighthouseResult);
-        setScreenshotResult(response.lighthouseResult?.fullPageScreenshot?.screenshot?.data);
-        updateLoadingJobs('lighthouse', 'success');
-      })
-      .catch(err => {
-        // if (err.errorType === 'TimeoutError') {
-        // Netlify limits to 10 seconds, we can try again client-side...
-        const params = 'category=PERFORMANCE&category=ACCESSIBILITY&category=BEST_PRACTICES&category=SEO&category=PWA&strategy=mobile';
-        const endpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${address}&${params}&key=${keys.googleCloud}`;
-        fetch(endpoint)
-          .then(response => response.json())
-          .then(response => {
-            setLighthouseResults(response.lightHouseResult);
-            setScreenshotResult(response?.lighthouseResult?.fullPageScreenshot?.screenshot?.data);
-            updateLoadingJobs('lighthouse', 'success');
-          })
-          .catch(err => updateLoadingJobs('lighthouse', 'error', err));
-      });
-  }, [address, addressType])
-
-
-  /* Get IP address location info */
-  useEffect(() => {
-    const fetchIpLocation = () => {
-      fetch(`https://ipapi.co/${ipAddress}/json/`)
-      .then(function(response) {
-        response.json().then(jsonData => {
-          setLocationResults(getLocation(jsonData));
-          updateLoadingJobs('location', 'success');
-        });
-      })
-      .catch(function(error) {
-        updateLoadingJobs('location', 'error', error);
-      });
-    };
-    if (ipAddress) {
-      fetchIpLocation();
-    }
-  }, [ipAddress]);
-
-  /* Get hostnames and server info from Shodan */
-  useEffect(() => {
-    const applyShodanResults = (response: any) => {
-      setServerInfo(getServerInfo(response));
-      setHostNames(getHostNames(response));
-    }
-    const fetchShodanData = () => {
-      const apiKey = keys.shodan;
-      fetch(`https://api.shodan.io/shodan/host/${ipAddress}?key=${apiKey}`)
-        .then(response => response.json())
-        .then(response => {
-          if (!response.error) {
-            applyShodanResults(response)
-            updateLoadingJobs('server-info', 'success');
-          }
-        })
-        .catch(err => updateLoadingJobs('server-info', 'error', err));
-    };
-    
-
-    if (ipAddress) {
-      fetchShodanData();
-    }
-  }, [ipAddress]);
-
-  /* Get BuiltWith tech stack */
-  useEffect(() => {
-    if (addressType !== 'url') {
-      updateLoadingJobs('built-with', 'skipped');
-      return;
-    }
-    const apiKey = keys.builtWith;
-    const endpoint = `https://api.builtwith.com/v21/api.json?KEY=${apiKey}&LOOKUP=${address}`;
-    fetch(endpoint)
-      .then(response => response.json())
-      .then(response => {
-        setTechnologyResults(makeTechnologies(response));
-        updateLoadingJobs('built-with', 'success');
-      })
-      .catch(err => updateLoadingJobs('built-with', 'error', err));
-  }, [address, addressType]);
-  
-  /* Get WhoIs info for a given domain name */
-  useEffect(() => {
-    if (addressType !== 'url') {
-      updateLoadingJobs('whois', 'skipped');
-      return;
-    }
-    const applyWhoIsResults = (response: any) => {
-      const whoIsResults: Whois = {
-        created: response.date_created,
-        expires: response.date_expires,
-        updated: response.date_updated,
-        nameservers: response.nameservers,
-      };
-      setWhoIsResults(whoIsResults);
-    }
-    const fetchWhoIsData = () => {
-      const apiKey = keys.whoApi;
-      fetch(`https://api.whoapi.com/?domain=${address}&r=whois&apikey=${apiKey}`)
-        .then(response => response.json())
-        .then(response => {
-          if (!response.error) applyWhoIsResults(response)
-          updateLoadingJobs('whois', 'success');
-        })
-        .catch(err => updateLoadingJobs('whois', 'error', err));
-    };
-    
-    if (addressType === 'url') {
-      fetchWhoIsData();
-    }
-  }, [addressType, address]);
 
   const makeSiteName = (address: string): string => {
     try {
@@ -377,7 +255,7 @@ const Results = (): JSX.Element => {
           { headersResults && <HeadersCard headers={headersResults} />}
         </ErrorBoundary>
         <ErrorBoundary title="Host Names">
-          { hostNames && <HostNamesCard hosts={hostNames} />}
+          { shoadnResults?.hostnames && <HostNamesCard hosts={shoadnResults.hostnames} />}
         </ErrorBoundary>
         <ErrorBoundary title="Domain Info">
           { whoIsResults && <WhoIsCard {...whoIsResults} />}
@@ -392,7 +270,7 @@ const Results = (): JSX.Element => {
           { cookieResults && <CookiesCard cookies={cookieResults} />}
         </ErrorBoundary>
         <ErrorBoundary title="Screenshot">
-          { screenshotResult && <ScreenshotCard screenshot={screenshotResult} />}
+          { lighthouseResults?.fullPageScreenshot?.screenshot?.data && <ScreenshotCard screenshot={lighthouseResults.fullPageScreenshot.screenshot.data} />}
         </ErrorBoundary>
         <ErrorBoundary title="Technologies">
           { technologyResults && <BuiltWithCard technologies={technologyResults} />}
@@ -401,7 +279,7 @@ const Results = (): JSX.Element => {
           { robotsTxtResults && <RobotsTxtCard robotTxt={robotsTxtResults} />}
         </ErrorBoundary>
         <ErrorBoundary title="Server Info">
-          { serverInfo && <ServerInfoCard {...serverInfo} />}
+          { shoadnResults?.serverInfo && <ServerInfoCard {...shoadnResults.serverInfo} />}
         </ErrorBoundary>
       </ResultsContent>
       <Footer />

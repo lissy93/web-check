@@ -93,7 +93,7 @@ const Home = (): JSX.Element => {
         });
       })
       .catch(function(error) {
-        console.log(error)
+        console.log('Failed to get IP address :\'(', error)
       });
   };
 

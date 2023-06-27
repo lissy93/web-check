@@ -23,7 +23,7 @@ const RobotsTxtCard = (props: { robotTxt: RowProps[] }): JSX.Element => {
       {
         props.robotTxt.map((row: RowProps, index: number) => {
           return (
-            <Row key={row.key || `${row.lbl}-${index}`} lbl={row.lbl} val={row.val} />
+            <Row key={`${row.lbl}-${index}`} lbl={row.lbl} val={row.val} />
           )
         })
       }

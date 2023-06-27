@@ -6,7 +6,7 @@ import Heading from 'components/Form/Heading';
 export interface RowProps {
   lbl: string,
   val: string,
-  key?: string,
+  // key?: string,
   children?: ReactNode,
   rowList?: RowProps[],
   title?: string,
@@ -77,10 +77,10 @@ const copyToClipboard = (text: string) => {
 }
 
 export const ExpandableRow = (props: RowProps) => {
-  const { lbl, val, key, title, rowList } = props;
+  const { lbl, val, title, rowList } = props;
   return (
     <Details>
-      <StyledExpandableRow key={key}>
+      <StyledExpandableRow key={`${lbl}-${val}`}>
         <span className="lbl" title={title}>{lbl}</span>
         <span className="val" title={val}>{val}</span>
       </StyledExpandableRow>
@@ -88,7 +88,7 @@ export const ExpandableRow = (props: RowProps) => {
         <SubRowList>
           { rowList?.map((row: RowProps, index: number) => {
             return (
-              <SubRow key={row.key || `${row.lbl}-${index}`}>
+              <SubRow key={`${row.lbl}-${index}`}>
                 <span className="lbl" title={row.title}>{row.lbl}</span>
                 <span className="val" title={row.val} onClick={() => copyToClipboard(row.val)}>
                   {formatValue(row.val)}
@@ -109,7 +109,7 @@ export const ListRow = (props: { list: string[], title: string }) => {
     <Heading as="h4" size="small" align="left" color={colors.primary}>{title}</Heading>
     { list.map((entry: string, index: number) => {
       return (
-      <Row lbl="" val="" key={`${title.toLocaleLowerCase()}-${index}`}>
+      <Row lbl="" val="" key={`${entry}-${title.toLocaleLowerCase()}-${index}`}>
         <span>{ entry }</span>
       </Row>
       )}
@@ -119,10 +119,10 @@ export const ListRow = (props: { list: string[], title: string }) => {
 }
 
 const Row = (props: RowProps) => {
-  const { lbl, val, key, title, children } = props;
-  if (children) return <StyledRow key={key}>{children}</StyledRow>;
+  const { lbl, val, title, children } = props;
+  if (children) return <StyledRow key={`${lbl}-${val}`}>{children}</StyledRow>;
   return (
-  <StyledRow key={key}>
+  <StyledRow key={`${lbl}-${val}`}>
     { lbl && <span className="lbl" title={title}>{lbl}</span> }
     <span className="val" title={val} onClick={() => copyToClipboard(val)}>
       {formatValue(val)}
