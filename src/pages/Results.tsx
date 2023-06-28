@@ -22,6 +22,8 @@ import HeadersCard from 'components/Results/Headers';
 import CookiesCard from 'components/Results/Cookies';
 import RobotsTxtCard from 'components/Results/RobotsTxt';
 import DnsRecordsCard from 'components/Results/DnsRecords';
+import RedirectsCard from 'components/Results/Redirects';
+import TxtRecordResults from 'components/Results/TxtRecords';
 import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
@@ -80,10 +82,18 @@ const Results = (): JSX.Element => {
         }
         return loadingJob;
       });
+
+      if (newState === 'success') {
+        console.log(
+          `%cFetch Success - ${job}%c\n\nThe ${job} job succeeded in ${timeTaken}ms`,
+          `background: ${colors.success}; color: ${colors.background}; padding: 4px 8px; font-size: 16px;`,
+          `color: ${colors.success};`,
+        );
+      }
   
       if (newState === 'error') {
         console.log(
-          `%cWeb-Check Fetch Error - ${job}%c\n\nThe ${job} job failed with the following error:%c\n${error}`,
+          `%cFetch Error - ${job}%c\n\nThe ${job} job failed with the following error:%c\n${error}`,
           `background: ${colors.danger}; padding: 4px 8px; font-size: 16px;`,
           `color: ${colors.danger};`,
           `color: ${colors.warning};`,
@@ -207,6 +217,22 @@ const Results = (): JSX.Element => {
       .then(res => makeTechnologies(res)),
   });
 
+  // Fetches DNS TXT records
+  const [txtRecordResults] = useMotherHook({
+    jobId: 'txt-records',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/get-txt?url=${address}`).then(res => res.json()),
+  });
+
+  // Fetches URL redirects
+  const [redirectResults] = useMotherHook({
+    jobId: 'redirects',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/follow-redirects?url=${address}`).then(res => res.json()),
+  });
+
   /* Cancel remaining jobs after  10 second timeout */
   useEffect(() => {
     const checkJobs = () => {
@@ -244,6 +270,8 @@ const Results = (): JSX.Element => {
     { title: 'Technologies', result: technologyResults, Component: BuiltWithCard },
     { title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard },
     { title: 'Server Info', result: shoadnResults?.serverInfo, Component: ServerInfoCard },
+    { title: 'Redirects', result: redirectResults, Component: RedirectsCard },
+    { title: 'TXT Records', result: txtRecordResults, Component: TxtRecordResults },
   ];
   
   return (
