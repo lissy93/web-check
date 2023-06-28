@@ -6,7 +6,7 @@
   functions = "server/lambda"
 
 [build.environment]
-  NODE_VERSION = "16.13.2"
+  NODE_VERSION = "16.16.0"
 
     
 # Site info, used for the 1-Click deploy page
@@ -54,6 +54,16 @@
 [[redirects]]
   from = "/read-robots-txt"
   to = "/.netlify/functions/read-robots-txt"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/follow-redirects"
+  to = "/.netlify/functions/follow-redirects"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/get-txt"
+  to = "/.netlify/functions/get-txt"
   status = 301
   force = true
   
