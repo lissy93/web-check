@@ -14,11 +14,11 @@ img {
 }
 `;
 
-const ScreenshotCard = (props: { screenshot: string }): JSX.Element => {
+const ScreenshotCard = (screenshot: string): JSX.Element => {
   return (
     <Outer>
       <Heading as="h3" align="left" color={colors.primary}>Screenshot</Heading>
-      <img src={props.screenshot} alt="Full page screenshot" />
+      <img src={screenshot} alt="Full page screenshot" />
     </Outer>
   );
 }

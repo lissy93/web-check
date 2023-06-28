@@ -12,16 +12,16 @@ const Outer = styled(Card)`
   }
 `;
 
-const RobotsTxtCard = (props: { robotTxt: RowProps[] }): JSX.Element => {
+const RobotsTxtCard = ( robots: { robots: RowProps[]}): JSX.Element => {
   return (
     <Outer>
       <Heading as="h3" align="left" color={colors.primary}>Crawl Rules</Heading>
       <div className="content">
       {
-        props.robotTxt.length === 0 && <p>No crawl rules found.</p>
+        robots.robots.length === 0 && <p>No crawl rules found.</p>
       }
       {
-        props.robotTxt.map((row: RowProps, index: number) => {
+        robots.robots.map((row: RowProps, index: number) => {
           return (
             <Row key={`${row.lbl}-${index}`} lbl={row.lbl} val={row.val} />
           )

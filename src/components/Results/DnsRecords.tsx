@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import colors from 'styles/colors';
 import Card from 'components/Form/Card';
 import Heading from 'components/Form/Heading';
-import Row, { ListRow, RowProps }  from 'components/Form/Row';
+import Row, { ListRow }  from 'components/Form/Row';
 
 const Outer = styled(Card)`
   .content {
@@ -12,8 +12,7 @@ const Outer = styled(Card)`
   }
 `;
 
-const DnsRecordsCard = (props: { dnsRecords: any }): JSX.Element => {
-  const dnsRecords = props.dnsRecords;
+const DnsRecordsCard = (dnsRecords: any): JSX.Element => {
   return (
     <Outer>
       <Heading as="h3" align="left" color={colors.primary}>DNS Records</Heading>

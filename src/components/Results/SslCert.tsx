@@ -79,8 +79,8 @@ const ListRow = (props: { list: string[], title: string }) => {
 );
 }
 
-const SslCertCard = (props: { sslCert: any }): JSX.Element => {
-  const { subject, issuer, fingerprint, serialNumber, asn1Curve, nistCurve, valid_to, valid_from, ext_key_usage } = props.sslCert;
+const SslCertCard = (sslCert: any): JSX.Element => {
+  const { subject, issuer, fingerprint, serialNumber, asn1Curve, nistCurve, valid_to, valid_from, ext_key_usage } = sslCert;
   return (
     <Outer>
       <Heading as="h3" align="left" color={colors.primary}>SSL Info</Heading>

@@ -9,8 +9,7 @@ const Outer = styled(Card)`
   grid-row: span 2;
 `;
 
-const HeadersCard = (props: { headers: any }): JSX.Element => {
-  const headers = props.headers;
+const HeadersCard = (headers: any): JSX.Element => {
   return (
     <Outer>
       <Heading as="h3" align="left" color={colors.primary}>Headers</Heading>

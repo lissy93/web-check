@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, SetStateAction, Dispatch } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {   useParams } from "react-router-dom";
 import styled from 'styled-components';
 
@@ -121,7 +121,7 @@ const Results = (): JSX.Element => {
   });
 
   // Fetch and parse cookies info
-  const [cookieResults] = useMotherHook<Cookie[]>({
+  const [cookieResults] = useMotherHook<{cookies: Cookie[]}>({
     jobId: 'cookies',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -131,7 +131,7 @@ const Results = (): JSX.Element => {
   });
 
   // Fetch and parse crawl rules from robots.txt
-  const [robotsTxtResults] = useMotherHook<RowProps[]>({
+  const [robotsTxtResults] = useMotherHook<{robots: RowProps[]}>({
     jobId: 'robots-txt',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -229,6 +229,22 @@ const Results = (): JSX.Element => {
       return address;
     }
   }
+
+  // A list of state sata, corresponding component and title for each card
+  const resultCardData = [
+    { title: 'Server Location', result: locationResults, Component: ServerLocationCard },
+    { title: 'SSL Info', result: sslResults, Component: SslCertCard },
+    { title: 'Headers', result: headersResults, Component: HeadersCard },
+    { title: 'Host Names', result: shoadnResults?.hostnames, Component: HostNamesCard },
+    { title: 'Domain Info', result: whoIsResults, Component: WhoIsCard },
+    { title: 'DNS Records', result: dnsResults, Component: DnsRecordsCard },
+    { title: 'Performance', result: lighthouseResults, Component: LighthouseCard },
+    { title: 'Cookies', result: cookieResults, Component: CookiesCard },
+    { title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot?.data, Component: ScreenshotCard },
+    { title: 'Technologies', result: technologyResults, Component: BuiltWithCard },
+    { title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard },
+    { title: 'Server Info', result: shoadnResults?.serverInfo, Component: ServerInfoCard },
+  ];
   
   return (
     <ResultsOuter>
@@ -244,43 +260,17 @@ const Results = (): JSX.Element => {
         }
       </Header>
       <ProgressBar loadStatus={loadingJobs} />
+      
       <ResultsContent>
-        <ErrorBoundary title="Server Location">
-          { locationResults && <ServerLocationCard {...locationResults} />}
-        </ErrorBoundary>
-        <ErrorBoundary title="SSL Info">
-          { sslResults && <SslCertCard sslCert={sslResults} />}
-        </ErrorBoundary>
-        <ErrorBoundary title="Headers">
-          { headersResults && <HeadersCard headers={headersResults} />}
-        </ErrorBoundary>
-        <ErrorBoundary title="Host Names">
-          { shoadnResults?.hostnames && <HostNamesCard hosts={shoadnResults.hostnames} />}
-        </ErrorBoundary>
-        <ErrorBoundary title="Domain Info">
-          { whoIsResults && <WhoIsCard {...whoIsResults} />}
-        </ErrorBoundary>
-        <ErrorBoundary title="DNS Records">
-          { dnsResults && <DnsRecordsCard dnsRecords={dnsResults} />}
-        </ErrorBoundary>
-        <ErrorBoundary title="Performance">
-          { lighthouseResults && <LighthouseCard lighthouse={lighthouseResults} />}
-        </ErrorBoundary>
-        <ErrorBoundary title="Cookies">
-          { cookieResults && <CookiesCard cookies={cookieResults} />}
-        </ErrorBoundary>
-        <ErrorBoundary title="Screenshot">
-          { lighthouseResults?.fullPageScreenshot?.screenshot?.data && <ScreenshotCard screenshot={lighthouseResults.fullPageScreenshot.screenshot.data} />}
-        </ErrorBoundary>
-        <ErrorBoundary title="Technologies">
-          { technologyResults && <BuiltWithCard technologies={technologyResults} />}
-        </ErrorBoundary>
-        <ErrorBoundary title="Crawl Rules">
-          { robotsTxtResults && <RobotsTxtCard robotTxt={robotsTxtResults} />}
-        </ErrorBoundary>
-        <ErrorBoundary title="Server Info">
-          { shoadnResults?.serverInfo && <ServerInfoCard {...shoadnResults.serverInfo} />}
-        </ErrorBoundary>
+          {
+            resultCardData.map(({ title, result, Component }) => (
+              (result) ? (
+                <ErrorBoundary title={title} key={title}>
+                <Component {...result} />
+                </ErrorBoundary>
+              ) : <></>
+            ))
+          }
       </ResultsContent>
       <Footer />
     </ResultsOuter>

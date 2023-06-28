@@ -47,9 +47,8 @@ const ListRow = (props: { list: Technology[], title: string }) => {
 );
 }
 
-const BuiltWithCard = (props: { technologies: TechnologyGroup[] }): JSX.Element => {
+const BuiltWithCard = (technologies: TechnologyGroup[]): JSX.Element => {
   // const { created, updated, expires, nameservers } = whois;
-  const { technologies } = props;
   return (
     <Outer>
       <Heading as="h3" align="left" color={colors.primary}>Technologies</Heading>

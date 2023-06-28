@@ -32,8 +32,7 @@ const HostListSection = (props: { list: string[], title: string }) => {
 );
 }
 
-const HostNamesCard = (props: { hosts: HostNames }): JSX.Element => {
-  const hosts = props.hosts;
+const HostNamesCard = (hosts: HostNames): JSX.Element => {
   return (
     <Outer>
       { hosts.domains.length > 0 &&
