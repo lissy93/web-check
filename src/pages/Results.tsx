@@ -118,7 +118,7 @@ const Results = (): JSX.Element => {
     jobId: 'get-ip',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`http://localhost:8888/.netlify/functions/find-url-ip?address=${address}`)
+    fetchRequest: () => fetch(`/find-url-ip?address=${address}`)
     .then(res => res.json())
     .then(res => res.ip),
   });
