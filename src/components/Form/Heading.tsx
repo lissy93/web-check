@@ -19,7 +19,7 @@ const StyledHeading = styled.h1<HeadingProps>`
   align-items: center;
   font-size: ${TextSizes.medium};
   img { // Some titles have an icon
-    width: 2rem;
+    width: 2.5rem;
     border-radius: 4px;
   }
   a { // If a title is a link, keep title styles

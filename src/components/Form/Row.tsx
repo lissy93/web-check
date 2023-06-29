@@ -64,13 +64,15 @@ const formatDate = (dateString: string): string => {
     day: 'numeric', month: 'long', year: 'numeric'
   }).format(new Date(dateString));
 }
-
 const formatValue = (value: any): string => {
-  const isValidDate = (date: any) => date instanceof Date && !isNaN(date as any as number);
+  const isValidDate = (date: any) => {
+    return date instanceof Date && !isNaN(date as any as number) && date >= new Date('1980-01-01');
+  };
   if (isValidDate(new Date(value))) return formatDate(value);
   if (typeof value === 'boolean') return value ? '✅' : '❌';
   return value;
 };
+
 
 const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text);

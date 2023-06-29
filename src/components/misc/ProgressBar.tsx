@@ -141,6 +141,9 @@ const jobNames = [
   'lighthouse',
   'location',
   'shodan',
+  'redirects',
+  'txt-records',
+  'status',
   // 'server-info',
   'whois',
 ] as const;

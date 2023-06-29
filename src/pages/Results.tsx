@@ -23,7 +23,8 @@ import CookiesCard from 'components/Results/Cookies';
 import RobotsTxtCard from 'components/Results/RobotsTxt';
 import DnsRecordsCard from 'components/Results/DnsRecords';
 import RedirectsCard from 'components/Results/Redirects';
-import TxtRecordResults from 'components/Results/TxtRecords';
+import TxtRecordCard from 'components/Results/TxtRecords';
+import ServerStatusCard from 'components/Results/ServerStatus';
 import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
@@ -233,6 +234,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`/follow-redirects?url=${address}`).then(res => res.json()),
   });
 
+  // Get current status and response time of server
+  const [serverStatusResults] = useMotherHook({
+    jobId: 'status',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/server-status?url=${address}`).then(res => res.json()),
+  });
+
   /* Cancel remaining jobs after  10 second timeout */
   useEffect(() => {
     const checkJobs = () => {
@@ -266,18 +275,20 @@ const Results = (): JSX.Element => {
     { title: 'DNS Records', result: dnsResults, Component: DnsRecordsCard },
     { title: 'Performance', result: lighthouseResults, Component: LighthouseCard },
     { title: 'Cookies', result: cookieResults, Component: CookiesCard },
-    { title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot?.data, Component: ScreenshotCard },
+    { title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard },
     { title: 'Technologies', result: technologyResults, Component: BuiltWithCard },
     { title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard },
     { title: 'Server Info', result: shoadnResults?.serverInfo, Component: ServerInfoCard },
     { title: 'Redirects', result: redirectResults, Component: RedirectsCard },
-    { title: 'TXT Records', result: txtRecordResults, Component: TxtRecordResults },
+    { title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard },
+    { title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard },
   ];
   
   return (
     <ResultsOuter>
       <Header as="header">
         <Heading color={colors.primary} size="large">
+          <img width="64" src="/web-check.png" alt="Web Check Icon" />
           <a href="/">Web Check</a>
         </Heading>
         { address && 

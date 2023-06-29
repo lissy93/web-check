@@ -8,7 +8,6 @@ import Row from 'components/Form/Row';
 const Outer = styled(Card)``;
 
 const TxtRecordCard = (records: any): JSX.Element => {
-  console.log(records);
   return (
     <Outer>
       <Heading as="h3" align="left" color={colors.primary}>TXT Config</Heading>
