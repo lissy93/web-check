@@ -65,6 +65,11 @@
   from = "/get-txt"
   to = "/.netlify/functions/get-txt"
   status = 301
+  force = true  
+[[redirects]]
+  from = "/server-status"
+  to = "/.netlify/functions/server-status"
+  status = 301
   force = true
   
 # For router history mode, ensure pages land on index
