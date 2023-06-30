@@ -70,6 +70,11 @@
   from = "/server-status"
   to = "/.netlify/functions/server-status"
   status = 301
+  force = true  
+[[redirects]]
+  from = "/check-ports"
+  to = "/.netlify/functions/check-ports"
+  status = 301
   force = true
   
 # For router history mode, ensure pages land on index
