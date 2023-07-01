@@ -25,6 +25,7 @@ import DnsRecordsCard from 'components/Results/DnsRecords';
 import RedirectsCard from 'components/Results/Redirects';
 import TxtRecordCard from 'components/Results/TxtRecords';
 import ServerStatusCard from 'components/Results/ServerStatus';
+import OpenPortsCard from 'components/Results/OpenPorts';
 import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
@@ -198,6 +199,16 @@ const Results = (): JSX.Element => {
       .then(res => parseShodanResults(res)),
   });
 
+
+  // Check for open ports
+  const [portsResults] = useMotherHook({
+    jobId: 'ports',
+    updateLoadingJobs,
+    addressInfo: { address: ipAddress, addressType: 'ipV4', expectedAddressTypes: ['ipV4', 'ipV6'] },
+    fetchRequest: () => fetch(`/check-ports?url=${ipAddress}`)
+      .then(res => res.json()),
+  });
+
   // Fetch and parse domain whois results
   const [whoIsResults] = useMotherHook<Whois>({
     jobId: 'whois',
@@ -282,6 +293,7 @@ const Results = (): JSX.Element => {
     { title: 'Redirects', result: redirectResults, Component: RedirectsCard },
     { title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard },
     { title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard },
+    { title: 'Open Ports', result: portsResults, Component: OpenPortsCard },
   ];
   
   return (
