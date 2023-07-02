@@ -145,6 +145,7 @@ const jobNames = [
   'txt-records',
   'status',
   'ports',
+  'trace-route',
   // 'server-info',
   'whois',
 ] as const;

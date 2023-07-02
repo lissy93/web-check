@@ -26,6 +26,8 @@ import RedirectsCard from 'components/Results/Redirects';
 import TxtRecordCard from 'components/Results/TxtRecords';
 import ServerStatusCard from 'components/Results/ServerStatus';
 import OpenPortsCard from 'components/Results/OpenPorts';
+import TraceRouteCard from 'components/Results/TraceRoute';
+
 import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
@@ -253,6 +255,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`/server-status?url=${address}`).then(res => res.json()),
   });
 
+  // Get trace route for a given hostname
+  const [traceRouteResults] = useMotherHook({
+    jobId: 'trace-route',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/trace-route?url=${address}`).then(res => res.json()),
+  });
+
   /* Cancel remaining jobs after  10 second timeout */
   useEffect(() => {
     const checkJobs = () => {
@@ -286,6 +296,7 @@ const Results = (): JSX.Element => {
     { title: 'DNS Records', result: dnsResults, Component: DnsRecordsCard },
     { title: 'Performance', result: lighthouseResults, Component: LighthouseCard },
     { title: 'Cookies', result: cookieResults, Component: CookiesCard },
+    { title: 'Trace Route', result: traceRouteResults, Component: TraceRouteCard },
     { title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard },
     { title: 'Technologies', result: technologyResults, Component: BuiltWithCard },
     { title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard },
