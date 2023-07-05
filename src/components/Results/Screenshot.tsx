@@ -1,25 +1,21 @@
+import { Card } from 'components/Form/Card';
 
-import styled from 'styled-components';
-import colors from 'styles/colors';
-import Card from 'components/Form/Card';
-import Heading from 'components/Form/Heading';
-
-const Outer = styled(Card)`
-overflow: auto;
-max-height: 28rem;
-img {
-  border-radius: 6px;
-  width: 100%;
-  margin 0.5rem 0;;
-}
+const cardStyles = `
+  overflow: auto;
+  max-height: 32rem;
+  img {
+    border-radius: 6px;
+    width: 100%;
+    margin 0.5rem 0;;
+  }
 `;
 
-const ScreenshotCard = (screenshot: { data: string }): JSX.Element => {
+const ScreenshotCard = (props: { data: { data: string }, title: string, actionButtons: any }): JSX.Element => {
+  const screenshot = props.data;
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>Screenshot</Heading>
+    <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       <img src={screenshot.data} alt="Full page screenshot" />
-    </Outer>
+    </Card>
   );
 }
 

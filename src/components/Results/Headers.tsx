@@ -1,18 +1,11 @@
-
-import styled from 'styled-components';
-import colors from 'styles/colors';
-import Card from 'components/Form/Card';
-import Heading from 'components/Form/Heading';
+import { Card } from 'components/Form/Card';
 import Row from 'components/Form/Row';
+import { ReactNode } from 'react';
 
-const Outer = styled(Card)`
-  grid-row: span 2;
-`;
-
-const HeadersCard = (headers: any): JSX.Element => {
+const HeadersCard = (props: { data: any, title: string, actionButtons: ReactNode }): JSX.Element => {
+  const headers = props.data;
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>Headers</Heading>
+    <Card heading={props.title} styles="grid-row: span 2;" actionButtons={props.actionButtons}>
       {
         Object.keys(headers).map((header: string, index: number) => {
           return (
@@ -20,7 +13,7 @@ const HeadersCard = (headers: any): JSX.Element => {
           )
         })
       }      
-    </Outer>
+    </Card>
   );
 }
 

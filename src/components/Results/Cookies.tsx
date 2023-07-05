@@ -1,21 +1,13 @@
-
-import styled from 'styled-components';
-import colors from 'styles/colors';
-import Card from 'components/Form/Card';
-import Heading from 'components/Form/Heading';
+import { Card } from 'components/Form/Card';
 import { ExpandableRow } from 'components/Form/Row';
 
-const Outer = styled(Card)``;
-
-const CookiesCard = (cookies: { cookies: any }): JSX.Element => {
+const CookiesCard = (props: { data: any, title: string, actionButtons: any}): JSX.Element => {
+  const cookies = props.data.cookies;
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>Cookies</Heading>
+    <Card heading={props.title} actionButtons={props.actionButtons}>
+      { cookies.length === 0 && <p>No cookies found.</p> }
       {
-        cookies.cookies.length === 0 && <p>No cookies found.</p>
-      }
-      {
-        cookies.cookies.map((cookie: any, index: number) => {
+        cookies.map((cookie: any, index: number) => {
           const attributes = Object.keys(cookie.attributes).map((key: string) => {
             return { lbl: key, val: cookie.attributes[key] }
           });
@@ -24,7 +16,7 @@ const CookiesCard = (cookies: { cookies: any }): JSX.Element => {
           )
         })
       }
-    </Outer>
+    </Card>
   );
 }
 

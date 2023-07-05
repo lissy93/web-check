@@ -1,10 +1,8 @@
 
 import styled from 'styled-components';
 import colors from 'styles/colors';
-import Card from 'components/Form/Card';
+import { Card } from 'components/Form/Card';
 import Heading from 'components/Form/Heading';
-
-const Outer = styled(Card)``;
 
 const Row = styled.div`
   display: flex;
@@ -79,14 +77,13 @@ const ListRow = (props: { list: string[], title: string }) => {
 );
 }
 
-const SslCertCard = (sslCert: any): JSX.Element => {
+const SslCertCard = (props: { data: any, title: string, actionButtons: any }): JSX.Element => {
+  const sslCert = props.data;
   const { subject, issuer, fingerprint, serialNumber, asn1Curve, nistCurve, valid_to, valid_from, ext_key_usage } = sslCert;
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>SSL Info</Heading>
+    <Card heading={props.title} actionButtons={props.actionButtons}>
       { subject && <DataRow lbl="Subject" val={subject?.CN} /> }
       { issuer?.O && <DataRow lbl="Issuer" val={issuer.O} /> }
-      
       { asn1Curve && <DataRow lbl="ASN1 Curve" val={asn1Curve} /> }
       { nistCurve && <DataRow lbl="NIST Curve" val={nistCurve} /> }
       { valid_to && <DataRow lbl="Expires" val={formatDate(valid_to)} /> }
@@ -96,7 +93,7 @@ const SslCertCard = (sslCert: any): JSX.Element => {
       { fingerprint && <DataRow lbl="Fingerprint" val={fingerprint} /> }
       { ext_key_usage && <ListRow title="Extended Key Usage" list={getExtendedKeyUsage(ext_key_usage)} /> }
       
-    </Outer>
+    </Card>
   );
 }
 

@@ -1,27 +1,63 @@
-
 import styled from 'styled-components';
 import colors from 'styles/colors';
-import Card from 'components/Form/Card';
+import { Card } from 'components/Form/Card';
 import Heading from 'components/Form/Heading';
-import Row from 'components/Form/Row';
 
-const Outer = styled(Card)``;
+const RouteRow = styled.div`
+  text-align: center;
+  width: fit-content;
+  margin: 0 auto;
+  .ipName {
+    font-size: 1rem;
+  }
+`;
 
-const TraceRouteCard = (traceRouteResponse: any): JSX.Element => {
-  console.log(traceRouteResponse.result);
+const RouteTimings = styled.div`
+p {
+  margin: 0 auto;
+}
+.arrow {
+  font-size: 2.5rem;
+  color: ${colors.primary};
+  margin-top: -1rem;
+}
+.times {
+  font-size: 0.85rem;
+  color: ${colors.textColorSecondary};
+}
+.completed {
+  text-align: center;
+  font-weight: bold;
+}
+`;
+
+const TraceRouteCard = (props: { data: any, title: string, actionButtons: any }): JSX.Element => {
+  const traceRouteResponse = props.data;
   const routes = traceRouteResponse.result;
-  console.log(Object.keys(routes));
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>Trace Route</Heading>
-      {routes.map((route: any) => (
-          <Row lbl="" val="">
+    <Card heading={props.title} actionButtons={props.actionButtons}>
+      {routes.filter((x: any) => x).map((route: any, index: number) => (
+          <RouteRow key={index}>
             {/* <span>{route}</span> */}
-            <span>{Object.keys(route)[0]}</span>
-          </Row>
+            <span className="ipName">{Object.keys(route)[0]}</span>
+            <RouteTimings>
+              {route[Object.keys(route)[0]].map((time: any, packetIndex: number) => (
+                <p className="times" key={`timing-${packetIndex}-${time}`}>
+                  { route[Object.keys(route)[0]].length > 1 && (<>Packet #{packetIndex + 1}:</>) }
+                  Took {time} ms
+                </p>
+              ))}
+              <p className="arrow">↓</p>
+            </RouteTimings>
+          </RouteRow>
         )
       )}
-    </Outer>
+      <RouteTimings>
+        <p className="completed">
+          Round trip completed in {traceRouteResponse.timeTaken} ms
+        </p>
+      </RouteTimings>
+    </Card>
   );
 }
 

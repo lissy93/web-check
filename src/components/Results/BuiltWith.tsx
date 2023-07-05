@@ -23,36 +23,26 @@ const Row = styled.div`
   }
 `;
 
-const DataRow = (props: { lbl: string, val: string }) => {
-  const { lbl, val } = props;
-  return (
-  <Row>
-    <span className="lbl">{lbl}</span>
-    <span className="val" title={val}>{val}</span>
-  </Row>
-  );
-};
-
 const ListRow = (props: { list: Technology[], title: string }) => {
   const { list, title } = props;
   return (
-  <>
-    <Heading as="h3" align="left" color={colors.primary}>{title}</Heading>
-    { list.map((entry: Technology, index: number) => {
-      return (
-      <Row key={`${title.toLocaleLowerCase()}-${index}`}><span>{ entry.Name }</span></Row>
+    <>
+      <Heading as="h3" align="left" color={colors.primary}>{title}</Heading>
+      { list.map((entry: Technology, index: number) => {
+        return (
+        <Row key={`${title.toLocaleLowerCase()}-${index}`}><span>{ entry.Name }</span></Row>
+        )}
       )}
-    )}
-  </>
-);
+    </>
+  );
 }
 
-const BuiltWithCard = (technologies: TechnologyGroup[]): JSX.Element => {
+const BuiltWithCard = (props: { data: TechnologyGroup[]}): JSX.Element => {
   // const { created, updated, expires, nameservers } = whois;
   return (
     <Outer>
       <Heading as="h3" align="left" color={colors.primary}>Technologies</Heading>
-      { technologies.map((group: TechnologyGroup) => {
+      { props.data.map((group: TechnologyGroup) => {
         return (
           <ListRow key={group.tag} title={group.tag} list={group.technologies} />
         );

@@ -2,10 +2,8 @@
 import styled from 'styled-components';
 import { Whois } from 'utils/result-processor';
 import colors from 'styles/colors';
-import Card from 'components/Form/Card';
+import { Card } from 'components/Form/Card';
 import Heading from 'components/Form/Heading';
-
-const Outer = styled(Card)``;
 
 const Row = styled.div`
   display: flex;
@@ -55,17 +53,17 @@ const ListRow = (props: { list: string[], title: string }) => {
 );
 }
 
-const ServerInfoCard = (whois: Whois): JSX.Element => {
+const WhoIsCard = (props: { data: Whois, title: string, actionButtons: any }): JSX.Element => {
+  const whois = props.data;
   const { created, updated, expires, nameservers } = whois;
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>Who Is Info</Heading>
+    <Card heading={props.title} actionButtons={props.actionButtons}>
       { created && <DataRow lbl="Created" val={formatDate(created)} /> }
       { updated && <DataRow lbl="Updated" val={formatDate(updated)} /> }
       { expires && <DataRow lbl="Expires" val={formatDate(expires)} /> }
       { nameservers && <ListRow title="Name Servers" list={nameservers} /> }
-    </Outer>
+    </Card>
   );
 }
 
-export default ServerInfoCard;
+export default WhoIsCard;

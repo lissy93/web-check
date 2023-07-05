@@ -1,16 +1,9 @@
-
-import styled from 'styled-components';
-
-import colors from 'styles/colors';
-import Card from 'components/Form/Card';
-import Heading from 'components/Form/Heading';
+import { Card } from 'components/Form/Card';
 import { ExpandableRow } from 'components/Form/Row';
 
 const processScore = (percentile: number) => {
   return `${Math.round(percentile * 100)}%`;
 }
-
-const Outer = styled(Card)``;
 
 interface Audit {
   id: string,
@@ -31,13 +24,13 @@ const makeValue = (audit: Audit) => {
   return score;
 };
 
-const LighthouseCard = (lighthouse: any): JSX.Element => {
+const LighthouseCard = (props: { data: any, title: string, actionButtons: any }): JSX.Element => {
+  const lighthouse = props.data;
   const categories = lighthouse?.categories || {};
   const audits = lighthouse?.audits || [];
 
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>Performance</Heading>
+    <Card heading={props.title} actionButtons={props.actionButtons}>
       { Object.keys(categories).map((title: string, index: number) => {
         const scoreIds = categories[title].auditRefs.map((ref: { id: string }) => ref.id);
         const scoreList = scoreIds.map((id: string) => {
@@ -52,7 +45,7 @@ const LighthouseCard = (lighthouse: any): JSX.Element => {
           />
         );
       }) }
-    </Outer>
+    </Card>
   );
 }
 

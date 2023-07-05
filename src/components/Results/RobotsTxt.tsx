@@ -1,21 +1,18 @@
 
-import styled from 'styled-components';
-import colors from 'styles/colors';
-import Card from 'components/Form/Card';
-import Heading from 'components/Form/Heading';
+import { Card } from 'components/Form/Card';
 import Row, { RowProps }  from 'components/Form/Row';
 
-const Outer = styled(Card)`
+const cardStyles = `
   .content {
     max-height: 28rem;
     overflow-y: auto;
   }
 `;
 
-const RobotsTxtCard = ( robots: { robots: RowProps[]}): JSX.Element => {
+const RobotsTxtCard = ( props: { data: { robots: RowProps[]}, title: string, actionButtons: any}): JSX.Element => {
+  const robots = props.data;
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>Crawl Rules</Heading>
+    <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       <div className="content">
       {
         robots.robots.length === 0 && <p>No crawl rules found.</p>
@@ -28,7 +25,7 @@ const RobotsTxtCard = ( robots: { robots: RowProps[]}): JSX.Element => {
         })
       }
       </div>
-    </Outer>
+    </Card>
   );
 }
 

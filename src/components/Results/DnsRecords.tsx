@@ -1,21 +1,17 @@
-
-import styled from 'styled-components';
-import colors from 'styles/colors';
-import Card from 'components/Form/Card';
-import Heading from 'components/Form/Heading';
+import { Card } from 'components/Form/Card';
 import Row, { ListRow }  from 'components/Form/Row';
 
-const Outer = styled(Card)`
+const styles = `
   .content {
     max-height: 28rem;
     overflow-y: auto;
   }
 `;
 
-const DnsRecordsCard = (dnsRecords: any): JSX.Element => {
+const DnsRecordsCard = (props: { data: any, title: string, actionButtons: any }): JSX.Element => {
+  const dnsRecords = props.data;
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>DNS Records</Heading>
+    <Card heading={props.title} actionButtons={props.actionButtons} styles={styles}>
       <div className="content">
       { dnsRecords.A && <Row lbl="A" val={dnsRecords.A.address} /> }
       { dnsRecords.AAAA?.length > 0 && <ListRow title="AAAA" list={dnsRecords.AAAA} /> }
@@ -25,9 +21,8 @@ const DnsRecordsCard = (dnsRecords: any): JSX.Element => {
       { dnsRecords.PTR?.length > 0 && <ListRow title="PTR" list={dnsRecords.PTR} /> }
       { dnsRecords.SOA?.length > 0 && <ListRow title="SOA" list={dnsRecords.SOA} /> }
       </div>
-    </Outer>
+    </Card>
   );
 }
 
 export default DnsRecordsCard;
-

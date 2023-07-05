@@ -1,23 +1,20 @@
 
-import styled from 'styled-components';
-import colors from 'styles/colors';
-import Card from 'components/Form/Card';
-import Heading from 'components/Form/Heading';
+import { Card } from 'components/Form/Card';
 import Row from 'components/Form/Row';
 
-const Outer = styled(Card)``;
+const cardStyles = '';
 
-const TxtRecordCard = (records: any): JSX.Element => {
+const TxtRecordCard = (props: {data: any, title: string, actionButtons: any }): JSX.Element => {
+  const records = props.data;
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>TXT Config</Heading>
+    <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       { !records && <Row lbl="" val="No TXT Records" />}
       {Object.keys(records).map((recordName: any, index: number) => {
         return (
           <Row lbl={recordName} val={records[recordName]} key={`${recordName}-${index}`} />
         );
       })}
-    </Outer>
+    </Card>
   );
 }
 

@@ -1,11 +1,8 @@
-
-import styled from 'styled-components';
 import colors from 'styles/colors';
-import Card from 'components/Form/Card';
-import Heading from 'components/Form/Heading';
+import { Card } from 'components/Form/Card';
 import Row from 'components/Form/Row';
 
-const Outer = styled(Card)`
+const cardStyles = `
   div {
     justify-content: flex-start;
     align-items: baseline; 
@@ -16,13 +13,21 @@ const Outer = styled(Card)`
     font-weight: bold;
     margin-right: 0.5rem;
   }
+  .redirect-count {
+    color: ${colors.textColorSecondary};
+    margin: 0;
+  }
 `;
 
-const RedirectsCard = (redirects: any): JSX.Element => {
+const RedirectsCard = (props: { data: any, title: string, actionButtons: any }): JSX.Element => {
+  const redirects = props.data;
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>Redirects</Heading>
+    <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       { !redirects?.redirects.length && <Row lbl="" val="No redirects" />}
+      <p className="redirect-count">
+        Followed {redirects.redirects.length}{' '}
+        redirect{redirects.redirects.length === 1 ? '' : 's'} when contacting host
+      </p>
       {redirects.redirects.map((redirect: any, index: number) => {
         return (
           <Row lbl="" val="" key={index}>
@@ -30,7 +35,7 @@ const RedirectsCard = (redirects: any): JSX.Element => {
           </Row>
         );
       })}
-    </Outer>
+    </Card>
   );
 }
 

@@ -1,17 +1,13 @@
 
 import styled from 'styled-components';
 import { ServerLocation } from 'utils/result-processor';
-import colors from 'styles/colors';
-import Card from 'components/Form/Card';
-import Heading from 'components/Form/Heading';
+import { Card } from 'components/Form/Card';
 import LocationMap from 'components/misc/LocationMap';
 import Flag from 'components/misc/Flag';
 import { TextSizes } from 'styles/typography';
 import Row, { StyledRow } from 'components/Form/Row';
 
-const Outer = styled(Card)`
-  grid-row: span 2
-`;
+const cardStyles = 'grid-row: span 2';
 
 const SmallText = styled.span`
   opacity: 0.5;
@@ -30,8 +26,8 @@ const CountryValue = styled.span`
   gap: 0.5rem;
 `;
 
-const ServerLocationCard = (location: ServerLocation): JSX.Element => {
-
+const ServerLocationCard = (props: { data: ServerLocation, title: string, actionButtons: any }): JSX.Element => {
+  const location = props.data;
   const {
     city, region, country,
     postCode, countryCode, coords,
@@ -39,8 +35,7 @@ const ServerLocationCard = (location: ServerLocation): JSX.Element => {
   } = location;
 
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>Location</Heading>
+    <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       <Row lbl="City" val={`${postCode}, ${city}, ${region}`} />
       <Row lbl="" val="">
         <b>Country</b>
@@ -56,7 +51,7 @@ const ServerLocationCard = (location: ServerLocation): JSX.Element => {
         <LocationMap lat={coords.latitude} lon={coords.longitude} label={`Server (${isp})`} />
         <SmallText>Latitude: {coords.latitude}, Longitude: {coords.longitude} </SmallText>
       </MapRow>
-    </Outer>
+    </Card>
   );
 }
 

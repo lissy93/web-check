@@ -1,18 +1,12 @@
-
-import styled from 'styled-components';
 import { ServerInfo } from 'utils/result-processor';
-import colors from 'styles/colors';
-import Card from 'components/Form/Card';
-import Heading from 'components/Form/Heading';
+import { Card } from 'components/Form/Card';
 import Row from 'components/Form/Row';
 
-const Outer = styled(Card)``;
-
-const ServerInfoCard = (info: ServerInfo): JSX.Element => {
+const ServerInfoCard = (props: { data: ServerInfo, title: string, actionButtons: any }): JSX.Element => {
+  const info = props.data;
   const { org, asn, isp, os, ports, ip, loc, type } = info;
   return (
-    <Outer>
-      <Heading as="h3" align="left" color={colors.primary}>Server Info</Heading>
+    <Card heading={props.title} actionButtons={props.actionButtons}>
       { org && <Row lbl="Organization" val={org} /> }
       { (isp && isp !== org) && <Row lbl="Service Provider" val={isp} /> }
       { os && <Row lbl="Operating System" val={os} /> }
@@ -21,7 +15,7 @@ const ServerInfoCard = (info: ServerInfo): JSX.Element => {
       { ip && <Row lbl="IP" val={ip} /> }
       { type && <Row lbl="Type" val={type} /> }
       { loc && <Row lbl="Location" val={loc} /> }
-    </Outer>
+    </Card>
   );
 }
 
