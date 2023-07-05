@@ -7,6 +7,7 @@ const traceroutePromise = util.promisify(traceroute.trace);
 
 exports.handler = async function(event, context) {
   const urlString = event.queryStringParameters.url;
+  const startTime = Date.now();
 
   try {
     if (!urlString) {
@@ -22,9 +23,10 @@ exports.handler = async function(event, context) {
     }
 
     const result = await traceroutePromise(host);
+    const timeTaken = Date.now() - startTime;
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: "Traceroute completed!", result }),
+      body: JSON.stringify({ message: "Traceroute completed!", result, timeTaken }),
     };
   } catch (err) {
     return {

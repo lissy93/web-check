@@ -6,27 +6,21 @@ const PORTS = [21, 22, 25, 80, 110, 143, 443, 587, 993, 995, 3306, 3389, 5900, 8
 async function checkPort(port, domain) {
     return new Promise(resolve => {
         const socket = new net.Socket();
-        console.log(port, 'Init');
 
         socket.setTimeout(1500); // you may want to adjust the timeout
 
         socket.once('connect', () => {
-            console.log(port, 'Connected!');
             socket.destroy();
             resolve(port);
         });
 
         socket.once('timeout', () => {
-          console.log(port, 'Timedout');  
           socket.destroy();
         });
 
         socket.once('error', (e) => {
-          console.log(port, 'Errored', e);
             socket.destroy();
         });
-
-        console.log(port, 'End');
         socket.connect(port, domain);
     });
 }
