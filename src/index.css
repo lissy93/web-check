@@ -32,3 +32,11 @@ svg.rsm-svg {
   background: #2a3240;
   border-radius: 6px;
 }
+
+:root {
+  --toastify-color-dark: #111927 !important;
+  --toastify-color-info: #04e4f4 !important;
+  --toastify-color-success: #20e253 !important;
+  --toastify-color-warning: #f6f000 !important;
+  --toastify-color-error: #f80363 !important;
+}
