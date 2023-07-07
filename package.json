@@ -15,6 +15,7 @@
     "@types/styled-components": "^5.1.25",
     "axios": "^1.4.0",
     "chrome-aws-lambda": "^10.1.0",
+    "flatted": "^3.2.7",
     "got": "^13.0.0",
     "jest-styled-components": "^7.0.8",
     "node-fetch": "2.6.1",
