@@ -3,8 +3,9 @@ import { Card } from 'components/Form/Card';
 import Row, { RowProps }  from 'components/Form/Row';
 
 const cardStyles = `
+  grid-row: span 2;
   .content {
-    max-height: 28rem;
+    max-height: 40rem;
     overflow-y: auto;
   }
 `;

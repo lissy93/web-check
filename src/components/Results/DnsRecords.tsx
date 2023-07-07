@@ -3,7 +3,7 @@ import Row, { ListRow }  from 'components/Form/Row';
 
 const styles = `
   .content {
-    max-height: 28rem;
+    max-height: 32rem;
     overflow-y: auto;
   }
 `;

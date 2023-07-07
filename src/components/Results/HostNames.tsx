@@ -28,7 +28,7 @@ const HostListSection = (props: { list: string[], title: string }) => {
 }
 
 const cardStyles = `
-  max-height: 28rem;
+  max-height: 32rem;
   overflow: auto;
 `;
 

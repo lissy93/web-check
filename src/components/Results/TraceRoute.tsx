@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import colors from 'styles/colors';
 import { Card } from 'components/Form/Card';
-import Heading from 'components/Form/Heading';
 
 const RouteRow = styled.div`
   text-align: center;
@@ -31,14 +30,17 @@ p {
 }
 `;
 
+const cardStyles = `
+  grid-row: span 2;
+`;
+
 const TraceRouteCard = (props: { data: any, title: string, actionButtons: any }): JSX.Element => {
   const traceRouteResponse = props.data;
   const routes = traceRouteResponse.result;
   return (
-    <Card heading={props.title} actionButtons={props.actionButtons}>
+    <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       {routes.filter((x: any) => x).map((route: any, index: number) => (
           <RouteRow key={index}>
-            {/* <span>{route}</span> */}
             <span className="ipName">{Object.keys(route)[0]}</span>
             <RouteTimings>
               {route[Object.keys(route)[0]].map((time: any, packetIndex: number) => (
