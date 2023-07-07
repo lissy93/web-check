@@ -1,7 +1,12 @@
 const net = require('net');
 
 // A list of commonly used ports.
-const PORTS = [21, 22, 25, 80, 110, 143, 443, 587, 993, 995, 3306, 3389, 5900, 8080];
+const PORTS = [
+  20, 21, 22, 23, 25, 53, 80, 67, 68, 69,
+  110, 119, 123, 143, 156, 161, 162, 179, 194,
+  389, 443, 587, 993, 995,
+  3000, 3306, 3389, 5060, 5900, 8000, 8080, 8888
+];
 
 async function checkPort(port, domain) {
     return new Promise(resolve => {

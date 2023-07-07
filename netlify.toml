@@ -81,6 +81,21 @@
   to = "/.netlify/functions/trace-route"
   status = 301
   force = true
+[[redirects]]
+  from = "/get-carbon"
+  to = "/.netlify/functions/get-carbon"
+  status = 301
+  force = true  
+[[redirects]]
+  from = "/site-features"
+  to = "/.netlify/functions/site-features"
+  status = 301
+  force = true  
+[[redirects]]
+  from = "/dns-sec"
+  to = "/.netlify/functions/dns-sec"
+  status = 301
+  force = true
   
 # For router history mode, ensure pages land on index
 [[redirects]]
