@@ -8,6 +8,8 @@ interface ButtonProps {
   size?: InputSize,
   bgColor?: string,
   fgColor?: string,
+  styles?: string,
+  title?: string,
 };
 
 const StyledButton = styled.button<ButtonProps>`
@@ -31,16 +33,19 @@ const StyledButton = styled.button<ButtonProps>`
   ${(props) => props.fgColor ?
     `color: ${props.fgColor};` : `color: ${colors.background};`
   }
+  ${props => props.styles}
 `;
 
 const Button = (props: ButtonProps): JSX.Element => {
-  const { children, size, bgColor, fgColor, onClick } = props;
+  const { children, size, bgColor, fgColor, onClick, styles, title } = props;
   return (
     <StyledButton
       onClick={onClick || (() => null) }
       size={size}
       bgColor={bgColor}
       fgColor={fgColor}
+      styles={styles}
+      title={title?.toString()}
       >
       {children}
     </StyledButton>

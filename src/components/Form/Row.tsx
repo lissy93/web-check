@@ -10,6 +10,7 @@ export interface RowProps {
   children?: ReactNode,
   rowList?: RowProps[],
   title?: string,
+  open?: boolean,
 }
 
 export const StyledRow = styled.div`
@@ -79,12 +80,12 @@ const copyToClipboard = (text: string) => {
 }
 
 export const ExpandableRow = (props: RowProps) => {
-  const { lbl, val, title, rowList } = props;
+  const { lbl, val, title, rowList, open } = props;
   return (
-    <Details>
+    <Details open={open}>
       <StyledExpandableRow key={`${lbl}-${val}`}>
-        <span className="lbl" title={title}>{lbl}</span>
-        <span className="val" title={val}>{val}</span>
+        <span className="lbl" title={title?.toString()}>{lbl}</span>
+        <span className="val" title={val?.toString()}>{val}</span>
       </StyledExpandableRow>
       { rowList &&
         <SubRowList>
