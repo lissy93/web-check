@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import colors from 'styles/colors';
 import Card from 'components/Form/Card';
-import { useState, useEffect } from 'react';
+import Heading from 'components/Form/Heading';
+import { useState, useEffect, ReactNode } from 'react';
 
 
 const LoadCard = styled(Card)`
@@ -58,6 +59,12 @@ const Details = styled.details`
     padding: 0.25rem;
     border-radius: 4px;
     width: fit-content;
+    li b {
+      cursor: pointer;
+    }
+    i {
+      color: ${colors.textColorSecondary};
+    }
   }
   p.error {
     margin: 0.5rem 0;
@@ -105,6 +112,17 @@ const SummaryContainer = styled.div`
   }
 `;
 
+const ReShowContainer = styled.div`
+  position: relative;
+  &.hidden {
+    height: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+  button { background: none;}
+`;
+
 const DismissButton = styled.button`
   width: fit-content;
   position: absolute;
@@ -122,6 +140,32 @@ const DismissButton = styled.button`
   }
 `;
 
+const FailedJobActionButton = styled.button`
+  margin: 0.1rem 0.1rem 0.1rem 0.5rem;
+  background: ${colors.background};
+  color: ${colors.textColorSecondary};
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: PTMono;
+  cursor: pointer;
+  border: 1px solid ${colors.textColorSecondary};
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    color: ${colors.primary};
+    border: 1px solid ${colors.primary};
+  } 
+`;
+
+const ErrorModalContent = styled.div`
+p {
+  margin: 0;
+}
+pre {
+  color: ${colors.danger};
+}
+`;
+
 export type LoadingState = 'success' | 'loading' | 'skipped' | 'error' | 'timed-out';
 
 export interface LoadingJob {
@@ -129,6 +173,7 @@ export interface LoadingJob {
   state: LoadingState,
   error?: string,
   timeTaken?: number,
+  retry?: () => void,
 }
 
 const jobNames = [
@@ -140,20 +185,24 @@ const jobNames = [
   'headers',
   'lighthouse',
   'location',
-  'shodan',
+  'hosts',
   'redirects',
   'txt-records',
   'status',
   'ports',
   'trace-route',
-  // 'server-info',
+  'carbon',
+  'server-info',
   'whois',
+  'features',
+  'dnssec',
 ] as const;
 
 export const initialJobs = jobNames.map((job: string) => {
   return {
     name: job,
     state: 'loading' as LoadingState,
+    retry: () => {}
   }
 });
 
@@ -225,18 +274,11 @@ const SummaryText = (props: { state: LoadingJob[], count: number }): JSX.Element
   let skippedTasksCount = props.state.filter((val: LoadingJob) => val.state === 'skipped').length;
   let successTasksCount = props.state.filter((val: LoadingJob) => val.state === 'success').length;
 
-  const skippedInfo = skippedTasksCount > 0 ? (<span className="skipped">{skippedTasksCount} skipped</span>) : null;
-  const successInfo = skippedTasksCount > 0 ? (<span className="success">{successTasksCount} successful</span>) : null;
+  const jobz = (jobCount: number) => `${jobCount} ${jobCount === 1 ? 'job' : 'jobs'}`;
 
-  if (failedTasksCount > 0) {
-    return (
-      <SummaryContainer className="error-info">
-        <b>{failedTasksCount} Job{failedTasksCount !== 1 ? 's' : ''} Failed</b>
-        {skippedInfo}
-        {successInfo}
-      </SummaryContainer>
-    );
-  }
+  const skippedInfo = skippedTasksCount > 0 ? (<span className="skipped">{jobz(skippedTasksCount)} skipped </span>) : null;
+  const successInfo = successTasksCount > 0 ? (<span className="success">{jobz(successTasksCount)} successful </span>) : null;
+  const failedInfo = failedTasksCount > 0 ? (<span className="error">{jobz(failedTasksCount)} failed </span>) : null;
 
   if (loadingTasksCount > 0) {
     return (
@@ -257,11 +299,15 @@ const SummaryText = (props: { state: LoadingJob[], count: number }): JSX.Element
   }
 
   return (
-    <SummaryContainer className="misc-info">Other</SummaryContainer>
+    <SummaryContainer className="error-info">
+      {successInfo}
+      {skippedInfo}
+      {failedInfo}
+    </SummaryContainer>
   );
 };
 
-const ProgressLoader = (props: { loadStatus: LoadingJob[] }): JSX.Element => {
+const ProgressLoader = (props: { loadStatus: LoadingJob[], showModal: (err: ReactNode) => void, showJobDocs: (job: string) => void }): JSX.Element => {
   const [ hideLoader, setHideLoader ] = useState<boolean>(false);
   const loadStatus = props.loadStatus;
   const percentages = calculateLoadingStatePercentages(loadStatus);
@@ -303,9 +349,26 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[] }): JSX.Element => {
     }
   };
 
-  return (
-  <LoadCard className={hideLoader ? 'hidden' : ''}>
+  const showErrorModal = (name: string, state: LoadingState, timeTaken: number | undefined, error: string) => {
+    const errorContent = (
+      <ErrorModalContent>
+        <Heading as="h3">Error Details for {name}</Heading>
+        <p>
+          The {name} job failed with an {state} state after {timeTaken} ms.
+          The server responded with the following error:
+        </p>
+        <pre>{error}</pre>
+      </ErrorModalContent>
+    );
+    props.showModal(errorContent);
+  };
 
+  return (
+  <>
+  <ReShowContainer className={!hideLoader ? 'hidden' : ''}>
+    <DismissButton onClick={() => setHideLoader(false)}>Show Load State</DismissButton>
+  </ReShowContainer>
+  <LoadCard className={hideLoader ? 'hidden' : ''}>
     <ProgressBarContainer>
       {Object.keys(percentages).map((state: string | LoadingState) =>
         <ProgressBarSegment 
@@ -327,12 +390,14 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[] }): JSX.Element => {
       <summary>Show Details</summary>
       <ul>
         {
-          loadStatus.map(({ name, state, timeTaken }: LoadingJob) => {
+          loadStatus.map(({ name, state, timeTaken, retry, error }: LoadingJob) => {
             return (
               <li key={name}>
-                <b>{getStatusEmoji(state)} {name}</b>
+                <b onClick={() => props.showJobDocs(name)}>{getStatusEmoji(state)} {name}</b>
                 <span style={{color : barColors[state][0]}}> ({state})</span>.
-                <i>{timeTaken ? ` Took ${timeTaken} ms` : '' }</i>
+                <i>{(timeTaken && state !== 'loading') ? ` Took ${timeTaken} ms` : '' }</i>
+                { (retry && state !== 'success' && state !== 'loading') && <FailedJobActionButton onClick={retry}>↻ Retry</FailedJobActionButton> }
+                { (error && state === 'error') && <FailedJobActionButton onClick={() => showErrorModal(name, state, timeTaken, error)}>■ Show Error</FailedJobActionButton> }
               </li>
             );
           })
@@ -347,6 +412,7 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[] }): JSX.Element => {
     </Details>
     <DismissButton onClick={() => setHideLoader(true)}>Dismiss</DismissButton>
   </LoadCard>
+  </>
   );
 }
 
