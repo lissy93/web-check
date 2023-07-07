@@ -1,13 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, ReactNode } from 'react';
 import {   useParams } from "react-router-dom";
 import styled from 'styled-components';
+import { ToastContainer } from 'react-toastify';
 
 import colors from 'styles/colors';
 import Heading from 'components/Form/Heading';
 import Card from 'components/Form/Card';
-import ErrorBoundary from 'components/misc/ErrorBoundary';
+import Modal from 'components/Form/Modal';
 import Footer from 'components/misc/Footer';
 import { RowProps }  from 'components/Form/Row';
+import docs from 'utils/docs';
 
 
 import ServerLocationCard from 'components/Results/ServerLocation';
@@ -27,8 +29,12 @@ import TxtRecordCard from 'components/Results/TxtRecords';
 import ServerStatusCard from 'components/Results/ServerStatus';
 import OpenPortsCard from 'components/Results/OpenPorts';
 import TraceRouteCard from 'components/Results/TraceRoute';
+import CarbonFootprintCard from 'components/Results/CarbonFootprint';
+import SiteFeaturesCard from 'components/Results/SiteFeatures';
+import DnsSecCard from 'components/Results/DnsSec';
 
 import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
+import ActionButtons from 'components/misc/ActionButtons';
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
 
@@ -69,6 +75,24 @@ const Header = styled(Card)`
   padding: 0.5rem 1rem;
 `;
 
+const JobDocsContainer = styled.div`
+p.doc-desc, p.doc-uses, ul {
+  margin: 0.25rem auto 1.5rem auto;
+}
+ul {
+  padding: 0 0.5rem 0 1rem;
+}
+ul li a {
+  color: ${colors.primary};
+}
+h4 {
+  border-top: 1px solid ${colors.primary};
+  color: ${colors.primary};
+  opacity: 0.75;
+  padding: 0.5rem 0;
+}
+`;
+
 const Results = (): JSX.Element => {
   const startTime = new Date().getTime();
 
@@ -77,28 +101,44 @@ const Results = (): JSX.Element => {
 
   const [ loadingJobs, setLoadingJobs ] = useState<LoadingJob[]>(initialJobs);
 
-  const updateLoadingJobs = useCallback((job: string, newState: LoadingState, error?: string) => {
-    const timeTaken = new Date().getTime() - startTime;
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState<ReactNode>(<></>);
+
+  const updateLoadingJobs = useCallback((job: string, newState: LoadingState, error?: string, retry?: () => void, data?: any) => {
+    const now = new Date();
+    const timeTaken = now.getTime() - startTime;
     setLoadingJobs((prevJobs) => {
       const newJobs = prevJobs.map((loadingJob: LoadingJob) => {
         if (loadingJob.name === job) {
-          return { ...loadingJob, error, state: newState, timeTaken };
+          return { ...loadingJob, error, state: newState, timeTaken, retry };
         }
         return loadingJob;
       });
 
+      const timeString = `[${now.getHours().toString().padStart(2, '0')}:`
+        +`${now.getMinutes().toString().padStart(2, '0')}:`
+        + `${now.getSeconds().toString().padStart(2, '0')}]`;
+
+
       if (newState === 'success') {
         console.log(
-          `%cFetch Success - ${job}%c\n\nThe ${job} job succeeded in ${timeTaken}ms`,
-          `background: ${colors.success}; color: ${colors.background}; padding: 4px 8px; font-size: 16px;`,
+          `%cFetch Success - ${job}%c\n\n${timeString}%c The ${job} job succeeded in ${timeTaken}ms`
+          + `\n%cRun %cwindow.webCheck['${job}']%c to inspect the raw the results`,
+          `background:${colors.success};color:${colors.background};padding: 4px 8px;font-size:16px;`,
+          `font-weight: bold; color: ${colors.success};`,
           `color: ${colors.success};`,
+          `color: #1d8242;`,`color: #1d8242;text-decoration:underline;`,`color: #1d8242;`,
         );
+        if (!(window as any).webCheck) (window as any).webCheck = {};
+        if (data) (window as any).webCheck[job] = data;
       }
   
       if (newState === 'error') {
         console.log(
-          `%cFetch Error - ${job}%c\n\nThe ${job} job failed with the following error:%c\n${error}`,
+          `%cFetch Error - ${job}%c\n\n${timeString}%c The ${job} job failed `
+          +`after ${timeTaken}ms, with the following error:%c\n${error}`,
           `background: ${colors.danger}; padding: 4px 8px; font-size: 16px;`,
+          `font-weight: bold; color: ${colors.danger};`,
           `color: ${colors.danger};`,
           `color: ${colors.warning};`,
         );
@@ -108,11 +148,13 @@ const Results = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    setAddressType(determineAddressType(address || ''));
+    if (!addressType || addressType === 'empt') {
+      setAddressType(determineAddressType(address || ''));
+    }
     if (addressType === 'ipV4' && address) {
       setIpAddress(address);
     }
-  }, []);
+  }, []);  
 
   const urlTypeOnly = ['url'] as AddressType[]; // Many jobs only run with these address types
 
@@ -127,7 +169,7 @@ const Results = (): JSX.Element => {
   });
 
   // Fetch and parse SSL certificate info
-  const [sslResults] = useMotherHook({
+  const [sslResults, updateSslResults] = useMotherHook({
     jobId: 'ssl',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -135,7 +177,7 @@ const Results = (): JSX.Element => {
   });
 
   // Fetch and parse cookies info
-  const [cookieResults] = useMotherHook<{cookies: Cookie[]}>({
+  const [cookieResults, updateCookieResults] = useMotherHook<{cookies: Cookie[]}>({
     jobId: 'cookies',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -145,7 +187,7 @@ const Results = (): JSX.Element => {
   });
 
   // Fetch and parse crawl rules from robots.txt
-  const [robotsTxtResults] = useMotherHook<{robots: RowProps[]}>({
+  const [robotsTxtResults, updateRobotsTxtResults] = useMotherHook<{robots: RowProps[]}>({
     jobId: 'robots-txt',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -155,7 +197,7 @@ const Results = (): JSX.Element => {
   });
 
   // Fetch and parse headers
-  const [headersResults] = useMotherHook({
+  const [headersResults, updateHeadersResults] = useMotherHook({
     jobId: 'headers',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -163,7 +205,7 @@ const Results = (): JSX.Element => {
   });
 
   // Fetch and parse DNS records
-  const [dnsResults] = useMotherHook({
+  const [dnsResults, updateDnsResults] = useMotherHook({
     jobId: 'dns',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -171,7 +213,7 @@ const Results = (): JSX.Element => {
   });
 
   // Fetch and parse Lighthouse performance data
-  const [lighthouseResults] = useMotherHook({
+  const [lighthouseResults, updateLighthouseResults] = useMotherHook({
     jobId: 'lighthouse',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -181,7 +223,7 @@ const Results = (): JSX.Element => {
   });
 
   // Get IP address location info
-  const [locationResults] = useMotherHook<ServerLocation>({
+  const [locationResults, updateLocationResults] = useMotherHook<ServerLocation>({
     jobId: 'location',
     updateLoadingJobs,
     addressInfo: { address: ipAddress, addressType: 'ipV4', expectedAddressTypes: ['ipV4', 'ipV6'] },
@@ -192,8 +234,8 @@ const Results = (): JSX.Element => {
 
 
   // Get hostnames and associated domains from Shodan
-  const [shoadnResults] = useMotherHook<ShodanResults>({
-    jobId: 'shodan',
+  const [shoadnResults, updateShodanResults] = useMotherHook<ShodanResults>({
+    jobId: 'hosts',
     updateLoadingJobs,
     addressInfo: { address: ipAddress, addressType: 'ipV4', expectedAddressTypes: ['ipV4', 'ipV6'] },
     fetchRequest: () => fetch(`https://api.shodan.io/shodan/host/${ipAddress}?key=${keys.shodan}`)
@@ -203,7 +245,7 @@ const Results = (): JSX.Element => {
 
 
   // Check for open ports
-  const [portsResults] = useMotherHook({
+  const [portsResults, updatePortsResults] = useMotherHook({
     jobId: 'ports',
     updateLoadingJobs,
     addressInfo: { address: ipAddress, addressType: 'ipV4', expectedAddressTypes: ['ipV4', 'ipV6'] },
@@ -212,7 +254,7 @@ const Results = (): JSX.Element => {
   });
 
   // Fetch and parse domain whois results
-  const [whoIsResults] = useMotherHook<Whois>({
+  const [whoIsResults, updateWhoIsResults] = useMotherHook<Whois>({
     jobId: 'whois',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -222,17 +264,17 @@ const Results = (): JSX.Element => {
   });
 
   // Fetch and parse built-with results
-  const [technologyResults] = useMotherHook<TechnologyGroup[]>({
-    jobId: 'built-with',
-    updateLoadingJobs,
-    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`https://api.builtwith.com/v21/api.json?KEY=${keys.builtWith}&LOOKUP=${address}`)
-      .then(res => res.json())
-      .then(res => makeTechnologies(res)),
-  });
+  // const [technologyResults, updateTechnologyResults] = useMotherHook<TechnologyGroup[]>({
+  //   jobId: 'built-with',
+  //   updateLoadingJobs,
+  //   addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+  //   fetchRequest: () => fetch(`https://api.builtwith.com/v21/api.json?KEY=${keys.builtWith}&LOOKUP=${address}`)
+  //     .then(res => res.json())
+  //     .then(res => makeTechnologies(res)),
+  // });
 
   // Fetches DNS TXT records
-  const [txtRecordResults] = useMotherHook({
+  const [txtRecordResults, updateTxtRecordResults] = useMotherHook({
     jobId: 'txt-records',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -240,7 +282,7 @@ const Results = (): JSX.Element => {
   });
 
   // Fetches URL redirects
-  const [redirectResults] = useMotherHook({
+  const [redirectResults, updateRedirectResults] = useMotherHook({
     jobId: 'redirects',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -248,7 +290,7 @@ const Results = (): JSX.Element => {
   });
 
   // Get current status and response time of server
-  const [serverStatusResults] = useMotherHook({
+  const [serverStatusResults, updateServerStatusResults] = useMotherHook({
     jobId: 'status',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -256,11 +298,35 @@ const Results = (): JSX.Element => {
   });
 
   // Get trace route for a given hostname
-  const [traceRouteResults] = useMotherHook({
+  const [traceRouteResults, updateTraceRouteResults] = useMotherHook({
     jobId: 'trace-route',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
     fetchRequest: () => fetch(`/trace-route?url=${address}`).then(res => res.json()),
+  });
+
+  // Fetch carbon footprint data for a given site
+  const [carbonResults, updateCarbonResults] = useMotherHook({
+    jobId: 'carbon',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/get-carbon?url=${address}`).then(res => res.json()),
+  });
+
+  // Get site features from BuiltWith
+  const [siteFeaturesResults, updateSiteFeaturesResults] = useMotherHook({
+    jobId: 'features',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/site-features?url=${address}`).then(res => res.json()),
+  });
+
+  // Get DNSSEC info
+  const [dnsSecResults, updateDnsSecResults] = useMotherHook({
+    jobId: 'dnssec',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/dns-sec?url=${address}`).then(res => res.json()),
   });
 
   /* Cancel remaining jobs after  10 second timeout */
@@ -288,24 +354,66 @@ const Results = (): JSX.Element => {
 
   // A list of state sata, corresponding component and title for each card
   const resultCardData = [
-    { title: 'Server Location', result: locationResults, Component: ServerLocationCard },
-    { title: 'SSL Info', result: sslResults, Component: SslCertCard },
-    { title: 'Headers', result: headersResults, Component: HeadersCard },
-    { title: 'Host Names', result: shoadnResults?.hostnames, Component: HostNamesCard },
-    { title: 'Domain Info', result: whoIsResults, Component: WhoIsCard },
-    { title: 'DNS Records', result: dnsResults, Component: DnsRecordsCard },
-    { title: 'Performance', result: lighthouseResults, Component: LighthouseCard },
-    { title: 'Cookies', result: cookieResults, Component: CookiesCard },
-    { title: 'Trace Route', result: traceRouteResults, Component: TraceRouteCard },
-    { title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard },
-    { title: 'Technologies', result: technologyResults, Component: BuiltWithCard },
-    { title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard },
-    { title: 'Server Info', result: shoadnResults?.serverInfo, Component: ServerInfoCard },
-    { title: 'Redirects', result: redirectResults, Component: RedirectsCard },
-    { title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard },
-    { title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard },
-    { title: 'Open Ports', result: portsResults, Component: OpenPortsCard },
+    { id: 'location', title: 'Server Location', result: locationResults, Component: ServerLocationCard, refresh: updateLocationResults },
+    { id: 'ssl', title: 'SSL Info', result: sslResults, Component: SslCertCard, refresh: updateSslResults },
+    { id: 'dns', title: 'Headers', result: headersResults, Component: HeadersCard, refresh: updateHeadersResults },
+    { id: 'hosts', title: 'Host Names', result: shoadnResults?.hostnames, Component: HostNamesCard, refresh: updateShodanResults },
+    { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },
+    { id: 'dns', title: 'DNS Records', result: dnsResults, Component: DnsRecordsCard, refresh: updateDnsResults },
+    { id: 'lighthouse', title: 'Performance', result: lighthouseResults, Component: LighthouseCard, refresh: updateLighthouseResults },
+    { id: 'cookies', title: 'Cookies', result: cookieResults, Component: CookiesCard, refresh: updateCookieResults },
+    { id: 'trace-route', title: 'Trace Route', result: traceRouteResults, Component: TraceRouteCard, refresh: updateTraceRouteResults },
+    { id: '', title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateLighthouseResults },
+    // { title: 'Technologies', result: technologyResults, Component: BuiltWithCard, refresh: updateTechnologyResults },
+    { id: 'robots-txt', title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard, refresh: updateRobotsTxtResults },
+    { id: 'server-info', title: 'Server Info', result: shoadnResults?.serverInfo, Component: ServerInfoCard, refresh: updateShodanResults },
+    { id: 'redirects', title: 'Redirects', result: redirectResults, Component: RedirectsCard, refresh: updateRedirectResults },
+    { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },
+    { id: 'status', title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard, refresh: updateServerStatusResults },
+    { id: 'ports', title: 'Open Ports', result: portsResults, Component: OpenPortsCard, refresh: updatePortsResults },
+    { id: 'carbon', title: 'Carbon Footprint', result: carbonResults, Component: CarbonFootprintCard, refresh: updateCarbonResults },
+    { id: 'features', title: 'Site Features', result: siteFeaturesResults, Component: SiteFeaturesCard, refresh: updateSiteFeaturesResults },
+    { id: 'dnssec', title: 'DNSSEC', result: dnsSecResults, Component: DnsSecCard, refresh: updateDnsSecResults },
   ];
+
+  const MakeActionButtons = (title: string, refresh: () => void, showInfo: (id: string) => void): ReactNode => {
+    const actions = [
+      { label: `Info about ${title}`, onClick: showInfo, icon: 'ⓘ'},
+      { label: `Re-fetch ${title} data`, onClick: refresh, icon: '↻'},
+    ];
+    return (
+      <ActionButtons actions={actions} />
+    );
+  };
+
+  const showInfo = (id: string) => {
+    const doc = docs.filter((doc: any) => doc.id === id)[0] || null;
+    setModalContent(
+      doc? (<JobDocsContainer>
+        <Heading as="h3" size="medium" color={colors.primary}>{doc.title}</Heading>
+        <Heading as="h4" size="small">About</Heading>
+        <p className="doc-desc">{doc.description}</p>
+        <Heading as="h4" size="small">Use Cases</Heading>
+        <p className="doc-uses">{doc.use}</p>
+        <Heading as="h4" size="small">Links</Heading>
+        <ul>
+          {doc.resources.map((resource: string, index: number) => (
+          <li id={`link-${index}`}><a target="_blank" rel="noreferrer" href={resource}>{resource}</a></li>
+          ))}
+        </ul>
+      </JobDocsContainer>)
+    : (
+      <JobDocsContainer>
+        <p>No Docs provided for this widget yet</p>
+      </JobDocsContainer>
+      ));
+    setModalOpen(true);
+  };
+
+  const showErrorModal = (content: ReactNode) => {
+    setModalContent(content);
+    setModalOpen(true);
+  };
   
   return (
     <ResultsOuter>
@@ -321,20 +429,25 @@ const Results = (): JSX.Element => {
         </Heading>
         }
       </Header>
-      <ProgressBar loadStatus={loadingJobs} />
+      <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
       
       <ResultsContent>
           {
-            resultCardData.map(({ title, result, Component }) => (
-              (result) ? (
-                <ErrorBoundary title={title} key={title}>
-                <Component {...result} />
-                </ErrorBoundary>
+            resultCardData.map(({ id, title, result, refresh, Component }, index: number) => (
+              (result && !result.error) ? (
+                <Component
+                  key={`${title}-${index}`}
+                  data={{...result}}
+                  title={title}
+                  actionButtons={refresh ? MakeActionButtons(title, refresh, () => showInfo(id)) : undefined}
+                />
               ) : <></>
             ))
           }
       </ResultsContent>
       <Footer />
+      <Modal isOpen={modalOpen} closeModal={()=> setModalOpen(false)}>{modalContent}</Modal>
+      <ToastContainer limit={3} draggablePercent={60} autoClose={2500} theme="dark" position="bottom-right" />
     </ResultsOuter>
   );
 }
