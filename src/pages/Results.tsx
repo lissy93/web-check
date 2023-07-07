@@ -9,6 +9,7 @@ import Card from 'components/Form/Card';
 import Modal from 'components/Form/Modal';
 import Footer from 'components/misc/Footer';
 import { RowProps }  from 'components/Form/Row';
+import ErrorBoundary from 'components/misc/ErrorBoundary';
 import docs from 'utils/docs';
 
 
@@ -435,12 +436,14 @@ const Results = (): JSX.Element => {
           {
             resultCardData.map(({ id, title, result, refresh, Component }, index: number) => (
               (result && !result.error) ? (
-                <Component
-                  key={`${title}-${index}`}
-                  data={{...result}}
-                  title={title}
-                  actionButtons={refresh ? MakeActionButtons(title, refresh, () => showInfo(id)) : undefined}
-                />
+                <ErrorBoundary title={title}>
+                  <Component
+                    key={`${title}-${index}`}
+                    data={{...result}}
+                    title={title}
+                    actionButtons={refresh ? MakeActionButtons(title, refresh, () => showInfo(id)) : undefined}
+                  />
+                </ErrorBoundary>
               ) : <></>
             ))
           }
