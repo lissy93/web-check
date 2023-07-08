@@ -5,10 +5,25 @@
   publish = "build"
   functions = "server/lambda"
 
+# Environmental variables and optioanl secrets
 [build.environment]
   NODE_VERSION = "16.16.0"
+  GOOGLE_CLOUD_API_KEY=''
+  SHODAN_API_KEY=''
+  REACT_APP_SHODAN_API_KEY=''
+  WHO_API_KEY=''
+  REACT_APP_WHO_API_KEY=''
+  SECURITY_TRAILS_API_KEY=''
+  BUILT_WITH_API_KEY=''
+  CI=false
 
-    
+[dev]
+  command = "yarn start"
+  port = 8888
+  targetPort = 3000
+  publish = "dist"
+  autoLaunch = false
+
 # Site info, used for the 1-Click deploy page
 [template.environment]
   STATUSKIT_PAGE_TITLE = "Web Check"

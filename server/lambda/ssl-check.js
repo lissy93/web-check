@@ -1,5 +1,4 @@
 const https = require('https');
-const { stringify } = require('flatted');
 
 exports.handler = async function (event, context) {
   const { url } = event.queryStringParameters;
@@ -12,10 +11,7 @@ exports.handler = async function (event, context) {
   };
 
   if (!url) {
-    return {
-      statusCode: 400,
-      body: errorResponse('url query parameter is required'),
-    };
+    return errorResponse('url query parameter is required');
   }
 
   return new Promise((resolve, reject) => {
@@ -25,21 +21,22 @@ exports.handler = async function (event, context) {
       if (!res.socket.authorized) {
         resolve(errorResponse(`SSL handshake not authorized. Reason: ${res.socket.authorizationError}`));
       } else {
-        const cert = res.socket.getPeerCertificate(true);
+        let cert = res.socket.getPeerCertificate(true);
         if (!cert || Object.keys(cert).length === 0) {
           resolve(errorResponse("No certificate presented by the server."));
         } else {
+          // omit the raw and issuerCertificate fields
+          const { raw, issuerCertificate, ...certWithoutRaw } = cert;
           resolve({
             statusCode: 200,
-            body: stringify(cert),
+            body: JSON.stringify(certWithoutRaw),
           });
         }
       }
     });
 
     req.on('error', (error) => {
-      resolve(
-        errorResponse(`Error fetching site certificate: ${error.message}`, 500));
+      resolve(errorResponse(`Error fetching site certificate: ${error.message}`, 500));
     });
 
     req.end();
