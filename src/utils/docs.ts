@@ -227,6 +227,72 @@ const docs: Doc[] = [
       "https://whois.domaintools.com/",
     ],
   },
+  {
+    id: "dnssec",
+    title: "DNS Security Extensions",
+    description:
+      "Without DNSSEC, it\'s possible for MITM attackers to spoof records and lead users to phishing sites. This is because the DNS system includes no built-in methods to verify that the response to the request was not forged, or that any other part of the process wasn’t interrupted by an attacker. The DNS Security Extensions (DNSSEC) secures DNS lookups by signing your DNS records using public keys, so browsers can detect if the response has been tampered with. Another solution to this issue is DoH (DNS over HTTPS) and DoT (DNS over TLD).",
+    use: "DNSSEC information provides insight into an organization's level of cybersecurity maturity and potential vulnerabilities, particularly around DNS spoofing and cache poisoning. If no DNS secururity (DNSSEC, DoH, DoT, etc) is implemented, this may provide an entry point for an attacker.",
+    resources: [
+      "https://dnssec-analyzer.verisignlabs.com/",
+      "https://www.cloudflare.com/dns/dnssec/how-dnssec-works/",
+      "https://en.wikipedia.org/wiki/Domain_Name_System_Security_Extensions",
+      "https://www.icann.org/resources/pages/dnssec-what-is-it-why-important-2019-03-05-en",
+      "https://support.google.com/domains/answer/6147083",
+      "https://www.internetsociety.org/resources/deploy360/2013/dnssec-test-sites/",
+    ],
+  },
+];
+
+export const about = [
+`Web-Check is a powerful all-in-one tool for discovering information about a website/host.
+The core philosophy is simple: feed Web-Check a URL and let it gather, collate, and present a broad array of open data for you to delve into.`,
+
+`The report shines a spotlight onto potential attack vectors, existing security measures,
+and the intricate web of connections within a site's architecture.
+The results can also help optimizing server responses, configuring redirects,
+managing cookies, or fine-tuning DNS records for your site.`,
+
+`So, weather you're a developer, system administrator, security researcher, penetration
+tester or are just interested in discovering the underlying technologies of a given site 
+- I'm sure you'll find this a useful addition to your toolbox.`,
+
+`It works using a series of lambda functions, each of which makes a crafted fetch
+request to the host, processes the returned data, then responds with the results.
+The web UI is just a simple React TypeScript app.`,
+
+`There's a managed instance (hosted on Netlify), which you can use for free
+(until my lambda function credits run out!), or you can easily deploy your own
+instance locally or remotely.
+All the code is open source, so feel free to fork and modify to your liking.
+For development and deployment instructions, as well as contributing guidelines, see the GitHub repo.
+`];
+
+export const license = `The MIT License (MIT)
+Copyright (c) Alicia Sykes <alicia@omg.com> 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy 
+of this software and associated documentation files (the "Software"), to deal 
+in the Software without restriction, including without limitation the rights 
+to use, copy, modify, merge, publish, distribute, sub-license, and/or sell 
+copies of the Software, and to permit persons to whom the Software is furnished 
+to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included install 
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANT ABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+`;
+
+export const fairUse = [
+  'Please use this tool responsibly. Do not use it for hosts you do not have permission to scan. Do not use it to attack or disrupt services.',
+  'Requests are rate-limited to prevent abuse. If you need to make more bandwidth, please deploy your own instance.',
+  'The hosted instance is only for demo use, as excessive use will quickly deplete my lambda function credits, making it unavailable for others and/or costing me money.',
 ];
 
 export default docs;
