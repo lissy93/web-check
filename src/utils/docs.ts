@@ -4,6 +4,7 @@ interface Doc {
   description: string;
   use: string;
   resources: string[];
+  screenshot?: string;
 }
 
 const docs: Doc[] = [
@@ -32,6 +33,7 @@ const docs: Doc[] = [
       "https://letsencrypt.org/docs/",
       "https://www.sslshopper.com/ssl-checker.html",
     ],
+    screenshot: 'https://i.ibb.co/kB7LsV1/wc-ssl.png',
   },
   {
     id: "dns",
@@ -45,6 +47,7 @@ const docs: Doc[] = [
       "https://mxtoolbox.com/DNSLookup.aspx",
       "https://www.dnswatch.info/",
     ],
+    screenshot: 'https://i.ibb.co/7Q1kMwM/wc-dns.png',
   },
   {
     id: "cookies",
@@ -58,6 +61,7 @@ const docs: Doc[] = [
       "https://owasp.org/www-community/controls/SecureFlag",
       "https://tools.ietf.org/html/rfc6265",
     ],
+    screenshot: 'https://i.ibb.co/TTQ6DtP/wc-cookies.png',
   },
   {
     id: "robots-txt",
@@ -71,6 +75,7 @@ const docs: Doc[] = [
       "https://moz.com/learn/seo/robotstxt",
       "https://en.wikipedia.org/wiki/Robots_exclusion_standard",
     ],
+    screenshot: 'https://i.ibb.co/KwQCjPf/wc-robots.png',
   },
   {
     id: "headers",
@@ -84,10 +89,11 @@ const docs: Doc[] = [
       "https://www.w3schools.com/tags/ref_httpheaders.asp",
       "https://owasp.org/www-project-secure-headers/",
     ],
+    screenshot: 'https://i.ibb.co/t3xcwP1/wc-headers.png',
   },
   {
     id: "lighthouse",
-    title: "Headers",
+    title: "Quality Report",
     description:
       "The Headers task involves extracting and interpreting the HTTP headers sent by the target website during the request-response cycle. HTTP headers are key-value pairs sent at the start of an HTTP response, or before the actual data. Headers contain important directives for how to handle the data being transferred, including cache policies, content types, encoding, server information, security policies, and more.",
     use: "Analyzing HTTP headers can provide significant insights in an OSINT investigation. Headers can reveal specific server configurations, chosen technologies, caching directives, and various security settings. This information can help to determine a website's underlying technology stack, server-side security measures, potential vulnerabilities, and general operational practices.",
@@ -97,6 +103,7 @@ const docs: Doc[] = [
       "https://www.w3schools.com/tags/ref_httpheaders.asp",
       "https://owasp.org/www-project-secure-headers/",
     ],
+    screenshot: 'https://i.ibb.co/Kqg8rx7/wc-quality.png',
   },
   {
     id: "location",
@@ -110,6 +117,7 @@ const docs: Doc[] = [
       "https://www.cloudflare.com/learning/cdn/glossary/geolocation/",
       "https://developers.google.com/maps/documentation/geolocation/intro",
     ],
+    screenshot: 'https://i.ibb.co/cXH2hfR/wc-location.png',
   },
   {
     id: "hosts",
@@ -123,6 +131,7 @@ const docs: Doc[] = [
       "https://subdomainfinder.c99.nl/",
       "https://securitytrails.com/blog/top-dns-enumeration-tools",
     ],
+    screenshot: 'https://i.ibb.co/25j1sT7/wc-hosts.png',
   },
   {
     id: "redirects",
@@ -136,6 +145,7 @@ const docs: Doc[] = [
       "https://www.screamingfrog.co.uk/server-response-codes/",
       "https://ahrefs.com/blog/301-redirects/",
     ],
+    screenshot: 'https://i.ibb.co/hVVrmwh/wc-redirects.png',
   },
   {
     id: "txt-records",
@@ -149,10 +159,11 @@ const docs: Doc[] = [
       "https://tools.ietf.org/html/rfc7208",
       "https://dmarc.org/wiki/FAQ",
     ],
+    screenshot: 'https://i.ibb.co/wyt21QN/wc-txt-records.png',
   },
   {
     id: "status",
-    title: "TXT Records",
+    title: "Server Status",
     description:
       "TXT records are a type of Domain Name Service (DNS) record that provides text information to sources outside your domain. They can be used for a variety of purposes, such as verifying domain ownership, ensuring email security, and even preventing unauthorized changes to your website.",
     use: "In the context of OSINT, TXT records can be a valuable source of information. They may reveal details about the domain's email configuration, the use of specific services like Google Workspace or Microsoft 365, or security measures in place such as SPF and DKIM. Understanding these details can give an insight into the technologies used by the organization, their email security practices, and potential vulnerabilities.",
@@ -162,6 +173,7 @@ const docs: Doc[] = [
       "https://tools.ietf.org/html/rfc7208",
       "https://dmarc.org/wiki/FAQ",
     ],
+    screenshot: 'https://i.ibb.co/V9CNLBK/wc-status.png',
   },
   {
     id: "ports",
@@ -175,6 +187,7 @@ const docs: Doc[] = [
       "https://www.cloudflare.com/learning/ddos/glossary/open-port/",
       "https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers",
     ],
+    screenshot: 'https://i.ibb.co/F8D1hmf/wc-ports.png',
   },
   {
     id: "trace-route",
@@ -188,6 +201,7 @@ const docs: Doc[] = [
       "https://en.wikipedia.org/wiki/Traceroute",
       "https://www.ripe.net/publications/docs/ripe-611",
     ],
+    screenshot: 'https://i.ibb.co/M59qgxP/wc-trace-route.png',
   },
   {
     id: "carbon",
@@ -201,6 +215,7 @@ const docs: Doc[] = [
       "https://www.nature.com/articles/s41598-020-76164-y",
       "https://www.sciencedirect.com/science/article/pii/S0959652620307817",
     ],
+    screenshot: 'https://i.ibb.co/dmbFxjN/wc-carbon.png',
   },
   {
     id: "server-info",
@@ -214,10 +229,11 @@ const docs: Doc[] = [
       "https://tools.ietf.org/html/rfc7231#section-7.4.2",
       "https://builtwith.com/",
     ],
+    screenshot: 'https://i.ibb.co/Mk1jx32/wc-server.png',
   },
   {
     id: "whois",
-    title: "Whois",
+    title: "Domain Info",
     description:
       "This task retrieves Whois records for the target domain. Whois records are a rich source of information, including the name and contact information of the domain registrant, the domain's creation and expiration dates, the domain's nameservers, and more. The information is usually obtained through a query to a Whois database server.",
     use: "In an OSINT context, Whois records can provide valuable clues about the entity behind a website. They can show when the domain was first registered and when it's set to expire, which could provide insights into the operational timeline of the entity. The contact information, though often redacted or anonymized, can sometimes lead to additional avenues of investigation. The nameservers could also be used to link together multiple domains owned by the same entity.",
@@ -226,6 +242,7 @@ const docs: Doc[] = [
       "https://www.icann.org/resources/pages/whois-2018-01-17-en",
       "https://whois.domaintools.com/",
     ],
+    screenshot: 'https://i.ibb.co/89WLp14/wc-domain.png',
   },
   {
     id: "dnssec",
@@ -241,6 +258,15 @@ const docs: Doc[] = [
       "https://support.google.com/domains/answer/6147083",
       "https://www.internetsociety.org/resources/deploy360/2013/dnssec-test-sites/",
     ],
+    screenshot: 'https://i.ibb.co/J54zVmQ/wc-dnssec.png',
+  },
+  {
+    id: "features",
+    title: "Features",
+    description: '',
+    use: "",
+    resources: [],
+    screenshot: 'https://i.ibb.co/gP4P6kp/wc-features.png',
   },
 ];
 

@@ -18,8 +18,8 @@ function App() {
     <Container>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/results/:address" element={<Results />} />
         <Route path="/about" element={<About />} />
+        <Route path="/results/:address" element={<Results />} />
       </Routes>
     </Container>
   );

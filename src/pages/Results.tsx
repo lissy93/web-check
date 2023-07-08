@@ -78,6 +78,7 @@ ul {
 ul li a {
   color: ${colors.primary};
 }
+summary { color: ${colors.primary};}
 h4 {
   border-top: 1px solid ${colors.primary};
   color: ${colors.primary};
@@ -141,6 +142,7 @@ const Results = (): JSX.Element => {
   }, []);
 
   const parseJson = (response: Response): Promise<any> => {
+    // return response.json()
     return new Promise((resolve) => {
       if (response.ok) {
         response.json()
@@ -431,6 +433,10 @@ const Results = (): JSX.Element => {
           <li id={`link-${index}`}><a target="_blank" rel="noreferrer" href={resource}>{resource}</a></li>
           ))}
         </ul>
+        <details>
+          <summary><Heading as="h4" size="small">Example</Heading></summary>
+          <img width="300" src={doc.screenshot} alt="Screenshot" />
+        </details>
       </JobDocsContainer>)
     : (
       <JobDocsContainer>

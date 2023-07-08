@@ -10,7 +10,7 @@ import docs, { about, license, fairUse } from 'utils/docs';
 
 
 const AboutContainer = styled.div`
-width: 80vw;
+width: 95vw;
 max-width: 1000px;
 margin: 2rem auto;
 padding-bottom: 1rem;
@@ -30,6 +30,7 @@ const HeaderLinkContainer = styled.nav`
 
 const Section = styled(StyledCard)`
   margin-bottom: 2rem;
+  overflow: clip;
   h3 {
     font-size: 1.5rem;
   }
@@ -68,6 +69,13 @@ const Section = styled(StyledCard)`
         }
       }
     }
+  }
+  .screenshot {
+    float: right;
+    break-inside: avoid;
+    max-width: 300px;
+    max-height: 28rem;
+    border-radius: 6px;
   }
 `;
 
@@ -109,16 +117,25 @@ const About = (): JSX.Element => {
         {docs.map((section, sectionIndex: number) => (
           <section key={section.title}>
             <Heading as="h3" size="small" id={makeAnchor(section.title)} color={colors.primary}>{section.title}</Heading>
-            <Heading as="h4" size="small">Description</Heading>
-            <p>{section.description}</p>
-            <Heading as="h4" size="small">Use Cases</Heading>
-            <p>{section.use}</p>
-            <Heading as="h4" size="small">Useful Links</Heading>
-            <ul>
-              {section.resources.map((link: string) => (
-                <li><a href={link}>{link}</a></li>
-              ))}
-            </ul>
+            {section.screenshot && 
+              <img className="screenshot" src={section.screenshot} alt={`Example Screenshot ${section.title}`} />
+            }
+            {section.description && <>
+              <Heading as="h4" size="small">Description</Heading>
+              <p>{section.description}</p>
+            </>}
+            { section.use && <>
+              <Heading as="h4" size="small">Use Cases</Heading>
+              <p>{section.use}</p>
+            </>}
+            {section.resources && section.resources.length > 0 && <>
+              <Heading as="h4" size="small">Useful Links</Heading>
+              <ul>
+                {section.resources.map((link: string, linkIndx: number) => (
+                  <li key={linkIndx}><a href={link}>{link}</a></li>
+                ))}
+              </ul>
+            </>}
             { sectionIndex < docs.length - 1 && <hr /> }
           </section>
         ))}
