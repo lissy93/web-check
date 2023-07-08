@@ -117,7 +117,7 @@ const Home = (): JSX.Element => {
           disabled={inputDisabled}
           handleChange={inputChange}
         />
-        <FindIpButton onClick={findIpAddress}>Or, find my IP</FindIpButton>
+        {/* <FindIpButton onClick={findIpAddress}>Or, find my IP</FindIpButton> */}
         { errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
         <Button size="large" onClick={submit}>Analyze!</Button>
       </UserInputMain>

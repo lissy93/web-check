@@ -83,6 +83,10 @@ const StatusInfoWrapper = styled.div`
   }
 `;
 
+const AboutPageLink = styled.a`
+  color: ${colors.primary};
+`;
+
 const SummaryContainer = styled.div`
   margin: 0.5rem 0;
   b {
@@ -178,24 +182,24 @@ export interface LoadingJob {
 
 const jobNames = [
   'get-ip',
+  'location',
   'ssl',
   'dns',
-  'cookies',
-  'robots-txt',
-  'headers',
-  'lighthouse',
-  'location',
+  'whois',
   'hosts',
+  'lighthouse',
+  'cookies',
+  'trace-route',
+  'server-info',
   'redirects',
-  'txt-records',
+  'robots-txt',
+  'dnssec',
   'status',
   'ports',
-  'trace-route',
-  'carbon',
-  'server-info',
-  'whois',
+  'txt-records',
   'features',
-  'dnssec',
+  'carbon',
+  'headers',
 ] as const;
 
 export const initialJobs = jobNames.map((job: string) => {
@@ -283,7 +287,7 @@ const SummaryText = (props: { state: LoadingJob[], count: number }): JSX.Element
   if (loadingTasksCount > 0) {
     return (
       <SummaryContainer className="loading-info">
-        <b>Loading {loadingTasksCount} / {totalJobs} Jobs</b>
+        <b>Loading {totalJobs - loadingTasksCount} / {totalJobs} Jobs</b>
         {skippedInfo}
       </SummaryContainer>
     );
@@ -409,6 +413,7 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[], showModal: (err: Reac
           It's normal for some jobs to fail, either because the host doesn't return the required info,
           or restrictions in the lambda function, or hitting an API limit.
         </p>}
+        <AboutPageLink href="/about" target="_blank" rel="noreferer" >Learn More about Web-Check</AboutPageLink>
     </Details>
     <DismissButton onClick={() => setHideLoader(true)}>Dismiss</DismissButton>
   </LoadCard>

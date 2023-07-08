@@ -2,7 +2,8 @@ import { Card } from 'components/Form/Card';
 
 const cardStyles = `
   overflow: auto;
-  max-height: 32rem;
+  max-height: 40rem;
+  grid-row: span 2;
   img {
     border-radius: 6px;
     width: 100%;

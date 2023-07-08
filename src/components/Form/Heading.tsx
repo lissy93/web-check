@@ -9,6 +9,7 @@ interface HeadingProps {
   size?: 'xSmall' | 'small' | 'medium' | 'large';
   inline?: boolean;
   children: React.ReactNode;
+  id?: string;
 };
 
 const StyledHeading = styled.h1<HeadingProps>`
@@ -46,9 +47,9 @@ const StyledHeading = styled.h1<HeadingProps>`
 `;
 
 const Heading = (props: HeadingProps): JSX.Element => {
-  const { children, as, size, align, color, inline } = props;
+  const { children, as, size, align, color, inline, id } = props;
   return (
-    <StyledHeading as={as} size={size} align={align} color={color} inline={inline}>
+    <StyledHeading as={as} size={size} align={align} color={color} inline={inline} id={id}>
       {children}
     </StyledHeading>
   );

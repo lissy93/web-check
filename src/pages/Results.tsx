@@ -8,6 +8,7 @@ import Heading from 'components/Form/Heading';
 import Card from 'components/Form/Card';
 import Modal from 'components/Form/Modal';
 import Footer from 'components/misc/Footer';
+import Nav from 'components/Form/Nav';
 import { RowProps }  from 'components/Form/Row';
 import ErrorBoundary from 'components/misc/ErrorBoundary';
 import docs from 'utils/docs';
@@ -65,15 +66,6 @@ const ResultsContent = styled.section`
   margin: auto;
   width: calc(100% - 2rem);
   padding-bottom: 1rem;
-`;
-
-const Header = styled(Card)`
-  margin: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  padding: 0.5rem 1rem;
 `;
 
 const JobDocsContainer = styled.div`
@@ -148,6 +140,37 @@ const Results = (): JSX.Element => {
     });
   }, []);
 
+  const parseJson = (response: Response): Promise<any> => {
+    return new Promise((resolve) => {
+      if (response.ok) {
+        response.json()
+          .then(data => resolve(data))
+          .catch(error => resolve(
+            { error: `Failed to process response, likely due to Netlify's 10-sec limit on lambda functions. Error: ${error}`}
+          ));
+      } else {
+        resolve(
+          { error: `Response returned with status: ${response.status} ${response.statusText}.`
+          + `This is likely due to an incompatibility with the lambda function.` }
+        );
+      }
+    });
+  };
+  
+
+
+  // const parseJson = (response: Response): Promise<any> => {
+  //   if (response.status >= 400) {
+  //     return new Promise((resolve) => resolve({ error: `Failed to fetch data: ${response.statusText}` }));
+  //   }
+  //   return new Promise((resolve) => {
+  //     if (!response) { resolve({ error: 'No response from server' }); }
+  //     response.json()
+  //       .catch(error => resolve({ error: `Failed to process response, likely due to Netlify's 10-sec limit on lambda functions. Error: ${error}`}));  
+  //   });
+  // };
+  
+
   useEffect(() => {
     if (!addressType || addressType === 'empt') {
       setAddressType(determineAddressType(address || ''));
@@ -165,7 +188,7 @@ const Results = (): JSX.Element => {
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
     fetchRequest: () => fetch(`/find-url-ip?address=${address}`)
-    .then(res => res.json())
+    .then(res => parseJson(res))
     .then(res => res.ip),
   });
 
@@ -174,7 +197,7 @@ const Results = (): JSX.Element => {
     jobId: 'ssl',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`/ssl-check?url=${address}`).then((res) => res.json()),
+    fetchRequest: () => fetch(`/ssl-check?url=${address}`).then((res) => parseJson(res)),
   });
 
   // Fetch and parse cookies info
@@ -183,7 +206,7 @@ const Results = (): JSX.Element => {
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
     fetchRequest: () => fetch(`/get-cookies?url=${address}`)
-      .then(res => res.json())
+      .then(res => parseJson(res))
       .then(res => parseCookies(res.cookies)),
   });
 
@@ -202,7 +225,7 @@ const Results = (): JSX.Element => {
     jobId: 'headers',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`/get-headers?url=${address}`).then(res => res.json()),
+    fetchRequest: () => fetch(`/get-headers?url=${address}`).then(res => parseJson(res)),
   });
 
   // Fetch and parse DNS records
@@ -210,7 +233,7 @@ const Results = (): JSX.Element => {
     jobId: 'dns',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`/get-dns?url=${address}`).then(res => res.json()),
+    fetchRequest: () => fetch(`/get-dns?url=${address}`).then(res => parseJson(res)),
   });
 
   // Fetch and parse Lighthouse performance data
@@ -219,8 +242,8 @@ const Results = (): JSX.Element => {
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
     fetchRequest: () => fetch(`/lighthouse-report?url=${address}`)
-      .then(res => res.json())
-      .then(res => res.lighthouseResult),
+      .then(res => parseJson(res))
+      .then(res => res?.lighthouseResult || { error: 'No Data'}),
   });
 
   // Get IP address location info
@@ -229,7 +252,7 @@ const Results = (): JSX.Element => {
     updateLoadingJobs,
     addressInfo: { address: ipAddress, addressType: 'ipV4', expectedAddressTypes: ['ipV4', 'ipV6'] },
     fetchRequest: () => fetch(`https://ipapi.co/${ipAddress}/json/`)
-      .then(res => res.json())
+      .then(res => parseJson(res))
       .then(res => getLocation(res)),
   });
 
@@ -240,7 +263,7 @@ const Results = (): JSX.Element => {
     updateLoadingJobs,
     addressInfo: { address: ipAddress, addressType: 'ipV4', expectedAddressTypes: ['ipV4', 'ipV6'] },
     fetchRequest: () => fetch(`https://api.shodan.io/shodan/host/${ipAddress}?key=${keys.shodan}`)
-      .then(res => res.json())
+      .then(res => parseJson(res))
       .then(res => parseShodanResults(res)),
   });
 
@@ -251,7 +274,7 @@ const Results = (): JSX.Element => {
     updateLoadingJobs,
     addressInfo: { address: ipAddress, addressType: 'ipV4', expectedAddressTypes: ['ipV4', 'ipV6'] },
     fetchRequest: () => fetch(`/check-ports?url=${ipAddress}`)
-      .then(res => res.json()),
+      .then(res => parseJson(res)),
   });
 
   // Fetch and parse domain whois results
@@ -260,7 +283,7 @@ const Results = (): JSX.Element => {
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
     fetchRequest: () => fetch(`https://api.whoapi.com/?domain=${address}&r=whois&apikey=${keys.whoApi}`)
-      .then(res => res.json())
+      .then(res => parseJson(res))
       .then(res => applyWhoIsResults(res)),
   });
 
@@ -270,7 +293,7 @@ const Results = (): JSX.Element => {
   //   updateLoadingJobs,
   //   addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
   //   fetchRequest: () => fetch(`https://api.builtwith.com/v21/api.json?KEY=${keys.builtWith}&LOOKUP=${address}`)
-  //     .then(res => res.json())
+  //     .then(res => parseJson(res))
   //     .then(res => makeTechnologies(res)),
   // });
 
@@ -279,7 +302,7 @@ const Results = (): JSX.Element => {
     jobId: 'txt-records',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`/get-txt?url=${address}`).then(res => res.json()),
+    fetchRequest: () => fetch(`/get-txt?url=${address}`).then(res => parseJson(res)),
   });
 
   // Fetches URL redirects
@@ -287,7 +310,7 @@ const Results = (): JSX.Element => {
     jobId: 'redirects',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`/follow-redirects?url=${address}`).then(res => res.json()),
+    fetchRequest: () => fetch(`/follow-redirects?url=${address}`).then(res => parseJson(res)),
   });
 
   // Get current status and response time of server
@@ -295,7 +318,7 @@ const Results = (): JSX.Element => {
     jobId: 'status',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`/server-status?url=${address}`).then(res => res.json()),
+    fetchRequest: () => fetch(`/server-status?url=${address}`).then(res => parseJson(res)),
   });
 
   // Get trace route for a given hostname
@@ -303,7 +326,7 @@ const Results = (): JSX.Element => {
     jobId: 'trace-route',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`/trace-route?url=${address}`).then(res => res.json()),
+    fetchRequest: () => fetch(`/trace-route?url=${address}`).then(res => parseJson(res)),
   });
 
   // Fetch carbon footprint data for a given site
@@ -311,7 +334,7 @@ const Results = (): JSX.Element => {
     jobId: 'carbon',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`/get-carbon?url=${address}`).then(res => res.json()),
+    fetchRequest: () => fetch(`/get-carbon?url=${address}`).then(res => parseJson(res)),
   });
 
   // Get site features from BuiltWith
@@ -319,7 +342,14 @@ const Results = (): JSX.Element => {
     jobId: 'features',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`/site-features?url=${address}`).then(res => res.json()),
+    fetchRequest: () => fetch(`/site-features?url=${address}`)
+    .then(res => parseJson(res))
+    .then(res => {
+      if (res.Errors && res.Errors.length > 0) {
+        return { error: `No data returned, because ${res.Errors[0].Message || 'API lookup failed'}` };
+      }
+      return res;
+    }),
   });
 
   // Get DNSSEC info
@@ -327,7 +357,7 @@ const Results = (): JSX.Element => {
     jobId: 'dnssec',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`/dns-sec?url=${address}`).then(res => res.json()),
+    fetchRequest: () => fetch(`/dns-sec?url=${address}`).then(res => parseJson(res)),
   });
 
   /* Cancel remaining jobs after  10 second timeout */
@@ -357,24 +387,23 @@ const Results = (): JSX.Element => {
   const resultCardData = [
     { id: 'location', title: 'Server Location', result: locationResults, Component: ServerLocationCard, refresh: updateLocationResults },
     { id: 'ssl', title: 'SSL Info', result: sslResults, Component: SslCertCard, refresh: updateSslResults },
-    { id: 'dns', title: 'Headers', result: headersResults, Component: HeadersCard, refresh: updateHeadersResults },
-    { id: 'hosts', title: 'Host Names', result: shoadnResults?.hostnames, Component: HostNamesCard, refresh: updateShodanResults },
+    { id: 'headers', title: 'Headers', result: headersResults, Component: HeadersCard, refresh: updateHeadersResults },
     { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },
     { id: 'dns', title: 'DNS Records', result: dnsResults, Component: DnsRecordsCard, refresh: updateDnsResults },
+    { id: 'hosts', title: 'Host Names', result: shoadnResults?.hostnames, Component: HostNamesCard, refresh: updateShodanResults },
     { id: 'lighthouse', title: 'Performance', result: lighthouseResults, Component: LighthouseCard, refresh: updateLighthouseResults },
     { id: 'cookies', title: 'Cookies', result: cookieResults, Component: CookiesCard, refresh: updateCookieResults },
     { id: 'trace-route', title: 'Trace Route', result: traceRouteResults, Component: TraceRouteCard, refresh: updateTraceRouteResults },
-    { id: '', title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateLighthouseResults },
-    // { title: 'Technologies', result: technologyResults, Component: BuiltWithCard, refresh: updateTechnologyResults },
-    { id: 'robots-txt', title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard, refresh: updateRobotsTxtResults },
     { id: 'server-info', title: 'Server Info', result: shoadnResults?.serverInfo, Component: ServerInfoCard, refresh: updateShodanResults },
     { id: 'redirects', title: 'Redirects', result: redirectResults, Component: RedirectsCard, refresh: updateRedirectResults },
-    { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },
+    { id: 'robots-txt', title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard, refresh: updateRobotsTxtResults },
+    { id: 'dnssec', title: 'DNSSEC', result: dnsSecResults, Component: DnsSecCard, refresh: updateDnsSecResults },
     { id: 'status', title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard, refresh: updateServerStatusResults },
     { id: 'ports', title: 'Open Ports', result: portsResults, Component: OpenPortsCard, refresh: updatePortsResults },
-    { id: 'carbon', title: 'Carbon Footprint', result: carbonResults, Component: CarbonFootprintCard, refresh: updateCarbonResults },
+    { id: 'screenshot', title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateLighthouseResults },
+    { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },
     { id: 'features', title: 'Site Features', result: siteFeaturesResults, Component: SiteFeaturesCard, refresh: updateSiteFeaturesResults },
-    { id: 'dnssec', title: 'DNSSEC', result: dnsSecResults, Component: DnsSecCard, refresh: updateDnsSecResults },
+    { id: 'carbon', title: 'Carbon Footprint', result: carbonResults, Component: CarbonFootprintCard, refresh: updateCarbonResults },
   ];
 
   const MakeActionButtons = (title: string, refresh: () => void, showInfo: (id: string) => void): ReactNode => {
@@ -418,18 +447,14 @@ const Results = (): JSX.Element => {
   
   return (
     <ResultsOuter>
-      <Header as="header">
-        <Heading color={colors.primary} size="large">
-          <img width="64" src="/web-check.png" alt="Web Check Icon" />
-          <a href="/">Web Check</a>
-        </Heading>
-        { address && 
+      <Nav>
+      { address && 
         <Heading color={colors.textColor} size="medium">
           { addressType === 'url' && <img width="32px" src={`https://icon.horse/icon/${makeSiteName(address)}`} alt="" /> }
           {makeSiteName(address)}
         </Heading>
         }
-      </Header>
+      </Nav>
       <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
       
       <ResultsContent>

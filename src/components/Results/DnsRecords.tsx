@@ -2,8 +2,10 @@ import { Card } from 'components/Form/Card';
 import Row, { ListRow }  from 'components/Form/Row';
 
 const styles = `
+  grid-row: span 2;
   .content {
-    max-height: 32rem;
+    max-height: 50rem;
+    overflow-x: hidden;
     overflow-y: auto;
   }
 `;

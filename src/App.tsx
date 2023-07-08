@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import Styled from 'styled-components';
 import Home from 'pages/Home';
 import Results from 'pages/Results';
+import About from 'pages/About';
 import colors from 'styles/colors';
 
 const Container = Styled.main`
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/results/:address" element={<Results />} />
+        <Route path="/about" element={<About />} />
       </Routes>
     </Container>
   );

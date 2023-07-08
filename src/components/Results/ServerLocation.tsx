@@ -7,7 +7,7 @@ import Flag from 'components/misc/Flag';
 import { TextSizes } from 'styles/typography';
 import Row, { StyledRow } from 'components/Form/Row';
 
-const cardStyles = 'grid-row: span 2';
+const cardStyles = '';
 
 const SmallText = styled.span`
   opacity: 0.5;
