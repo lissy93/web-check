@@ -23,9 +23,13 @@ exports.handler = async (event) => {
       }),
     };
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: `Error: ${error.message}`,
-    };
+    return errorResponse(`Error: ${error.message}`);
   }
+};
+
+const errorResponse = (message, statusCode = 444) => {
+  return {
+    statusCode: statusCode,
+    body: JSON.stringify({ error: message }),
+  };
 };

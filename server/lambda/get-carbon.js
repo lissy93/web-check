@@ -6,7 +6,7 @@ exports.handler = async (event, context) => {
   if (!url) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: 'url query parameter is required' }),
+      body: JSON.stringify({ error: 'url query parameter is required' }),
     };
   }
 
@@ -49,7 +49,7 @@ exports.handler = async (event, context) => {
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: `Error: ${error.message}` }),
+      body: JSON.stringify({ error: `Error: ${error.message}` }),
     };
   }
 };

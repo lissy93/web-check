@@ -1,14 +1,10 @@
 const https = require('https');
-const urlModule = require('url');
 
 exports.handler = async function(event, context) {
   let { url } = event.queryStringParameters;
 
   if (!url) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'url query parameter is required' }),
-    };
+    return errorResponse('URL query parameter is required.');
   }
 
   // Extract hostname from URL
@@ -40,10 +36,10 @@ exports.handler = async function(event, context) {
           res.on('end', () => {
             resolve(JSON.parse(data));
           });
-        });
 
-        req.on('error', error => {
-          reject(error);
+          res.on('error', error => {
+            reject(error);
+          });
         });
 
         req.end();
@@ -55,15 +51,19 @@ exports.handler = async function(event, context) {
         records[type] = { isFound: false, answer: null, response: dnsResponse};
       }
     } catch (error) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: `Error fetching ${type} record: ${error.message}` }),
-      };
+      return errorResponse(`Error fetching ${type} record: ${error.message}`);
     }
   }
 
   return {
     statusCode: 200,
     body: JSON.stringify(records),
+  };
+};
+
+const errorResponse = (message, statusCode = 444) => {
+  return {
+    statusCode: statusCode,
+    body: JSON.stringify({ error: message }),
   };
 };

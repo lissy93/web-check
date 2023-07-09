@@ -9,7 +9,7 @@ const PORTS = [
 ];
 
 async function checkPort(port, domain) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         const socket = new net.Socket();
 
         socket.setTimeout(1500); // you may want to adjust the timeout
@@ -21,22 +21,23 @@ async function checkPort(port, domain) {
 
         socket.once('timeout', () => {
           socket.destroy();
+          reject(new Error(`Timeout at port: ${port}`));
         });
 
         socket.once('error', (e) => {
             socket.destroy();
+            reject(e);
         });
+        
         socket.connect(port, domain);
     });
 }
 
 exports.handler = async (event, context) => {
   const domain = event.queryStringParameters.url;
+  
   if (!domain) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: "Missing 'domain' parameter" }),
-    };
+    return errorResponse('Missing domain parameter.');
   }
 
   const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -71,11 +72,19 @@ exports.handler = async (event, context) => {
     }
   }
 
+  if(timeoutReached){
+    return errorResponse('The function timed out before completing.');
+  }
+
   return {
     statusCode: 200,
-    body: JSON.stringify({ timeout: timeoutReached, openPorts, failedPorts }),
+    body: JSON.stringify({ openPorts, failedPorts }),
   };
 };
 
-
-
+const errorResponse = (message, statusCode = 444) => {
+  return {
+    statusCode: statusCode,
+    body: JSON.stringify({ error: message }),
+  };
+};

@@ -6,11 +6,20 @@ exports.handler = async function(event, context) {
   if (!siteURL) {
     return {
       statusCode: 400,
-      body: 'Missing URL parameter',
+      body: JSON.stringify({ error: 'Missing url query parameter' }),
     };
   }
 
-  const parsedURL = new URL(siteURL);
+  let parsedURL;
+  try {
+    parsedURL = new URL(siteURL);
+  } catch (error) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid url query parameter' }),
+    };
+  }
+
   const robotsURL = `${parsedURL.protocol}//${parsedURL.hostname}/robots.txt`;
 
   try {
@@ -25,13 +34,13 @@ exports.handler = async function(event, context) {
     } else {
       return {
         statusCode: response.status,
-        body: `Failed to fetch robots.txt`,
+        body: JSON.stringify({ error: 'Failed to fetch robots.txt', statusCode: response.status }),
       };
     }
   } catch (error) {
     return {
       statusCode: 500,
-      body: `Error fetching robots.txt: ${error.toString()}`,
+      body: JSON.stringify({ error: `Error fetching robots.txt: ${error.message}` }),
     };
   }
 };
