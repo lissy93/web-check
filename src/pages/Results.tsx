@@ -189,7 +189,7 @@ const Results = (): JSX.Element => {
     jobId: 'get-ip',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`/find-url-ip?address=${address}`)
+    fetchRequest: () => fetch(`/find-url-ip?url=${address}`)
     .then(res => parseJson(res))
     .then(res => res.ip),
   });
