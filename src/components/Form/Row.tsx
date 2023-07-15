@@ -60,15 +60,39 @@ const SubRow = styled(StyledRow).attrs({
   border-bottom: 1px dashed ${colors.primaryTransparent} !important;
 `;
 
+const isValidDate = (date: any): boolean => {
+  // Checks if a date is within reasonable range
+  const isInRange = (date: Date): boolean => {
+    return date >= new Date('1995-01-01') && date <= new Date('2030-12-31');
+  };
+
+  // Check if input is a timestamp
+  if (typeof date === 'number') {
+    const timestampDate = new Date(date);
+    return !isNaN(timestampDate.getTime()) && isInRange(timestampDate);
+  }
+
+  // Check if input is a date string
+  if (typeof date === 'string') {
+    const dateStringDate = new Date(date);
+    return !isNaN(dateStringDate.getTime()) && isInRange(dateStringDate);
+  }
+
+  // Check if input is a Date object
+  if (date instanceof Date) {
+    return !isNaN(date.getTime()) && isInRange(date);
+  }
+
+  return false;
+};
+
+
 const formatDate = (dateString: string): string => {
   return new Intl.DateTimeFormat('en-GB', {
     day: 'numeric', month: 'long', year: 'numeric'
   }).format(new Date(dateString));
 }
 const formatValue = (value: any): string => {
-  const isValidDate = (date: any) => {
-    return date instanceof Date && !isNaN(date as any as number) && date >= new Date('1980-01-01');
-  };
   if (isValidDate(new Date(value))) return formatDate(value);
   if (typeof value === 'boolean') return value ? '✅' : '❌';
   return value;
