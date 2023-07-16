@@ -2,7 +2,10 @@
 import { Card } from 'components/Form/Card';
 import Row from 'components/Form/Row';
 
-const cardStyles = '';
+const cardStyles = `
+grid-column: span 2;
+span.val { max-width: 32rem; }
+`;
 
 const TxtRecordCard = (props: {data: any, title: string, actionButtons: any }): JSX.Element => {
   const records = props.data;

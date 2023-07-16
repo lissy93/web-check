@@ -268,6 +268,28 @@ const docs: Doc[] = [
     resources: [],
     screenshot: 'https://i.ibb.co/gP4P6kp/wc-features.png',
   },
+  {
+    id: "hsts",
+    title: "HTTP Strict Transport Security",
+    description: 'HTTP Strict Transport Security (HSTS) is a web security policy '
+    +'mechanism that helps protect websites against protocol downgrade attacks and '
+    + 'cookie hijacking. A website can be included in the HSTS preload list by '
+    + 'conforming to a set of requirements and then submitting itself to the list.',
+    use: `There are several reasons why it\'s important for a site to be HSTS enabled:
+  1. User bookmarks or manually types http://example.com and is subject to a man-in-the-middle attacker
+    HSTS automatically redirects HTTP requests to HTTPS for the target domain
+  2. Web application that is intended to be purely HTTPS inadvertently contains HTTP links or serves content over HTTP
+    HSTS automatically redirects HTTP requests to HTTPS for the target domain
+  3. A man-in-the-middle attacker attempts to intercept traffic from a victim user using an invalid certificate and hopes the user will accept the bad certificate
+    HSTS does not allow a user to override the invalid certificate message
+    `,
+    resources: [
+      'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security',
+      'https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Strict_Transport_Security_Cheat_Sheet.html',
+      'https://hstspreload.org/'
+    ],
+    screenshot: 'https://i.ibb.co/k253fq4/Screenshot-from-2023-07-17-20-10-52.png',
+  },
 ];
 
 export const about = [

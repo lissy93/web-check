@@ -187,6 +187,11 @@ export const parseRobotsTxt = (content: string): { robots: RowProps[] } => {
 }
 
 export const applyWhoIsResults = (response: any) => {
+  if (response.status !== '0') {
+    return {
+      error: response.status_desc,
+    }
+  }
   const whoIsResults: Whois = {
     created: response.date_created,
     expires: response.date_expires,
