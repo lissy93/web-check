@@ -5,7 +5,6 @@ import { ToastContainer } from 'react-toastify';
 
 import colors from 'styles/colors';
 import Heading from 'components/Form/Heading';
-import Card from 'components/Form/Card';
 import Modal from 'components/Form/Modal';
 import Footer from 'components/misc/Footer';
 import Nav from 'components/Form/Nav';
@@ -34,6 +33,7 @@ import TraceRouteCard from 'components/Results/TraceRoute';
 import CarbonFootprintCard from 'components/Results/CarbonFootprint';
 import SiteFeaturesCard from 'components/Results/SiteFeatures';
 import DnsSecCard from 'components/Results/DnsSec';
+import SelfScanMsg from 'components/misc/SelfScanMsg';
 
 import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
 import ActionButtons from 'components/misc/ActionButtons';
@@ -462,7 +462,7 @@ const Results = (): JSX.Element => {
         }
       </Nav>
       <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
-      
+      { address?.includes(window?.location?.hostname || 'web-check.as93.net') && <SelfScanMsg />}
       <ResultsContent>
           {
             resultCardData.map(({ id, title, result, refresh, Component }, index: number) => (
