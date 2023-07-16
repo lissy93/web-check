@@ -33,6 +33,7 @@ import TraceRouteCard from 'components/Results/TraceRoute';
 import CarbonFootprintCard from 'components/Results/CarbonFootprint';
 import SiteFeaturesCard from 'components/Results/SiteFeatures';
 import DnsSecCard from 'components/Results/DnsSec';
+import HstsCard from 'components/Results/Hsts';
 import SelfScanMsg from 'components/misc/SelfScanMsg';
 
 import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
@@ -280,7 +281,7 @@ const Results = (): JSX.Element => {
   });
 
   // Fetch and parse domain whois results
-  const [whoIsResults, updateWhoIsResults] = useMotherHook<Whois>({
+  const [whoIsResults, updateWhoIsResults] = useMotherHook<Whois | { error: string }>({
     jobId: 'whois',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
@@ -337,6 +338,14 @@ const Results = (): JSX.Element => {
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
     fetchRequest: () => fetch(`/get-carbon?url=${address}`).then(res => parseJson(res)),
+  });
+
+  // Check if a site is on the HSTS preload list
+  const [hstsResults, updateHstsResults] = useMotherHook({
+    jobId: 'hsts',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/check-hsts?url=${address}`).then(res => parseJson(res)),
   });
 
   // Get site features from BuiltWith
@@ -404,6 +413,7 @@ const Results = (): JSX.Element => {
     { id: 'ports', title: 'Open Ports', result: portsResults, Component: OpenPortsCard, refresh: updatePortsResults },
     { id: 'screenshot', title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateLighthouseResults },
     { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },
+    { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
     { id: 'features', title: 'Site Features', result: siteFeaturesResults, Component: SiteFeaturesCard, refresh: updateSiteFeaturesResults },
     { id: 'carbon', title: 'Carbon Footprint', result: carbonResults, Component: CarbonFootprintCard, refresh: updateCarbonResults },
   ];
