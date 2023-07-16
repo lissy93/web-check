@@ -109,7 +109,7 @@ export const ExpandableRow = (props: RowProps) => {
     <Details open={open}>
       <StyledExpandableRow key={`${lbl}-${val}`}>
         <span className="lbl" title={title?.toString()}>{lbl}</span>
-        <span className="val" title={val?.toString()}>{val}</span>
+        <span className="val" title={val?.toString()}>{val.toString()}</span>
       </StyledExpandableRow>
       { rowList &&
         <SubRowList>
