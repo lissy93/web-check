@@ -34,6 +34,7 @@ import CarbonFootprintCard from 'components/Results/CarbonFootprint';
 import SiteFeaturesCard from 'components/Results/SiteFeatures';
 import DnsSecCard from 'components/Results/DnsSec';
 import HstsCard from 'components/Results/Hsts';
+import DomainLookup from 'components/Results/DomainLookup';
 import SelfScanMsg from 'components/misc/SelfScanMsg';
 
 import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
@@ -371,6 +372,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`/dns-sec?url=${address}`).then(res => parseJson(res)),
   });
 
+  // Run a manual whois lookup on the domain
+  const [domainLookupResults, updateDomainLookupResults] = useMotherHook({
+    jobId: 'domain-lookup',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/whois-lookup?url=${address}`).then(res => parseJson(res)),
+  });
+
   /* Cancel remaining jobs after  10 second timeout */
   useEffect(() => {
     const checkJobs = () => {
@@ -399,7 +408,7 @@ const Results = (): JSX.Element => {
     { id: 'location', title: 'Server Location', result: locationResults, Component: ServerLocationCard, refresh: updateLocationResults },
     { id: 'ssl', title: 'SSL Info', result: sslResults, Component: SslCertCard, refresh: updateSslResults },
     { id: 'headers', title: 'Headers', result: headersResults, Component: HeadersCard, refresh: updateHeadersResults },
-    { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },
+    { id: 'domain', title: 'Whois', result: domainLookupResults, Component: DomainLookup, refresh: updateDomainLookupResults },
     { id: 'dns', title: 'DNS Records', result: dnsResults, Component: DnsRecordsCard, refresh: updateDnsResults },
     { id: 'hosts', title: 'Host Names', result: shoadnResults?.hostnames, Component: HostNamesCard, refresh: updateShodanResults },
     { id: 'lighthouse', title: 'Performance', result: lighthouseResults, Component: LighthouseCard, refresh: updateLighthouseResults },
@@ -414,6 +423,7 @@ const Results = (): JSX.Element => {
     { id: 'screenshot', title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateLighthouseResults },
     { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },
     { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
+    { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },
     { id: 'features', title: 'Site Features', result: siteFeaturesResults, Component: SiteFeaturesCard, refresh: updateSiteFeaturesResults },
     { id: 'carbon', title: 'Carbon Footprint', result: carbonResults, Component: CarbonFootprintCard, refresh: updateCarbonResults },
   ];
