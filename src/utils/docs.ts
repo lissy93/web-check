@@ -232,6 +232,19 @@ const docs: Doc[] = [
     screenshot: 'https://i.ibb.co/Mk1jx32/wc-server.png',
   },
   {
+    id: "domain",
+    title: "Whois Lookup",
+    description:
+      "This task retrieves Whois records for the target domain. Whois records are a rich source of information, including the name and contact information of the domain registrant, the domain's creation and expiration dates, the domain's nameservers, and more. The information is usually obtained through a query to a Whois database server.",
+    use: "In an OSINT context, Whois records can provide valuable clues about the entity behind a website. They can show when the domain was first registered and when it's set to expire, which could provide insights into the operational timeline of the entity. The contact information, though often redacted or anonymized, can sometimes lead to additional avenues of investigation. The nameservers could also be used to link together multiple domains owned by the same entity.",
+    resources: [
+      "https://en.wikipedia.org/wiki/WHOIS",
+      "https://www.icann.org/resources/pages/whois-2018-01-17-en",
+      "https://whois.domaintools.com/",
+    ],
+    screenshot: 'https://i.ibb.co/89WLp14/wc-domain.png',
+  },
+  {
     id: "whois",
     title: "Domain Info",
     description:
