@@ -55,7 +55,7 @@ const Home = (): JSX.Element => {
 
   /* Check is valid address, either show err or redirect to results page */
   const submit = () => {
-    let address = userInput;
+    let address = userInput.endsWith("/") ? userInput.slice(0, -1) : userInput;
     const addressType = determineAddressType(address);
   
     if (addressType === 'empt') {
