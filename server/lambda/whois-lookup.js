@@ -1,14 +1,42 @@
 const net = require('net');
-const { URL } = require('url');
+// const { URL } = require('url');
+
+const errorResponse = (message, statusCode = 444) => {
+  return {
+    statusCode: statusCode,
+    body: JSON.stringify({ error: message }),
+  };
+};
+
+const getBaseDomain = (url) => {
+  // Determine whether a protocol is present
+  let protocol = '';
+  if (url.startsWith('http://')) {
+      protocol = 'http://';
+  } else if (url.startsWith('https://')) {
+      protocol = 'https://';
+  }
+
+  // Remove protocol for domain parsing but keep it for final output
+  let noProtocolUrl = url.replace(protocol, '');
+
+  // Split on '.' and get the last two sections
+  const domainParts = noProtocolUrl.split('.');
+
+  // If there's more than one '.' 
+  // then get only the last two parts to ignore subdomains
+  if (domainParts.length > 2) {
+      return protocol + domainParts.slice(-2).join('.');
+  } else {
+      return url;
+  }
+}
 
 exports.handler = async function(event, context) {
   let url = event.queryStringParameters.url;
 
   if (!url) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'A url query parameter is required' }),
-    };
+    return errorResponse('URL query parameter is required.', 400);
   }
 
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -17,12 +45,9 @@ exports.handler = async function(event, context) {
 
   let hostname;
   try {
-    hostname = new URL(url).hostname;
+    hostname = getBaseDomain(new URL(url).hostname);
   } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'Invalid url provided' }),
-    };
+    return errorResponse(`Unable to parse URL: ${error}`, 400);
   }
 
   return new Promise((resolve, reject) => {
@@ -43,18 +68,12 @@ exports.handler = async function(event, context) {
           body: JSON.stringify(parsedData),
         });
       } catch (error) {
-        resolve({
-          statusCode: 500,
-          body: JSON.stringify({ error: error.message }),
-        });
+        resolve(errorResponse(error.message));
       }
     });
 
     client.on('error', (err) => {
-      resolve({
-        statusCode: 500,
-        body: JSON.stringify({ message: err.message }),
-      });
+      resolve(errorResponse(err.message, 500));
     });
   });
 };
