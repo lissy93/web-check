@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 
 
 const FancyBackground = (): JSX.Element => {
@@ -325,7 +326,7 @@ const FancyBackground = (): JSX.Element => {
     return { x: xx, y: yy };
   };
   
-  document.addEventListener('DOMContentLoaded', function () {
+  useEffect(() => {
     App.setup();
     App.draw();
   
@@ -334,7 +335,8 @@ const FancyBackground = (): JSX.Element => {
       requestAnimationFrame(frame);
     };
     frame();
-  });
+  }, []);
+  
   
 
   return (

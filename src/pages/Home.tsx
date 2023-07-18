@@ -119,7 +119,7 @@ const Home = (): JSX.Element => {
         />
         {/* <FindIpButton onClick={findIpAddress}>Or, find my IP</FindIpButton> */}
         { errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
-        <Button size="large" onClick={submit}>Analyze!</Button>
+        <Button styles="width: calc(100% - 1rem);" size="large" onClick={submit}>Analyze!</Button>
       </UserInputMain>
       <Footer isFixed={true} />
     </HomeContainer>

@@ -8,17 +8,24 @@ const StyledFooter = styled.footer`
   padding: 0.5rem 0;
   background: ${colors.backgroundDarker};
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
   flex-wrap: wrap;
   opacity: 0.75;
   transition: all 0.2s ease-in-out;
+  @media (min-width: 1024px) {
+    justify-content: space-between;
+  }
   &:hover {
     opacity: 1;
   }
   span {
     margin: 0 0.5rem;
+    text-align: center; 
   }
 `;
+
 
 const Link = styled.a`
   color: ${colors.primary};

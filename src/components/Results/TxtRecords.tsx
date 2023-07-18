@@ -4,7 +4,7 @@ import Row from 'components/Form/Row';
 
 const cardStyles = `
 grid-column: span 2;
-span.val { max-width: 32rem; }
+span.val { max-width: 32rem !important; }
 `;
 
 const TxtRecordCard = (props: {data: any, title: string, actionButtons: any }): JSX.Element => {
