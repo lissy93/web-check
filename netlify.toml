@@ -119,6 +119,11 @@
   to = "/.netlify/functions/dns-server"
   status = 301
   force = true
+[[redirects]]
+  from = "/tech-stack"
+  to = "/.netlify/functions/tech-stack"
+  status = 301
+  force = true
   
 # For router history mode, ensure pages land on index
 [[redirects]]

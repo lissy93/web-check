@@ -36,6 +36,7 @@ import DnsSecCard from 'components/Results/DnsSec';
 import HstsCard from 'components/Results/Hsts';
 import DomainLookup from 'components/Results/DomainLookup';
 import DnsServerCard from 'components/Results/DnsServer';
+import TechStackCard from 'components/Results/TechStack';
 import SelfScanMsg from 'components/misc/SelfScanMsg';
 
 import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
@@ -326,6 +327,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`/server-status?url=${address}`).then(res => parseJson(res)),
   });
 
+  // Get current status and response time of server
+  const [techStackResults, updateTechStackResults] = useMotherHook({
+    jobId: 'tech-stack',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/tech-stack?url=${address}`).then(res => parseJson(res)),
+  });
+
   // Get trace route for a given hostname
   const [traceRouteResults, updateTraceRouteResults] = useMotherHook({
     jobId: 'trace-route',
@@ -420,6 +429,7 @@ const Results = (): JSX.Element => {
     { id: 'domain', title: 'Whois', result: domainLookupResults, Component: DomainLookup, refresh: updateDomainLookupResults },
     { id: 'dns', title: 'DNS Records', result: dnsResults, Component: DnsRecordsCard, refresh: updateDnsResults },
     { id: 'hosts', title: 'Host Names', result: shoadnResults?.hostnames, Component: HostNamesCard, refresh: updateShodanResults },
+    { id: 'tech-stack', title: 'Tech Stack', result: techStackResults, Component: TechStackCard, refresh: updateTechStackResults },
     { id: 'lighthouse', title: 'Performance', result: lighthouseResults, Component: LighthouseCard, refresh: updateLighthouseResults },
     { id: 'cookies', title: 'Cookies', result: cookieResults, Component: CookiesCard, refresh: updateCookieResults },
     { id: 'trace-route', title: 'Trace Route', result: traceRouteResults, Component: TraceRouteCard, refresh: updateTraceRouteResults },

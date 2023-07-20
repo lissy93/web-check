@@ -31,6 +31,7 @@
     "traceroute": "^1.0.0",
     "tsparticles": "^2.0.6",
     "typescript": "^4.7.3",
+    "wappalyzer": "^6.10.63",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
