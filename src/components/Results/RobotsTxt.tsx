@@ -5,7 +5,7 @@ import Row, { RowProps }  from 'components/Form/Row';
 const cardStyles = `
   grid-row: span 2;
   .content {
-    max-height: 40rem;
+    max-height: 50rem;
     overflow-y: auto;
   }
 `;

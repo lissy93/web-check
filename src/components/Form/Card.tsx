@@ -11,6 +11,7 @@ export const StyledCard = styled.section<{ styles?: string}>`
   border-radius: 8px;
   padding: 1rem;
   position: relative;
+  margin 0.5rem;
   ${props => props.styles}
 `;
 

@@ -30,9 +30,7 @@ p {
 }
 `;
 
-const cardStyles = `
-  grid-row: span 2;
-`;
+const cardStyles = ``;
 
 const TraceRouteCard = (props: { data: any, title: string, actionButtons: any }): JSX.Element => {
   const traceRouteResponse = props.data;

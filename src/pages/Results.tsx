@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, ReactNode } from 'react';
 import {   useParams } from "react-router-dom";
 import styled from 'styled-components';
 import { ToastContainer } from 'react-toastify';
+import Masonry from 'react-masonry-css'
 
 import colors from 'styles/colors';
 import Heading from 'components/Form/Heading';
@@ -59,6 +60,24 @@ import {
 const ResultsOuter = styled.div`
   display: flex;
   flex-direction: column;
+  .my-masonry-grid {
+    display: -webkit-box; /* Not needed if autoprefixing */
+    display: -ms-flexbox; /* Not needed if autoprefixing */
+    display: flex;
+    // margin: 1rem;
+    // margin-left: -30px; /* gutter size offset */
+    width: auto;
+  }
+  .my-masonry-grid_column {
+    // margin-left: 30px; /* gutter size */
+    background-clip: padding-box;
+  }
+
+  /* Style your items */
+  .my-masonry-grid_column > div { /* change div to reference your elements you put in <Masonry> */
+    // background: grey;
+    // margin-bottom: 30px;
+}
 `;
 
 const ResultsContent = styled.section`
@@ -504,6 +523,11 @@ const Results = (): JSX.Element => {
       <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
       { address?.includes(window?.location?.hostname || 'web-check.as93.net') && <SelfScanMsg />}
       <ResultsContent>
+        
+      <Masonry
+          breakpointCols={{ 10000: 12, 4000: 9, 3600: 8, 3200: 7, 2800: 6, 2400: 5, 2000: 4, 1600: 3, 1200: 2, 800: 1 }}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column">
           {
             resultCardData.map(({ id, title, result, refresh, Component }, index: number) => (
               (result && !result.error) ? (
@@ -518,6 +542,7 @@ const Results = (): JSX.Element => {
               ) : <></>
             ))
           }
+          </Masonry>
       </ResultsContent>
       <Footer />
       <Modal isOpen={modalOpen} closeModal={()=> setModalOpen(false)}>{modalContent}</Modal>

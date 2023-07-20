@@ -5,7 +5,7 @@ import Heading  from 'components/Form/Heading';
 
 const styles = `
   .content {
-    max-height: 32rem;
+    max-height: 50rem;
     overflow-y: auto;
   }
 
