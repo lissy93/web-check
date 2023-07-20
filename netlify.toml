@@ -113,6 +113,11 @@
   from = "/whois-lookup"
   to = "/.netlify/functions/whois-lookup"
   status = 301
+  force = true  
+[[redirects]]
+  from = "/dns-server"
+  to = "/.netlify/functions/dns-server"
+  status = 301
   force = true
   
 # For router history mode, ensure pages land on index
