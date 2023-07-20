@@ -1,7 +1,7 @@
 
 import { Card } from 'components/Form/Card';
 import Heading from 'components/Form/Heading';
-import Row, { ExpandableRow, RowProps } from 'components/Form/Row';
+import Row from 'components/Form/Row';
 import colors from 'styles/colors';
 
 const cardStyles = `
@@ -15,7 +15,6 @@ const cardStyles = `
 
 const DnsServerCard = (props: {data: any, title: string, actionButtons: any }): JSX.Element => {
   const dnsSecurity = props.data;
-  console.log(dnsSecurity);
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       {dnsSecurity.dns.map((dns: any, index: number) => {
