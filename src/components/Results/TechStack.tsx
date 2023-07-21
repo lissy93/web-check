@@ -62,8 +62,9 @@ h4 {
   }
 }
 .tech-icon {
-  width: 2.5rem;
+  min-width: 2.5rem;
   border-radius: 4px;
+  margin: 0.5rem 0;
 }
 &:not(:last-child) {
   border-bottom: 1px solid ${colors.primary};

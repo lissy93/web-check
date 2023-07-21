@@ -19,7 +19,6 @@ const cardStyles = `
 `;
 
 const SitemapCard = (props: {data: any, title: string, actionButtons: any }): JSX.Element => {
-  console.log(props.data);
   const normalSiteMap = props.data.url ||  props.data.urlset?.url || null;
   const siteMapIndex = props.data.sitemapindex?.sitemap || null;
 
@@ -32,8 +31,12 @@ const SitemapCard = (props: {data: any, title: string, actionButtons: any }): JS
   };
 
   const getPathFromUrl = (url: string) => {
-    const urlObj = new URL(url);
-    return urlObj.pathname;
+    try {
+      const urlObj = new URL(url);
+      return urlObj.pathname;
+    } catch (e) {
+      return url;
+    }    
   };
 
   return (

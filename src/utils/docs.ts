@@ -92,7 +92,7 @@ const docs: Doc[] = [
     screenshot: 'https://i.ibb.co/t3xcwP1/wc-headers.png',
   },
   {
-    id: "lighthouse",
+    id: "quality",
     title: "Quality Report",
     description:
       "The Headers task involves extracting and interpreting the HTTP headers sent by the target website during the request-response cycle. HTTP headers are key-value pairs sent at the start of an HTTP response, or before the actual data. Headers contain important directives for how to handle the data being transferred, including cache policies, content types, encoding, server information, security policies, and more.",
@@ -302,6 +302,45 @@ const docs: Doc[] = [
       'https://hstspreload.org/'
     ],
     screenshot: 'https://i.ibb.co/k253fq4/Screenshot-from-2023-07-17-20-10-52.png',
+  },
+  {
+    id: 'screenshot',
+    title: 'Screenshot',
+    description: 'This check takes a screenshot of webpage that the requested URL / IP resolves to, and displays it.',
+    use: 'This may be useful to see what a given website looks like, free of the constraints of your browser, IP, or location.',
+    resources: [],
+  },
+  {
+    id: 'dns-server',
+    title: 'DNS Server',
+    description: 'This check determines the DNS server(s) that the requested URL / IP resolves to. Also fires off a rudimentary check to see if the DNS server supports DoH, and weather it\'s vulnerable to DNS cache poisoning.',
+    use: '',
+    resources: [],
+  },
+  {
+    id: 'tech-stack',
+    title: 'Tech Stack',
+    description: 'Checks what technologies a site is built with.'
+    + 'This is done by fetching and parsing the site, then comparing it against a bit list of RegEx maintained by Wappalyzer to identify the unique fingerprints that different technologies leave.',
+    use: 'Identifying a website\'s tech stack aids in evaluating its security by exposing potential vulnerabilities, '
+    + 'informs competitive analyses and development decisions, and can guide tailored marketing strategies. '
+    + 'Ethical application of this knowledge is crucial to avoid harmful activities like data theft or unauthorized intrusion.',
+    resources: [
+      'https://builtwith.com/',
+      'https://github.com/wappalyzer/wappalyzer/tree/master/src/technologies'
+    ],
+  },
+  {
+    id: 'sitemap',
+    title: 'Sitemap',
+    description: 'This job finds and parses a site\'s listed sitemap. This file lists public sub-pages on the site, which the author wishes to be crawled by search engines. Sitemaps help with SEO, but are also useful for seeing all a sites public content at a glance.',
+    use: 'Understand the structure of a site\'s public-facing content, and for site-owners, check that you\'re site\'s sitemap is accessible, parsable and contains everything you wish it to.',
+    resources: [
+      'https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview',
+      'https://www.sitemaps.org/protocol.html',
+      'https://www.conductor.com/academy/xml-sitemap/',
+    ],
+    screenshot: 'https://i.ibb.co/GtrCQYq/Screenshot-from-2023-07-21-12-28-38.png',
   },
 ];
 
