@@ -35,6 +35,7 @@ import CarbonFootprintCard from 'components/Results/CarbonFootprint';
 import SiteFeaturesCard from 'components/Results/SiteFeatures';
 import DnsSecCard from 'components/Results/DnsSec';
 import HstsCard from 'components/Results/Hsts';
+import SitemapCard from 'components/Results/Sitemap';
 import DomainLookup from 'components/Results/DomainLookup';
 import DnsServerCard from 'components/Results/DnsServer';
 import TechStackCard from 'components/Results/TechStack';
@@ -60,24 +61,11 @@ import {
 const ResultsOuter = styled.div`
   display: flex;
   flex-direction: column;
-  .my-masonry-grid {
-    display: -webkit-box; /* Not needed if autoprefixing */
-    display: -ms-flexbox; /* Not needed if autoprefixing */
+  .masonry-grid {
     display: flex;
-    // margin: 1rem;
-    // margin-left: -30px; /* gutter size offset */
     width: auto;
   }
-  .my-masonry-grid_column {
-    // margin-left: 30px; /* gutter size */
-    background-clip: padding-box;
-  }
-
-  /* Style your items */
-  .my-masonry-grid_column > div { /* change div to reference your elements you put in <Masonry> */
-    // background: grey;
-    // margin-bottom: 30px;
-}
+  .masonry-grid-col section { margin: 1rem 0.5rem; }
 `;
 
 const ResultsContent = styled.section`
@@ -165,7 +153,6 @@ const Results = (): JSX.Element => {
   }, []);
 
   const parseJson = (response: Response): Promise<any> => {
-    // return response.json()
     return new Promise((resolve) => {
       if (response.ok) {
         response.json()
@@ -181,20 +168,6 @@ const Results = (): JSX.Element => {
       }
     });
   };
-  
-
-
-  // const parseJson = (response: Response): Promise<any> => {
-  //   if (response.status >= 400) {
-  //     return new Promise((resolve) => resolve({ error: `Failed to fetch data: ${response.statusText}` }));
-  //   }
-  //   return new Promise((resolve) => {
-  //     if (!response) { resolve({ error: 'No response from server' }); }
-  //     response.json()
-  //       .catch(error => resolve({ error: `Failed to process response, likely due to Netlify's 10-sec limit on lambda functions. Error: ${error}`}));  
-  //   });
-  // };
-  
 
   useEffect(() => {
     if (!addressType || addressType === 'empt') {
@@ -312,16 +285,6 @@ const Results = (): JSX.Element => {
       .then(res => applyWhoIsResults(res)),
   });
 
-  // Fetch and parse built-with results
-  // const [technologyResults, updateTechnologyResults] = useMotherHook<TechnologyGroup[]>({
-  //   jobId: 'built-with',
-  //   updateLoadingJobs,
-  //   addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-  //   fetchRequest: () => fetch(`https://api.builtwith.com/v21/api.json?KEY=${keys.builtWith}&LOOKUP=${address}`)
-  //     .then(res => parseJson(res))
-  //     .then(res => makeTechnologies(res)),
-  // });
-
   // Fetches DNS TXT records
   const [txtRecordResults, updateTxtRecordResults] = useMotherHook({
     jobId: 'txt-records',
@@ -376,6 +339,14 @@ const Results = (): JSX.Element => {
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
     fetchRequest: () => fetch(`/check-hsts?url=${address}`).then(res => parseJson(res)),
+  });
+
+  // Get a websites listed pages, from sitemap
+  const [sitemapResults, updateSitemapResults] = useMotherHook({
+    jobId: 'sitemap',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/sitemap?url=${address}`).then(res => parseJson(res)),
   });
 
   // Get site features from BuiltWith
@@ -449,12 +420,13 @@ const Results = (): JSX.Element => {
     { id: 'dns', title: 'DNS Records', result: dnsResults, Component: DnsRecordsCard, refresh: updateDnsResults },
     { id: 'hosts', title: 'Host Names', result: shoadnResults?.hostnames, Component: HostNamesCard, refresh: updateShodanResults },
     { id: 'tech-stack', title: 'Tech Stack', result: techStackResults, Component: TechStackCard, refresh: updateTechStackResults },
-    { id: 'lighthouse', title: 'Performance', result: lighthouseResults, Component: LighthouseCard, refresh: updateLighthouseResults },
+    { id: 'quality', title: 'Quality Summary', result: lighthouseResults, Component: LighthouseCard, refresh: updateLighthouseResults },
     { id: 'cookies', title: 'Cookies', result: cookieResults, Component: CookiesCard, refresh: updateCookieResults },
     { id: 'trace-route', title: 'Trace Route', result: traceRouteResults, Component: TraceRouteCard, refresh: updateTraceRouteResults },
     { id: 'server-info', title: 'Server Info', result: shoadnResults?.serverInfo, Component: ServerInfoCard, refresh: updateShodanResults },
     { id: 'redirects', title: 'Redirects', result: redirectResults, Component: RedirectsCard, refresh: updateRedirectResults },
     { id: 'robots-txt', title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard, refresh: updateRobotsTxtResults },
+    { id: 'sitemap', title: 'Pages', result: sitemapResults, Component: SitemapCard, refresh: updateSitemapResults },
     { id: 'dnssec', title: 'DNSSEC', result: dnsSecResults, Component: DnsSecCard, refresh: updateDnsSecResults },
     { id: 'status', title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard, refresh: updateServerStatusResults },
     { id: 'ports', title: 'Open Ports', result: portsResults, Component: OpenPortsCard, refresh: updatePortsResults },
@@ -526,8 +498,8 @@ const Results = (): JSX.Element => {
         
       <Masonry
           breakpointCols={{ 10000: 12, 4000: 9, 3600: 8, 3200: 7, 2800: 6, 2400: 5, 2000: 4, 1600: 3, 1200: 2, 800: 1 }}
-          className="my-masonry-grid"
-          columnClassName="my-masonry-grid_column">
+          className="masonry-grid"
+          columnClassName="masonry-grid-col">
           {
             resultCardData.map(({ id, title, result, refresh, Component }, index: number) => (
               (result && !result.error) ? (
