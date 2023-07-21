@@ -236,7 +236,7 @@ const Results = (): JSX.Element => {
 
   // Fetch and parse Lighthouse performance data
   const [lighthouseResults, updateLighthouseResults] = useMotherHook({
-    jobId: 'lighthouse',
+    jobId: 'quality',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
     fetchRequest: () => fetch(`/lighthouse-report?url=${address}`)
@@ -349,6 +349,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`/sitemap?url=${address}`).then(res => parseJson(res)),
   });
 
+  // Get a websites listed pages, from sitemap
+  const [screenshotResult, updateScreenshotResult] = useMotherHook({
+    jobId: 'screenshot',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`/screenshot?url=${address}`).then(res => parseJson(res)),
+  });
+
   // Get site features from BuiltWith
   const [siteFeaturesResults, updateSiteFeaturesResults] = useMotherHook({
     jobId: 'features',
@@ -374,7 +382,7 @@ const Results = (): JSX.Element => {
 
   // Run a manual whois lookup on the domain
   const [domainLookupResults, updateDomainLookupResults] = useMotherHook({
-    jobId: 'domain-lookup',
+    jobId: 'domain',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
     fetchRequest: () => fetch(`/whois-lookup?url=${address}`).then(res => parseJson(res)),
@@ -430,7 +438,8 @@ const Results = (): JSX.Element => {
     { id: 'dnssec', title: 'DNSSEC', result: dnsSecResults, Component: DnsSecCard, refresh: updateDnsSecResults },
     { id: 'status', title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard, refresh: updateServerStatusResults },
     { id: 'ports', title: 'Open Ports', result: portsResults, Component: OpenPortsCard, refresh: updatePortsResults },
-    { id: 'screenshot', title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateLighthouseResults },
+    { id: 'screenshot', title: 'Screenshot', result: screenshotResult, Component: ScreenshotCard, refresh: updateScreenshotResult },
+    // { id: 'screenshot', title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateLighthouseResults },
     { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },
     { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
     { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },
