@@ -1,6 +1,6 @@
 exports.handler = async (event) => {
   const { url } = event.queryStringParameters;
-  const redirects = [];
+  const redirects = [url];
 
   try {
     const got = await import('got');
