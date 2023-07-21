@@ -154,18 +154,11 @@ const Results = (): JSX.Element => {
 
   const parseJson = (response: Response): Promise<any> => {
     return new Promise((resolve) => {
-      if (response.ok) {
         response.json()
           .then(data => resolve(data))
           .catch(error => resolve(
             { error: `Failed to process response, likely due to Netlify's 10-sec limit on lambda functions. Error: ${error}`}
           ));
-      } else {
-        resolve(
-          { error: `Response returned with status: ${response.status} ${response.statusText}.`
-          + `This is likely due to an incompatibility with the lambda function.` }
-        );
-      }
     });
   };
 

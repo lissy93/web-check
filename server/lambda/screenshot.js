@@ -31,8 +31,8 @@ exports.handler = async (event, context, callback) => {
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: { width: 800, height: 600 },
-      executablePath: '/usr/bin/chromium',
-      // executablePath: await chromium.executablePath(),
+      // executablePath: '/usr/bin/chromium',
+      executablePath: await chromium.executablePath(),
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });

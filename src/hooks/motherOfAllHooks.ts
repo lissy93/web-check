@@ -52,7 +52,7 @@ const useMotherOfAllHooks = <ResultType = any>(params: UseIpAddressProps<ResultT
     })
     .catch((err) => {
       // Something fucked up, log the error
-      updateLoadingJobs(jobId, 'error', err.message, reset);
+      updateLoadingJobs(jobId, 'error', err.error || err.message, reset);
       throw err;
     })
   }
