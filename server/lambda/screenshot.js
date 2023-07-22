@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer-core');
-const chromium = require('@sparticuz/chromium');
+const chromium = require('chrome-aws-lambda');
 
 exports.handler = async (event, context, callback) => {
   let browser = null;
@@ -28,26 +28,22 @@ exports.handler = async (event, context, callback) => {
   }
 
   try {
-    browser = await puppeteer.launch({
+      browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: { width: 800, height: 600 },
-      // executablePath: '/usr/bin/chromium',
-      executablePath: await chromium.executablePath(),
+      executablePath: process.env.CHROME_EXECUTABLE_PATH || await chromium.executablePath,
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });
 
     let page = await browser.newPage();
 
-    // Emulate dark theme
     await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }]);
 
-    // Set navigation timeout
-    page.setDefaultNavigationTimeout(5000);
+    page.setDefaultNavigationTimeout(8000);
 
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
 
-    // Ensure the page has some minimal interactivity before taking the screenshot.
     await page.evaluate(() => {
       const selector = 'body';
       return new Promise((resolve, reject) => {
@@ -70,6 +66,7 @@ exports.handler = async (event, context, callback) => {
 
     callback(null, response);
   } catch (error) {
+    console.log(error);
     callback(null, {
       statusCode: 500,
       body: JSON.stringify({ error: `An error occurred: ${error.message}` }),

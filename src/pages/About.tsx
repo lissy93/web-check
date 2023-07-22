@@ -31,6 +31,7 @@ const HeaderLinkContainer = styled.nav`
 const Section = styled(StyledCard)`
   margin-bottom: 2rem;
   overflow: clip;
+  max-height: 100%;
   h3 {
     font-size: 1.5rem;
   }
@@ -76,6 +77,7 @@ const Section = styled(StyledCard)`
     max-width: 300px;
     max-height: 28rem;
     border-radius: 6px;
+    clear: both;
   }
 `;
 

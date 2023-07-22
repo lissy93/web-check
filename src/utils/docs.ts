@@ -276,8 +276,8 @@ const docs: Doc[] = [
   {
     id: "features",
     title: "Features",
-    description: '',
-    use: "",
+    description: 'Checks which core features are present on a site. If a feature as marked as dead, that means it\'s not being actively used at load time',
+    use: "This is useful to understand what a site is capable of, and what technologies to look for",
     resources: [],
     screenshot: 'https://i.ibb.co/gP4P6kp/wc-features.png',
   },
