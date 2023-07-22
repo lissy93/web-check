@@ -1,0 +1,8 @@
+version: '3.9'
+services:
+  web-check:
+    container_name: Web-Check
+    image: lissy93/web-check
+    ports:
+      - 8888:8888
+    restart: unless-stopped
