@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const axios = require('axios');
 
 exports.handler = async function(event, context) {
   const { url } = event.queryStringParameters;
@@ -11,14 +11,18 @@ exports.handler = async function(event, context) {
   }
 
   try {
-    const response = await fetch(url);
-    const headers = response.headers.raw();
+    const response = await axios.get(url, {
+      validateStatus: function (status) {
+        return status >= 200 && status < 600; // Resolve only if the status code is less than 600
+      },
+    });
 
     return {
       statusCode: 200,
-      body: JSON.stringify(headers),
+      body: JSON.stringify(response.headers),
     };
   } catch (error) {
+    console.log(error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message }),

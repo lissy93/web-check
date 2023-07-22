@@ -31,9 +31,10 @@ exports.handler = async (event, context, callback) => {
       browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: { width: 800, height: 600 },
-      executablePath: process.env.CHROME_EXECUTABLE_PATH || await chromium.executablePath,
+      executablePath: process.env.CHROME_PATH || await chromium.executablePath,
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
+      ignoreDefaultArgs: ['--disable-extensions'],
     });
 
     let page = await browser.newPage();

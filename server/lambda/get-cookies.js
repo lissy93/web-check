@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const axios = require('axios');
 
 exports.handler = async function(event, context) {
   const { url } = event.queryStringParameters;
@@ -11,9 +11,8 @@ exports.handler = async function(event, context) {
   }
 
   try {
-    const response = await fetch(url);
-    const cookies = response.headers.get('set-cookie');
-
+    const response = await axios.get(url, {withCredentials: true});
+    const cookies = response.headers['set-cookie'];
     return {
       statusCode: 200,
       body: JSON.stringify({ cookies }),

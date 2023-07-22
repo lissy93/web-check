@@ -25,11 +25,6 @@
 
 # Redirect the Node endpoints to serverless functions
 [[redirects]]
-  from = "/api"
-  to = "/.netlify/functions/web-check"
-  status = 301
-  force = true
-[[redirects]]
   from = "/find-url-ip"
   to = "/.netlify/functions/find-url-ip"
   status = 301
@@ -134,7 +129,12 @@
   to = "/.netlify/functions/screenshot"
   status = 301
   force = true
-  
+
+[[plugins]]
+package = "netlify-plugin-chromium"
+  [plugins.inputs]
+  packageManager = ["yarn"]
+
 # For router history mode, ensure pages land on index
 [[redirects]]
   from = "/*"

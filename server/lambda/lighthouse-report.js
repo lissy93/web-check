@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const axios = require('axios');
 
 exports.handler = function(event, context, callback) {
   const { url } = event.queryStringParameters;
@@ -12,13 +12,13 @@ exports.handler = function(event, context, callback) {
 
   const apiKey = process.env.GOOGLE_CLOUD_API_KEY;
   const endpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&category=PERFORMANCE&category=ACCESSIBILITY&category=BEST_PRACTICES&category=SEO&category=PWA&strategy=mobile&key=${apiKey}`;
-  fetch(endpoint)
-  .then((res) => res.json() )
+  
+  axios.get(endpoint)
   .then(
-    (data) => {
+    (response) => {
       callback(null, {
         statusCode: 200,
-        body: JSON.stringify(data),
+        body: JSON.stringify(response.data),
       });
     }
   ).catch(
@@ -30,4 +30,3 @@ exports.handler = function(event, context, callback) {
     }
   );
 };
-

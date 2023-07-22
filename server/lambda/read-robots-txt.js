@@ -1,8 +1,8 @@
-const fetch = require('node-fetch');
+const axios = require('axios');
 
 exports.handler = async function(event, context) {
   const siteURL = event.queryStringParameters.url;
-  
+
   if (!siteURL) {
     return {
       statusCode: 400,
@@ -23,13 +23,12 @@ exports.handler = async function(event, context) {
   const robotsURL = `${parsedURL.protocol}//${parsedURL.hostname}/robots.txt`;
 
   try {
-    const response = await fetch(robotsURL);
-    const text = await response.text();
+    const response = await axios.get(robotsURL);
 
-    if (response.ok) {
+    if (response.status === 200) {
       return {
         statusCode: 200,
-        body: text,
+        body: response.data,
       };
     } else {
       return {
