@@ -12,6 +12,7 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/react-router-dom": "^5.3.3",
+    "@types/react-simple-maps": "^3.0.0",
     "@types/styled-components": "^5.1.26",
     "axios": "^1.4.0",
     "chrome-aws-lambda": "^10.1.0",
@@ -19,9 +20,9 @@
     "got": "^13.0.0",
     "jest-styled-components": "^7.1.1",
     "netlify-cli": "^15.9.1",
-    "netlify-plugin-chromium": "^1.1.4",
     "perf_hooks": "^0.0.1",
     "psl": "^1.9.0",
+    "puppeteer": "^20.9.0",
     "puppeteer-core": "^20.9.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -61,9 +62,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@types/react-simple-maps": "^3.0.0"
   },
   "compilerOptions": {
     "allowJs": true,

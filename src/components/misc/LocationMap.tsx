@@ -32,8 +32,8 @@ const MapChart = (location: Props) => {
         stroke={colors.primary}
         strokeWidth={0.5}
       >
-        {({ geographies }) =>
-          geographies.map((geo) => (
+        {({ geographies }: any) =>
+          geographies.map((geo: any) => (
             <Geography key={geo.rsmKey} geography={geo} />
           ))
         }

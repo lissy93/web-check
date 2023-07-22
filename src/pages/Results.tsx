@@ -18,7 +18,6 @@ import ServerLocationCard from 'components/Results/ServerLocation';
 import ServerInfoCard from 'components/Results/ServerInfo';
 import HostNamesCard from 'components/Results/HostNames';
 import WhoIsCard from 'components/Results/WhoIs';
-import BuiltWithCard from 'components/Results/BuiltWith';
 import LighthouseCard from 'components/Results/Lighthouse';
 import ScreenshotCard from 'components/Results/Screenshot';
 import SslCertCard from 'components/Results/SslCert';
@@ -51,7 +50,6 @@ import useMotherHook from 'hooks/motherOfAllHooks';
 
 import {
   getLocation, ServerLocation,
-  makeTechnologies, TechnologyGroup,
   parseCookies, Cookie,
   parseRobotsTxt,
   applyWhoIsResults, Whois,
@@ -157,7 +155,9 @@ const Results = (): JSX.Element => {
         response.json()
           .then(data => resolve(data))
           .catch(error => resolve(
-            { error: `Failed to process response, likely due to Netlify's 10-sec limit on lambda functions. Error: ${error}`}
+            { error: `Failed to get a valid response 😢.
+            This is likely due the target not exposing the required data, or limitations in how Netlify executes lambda functions, such as the 10-sec timeout.
+            Error info: ${error}`}
           ));
     });
   };
@@ -247,7 +247,6 @@ const Results = (): JSX.Element => {
       .then(res => getLocation(res)),
   });
 
-
   // Get hostnames and associated domains from Shodan
   const [shoadnResults, updateShodanResults] = useMotherHook<ShodanResults>({
     jobId: 'hosts',
@@ -257,7 +256,6 @@ const Results = (): JSX.Element => {
       .then(res => parseJson(res))
       .then(res => parseShodanResults(res)),
   });
-
 
   // Check for open ports
   const [portsResults, updatePortsResults] = useMotherHook({
@@ -432,7 +430,6 @@ const Results = (): JSX.Element => {
     { id: 'status', title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard, refresh: updateServerStatusResults },
     { id: 'ports', title: 'Open Ports', result: portsResults, Component: OpenPortsCard, refresh: updatePortsResults },
     { id: 'screenshot', title: 'Screenshot', result: screenshotResult || lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateScreenshotResult },
-    // { id: 'screenshot', title: 'Screenshot', result: lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateLighthouseResults },
     { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },
     { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
     { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },

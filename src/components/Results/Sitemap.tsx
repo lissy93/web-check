@@ -1,6 +1,5 @@
 
 import { Card } from 'components/Form/Card';
-import Heading from 'components/Form/Heading';
 import Row, { ExpandableRow } from 'components/Form/Row';
 import colors from 'styles/colors';
 

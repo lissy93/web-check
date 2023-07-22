@@ -1,6 +1,6 @@
 
 import { Card } from 'components/Form/Card';
-import Row, { ExpandableRow, RowProps } from 'components/Form/Row';
+import Row, { RowProps } from 'components/Form/Row';
 
 const cardStyles = '';
 
