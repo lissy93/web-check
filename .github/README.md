@@ -5,7 +5,7 @@
 <img src="https://i.ibb.co/q1gZN2p/web-check-logo.png" width="96" /><br />
 <b><i>Comprehensive, on-demand open source intelligence for any website</i></b>
 <br />
-<b>🌐 <a href="https://web-check.as93.net/">web-check.as93.net</a></b><br />
+<b>🌐 <a href="https://web-check.xyz/">web-check.xyz</a></b><br />
 
 </p>
 
@@ -28,15 +28,16 @@ A hosted version can be accessed at: **[web-check.as93.net](https://web-check.as
 The source for this repo is mirrored to CodeBerg, available at: **[codeberg.org/alicia/web-check](https://codeberg.org/alicia/web-check)**
 
 ### Motivation
-Often when I'm looking into a website, there's several things I always check first.
-None of this is hard, and can usually be done with a series of curl commands, or using a combination of online tools.
-But it's so much easier to have everything presented clearly and visible in one place.
+Often when you're looking into a website, there's several things you always initially check.
+Think: Whois, SSL chain, DNS records, tech stack, security protocols, crawl rules, sitemap, redirects, basic performance, open ports, server info, etc.
+None of this is hard to find with a series of basic curl commands, or a combination of online tools. But it's just so much easier to have everything presented clearly and visible in one place :)
 
 ### Features
 
-
 <details>
 <summary><h4>Expand to see all features</h4></summary>
+
+<sup>**Note** _this list needs updating, many more jobs have been added since..._</sup>
 
 <details>
 <summary><b>IP Address</b></summary>
@@ -357,11 +358,11 @@ DNSSEC information provides insight into an organization's level of cybersecurit
 
 Read more here: **[web-check.as93.net/about](https://web-check.as93.net/about)**
 
-_Note that not all checks will work for all sites. Sometimes it's not possible to determine some information, and there are limitations imposed by Netlify for the lambda functions._
+_Note that not all checks will work for all sites. Sometimes it's not possible to determine some information, and the demo instance has some limitations imposed by Netlify for the lambda functions._
 
 ---
 
-## Building
+## Usage
 
 ### Developing
 
@@ -369,15 +370,40 @@ You'll need [Node.js](https://nodejs.org/en) (V 18.16.1 or later) installed.
 
 1. Clone the repo, `git clone git@github.com:Lissy93/web-check.git`
 2. Cd into it, `cd web-check`
-3. Install dependencies: `npm i`
-4. Populate environmental variables, in the `.env`
-5. Start the dev server, with `npx netlify-cli dev`
+3. Install dependencies: `yarn`
+4. Start the dev server, with `yarn dev`
 
-### Deploying
+Note that some checks also require `chromium`, `traceroute` and `dns` to be installed. These jobs will be skipped if those packages arn't present.
+
+### Deploying - Option #1: Netlify
 
 Click the button below, to deploy to Netlify 👇
 
 [![Deploy to Netlify](https://img.shields.io/badge/Deploy-Netlify-%2330c8c9?style=for-the-badge&logo=netlify&labelColor=1e0e41 'Deploy Web-Check to Netlify, via 1-Click Script')](https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check)
+
+### Deploying - Option #2: Docker
+
+Run `docker run -p 8888:3000 lissy93/web-check`, then open `http://localhost:3000`
+
+The app is published to DockerHub ([`hub.docker.com/r/lissy93/web-check`](https://hub.docker.com/r/lissy93/web-check)) as well as GHCR ([`ghcr.io/lissy93/web-check`](https://github.com/Lissy93/web-check/pkgs/container/web-check)), or you can build the image yourself by cloning the project and running `docker build -t web-check .`
+
+[![Test on PWD](https://img.shields.io/badge/Try-Play_with_Docker-%232496ED?style=for-the-badge&logo=docker&labelColor=1e0e41)](https://labs.play-with-docker.com/?stack=https://raw.githubusercontent.com/Lissy93/web-check/master/docker-compose.yml 'Deploy Web-Check to PWD, via 1-Click Script')
+
+### Deploying - Option #3: From Source
+
+Follow the instructions in the [Developing](#developing) section above, then run `yarn build` && `yarn start` to build and serve the application.
+
+### Configuring
+By default, no configuration is needed, but there are some optional environmental variables that you can set to give you access to some additional checks. These include:
+
+- `GOOGLE_CLOUD_API_KEY` - A Google API key ([get here](https://cloud.google.com/api-gateway/docs/authenticate-api-keys)). This can be used to return quality metrics for a site
+- `TORRENT_IP_API_KEY` - A torrent API key ([get here](https://iknowwhatyoudownload.com/en/api/)). This will show torrents downloaded by an IP
+- `REACT_APP_SHODAN_API_KEY` - A Shodan API key ([get here](https://account.shodan.io/)). This will show associated host names for a given domain
+- `REACT_APP_WHO_API_KEY` - A WhoAPI key ([get here](https://whoapi.com/)). This will show more comprehensive WhoIs records than the default job
+- `SECURITY_TRAILS_API_KEY` - A Security Trails API key ([get here](https://securitytrails.com/corp/api)). This will show org info associated with the IP
+- `BUILT_WITH_API_KEY` - A BuiltWith API key ([get here](https://api.builtwith.com/)). This will show the main features of a site
+
+The above keys can be added into an `.env` file in the projects root, or via the Netlify UI, or by passing directly to the Docker container.
 
 ---
 
