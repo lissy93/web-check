@@ -1,145 +1,35 @@
-# Essential site config
+# Build settings and site core config
 [build]
   base = "/"
   command = "yarn build"
   publish = "build"
-  functions = "server/lambda"
+  functions = "api"
 
 # Environmental variables and optioanl secrets
-# [build.environment]
-#   NODE_VERSION = "16.16.0"
-#   GOOGLE_CLOUD_API_KEY=''
-#   SHODAN_API_KEY=''
-#   REACT_APP_SHODAN_API_KEY=''
-#   WHO_API_KEY=''
-#   REACT_APP_WHO_API_KEY=''
-#   SECURITY_TRAILS_API_KEY=''
-#   BUILT_WITH_API_KEY=''
-#   CI=false
+[build.environment]
+  # Build configuration env vars (uncomment if you want to conigure these)
+  CI=false # Set CI to false, to prevent warnings from exiting the build
+  # CHROME_PATH='/usr/bin/chromium' # Path to Chromium binary
+  # NODE_VERSION = "16.16.0"  # Set the version of Node.js to use
 
-# Site info, used for the 1-Click deploy page
-[template.environment]
-  STATUSKIT_PAGE_TITLE = "Web Check"
-  STATUSKIT_COMPANY_LOGO = "https://raw.githubusercontent.com/Lissy93/web-check/master/public/apple-touch-icon.png"
-  STATUSKIT_SUPPORT_CONTACT_LINK = "https://github.com/lissy93/web-check"
+  # Optional secrets and API keys (uncomment if you want to add these)
+  # GOOGLE_CLOUD_API_KEY=''     # Google Cloud API key, for running Lighthouse scans
+  # BUILT_WITH_API_KEY=''       # BuiltWith API key, for detecting site features
+  # REACT_APP_SHODAN_API_KEY='' # Shodan API key, for using Shodan scan API
+  # REACT_APP_WHO_API_KEY=''    # WhoAPI key, for iniiating client-side whois lookup
 
-# Redirect the Node endpoints to serverless functions
+# Redirect the /api/* path to the lambda functions
 [[redirects]]
-  from = "/find-url-ip"
-  to = "/.netlify/functions/find-url-ip"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/lighthouse-report"
-  to = "/.netlify/functions/lighthouse-report"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/ssl-check"
-  to = "/.netlify/functions/ssl-check"
-  status = 301
-  force = true  
-[[redirects]]
-  from = "/get-headers"
-  to = "/.netlify/functions/get-headers"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/get-cookies"
-  to = "/.netlify/functions/get-cookies"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/get-dns"
-  to = "/.netlify/functions/get-dns"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/read-robots-txt"
-  to = "/.netlify/functions/read-robots-txt"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/follow-redirects"
-  to = "/.netlify/functions/follow-redirects"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/get-txt"
-  to = "/.netlify/functions/get-txt"
-  status = 301
-  force = true  
-[[redirects]]
-  from = "/server-status"
-  to = "/.netlify/functions/server-status"
-  status = 301
-  force = true  
-[[redirects]]
-  from = "/check-ports"
-  to = "/.netlify/functions/check-ports"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/trace-route"
-  to = "/.netlify/functions/trace-route"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/get-carbon"
-  to = "/.netlify/functions/get-carbon"
-  status = 301
-  force = true  
-[[redirects]]
-  from = "/site-features"
-  to = "/.netlify/functions/site-features"
-  status = 301
-  force = true  
-[[redirects]]
-  from = "/dns-sec"
-  to = "/.netlify/functions/dns-sec"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/check-hsts"
-  to = "/.netlify/functions/check-hsts"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/whois-lookup"
-  to = "/.netlify/functions/whois-lookup"
-  status = 301
-  force = true  
-[[redirects]]
-  from = "/dns-server"
-  to = "/.netlify/functions/dns-server"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/tech-stack"
-  to = "/.netlify/functions/tech-stack"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/sitemap"
-  to = "/.netlify/functions/sitemap"
-  status = 301
-  force = true
-[[redirects]]
-  from = "/screenshot"
-  to = "/.netlify/functions/screenshot"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 301
   force = true
 
+# Plugins
 [[plugins]]
 package = "netlify-plugin-chromium"
   [plugins.inputs]
   packageManager = "yarn"
-
-# For router history mode, ensure pages land on index
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200  
 
 # Set any security headers here
 [[headers]]
@@ -147,6 +37,3 @@ package = "netlify-plugin-chromium"
   [headers.values]
   # Uncomment to enable Netlify user control. Requires premium plan.
   # Basic-Auth = "someuser:somepassword anotheruser:anotherpassword"
-
-
-  

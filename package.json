@@ -1,7 +1,26 @@
 {
   "name": "web-check",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "private": false,
+  "description": "All-in-one OSINT tool for analyzing any website",
+  "repository": "github:lissy93/web-check",
+  "homepage": "https://web-check.as93.net",
+  "license": "MIT",
+  "author": {
+    "name": "Alicia Sykes",
+    "email": "alicia@omg.lol"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/Lissy93"
+  },
+  "scripts": {
+    "dev": "netlify dev",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "@netlify/functions": "^1.6.0",
     "@testing-library/jest-dom": "^5.17.0",
@@ -37,13 +56,6 @@
     "wappalyzer": "^6.10.63",
     "web-vitals": "^3.4.0",
     "xml2js": "^0.6.0"
-  },
-  "scripts": {
-    "dev": "netlify dev",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
