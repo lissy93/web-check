@@ -133,7 +133,7 @@
 [[plugins]]
 package = "netlify-plugin-chromium"
   [plugins.inputs]
-  packageManager = ["yarn"]
+  packageManager = "yarn"
 
 # For router history mode, ensure pages land on index
 [[redirects]]
