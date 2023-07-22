@@ -13,6 +13,7 @@ import { RowProps }  from 'components/Form/Row';
 import ErrorBoundary from 'components/misc/ErrorBoundary';
 import docs from 'utils/docs';
 
+import Loader from 'components/misc/Loader';
 
 import ServerLocationCard from 'components/Results/ServerLocation';
 import ServerInfoCard from 'components/Results/ServerInfo';
@@ -102,8 +103,7 @@ const Results = (): JSX.Element => {
   const [ addressType, setAddressType ] = useState<AddressType>('empt');
   const { address } = useParams();
 
-  const [ loadingJobs, setLoadingJobs ] = useState<LoadingJob[]>(initialJobs);
-
+  const [loadingJobs, setLoadingJobs] = useState<LoadingJob[]>(initialJobs);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(<></>);
 
@@ -496,6 +496,7 @@ const Results = (): JSX.Element => {
       </Nav>
       <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
       { address?.includes(window?.location?.hostname || 'web-check.as93.net') && <SelfScanMsg />}
+      <Loader show={loadingJobs.filter((job: LoadingJob) => job.state !== 'loading').length < 5} />
       <ResultsContent>
         
       <Masonry
