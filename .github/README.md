@@ -366,14 +366,13 @@ _Note that not all checks will work for all sites. Sometimes it's not possible t
 
 ### Developing
 
-You'll need [Node.js](https://nodejs.org/en) (V 18.16.1 or later) installed.
-
 1. Clone the repo, `git clone git@github.com:Lissy93/web-check.git`
 2. Cd into it, `cd web-check`
 3. Install dependencies: `yarn`
 4. Start the dev server, with `yarn dev`
 
-Note that some checks also require `chromium`, `traceroute` and `dns` to be installed. These jobs will be skipped if those packages arn't present.
+You'll need [Node.js](https://nodejs.org/en) (V 18.16.1 or later) installed, as well as [git](https://git-scm.com/).
+Some checks also require `chromium`, `traceroute` and `dns` to be installed within your environment. These jobs will just be skipped if those packages arn't present.
 
 ### Deploying - Option #1: Netlify
 
@@ -385,16 +384,19 @@ Click the button below, to deploy to Netlify 👇
 
 Run `docker run -p 8888:3000 lissy93/web-check`, then open `http://localhost:3000`
 
-The app is published to DockerHub ([`hub.docker.com/r/lissy93/web-check`](https://hub.docker.com/r/lissy93/web-check)) as well as GHCR ([`ghcr.io/lissy93/web-check`](https://github.com/Lissy93/web-check/pkgs/container/web-check)), or you can build the image yourself by cloning the project and running `docker build -t web-check .`
-
-[![Test on PWD](https://img.shields.io/badge/Try-Play_with_Docker-%232496ED?style=for-the-badge&logo=docker&labelColor=1e0e41)](https://labs.play-with-docker.com/?stack=https://raw.githubusercontent.com/Lissy93/web-check/master/docker-compose.yml 'Deploy Web-Check to PWD, via 1-Click Script')
+You can get the Docker image from:
+- DockerHub: [`lissy93/web-check`](https://hub.docker.com/r/lissy93/web-check)
+- GHCR: [`ghcr.io/lissy93/web-check`](https://github.com/Lissy93/web-check/pkgs/container/web-check)
+- Or build the image yourself by cloning the repo and running `docker build -t web-check .`
 
 ### Deploying - Option #3: From Source
 
 Follow the instructions in the [Developing](#developing) section above, then run `yarn build` && `yarn start` to build and serve the application.
 
 ### Configuring
-By default, no configuration is needed, but there are some optional environmental variables that you can set to give you access to some additional checks. These include:
+
+By default, no configuration is needed. 
+But there are some optional environmental variables that you can set to give you access to some additional checks
 
 - `GOOGLE_CLOUD_API_KEY` - A Google API key ([get here](https://cloud.google.com/api-gateway/docs/authenticate-api-keys)). This can be used to return quality metrics for a site
 - `TORRENT_IP_API_KEY` - A torrent API key ([get here](https://iknowwhatyoudownload.com/en/api/)). This will show torrents downloaded by an IP
