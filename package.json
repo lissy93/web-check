@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev": "netlify dev",
-    "start": "react-scripts start",
+    "start": "netlify serve --offline",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
