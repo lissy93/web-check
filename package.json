@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@netlify/functions": "^1.6.0",
+    "@sentry/react": "^7.60.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
