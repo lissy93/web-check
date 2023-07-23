@@ -6,7 +6,7 @@ interface HeadingProps {
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'p';
   align?: 'left' | 'center' | 'right';
   color?: string;
-  size?: 'xSmall' | 'small' | 'medium' | 'large';
+  size?: 'xSmall' | 'small' | 'medium' | 'large' | 'xLarge';
   inline?: boolean;
   children: React.ReactNode;
   id?: string;
@@ -33,13 +33,14 @@ const StyledHeading = styled.h1<HeadingProps>`
       case 'small': return `font-size: ${TextSizes.small};`;
       case 'medium': return `font-size: ${TextSizes.large};`;
       case 'large': return `font-size: ${TextSizes.xLarge};`;
+      case 'xLarge': return `font-size: ${TextSizes.xLarge};`;
     }
   }};
   ${props => {
     switch (props.align) {
       case 'left': return 'text-align: left;';
       case 'right': return 'text-align: right;';
-      case 'center': return 'text-align: center;';
+      case 'center': return 'text-align: center; justify-content: center;';
     }
   }};
   ${props => props.color ? `color: ${props.color};` : '' }

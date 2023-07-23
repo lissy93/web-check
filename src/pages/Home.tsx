@@ -5,19 +5,25 @@ import { useNavigate, NavigateOptions } from 'react-router-dom';
 import Heading from 'components/Form/Heading';
 import Input from 'components/Form/Input'
 import Button from 'components/Form/Button';
+import { StyledCard } from 'components/Form/Card';
 import Footer from 'components/misc/Footer';
 import FancyBackground from 'components/misc/FancyBackground';
 
+import docs from 'utils/docs';
 import colors from 'styles/colors';
 import { determineAddressType } from 'utils/address-type-checker';
 
 const HomeContainer = styled.section`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
   font-family: 'PTMono';
+  padding: 0 1rem;
+  footer {
+    z-index: 1;
+  }
 `;
 
 const UserInputMain = styled.form`
@@ -26,9 +32,10 @@ const UserInputMain = styled.form`
   border-radius: 8px;
   padding: 1rem;
   z-index: 5;
-  min-height: 25vh;
-  min-width: 50vw;
   margin: 1rem;
+  width: calc(100% - 2rem);
+  max-width: 50rem;
+  z-index: 2;
 `;
 
 const FindIpButton = styled.a`
@@ -43,6 +50,40 @@ const FindIpButton = styled.a`
 const ErrorMessage = styled.p`
   color: ${colors.danger};
   margin: 0.5rem;
+`;
+
+const SiteFeaturesWrapper = styled(StyledCard)`
+  margin: 1rem;
+  width: calc(100% - 2rem);
+  max-width: 50rem;
+  z-index: 2;
+  .links {
+    display: flex;
+    justify-content: center;
+    a {
+      width: 100%;
+    }
+  }
+  ul {
+    -webkit-column-width: 150px;
+    -moz-column-width: 150px;
+    column-width: 150px;
+    list-style: none;
+    padding: 0 1rem;
+    font-size: 0.9rem;
+    li {
+      margin: 0.1rem 0;
+      text-indent: -1.2rem;
+    }
+    li:before {
+      content: '✓';
+      color: ${colors.primary};
+      margin-right: 0.5rem;
+    }
+  }
+  a {
+    color: ${colors.primary};
+  }
 `;
 
 const Home = (): JSX.Element => {
@@ -106,7 +147,10 @@ const Home = (): JSX.Element => {
     <HomeContainer>
       <FancyBackground />
       <UserInputMain onSubmit={formSubmitEvent}>
-        <Heading as="h1" size="large" align="center" color={colors.primary}>Web Check</Heading>
+        <Heading as="h1" size="xLarge" align="center" color={colors.primary}>
+          <img width="64" src="/web-check.png" alt="Web Check Icon" />
+          Web Check
+        </Heading>
         <Input
           id="user-input"
           value={userInput}
@@ -121,6 +165,19 @@ const Home = (): JSX.Element => {
         { errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
         <Button styles="width: calc(100% - 1rem);" size="large" onClick={submit}>Analyze!</Button>
       </UserInputMain>
+      <SiteFeaturesWrapper>
+        <div className="features">
+          <Heading as="h2" size="small" color={colors.primary}>Supported Checks</Heading>
+          <ul>
+            {docs.map((doc, index) => (<li key={index}>{doc.title}</li>))}
+            <li><a href="/about">+ more!</a></li>
+          </ul>
+        </div>
+        <div className="links">
+          <a href="https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check"><Button>Deploy your own Instance</Button></a>
+          <a href="https://github.com/lissy93/web-check"><Button>View on GitHub</Button></a>
+        </div>
+      </SiteFeaturesWrapper>
       <Footer isFixed={true} />
     </HomeContainer>
   );

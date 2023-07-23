@@ -10,7 +10,7 @@ interface Doc {
 const docs: Doc[] = [
   {
     id: "get-ip",
-    title: "IP Address",
+    title: "IP Info",
     description:
       "The IP Address task involves mapping the user provided URL to its corresponding IP address through a process known as Domain Name System (DNS) resolution. An IP address is a unique identifier given to every device on the Internet, and when paired with a domain name, it allows for accurate routing of online requests and responses.",
     use: "Identifying the IP address of a domain can be incredibly valuable for OSINT purposes. This information can aid in creating a detailed map of a target's network infrastructure, pinpointing the physical location of a server, identifying the hosting service, and even discovering other domains that are hosted on the same IP address. In cybersecurity, it's also useful for tracking the sources of attacks or malicious activities.",
@@ -23,7 +23,7 @@ const docs: Doc[] = [
   },
   {
     id: "ssl",
-    title: "SSL",
+    title: "SSL Chain",
     description:
       "The SSL task involves checking if the site has a valid Secure Sockets Layer (SSL) certificate. SSL is a protocol for establishing authenticated and encrypted links between networked computers. It's commonly used for securing communications over the internet, such as web browsing sessions, email transmissions, and more. In this task, we reach out to the server and initiate a SSL handshake. If successful, we gather details about the SSL certificate presented by the server.",
     use: "SSL certificates not only provide the assurance that data transmission to and from the website is secure, but they also provide valuable OSINT data. Information from an SSL certificate can include the issuing authority, the domain name, its validity period, and sometimes even organization details. This can be useful for verifying the authenticity of a website, understanding its security setup, or even for discovering associated subdomains or other services.",
@@ -93,7 +93,7 @@ const docs: Doc[] = [
   },
   {
     id: "quality",
-    title: "Quality Report",
+    title: "Quality Metrics",
     description:
       "The Headers task involves extracting and interpreting the HTTP headers sent by the target website during the request-response cycle. HTTP headers are key-value pairs sent at the start of an HTTP response, or before the actual data. Headers contain important directives for how to handle the data being transferred, including cache policies, content types, encoding, server information, security policies, and more.",
     use: "Analyzing HTTP headers can provide significant insights in an OSINT investigation. Headers can reveal specific server configurations, chosen technologies, caching directives, and various security settings. This information can help to determine a website's underlying technology stack, server-side security measures, potential vulnerabilities, and general operational practices.",
@@ -121,7 +121,7 @@ const docs: Doc[] = [
   },
   {
     id: "hosts",
-    title: "Associated Domains and Hostnames",
+    title: "Associated Hosts",
     description:
       "This task involves identifying and listing all domains and subdomains (hostnames) that are associated with the website's primary domain. This process often involves DNS enumeration to discover any linked domains and hostnames.",
     use: "In OSINT investigations, understanding the full scope of a target's web presence is critical. Associated domains could lead to uncovering related projects, backup sites, development/test sites, or services linked to the main site. These can sometimes provide additional information or potential security vulnerabilities. A comprehensive list of associated domains and hostnames can also give an overview of the organization's structure and online footprint.",
@@ -275,7 +275,7 @@ const docs: Doc[] = [
   },
   {
     id: "features",
-    title: "Features",
+    title: "Site Features",
     description: 'Checks which core features are present on a site. If a feature as marked as dead, that means it\'s not being actively used at load time',
     use: "This is useful to understand what a site is capable of, and what technologies to look for",
     resources: [],
@@ -332,7 +332,7 @@ const docs: Doc[] = [
   },
   {
     id: 'sitemap',
-    title: 'Sitemap',
+    title: 'Listed Pages',
     description: 'This job finds and parses a site\'s listed sitemap. This file lists public sub-pages on the site, which the author wishes to be crawled by search engines. Sitemaps help with SEO, but are also useful for seeing all a sites public content at a glance.',
     use: 'Understand the structure of a site\'s public-facing content, and for site-owners, check that you\'re site\'s sitemap is accessible, parsable and contains everything you wish it to.',
     resources: [
