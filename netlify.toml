@@ -25,6 +25,12 @@
   status = 301
   force = true
 
+# For router history mode, ensure pages land on index
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200  
+
 # Plugins
 [[plugins]]
 package = "netlify-plugin-chromium"
