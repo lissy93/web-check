@@ -34,7 +34,7 @@ const StyledExpandableRow = styled(StyledRow).attrs({
   as: "summary"
 })``;
 
-const Details = styled.details`
+export const Details = styled.details`
   transition: all 0.2s ease-in-out;
   summary {
     padding-left: 1rem;
