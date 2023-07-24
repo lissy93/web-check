@@ -1,0 +1,6 @@
+Contact: mailto:security@as93.net
+Contact: mailto:alicia@omg.lol
+Expires: 2024-12-31T23:59:00.000Z
+Encryption: https://keybase.io/aliciasykes/pgp_keys.asc?fingerprint=0688f8d34587d954e9e51fb8fedb68f55c0283a7
+Preferred-Languages: en
+Canonical: /security.txt
