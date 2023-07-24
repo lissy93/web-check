@@ -39,7 +39,9 @@ import SitemapCard from 'components/Results/Sitemap';
 import DomainLookup from 'components/Results/DomainLookup';
 import DnsServerCard from 'components/Results/DnsServer';
 import TechStackCard from 'components/Results/TechStack';
+import SecurityTxtCard from 'components/Results/SecurityTxt';
 import SelfScanMsg from 'components/misc/SelfScanMsg';
+
 
 import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
 import ActionButtons from 'components/misc/ActionButtons';
@@ -351,6 +353,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`${api}/screenshot?url=${address}`).then(res => parseJson(res)),
   });
 
+  // Get a websites listed pages, from sitemap
+  const [securityTxtResults, updateSecurityTxtResults] = useMotherHook({
+    jobId: 'security-txt',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`${api}/security-txt?url=${address}`).then(res => parseJson(res)),
+  });
+
   // Get site features from BuiltWith
   const [siteFeaturesResults, updateSiteFeaturesResults] = useMotherHook({
     jobId: 'features',
@@ -432,6 +442,7 @@ const Results = (): JSX.Element => {
     { id: 'dnssec', title: 'DNSSEC', result: dnsSecResults, Component: DnsSecCard, refresh: updateDnsSecResults },
     { id: 'status', title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard, refresh: updateServerStatusResults },
     { id: 'ports', title: 'Open Ports', result: portsResults, Component: OpenPortsCard, refresh: updatePortsResults },
+    { id: 'security-txt', title: 'Security.Txt', result: securityTxtResults, Component: SecurityTxtCard, refresh: updateSecurityTxtResults },
     { id: 'screenshot', title: 'Screenshot', result: screenshotResult || lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateScreenshotResult },
     { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },
     { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },

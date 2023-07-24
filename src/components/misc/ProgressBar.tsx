@@ -201,6 +201,7 @@ const jobNames = [
   'txt-records',
   'sitemap',
   'hsts',
+  'security-txt',
   // 'whois',
   'features',
   'carbon',

@@ -38,6 +38,7 @@
     "axios": "^1.4.0",
     "chrome-aws-lambda": "^10.1.0",
     "flatted": "^3.2.7",
+    "follow-redirects": "^1.15.2",
     "got": "^13.0.0",
     "jest-styled-components": "^7.1.1",
     "netlify-cli": "^15.9.1",
