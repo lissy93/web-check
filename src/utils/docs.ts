@@ -3,7 +3,7 @@ interface Doc {
   title: string;
   description: string;
   use: string;
-  resources: string[];
+  resources: string[] | { title: string, link: string}[];
   screenshot?: string;
 }
 
@@ -341,6 +341,26 @@ const docs: Doc[] = [
       'https://www.conductor.com/academy/xml-sitemap/',
     ],
     screenshot: 'https://i.ibb.co/GtrCQYq/Screenshot-from-2023-07-21-12-28-38.png',
+  },
+  {
+    id: 'security-txt',
+    title: 'Security.txt',
+    description: "The security.txt file tells researchers how they can responsibly disclose any security issues found on your site. "
+    + "The standard was proposed in RFC 9116, and specifies that this file should include a point of contact (email address), "
+    + "as well as optionally other info, like a link to the security disclosure policy, PGP key, proffered language, policy expiry and more. "
+    + "The file should be located at the root of your domain, either at /security.txt or /.well-known/security.txt.",
+    use: "This is important, as without a defined point of contact a security researcher may be unable to report a critical security issue, "
+    + "or may use insecure or possibly public channels to do so. From an OSINT perspective, you may also glean info about a site including "
+    + "their posture on security, their CSAF provider, and meta data from the PGP public key.",
+    resources: [
+      { title: 'securitytxt.org', link: 'https://securitytxt.org/'},
+      { title: 'RFC-9116 Proposal', link: 'https://datatracker.ietf.org/doc/html/rfc9116'},
+      { title: 'RFC-9116 History', link: 'https://datatracker.ietf.org/doc/rfc9116/'},
+      { title: 'Security.txt (Wikipedia)', link: 'https://en.wikipedia.org/wiki/Security.txt'},
+      { title: 'Example security.txt (Cloudflare)', link: 'https://www.cloudflare.com/.well-known/security.txt'},
+      { title: 'Tutorial for creating security.txt (Pieter Bakker)', link: 'https://pieterbakker.com/implementing-security-txt/'},
+    ],
+    screenshot: 'https://i.ibb.co/tq1FT5r/Screenshot-from-2023-07-24-20-31-21.png',
   },
 ];
 
