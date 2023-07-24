@@ -41,7 +41,6 @@ const Link = styled.a`
 `;
 
 const Footer = (props: { isFixed?: boolean }): JSX.Element => {
-  const homeUrl = 'https://web-check.as93.net';
   const licenseUrl = 'https://github.com/lissy93/web-check/blob/main/LICENSE';
   const authorUrl = 'https://aliciasykes.com';
   const githubUrl = 'https://github.com/lissy93/web-check';
@@ -51,7 +50,7 @@ const Footer = (props: { isFixed?: boolean }): JSX.Element => {
       View source at <Link href={githubUrl}>github.com/lissy93/web-check</Link>
     </span>
     <span>
-      <Link href={homeUrl}>Web-Check</Link> is
+      <Link href="/about">Web-Check</Link> is
       licensed under <Link href={licenseUrl}>MIT</Link> -
       © <Link href={authorUrl}>Alicia Sykes</Link> 2023
     </span>

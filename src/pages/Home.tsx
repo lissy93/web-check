@@ -74,6 +74,7 @@ const SiteFeaturesWrapper = styled(StyledCard)`
     li {
       margin: 0.1rem 0;
       text-indent: -1.2rem;
+      break-inside: avoid-column;
     }
     li:before {
       content: '✓';

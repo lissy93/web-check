@@ -462,8 +462,12 @@ const Results = (): JSX.Element => {
         <p className="doc-uses">{doc.use}</p>
         <Heading as="h4" size="small">Links</Heading>
         <ul>
-          {doc.resources.map((resource: string, index: number) => (
-          <li id={`link-${index}`}><a target="_blank" rel="noreferrer" href={resource}>{resource}</a></li>
+          {doc.resources.map((resource: string | { title: string, link: string } , index: number) => (
+            typeof resource === 'string' ? (
+              <li id={`link-${index}`}><a target="_blank" rel="noreferrer" href={resource}>{resource}</a></li>
+            ) : (
+              <li id={`link-${index}`}><a target="_blank" rel="noreferrer" href={resource.link}>{resource.title}</a></li>
+            )
           ))}
         </ul>
         <details>

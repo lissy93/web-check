@@ -133,8 +133,12 @@ const About = (): JSX.Element => {
             {section.resources && section.resources.length > 0 && <>
               <Heading as="h4" size="small">Useful Links</Heading>
               <ul>
-                {section.resources.map((link: string, linkIndx: number) => (
-                  <li key={linkIndx}><a href={link}>{link}</a></li>
+                {section.resources.map((link: string | { title: string, link: string }, linkIndx: number) => (
+                  typeof link === 'string' ? (
+                    <li id={`link-${linkIndx}`}><a target="_blank" rel="noreferrer" href={link}>{link}</a></li>
+                  ) : (
+                    <li id={`link-${linkIndx}`}><a target="_blank" rel="noreferrer" href={link.link}>{link.title}</a></li>
+                  )
                 ))}
               </ul>
             </>}
