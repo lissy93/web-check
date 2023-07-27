@@ -1,4 +1,4 @@
-interface Doc {
+export interface Doc {
   id: string;
   title: string;
   description: string;
