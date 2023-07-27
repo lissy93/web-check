@@ -36,6 +36,7 @@
     "@types/react-simple-maps": "^3.0.0",
     "@types/styled-components": "^5.1.26",
     "axios": "^1.4.0",
+    "cheerio": "^1.0.0-rc.12",
     "chrome-aws-lambda": "^10.1.0",
     "flatted": "^3.2.7",
     "follow-redirects": "^1.15.2",

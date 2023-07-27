@@ -202,6 +202,7 @@ const jobNames = [
   'sitemap',
   'hsts',
   'security-txt',
+  'linked-pages',
   // 'whois',
   'features',
   'carbon',

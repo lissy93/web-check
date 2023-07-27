@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, ReactNode } from 'react';
-import {   useParams } from "react-router-dom";
+import {   useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { ToastContainer } from 'react-toastify';
 import Masonry from 'react-masonry-css'
@@ -10,10 +10,15 @@ import Modal from 'components/Form/Modal';
 import Footer from 'components/misc/Footer';
 import Nav from 'components/Form/Nav';
 import { RowProps }  from 'components/Form/Row';
-import ErrorBoundary from 'components/misc/ErrorBoundary';
-import docs from 'utils/docs';
 
 import Loader from 'components/misc/Loader';
+import ErrorBoundary from 'components/misc/ErrorBoundary';
+import SelfScanMsg from 'components/misc/SelfScanMsg';
+import DocContent from 'components/misc/DocContent';
+import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
+import ActionButtons from 'components/misc/ActionButtons';
+import AdditionalResources from 'components/misc/AdditionalResources';
+import ViewRaw from 'components/misc/ViewRaw';
 
 import ServerLocationCard from 'components/Results/ServerLocation';
 import ServerInfoCard from 'components/Results/ServerInfo';
@@ -40,17 +45,11 @@ import DomainLookup from 'components/Results/DomainLookup';
 import DnsServerCard from 'components/Results/DnsServer';
 import TechStackCard from 'components/Results/TechStack';
 import SecurityTxtCard from 'components/Results/SecurityTxt';
-import SelfScanMsg from 'components/misc/SelfScanMsg';
+import ContentLinksCard from 'components/Results/ContentLinks';
 
-
-import ProgressBar, { LoadingJob, LoadingState, initialJobs } from 'components/misc/ProgressBar';
-import ActionButtons from 'components/misc/ActionButtons';
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
-
 import useMotherHook from 'hooks/motherOfAllHooks';
-
-
 import {
   getLocation, ServerLocation,
   parseCookies, Cookie,
@@ -78,25 +77,6 @@ const ResultsContent = styled.section`
   margin: auto;
   width: calc(100% - 2rem);
   padding-bottom: 1rem;
-`;
-
-const JobDocsContainer = styled.div`
-p.doc-desc, p.doc-uses, ul {
-  margin: 0.25rem auto 1.5rem auto;
-}
-ul {
-  padding: 0 0.5rem 0 1rem;
-}
-ul li a {
-  color: ${colors.primary};
-}
-summary { color: ${colors.primary};}
-h4 {
-  border-top: 1px solid ${colors.primary};
-  color: ${colors.primary};
-  opacity: 0.75;
-  padding: 0.5rem 0;
-}
 `;
 
 const Results = (): JSX.Element => {
@@ -400,6 +380,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`${api}/dns-server?url=${address}`).then(res => parseJson(res)),
   });
 
+  // Get list of links included in the page content
+  const [linkedPagesResults, updateLinkedPagesResults] = useMotherHook({
+    jobId: 'linked-pages',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`${api}/content-links?url=${address}`).then(res => parseJson(res)),
+  });
+
   /* Cancel remaining jobs after  10 second timeout */
   useEffect(() => {
     const checkJobs = () => {
@@ -438,7 +426,6 @@ const Results = (): JSX.Element => {
     { id: 'server-info', title: 'Server Info', result: shoadnResults?.serverInfo, Component: ServerInfoCard, refresh: updateShodanResults },
     { id: 'redirects', title: 'Redirects', result: redirectResults, Component: RedirectsCard, refresh: updateRedirectResults },
     { id: 'robots-txt', title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard, refresh: updateRobotsTxtResults },
-    { id: 'sitemap', title: 'Pages', result: sitemapResults, Component: SitemapCard, refresh: updateSitemapResults },
     { id: 'dnssec', title: 'DNSSEC', result: dnsSecResults, Component: DnsSecCard, refresh: updateDnsSecResults },
     { id: 'status', title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard, refresh: updateServerStatusResults },
     { id: 'ports', title: 'Open Ports', result: portsResults, Component: OpenPortsCard, refresh: updatePortsResults },
@@ -448,8 +435,11 @@ const Results = (): JSX.Element => {
     { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
     { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },
     { id: 'dns-server', title: 'DNS Server', result: dnsServerResults, Component: DnsServerCard, refresh: updateDnsServerResults },
+    { id: 'linked-pages', title: 'Linked Pages', result: linkedPagesResults, Component: ContentLinksCard, refresh: updateLinkedPagesResults },
     { id: 'features', title: 'Site Features', result: siteFeaturesResults, Component: SiteFeaturesCard, refresh: updateSiteFeaturesResults },
+    { id: 'sitemap', title: 'Pages', result: sitemapResults, Component: SitemapCard, refresh: updateSitemapResults },
     { id: 'carbon', title: 'Carbon Footprint', result: carbonResults, Component: CarbonFootprintCard, refresh: updateCarbonResults },
+    
   ];
 
   const MakeActionButtons = (title: string, refresh: () => void, showInfo: (id: string) => void): ReactNode => {
@@ -463,34 +453,7 @@ const Results = (): JSX.Element => {
   };
 
   const showInfo = (id: string) => {
-    const doc = docs.filter((doc: any) => doc.id === id)[0] || null;
-    setModalContent(
-      doc? (<JobDocsContainer>
-        <Heading as="h3" size="medium" color={colors.primary}>{doc.title}</Heading>
-        <Heading as="h4" size="small">About</Heading>
-        <p className="doc-desc">{doc.description}</p>
-        <Heading as="h4" size="small">Use Cases</Heading>
-        <p className="doc-uses">{doc.use}</p>
-        <Heading as="h4" size="small">Links</Heading>
-        <ul>
-          {doc.resources.map((resource: string | { title: string, link: string } , index: number) => (
-            typeof resource === 'string' ? (
-              <li id={`link-${index}`}><a target="_blank" rel="noreferrer" href={resource}>{resource}</a></li>
-            ) : (
-              <li id={`link-${index}`}><a target="_blank" rel="noreferrer" href={resource.link}>{resource.title}</a></li>
-            )
-          ))}
-        </ul>
-        <details>
-          <summary><Heading as="h4" size="small">Example</Heading></summary>
-          <img width="300" src={doc.screenshot} alt="Screenshot" />
-        </details>
-      </JobDocsContainer>)
-    : (
-      <JobDocsContainer>
-        <p>No Docs provided for this widget yet</p>
-      </JobDocsContainer>
-      ));
+    setModalContent(DocContent(id));
     setModalOpen(true);
   };
 
@@ -534,6 +497,8 @@ const Results = (): JSX.Element => {
           }
           </Masonry>
       </ResultsContent>
+      <ViewRaw everything={resultCardData} />
+      <AdditionalResources url={address} />
       <Footer />
       <Modal isOpen={modalOpen} closeModal={()=> setModalOpen(false)}>{modalContent}</Modal>
       <ToastContainer limit={3} draggablePercent={60} autoClose={2500} theme="dark" position="bottom-right" />
