@@ -6,13 +6,14 @@ import colors from 'styles/colors';
 import { ReactNode } from 'react';
 
 const Header = styled(StyledCard)`
-  margin: 1rem;
+  margin: 1rem auto;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   padding: 0.5rem 1rem;
   align-items: center;
+  width: 95vw;
 `;
 
 const Nav = (props: { children?: ReactNode}) => {

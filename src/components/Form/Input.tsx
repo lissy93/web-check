@@ -44,6 +44,8 @@ const StyledInput = styled.input<StyledInputTypes>`
 const StyledLabel = styled.label<StyledInputTypes>`
   color: ${colors.textColor};
   ${props => applySize(props.inputSize)};
+  padding: 0;
+  font-size: 1.6rem;
 `;
 
 const Input = (inputProps: Props): JSX.Element => {

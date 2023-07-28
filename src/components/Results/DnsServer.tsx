@@ -20,9 +20,9 @@ const DnsServerCard = (props: {data: any, title: string, actionButtons: any }): 
       {dnsSecurity.dns.map((dns: any, index: number) => {
         return (<>
           { dnsSecurity.dns.length > 1 && <Heading as="h4" size="small" color={colors.primary}>DNS Server #{index+1}</Heading> }
-          <Row lbl="IP Address" val={dns.address} />
-          { dns.hostname && <Row lbl="Hostname" val={dns.hostname} /> }
-          <Row lbl="DoH Support" val={dns.dohDirectSupports ? '✅ Yes*' : '❌ No*'} />
+          <Row lbl="IP Address" val={dns.address} key={`ip-${index}`} />
+          { dns.hostname && <Row lbl="Hostname" val={dns.hostname}  key={`host-${index}`} /> }
+          <Row lbl="DoH Support" val={dns.dohDirectSupports ? '✅ Yes*' : '❌ No*'} key={`doh-${index}`} />
         </>);
       })}
       {dnsSecurity.dns.length > 0 && (<small>

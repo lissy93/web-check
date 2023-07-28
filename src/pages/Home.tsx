@@ -60,8 +60,12 @@ const SiteFeaturesWrapper = styled(StyledCard)`
   .links {
     display: flex;
     justify-content: center;
+    gap: 0.5rem;
     a {
       width: 100%;
+      button {
+        width: calc(100% - 2rem);
+      }
     }
   }
   ul {
