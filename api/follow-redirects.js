@@ -1,5 +1,5 @@
 exports.handler = async (event) => {
-  const { url } = event.queryStringParameters;
+  const url = (event.queryStringParameters || event.query).url;
   const redirects = [url];
 
   try {

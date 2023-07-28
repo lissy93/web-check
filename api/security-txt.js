@@ -38,7 +38,7 @@ const isPgpSigned = (result) => {
 };
 
 exports.handler = async (event, context) => {
-  const urlParam = event.queryStringParameters.url;
+  const urlParam = (event.queryStringParameters || event.query).url;
   if (!urlParam) {
     return { 
       statusCode: 400, 

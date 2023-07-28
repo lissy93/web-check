@@ -2,7 +2,7 @@ const https = require('https');
 const { performance, PerformanceObserver } = require('perf_hooks');
 
 exports.handler = async function(event, context) {
-  const { url } = event.queryStringParameters;
+  const url = (event.queryStringParameters || event.query).url;
 
   if (!url) {
     return {

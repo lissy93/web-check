@@ -24,7 +24,7 @@ const getBaseDomain = (url) => {
 
 
 exports.handler = async function(event, context) {
-  let url = event.queryStringParameters.url;
+  const url = (event.queryStringParameters || event.query).url;
 
   if (!url) {
     return errorResponse('URL query parameter is required.', 400);

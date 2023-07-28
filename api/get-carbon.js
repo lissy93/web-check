@@ -1,7 +1,7 @@
 const https = require('https');
 
 exports.handler = async (event, context) => {
-  const { url } = event.queryStringParameters;
+  const url = (event.queryStringParameters || event.query).url;
 
   if (!url) {
     return {

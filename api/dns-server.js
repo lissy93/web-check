@@ -4,7 +4,8 @@ const dnsPromises = dns.promises;
 const axios = require('axios');
 
 exports.handler = async (event) => {
-  const domain = event.queryStringParameters.url.replace(/^(?:https?:\/\/)?/i, "");
+  const url = (event.queryStringParameters || event.query).url;
+  const domain = url.replace(/^(?:https?:\/\/)?/i, "");
   try {
     const addresses = await dnsPromises.resolve4(domain);
     const results = await Promise.all(addresses.map(async (address) => {

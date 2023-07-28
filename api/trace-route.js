@@ -2,7 +2,7 @@ const traceroute = require('traceroute');
 const url = require('url');
 
 exports.handler = async function(event, context) {
-  const urlString = event.queryStringParameters.url;
+  const urlString = (event.queryStringParameters || event.query).url;
 
   try {
     if (!urlString) {

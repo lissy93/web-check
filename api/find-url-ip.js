@@ -2,7 +2,7 @@ const dns = require('dns');
 
 /* Lambda function to fetch the IP address of a given URL */
 exports.handler = function (event, context, callback) {
-  const addressParam = event.queryStringParameters.url;
+  const addressParam = (event.queryStringParameters || event.query).url;
   
   if (!addressParam) {
     callback(null, errorResponse('Address parameter is missing.'));

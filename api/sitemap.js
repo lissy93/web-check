@@ -2,8 +2,9 @@ const axios = require('axios');
 const xml2js = require('xml2js');
 
 exports.handler = async (event) => {
-  const baseUrl = event.queryStringParameters.url.replace(/^(?:https?:\/\/)?/i, "");
-  const url = baseUrl.startsWith('http') ? baseUrl : `http://${baseUrl}`;
+  const url = (event.queryStringParameters || event.query).url;
+  // const baseUrl = event.queryStringParameters.url.replace(/^(?:https?:\/\/)?/i, "");
+  // const url = baseUrl.startsWith('http') ? baseUrl : `http://${baseUrl}`;
   let sitemapUrl;
 
   try {

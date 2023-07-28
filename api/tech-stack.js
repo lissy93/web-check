@@ -34,7 +34,7 @@ exports.handler = async (event, context, callback) => {
   }
 
   // Get URL from param
-  let url = event.queryStringParameters.url;
+  let url = (event.queryStringParameters || event.query).url;
   if (!/^https?:\/\//i.test(url)) {
     url = 'http://' + url;
   }

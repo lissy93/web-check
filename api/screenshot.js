@@ -3,7 +3,7 @@ const chromium = require('chrome-aws-lambda');
 
 exports.handler = async (event, context, callback) => {
   let browser = null;
-  let targetUrl = event.queryStringParameters.url;
+  let targetUrl = (event.queryStringParameters || event.query).url;
 
   if (!targetUrl) {
     callback(null, {

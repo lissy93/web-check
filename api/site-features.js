@@ -1,7 +1,7 @@
 const https = require('https');
 
 exports.handler = async function (event, context) {
-  const { url } = event.queryStringParameters;
+  const url = (event.queryStringParameters || event.query).url;
   const apiKey = process.env.BUILT_WITH_API_KEY;
 
   const errorResponse = (message, statusCode = 500) => {

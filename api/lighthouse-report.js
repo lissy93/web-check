@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 exports.handler = function(event, context, callback) {
-  const { url } = event.queryStringParameters;
+  const url = (event.queryStringParameters || event.query).url;
 
   if (!url) {
     callback(null, {

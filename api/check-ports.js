@@ -34,7 +34,7 @@ async function checkPort(port, domain) {
 }
 
 exports.handler = async (event, context) => {
-  const domain = event.queryStringParameters.url;
+  const domain = (event.queryStringParameters || event.query).url;
   
   if (!domain) {
     return errorResponse('Missing domain parameter.');

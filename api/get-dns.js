@@ -2,7 +2,7 @@ const dns = require('dns');
 const util = require('util');
 
 exports.handler = async function(event, context) {
-  let hostname = event.queryStringParameters.url;
+  let hostname = (event.queryStringParameters || event.query).url;
 
   // Handle URLs by extracting hostname
   if (hostname.startsWith('http://') || hostname.startsWith('https://')) {

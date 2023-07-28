@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 exports.handler = async function(event, context) {
-  const { url } = event.queryStringParameters;
+  const url = (event.queryStringParameters || event.query).url;
 
   if (!url) {
     return {

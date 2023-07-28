@@ -1,7 +1,7 @@
 const https = require('https');
 
 exports.handler = async function(event, context) {
-  const siteURL = event.queryStringParameters.url;
+  const siteURL = (event.queryStringParameters || event.query).url;
 
   const errorResponse = (message, statusCode = 500) => {
     return {

@@ -1,7 +1,15 @@
 const dns = require('dns').promises;
 
 exports.handler = async (event) => {
-  const url = new URL(event.queryStringParameters.url);
+  let url = (event.queryStringParameters || event.query).url;
+  try {
+  url = new URL(url);
+  } catch (error) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: `Invalid URL ${error}` }),
+    };
+  }
   try {
     const txtRecords = await dns.resolveTxt(url.hostname);
 
