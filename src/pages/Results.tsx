@@ -47,6 +47,7 @@ import TechStackCard from 'components/Results/TechStack';
 import SecurityTxtCard from 'components/Results/SecurityTxt';
 import ContentLinksCard from 'components/Results/ContentLinks';
 import SocialTagsCard from 'components/Results/SocialTags';
+import MailConfigCard from 'components/Results/MailConfig';
 
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
@@ -397,6 +398,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`${api}/content-links?url=${address}`).then(res => parseJson(res)),
   });
 
+  // Get mail config for server, based on DNS records
+  const [mailConfigResults, updateMailConfigResults] = useMotherHook({
+    jobId: 'mail-config',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`${api}/mail-config?url=${address}`).then(res => parseJson(res)),
+  });
+
   /* Cancel remaining jobs after  10 second timeout */
   useEffect(() => {
     const checkJobs = () => {
@@ -443,6 +452,7 @@ const Results = (): JSX.Element => {
     { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },
     { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
     { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },
+    { id: 'mail-config', title: 'Email Configuration', result: mailConfigResults, Component: MailConfigCard, refresh: updateMailConfigResults },
     { id: 'dns-server', title: 'DNS Server', result: dnsServerResults, Component: DnsServerCard, refresh: updateDnsServerResults },
     { id: 'social-tags', title: 'Social Tags', result: socialTagResults, Component: SocialTagsCard, refresh: updateSocialTagResults },
     { id: 'linked-pages', title: 'Linked Pages', result: linkedPagesResults, Component: ContentLinksCard, refresh: updateLinkedPagesResults },
