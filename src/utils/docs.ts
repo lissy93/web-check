@@ -210,12 +210,13 @@ const docs: Doc[] = [
       "This task calculates the estimated carbon footprint of a website. It's based on the amount of data being transferred and processed, and the energy usage of the servers that host and deliver the website. The larger the website and the more complex its features, the higher its carbon footprint is likely to be.",
     use: "From an OSINT perspective, understanding a website's carbon footprint doesn't directly provide insights into its internal workings or the organization behind it. However, it can still be valuable data in broader analyses, especially in contexts where environmental impact is a consideration. For example, it can be useful for activists, researchers, or ethical hackers who are interested in the sustainability of digital infrastructure, and who want to hold organizations accountable for their environmental impact.",
     resources: [
-      "https://www.websitecarbon.com/",
-      "https://www.thegreenwebfoundation.org/",
-      "https://www.nature.com/articles/s41598-020-76164-y",
-      "https://www.sciencedirect.com/science/article/pii/S0959652620307817",
+      { title: 'WebsiteCarbon - Carbon Calculator', link: 'https://www.websitecarbon.com/' },
+      { title: 'The Green Web Foundation', link: 'https://www.thegreenwebfoundation.org/' },
+      { title: 'The Eco Friendly Web Alliance', link: 'https://ecofriendlyweb.org/' },
+      { title: 'Reset.org', link: 'https://en.reset.org/' },
+      { title: 'Your website is killing the planet - via Wired', link: 'https://www.wired.co.uk/article/internet-carbon-footprint' },
     ],
-    screenshot: 'https://i.ibb.co/dmbFxjN/wc-carbon.png',
+    screenshot: 'https://i.ibb.co/5v6fSyw/Screenshot-from-2023-07-29-19-07-50.png',
   },
   {
     id: "server-info",
@@ -261,7 +262,7 @@ const docs: Doc[] = [
     id: "dnssec",
     title: "DNS Security Extensions",
     description:
-      "Without DNSSEC, it\'s possible for MITM attackers to spoof records and lead users to phishing sites. This is because the DNS system includes no built-in methods to verify that the response to the request was not forged, or that any other part of the process wasn’t interrupted by an attacker. The DNS Security Extensions (DNSSEC) secures DNS lookups by signing your DNS records using public keys, so browsers can detect if the response has been tampered with. Another solution to this issue is DoH (DNS over HTTPS) and DoT (DNS over TLD).",
+      "Without DNSSEC, it's possible for MITM attackers to spoof records and lead users to phishing sites. This is because the DNS system includes no built-in methods to verify that the response to the request was not forged, or that any other part of the process wasn’t interrupted by an attacker. The DNS Security Extensions (DNSSEC) secures DNS lookups by signing your DNS records using public keys, so browsers can detect if the response has been tampered with. Another solution to this issue is DoH (DNS over HTTPS) and DoT (DNS over TLD).",
     use: "DNSSEC information provides insight into an organization's level of cybersecurity maturity and potential vulnerabilities, particularly around DNS spoofing and cache poisoning. If no DNS secururity (DNSSEC, DoH, DoT, etc) is implemented, this may provide an entry point for an attacker.",
     resources: [
       "https://dnssec-analyzer.verisignlabs.com/",
@@ -288,7 +289,7 @@ const docs: Doc[] = [
     +'mechanism that helps protect websites against protocol downgrade attacks and '
     + 'cookie hijacking. A website can be included in the HSTS preload list by '
     + 'conforming to a set of requirements and then submitting itself to the list.',
-    use: `There are several reasons why it\'s important for a site to be HSTS enabled:
+    use: `There are several reasons why it's important for a site to be HSTS enabled:
   1. User bookmarks or manually types http://example.com and is subject to a man-in-the-middle attacker
     HSTS automatically redirects HTTP requests to HTTPS for the target domain
   2. Web application that is intended to be purely HTTPS inadvertently contains HTTP links or serves content over HTTP
@@ -309,6 +310,7 @@ const docs: Doc[] = [
     description: 'This check takes a screenshot of webpage that the requested URL / IP resolves to, and displays it.',
     use: 'This may be useful to see what a given website looks like, free of the constraints of your browser, IP, or location.',
     resources: [],
+    screenshot: 'https://i.ibb.co/2F0x8kP/Screenshot-from-2023-07-29-18-34-48.png',
   },
   {
     id: 'dns-server',
@@ -362,6 +364,60 @@ const docs: Doc[] = [
     ],
     screenshot: 'https://i.ibb.co/tq1FT5r/Screenshot-from-2023-07-24-20-31-21.png',
   },
+  {
+    id: 'linked-pages',
+    title: 'Linked Pages',
+    description: 'Displays all internal and external links found on a site, identified by the href attributes attached to anchor elements.',
+    use: "For site owners, this is useful for diagnosing SEO issues, improving the site structure, understanding how content is inter-connected. External links can show partnerships, dependencies, and potential reputation risks. " +
+    "From a security standpoint, the outbound links can help identify any potential malicious or compromised sites the website is unknowingly linking to. Analyzing internal links can aid in understanding the site's structure and potentially uncover hidden or vulnerable pages which are not intended to be public. " +
+    "And for an OSINT investigator, it can aid in building a comprehensive understanding of the target, uncovering related entities, resources, or even potential hidden parts of the site.",
+    resources: [
+      { title: 'W3C Link Checker', link: 'https://validator.w3.org/checklink'},
+    ],
+    screenshot: 'https://i.ibb.co/LtK14XR/Screenshot-from-2023-07-29-11-16-44.png',
+  },
+  {
+    id: 'social-tags',
+    title: 'Social Tags',
+    description: 'Websites can include certain meta tags, that tell search engines and social media platforms what info to display. This usually includes a title, description, thumbnail, keywords, author, social accounts, etc.',
+    use: 'Adding this data to your site will boost SEO, and as an OSINT researcher it can be useful to understand how a given web app describes itself',
+    resources: [
+      { title: 'SocialSharePreview.com', link: 'https://socialsharepreview.com/'},
+      { title: 'The guide to social meta tags', link: 'https://css-tricks.com/essential-meta-tags-social-media/'},
+      { title: 'Web.dev metadata tags', link: 'https://web.dev/learn/html/metadata/'},
+      { title: 'Open Graph Protocol', link: 'https://ogp.me/'},
+      { title: 'Twitter Cards', link: 'https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards'},
+      { title: 'Facebook Open Graph', link: 'https://developers.facebook.com/docs/sharing/webmasters'},
+    ],
+    screenshot: 'https://i.ibb.co/4srTT1w/Screenshot-from-2023-07-29-11-15-27.png',
+  },
+  {
+    id: 'mail-config',
+    title: 'Email Configuration',
+    description: "DMARC (Domain-based Message Authentication, Reporting & Conformance): DMARC is an email authentication protocol that works with SPF and DKIM to prevent email spoofing and phishing. It allows domain owners to specify how to handle unauthenticated mail via a published policy in DNS, and provides a way for receiving mail servers to send feedback about emails' compliance to the sender. " +
+    "BIMI (Brand Indicators for Message Identification): BIMI is an emerging email standard that enables organizations to display a logo in their customers' email clients automatically. BIMI ties the logo to the domain's DMARC record, providing another level of visual assurance to recipients that the email is legitimate. " +
+    "DKIM (DomainKeys Identified Mail): DKIM is an email security standard designed to make sure that messages were not altered in transit between the sending and recipient servers. It uses digital signatures linked to the domain of the sender to verify the sender and ensure message integrity. " +
+    "SPF (Sender Policy Framework): SPF is an email authentication method designed to prevent email spoofing. It specifies which mail servers are authorized to send email on behalf of a domain by creating a DNS record. This helps protect against spam by providing a way for receiving mail servers to check that incoming mail from a domain comes from a host authorized by that domain's administrators.",
+    use: "This information is helpful for researchers as it helps assess a domain's email security posture, uncover potential vulnerabilities, and verify the legitimacy of emails for phishing detection. These details can also provide insight into the hosting environment, potential service providers, and the configuration patterns of a target organization, assisting in investigative efforts.",
+    resources: [
+      { title: 'Intro to DMARC, DKIM, and SPF (via Cloudflare)', link: 'https://www.cloudflare.com/learning/email-security/dmarc-dkim-spf/' },
+      { title: 'EasyDMARC Domain Scanner', link: 'https://easydmarc.com/tools/domain-scanner' },
+      { title: 'MX Toolbox', link: 'https://mxtoolbox.com/' },
+      { title: 'RFC-7208 - SPF', link: 'https://datatracker.ietf.org/doc/html/rfc7208' },
+      { title: 'RFC-6376 - DKIM', link: 'https://datatracker.ietf.org/doc/html/rfc6376' },
+      { title: 'RFC-7489 - DMARC', link: 'https://datatracker.ietf.org/doc/html/rfc7489' },
+      { title: 'BIMI Group', link: 'https://bimigroup.org/' },
+    ],
+    screenshot: 'https://i.ibb.co/yqhwx5G/Screenshot-from-2023-07-29-18-22-20.png',
+  },
+  // {
+  //   id: '',
+  //   title: '',
+  //   description: '',
+  //   use: '',
+  //   resources: [],
+  //   screenshot: '',
+  // },
 ];
 
 export const about = [
@@ -409,10 +465,18 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 `;
 
+export const supportUs = [
+  "The hosted app is free to use without restriction. All the code is open source, so you're also free to deploy your own instance, or make any modifications.",
+  "Running web-check does cost me a small amount of money each month, so if you're finding the app useful, consider <a href='https://github.com/sponsors/Lissy93'>sponsoring me on GitHub</a> if you're able to. Even just $1 or $2/month would be a huge help in supporting the ongoing project running costs.",
+  "Otherwise, there are other ways you can help out, like submitting or reviewing a pull request to the <a href='https://github.com/Lissy93/web-check'>GitHub repo</a>, upvoting us on <a href='https://www.producthunt.com/posts/web-check'>Product Hunt</a>, or by sharing with your network.",
+  "But don't feel obliged to do anything, as this app (and all my other projects) will always remain 100% free and open source, and I will do my best to ensure the managed instances remain up and available for as long as possible :)",
+];
+
 export const fairUse = [
-  'Please use this tool responsibly. Do not use it for hosts you do not have permission to scan. Do not use it to attack or disrupt services.',
-  'Requests are rate-limited to prevent abuse. If you need to make more bandwidth, please deploy your own instance.',
-  'The hosted instance is only for demo use, as excessive use will quickly deplete my lambda function credits, making it unavailable for others and/or costing me money.',
+  'Please use this tool responsibly. Do not use it for hosts you do not have permission to scan. Do not use it as part of a scheme to attack or disrupt services.',
+  'Requests may be rate-limited to prevent abuse. If you need to make more bandwidth, please deploy your own instance.',
+  'There is no guarantee of uptime or availability. If you need to make sure the service is available, please deploy your own instance.',
+  'Please use fairly, as excessive use will quickly deplete the lambda function credits, making the service unavailable for others (and/or empty my bank account!).',
 ];
 
 export default docs;

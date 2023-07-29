@@ -6,7 +6,7 @@ import Footer from 'components/misc/Footer';
 import Nav from 'components/Form/Nav';
 import Button from 'components/Form/Button';
 import { StyledCard } from 'components/Form/Card';
-import docs, { about, license, fairUse } from 'utils/docs';
+import docs, { about, license, fairUse, supportUs } from 'utils/docs';
 
 
 const AboutContainer = styled.div`
@@ -16,6 +16,7 @@ margin: 2rem auto;
 padding-bottom: 1rem;
 header {
   margin 1rem 0;
+  width: auto;
 }
 `;
 
@@ -75,7 +76,7 @@ const Section = styled(StyledCard)`
     float: right;
     break-inside: avoid;
     max-width: 300px;
-    max-height: 28rem;
+    // max-height: 28rem;
     border-radius: 6px;
     clear: both;
   }
@@ -147,6 +148,11 @@ const About = (): JSX.Element => {
         ))}
       </Section>
 
+      <Heading as="h2" size="medium" color={colors.primary}>Support Us</Heading>
+      <Section>
+        {supportUs.map((para, index: number) => (<p dangerouslySetInnerHTML={{__html: para}} />))}
+      </Section>
+
       <Heading as="h2" size="medium" color={colors.primary}>Terms & Info</Heading>
       <Section>
       <Heading as="h3" size="small" color={colors.primary}>License</Heading>
@@ -166,6 +172,11 @@ const About = (): JSX.Element => {
         <Heading as="h3" size="small" color={colors.primary}>Privacy</Heading>
         <p>
         Analytics are used on the demo instance (via a self-hosted Plausible instance), this only records the URL you visited but no personal data.
+        There's also some basic error logging (via a self-hosted GlitchTip instance), this is only used to help me fix bugs.
+        <br />
+        <br />
+        Neither your IP address, browser/OS/hardware info, nor any other data will ever be collected or logged.
+        (You may verify this yourself, either by inspecting the source code or the using developer tools)
         </p>
         <hr />
         <Heading as="h3" size="small" color={colors.primary}>Support</Heading>
