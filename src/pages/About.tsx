@@ -5,6 +5,7 @@ import Heading from 'components/Form/Heading';
 import Footer from 'components/misc/Footer';
 import Nav from 'components/Form/Nav';
 import Button from 'components/Form/Button';
+import AdditionalResources from 'components/misc/AdditionalResources';
 import { StyledCard } from 'components/Form/Card';
 import docs, { about, license, fairUse, supportUs } from 'utils/docs';
 
@@ -17,6 +18,10 @@ padding-bottom: 1rem;
 header {
   margin 1rem 0;
   width: auto;
+}
+section {
+  width: auto;
+  .inner-heading { display: none; }
 }
 `;
 
@@ -86,7 +91,6 @@ const makeAnchor = (title: string): string => {
   return title.toLowerCase().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "-");
 };
 
-
 const About = (): JSX.Element => {
   return (
     <div>
@@ -147,6 +151,14 @@ const About = (): JSX.Element => {
           </section>
         ))}
       </Section>
+
+      <Heading as="h2" size="medium" color={colors.primary}>API Documentation</Heading>
+      <Section>
+        <p>// Coming soon...</p>
+      </Section>
+
+      <Heading as="h2" size="medium" color={colors.primary}>Additional Resources</Heading>
+      <AdditionalResources />
 
       <Heading as="h2" size="medium" color={colors.primary}>Support Us</Heading>
       <Section>

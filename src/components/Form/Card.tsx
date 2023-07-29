@@ -30,7 +30,7 @@ export const Card = (props: CardProps): JSX.Element => {
     <ErrorBoundary title={heading}>
       <StyledCard styles={styles}>
         { actionButtons && actionButtons }
-        { heading && <Heading as="h3" align="left" color={colors.primary}>{heading}</Heading> }
+        { heading && <Heading className="inner-heading" as="h3" align="left" color={colors.primary}>{heading}</Heading> }
         {children}
       </StyledCard>
     </ErrorBoundary>

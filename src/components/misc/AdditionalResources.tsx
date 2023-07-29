@@ -8,7 +8,7 @@ margin: 0;
 padding: 1rem;
 display: grid;
 gap: 0.5rem;
-grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
 li a.resource-wrap {
   display: flex;
   align-items: start;
@@ -192,7 +192,7 @@ const resources = [
 ];
 
 const makeLink = (resource: any, scanUrl: string | undefined): string => {
-  return (scanUrl && resource.searchLink) ? resource.searchLink.replaceAll('{URL}', scanUrl.replace('https://', '')) : '#';
+  return (scanUrl && resource.searchLink) ? resource.searchLink.replaceAll('{URL}', scanUrl.replace('https://', '')) : resource.link;
 };
 
 const AdditionalResources = (props: { url?: string }): JSX.Element => {
