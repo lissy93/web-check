@@ -34,6 +34,18 @@ exports.handler = async (event, context) => {
     const internalLinks = [...internalLinksMap.entries()].sort((a, b) => b[1] - a[1]).map(entry => entry[0]);
     const externalLinks = [...externalLinksMap.entries()].sort((a, b) => b[1] - a[1]).map(entry => entry[0]);
 
+    if (internalLinks.length === 0 && externalLinks.length === 0) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          skipped: 'No internal or external links found. '
+            + 'This may be due to the website being dynamically rendered, using a client-side framework (like React), and without SSR enabled. '
+            + 'That would mean that the static HTML returned from the HTTP request doesn\'t contain any meaningful content for Web-Check to analyze. '
+            + 'You can rectify this by using a headless browser to render the page instead.',
+          }),
+      };
+    }
+
     return {
       statusCode: 200,
       body: JSON.stringify({ internal: internalLinks, external: externalLinks }),
