@@ -41,6 +41,13 @@ exports.handler = async (event, context) => {
       }).on('error', reject);
     });
 
+    if (!carbonData.statistics || (carbonData.statistics.adjustedBytes === 0 && carbonData.statistics.energy === 0)) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ skipped: 'Not enough info to get carbon data' }),
+      };
+    }
+
     carbonData.scanUrl = url;
     return {
       statusCode: 200,
