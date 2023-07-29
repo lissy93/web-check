@@ -46,6 +46,7 @@ import DnsServerCard from 'components/Results/DnsServer';
 import TechStackCard from 'components/Results/TechStack';
 import SecurityTxtCard from 'components/Results/SecurityTxt';
 import ContentLinksCard from 'components/Results/ContentLinks';
+import SocialTagsCard from 'components/Results/SocialTags';
 
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
@@ -341,6 +342,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`${api}/security-txt?url=${address}`).then(res => parseJson(res)),
   });
 
+  // Get social media previews, from a sites social meta tags
+  const [socialTagResults, updateSocialTagResults] = useMotherHook({
+    jobId: 'social-tags',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`${api}/social-tags?url=${address}`).then(res => parseJson(res)),
+  });
+
   // Get site features from BuiltWith
   const [siteFeaturesResults, updateSiteFeaturesResults] = useMotherHook({
     jobId: 'features',
@@ -435,6 +444,7 @@ const Results = (): JSX.Element => {
     { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
     { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },
     { id: 'dns-server', title: 'DNS Server', result: dnsServerResults, Component: DnsServerCard, refresh: updateDnsServerResults },
+    { id: 'social-tags', title: 'Social Tags', result: socialTagResults, Component: SocialTagsCard, refresh: updateSocialTagResults },
     { id: 'linked-pages', title: 'Linked Pages', result: linkedPagesResults, Component: ContentLinksCard, refresh: updateLinkedPagesResults },
     { id: 'features', title: 'Site Features', result: siteFeaturesResults, Component: SiteFeaturesCard, refresh: updateSiteFeaturesResults },
     { id: 'sitemap', title: 'Pages', result: sitemapResults, Component: SitemapCard, refresh: updateSitemapResults },
