@@ -322,14 +322,14 @@ const docs: Doc[] = [
   {
     id: 'tech-stack',
     title: 'Tech Stack',
-    description: 'Checks what technologies a site is built with.'
+    description: 'Checks what technologies a site is built with. '
     + 'This is done by fetching and parsing the site, then comparing it against a bit list of RegEx maintained by Wappalyzer to identify the unique fingerprints that different technologies leave.',
     use: 'Identifying a website\'s tech stack aids in evaluating its security by exposing potential vulnerabilities, '
     + 'informs competitive analyses and development decisions, and can guide tailored marketing strategies. '
     + 'Ethical application of this knowledge is crucial to avoid harmful activities like data theft or unauthorized intrusion.',
     resources: [
-      'https://builtwith.com/',
-      'https://github.com/wappalyzer/wappalyzer/tree/master/src/technologies'
+      { title: 'Wappalyzer fingerprints', link: 'https://github.com/wappalyzer/wappalyzer/tree/master/src/technologies'},
+      { title: 'BuiltWith - Check what tech a site is using', link: 'https://builtwith.com/'},
     ],
   },
   {
@@ -338,9 +338,9 @@ const docs: Doc[] = [
     description: 'This job finds and parses a site\'s listed sitemap. This file lists public sub-pages on the site, which the author wishes to be crawled by search engines. Sitemaps help with SEO, but are also useful for seeing all a sites public content at a glance.',
     use: 'Understand the structure of a site\'s public-facing content, and for site-owners, check that you\'re site\'s sitemap is accessible, parsable and contains everything you wish it to.',
     resources: [
-      'https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview',
-      'https://www.sitemaps.org/protocol.html',
-      'https://www.conductor.com/academy/xml-sitemap/',
+      { title: 'Learn about Sitemaps', link: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview'},
+      { title: 'Sitemap XML spec', link: 'https://www.sitemaps.org/protocol.html'},
+      { title: 'Sitemap tutorial', link: 'https://www.conductor.com/academy/xml-sitemap/'},
     ],
     screenshot: 'https://i.ibb.co/GtrCQYq/Screenshot-from-2023-07-21-12-28-38.png',
   },
