@@ -42,7 +42,7 @@ None of this is hard to find with a series of basic curl commands, or a combinat
 <details>
 <summary><b>IP Address</b></summary>
 
-<img width="300" src="undefined?" align="right" />
+<img width="300" src="./screenshots/wc_ip-adress.png" align="right" />
 
 ###### Description
 The IP Address task involves mapping the user provided URL to its corresponding IP address through a process known as Domain Name System (DNS) resolution. An IP address is a unique identifier given to every device on the Internet, and when paired with a domain name, it allows for accurate routing of online requests and responses.
