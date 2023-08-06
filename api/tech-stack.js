@@ -26,7 +26,7 @@ const analyze = async (url) => {
 
 exports.handler = async (event, context, callback) => {
   // Validate URL parameter
-  if (!event.queryStringParameters || !event.queryStringParameters.url) {
+  if (!(event.queryStringParameters || event.query).url) {
     return {
       statusCode: 400,
       body: JSON.stringify({ error: 'Missing url parameter' }),
