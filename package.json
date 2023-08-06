@@ -39,6 +39,7 @@
     "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
     "chrome-aws-lambda": "^10.1.0",
+    "dotenv": "^16.3.1",
     "flatted": "^3.2.7",
     "follow-redirects": "^1.15.2",
     "got": "^13.0.0",
