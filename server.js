@@ -2,13 +2,20 @@ const express = require('express');
 const awsServerlessExpress = require('aws-serverless-express');
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 
-// Read the '/api' directory and import each lambda function
 const handlers = {};
-fs.readdirSync(path.join(__dirname, '/api')).forEach(file => {
-  const route = `/api/${file.split('.')[0]}`; // remove .js extension
+
+const dirPath = path.join(__dirname, '/api');
+
+const fileNames = fs.readdirSync(dirPath, { withFileTypes: true })
+  .filter(dirent => dirent.isFile() && dirent.name.endsWith('.js'))
+  .map(dirent => dirent.name);
+
+fileNames.forEach(file => {
+  const route = `/api/${file.split('.')[0]}`;
   const handler = require(path.join(__dirname, '/api', file)).handler;
   handlers[route] = handler;
   
@@ -51,10 +58,11 @@ app.get('/api', async (req, res) => {
 });
 
 // Create serverless express server
+const port = process.env.API_PORT || 3001;
 const server = awsServerlessExpress
 .createServer(app)
-.listen(3001, () => {
-  console.log('Listening on port 3001');
+.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
 
 exports.handler = (event, context) => {
