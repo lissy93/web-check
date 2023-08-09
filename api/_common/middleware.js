@@ -1,21 +1,31 @@
 const normalizeUrl = (url) => {
-  // Normalizing logic here
-  return url.startsWith('http') ? url : `http://${url}`;
+  return url.startsWith('http') ? url : `https://${url}`;
 };
 
 const commonMiddleware = (handler) => {
   return async (event, context, callback) => {
-    try {
-      const rawUrl = event.queryStringParameters.url;
-      const url = normalizeUrl(rawUrl);
-
-      // Call the specific handler with the normalized URL
-      const response = await handler(url, event, context);
-
+    
+    const rawUrl = (event.queryStringParameters || event.query).url;
+    
+    if (!rawUrl) {
       callback(null, {
-        statusCode: 200,
-        body: JSON.stringify(response),
+        statusCode: 500,
+        body: JSON.stringify({ error: 'No URL specified' }),
       });
+    }
+
+    const url = normalizeUrl(rawUrl);
+
+    try {
+      const response = await handler(url, event, context);
+      if (response.body && response.statusCode) {
+      callback(null, response);
+      } else {
+        callback(null, {
+          statusCode: 200,
+          body: typeof response === 'object' ? JSON.stringify(response) : response,
+        });
+      }
     } catch (error) {
       console.log(error);
       callback(null, {
