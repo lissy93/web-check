@@ -1,8 +1,7 @@
 const https = require('https');
+const middleware = require('./_common/middleware');
 
-exports.handler = async function(event, context) {
-  const siteURL = (event.queryStringParameters || event.query).url;
-
+exports.handler = middleware(async (url, event, context) => {
   const errorResponse = (message, statusCode = 500) => {
     return {
       statusCode: statusCode,
@@ -16,15 +15,9 @@ exports.handler = async function(event, context) {
     };
   };
 
-  if (!siteURL) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'URL parameter is missing!' }),
-    };
-  }
 
   return new Promise((resolve, reject) => {
-    const req = https.request(siteURL, res => {
+    const req = https.request(url, res => {
       const headers = res.headers;
       const hstsHeader = headers['strict-transport-security'];
 
@@ -60,4 +53,5 @@ exports.handler = async function(event, context) {
 
     req.end();
   });
-};
+});
+

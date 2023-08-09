@@ -1,40 +1,22 @@
 const axios = require('axios');
+const middleware = require('./_common/middleware');
 
-exports.handler = function(event, context, callback) {
-  const url = (event.queryStringParameters || event.query).url;
-
-  if (!url) {
-    callback(null, {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'URL param is required'}),
-    });
-  }
-
+const handler = async (url, event, context) => {
   const apiKey = process.env.GOOGLE_CLOUD_API_KEY;
 
+  if (!url) {
+    throw new Error('URL param is required');
+  }
+
   if (!apiKey) {
-    callback(null, {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'API key (GOOGLE_CLOUD_API_KEY) not set'}),
-    });
+    throw new Error('API key (GOOGLE_CLOUD_API_KEY) not set');
   }
 
   const endpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&category=PERFORMANCE&category=ACCESSIBILITY&category=BEST_PRACTICES&category=SEO&category=PWA&strategy=mobile&key=${apiKey}`;
+
+  const response = await axios.get(endpoint);
   
-  axios.get(endpoint)
-  .then(
-    (response) => {
-      callback(null, {
-        statusCode: 200,
-        body: JSON.stringify(response.data),
-      });
-    }
-  ).catch(
-    () => {
-      callback(null, {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Error running Lighthouse'}),
-      });
-    }
-  );
+  return response.data;
 };
+
+exports.handler = middleware(handler);

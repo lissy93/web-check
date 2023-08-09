@@ -1,8 +1,9 @@
 const dns = require('dns');
 const util = require('util');
+const middleware = require('./_common/middleware');
 
-exports.handler = async function(event, context) {
-  let hostname = (event.queryStringParameters || event.query).url;
+const handler = async (url) => {
+  let hostname = url;
 
   // Handle URLs by extracting hostname
   if (hostname.startsWith('http://') || hostname.startsWith('https://')) {
@@ -35,25 +36,19 @@ exports.handler = async function(event, context) {
     ]);
 
     return {
-      statusCode: 200,
-      body: JSON.stringify({
-        A: a,
-        AAAA: aaaa,
-        MX: mx,
-        TXT: txt,
-        NS: ns,
-        CNAME: cname,
-        SOA: soa,
-        SRV: srv,
-        PTR: ptr
-      })
+      A: a,
+      AAAA: aaaa,
+      MX: mx,
+      TXT: txt,
+      NS: ns,
+      CNAME: cname,
+      SOA: soa,
+      SRV: srv,
+      PTR: ptr
     };
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: error.message
-      })
-    };
+    throw new Error(error.message);
   }
 };
+
+exports.handler = middleware(handler);

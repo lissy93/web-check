@@ -1,5 +1,6 @@
 const { https } = require('follow-redirects');
 const { URL } = require('url');
+const middleware = require('./_common/middleware');
 
 const SECURITY_TXT_PATHS = [
   '/security.txt',
@@ -37,58 +38,38 @@ const isPgpSigned = (result) => {
   return false;
 };
 
-exports.handler = async (event, context) => {
-  const urlParam = (event.queryStringParameters || event.query).url;
-  if (!urlParam) {
-    return { 
-      statusCode: 400, 
-      body: JSON.stringify({ error: 'Missing url parameter' }) 
-    };
-  }
+const securityTxtHandler = async (urlParam) => {
 
   let url;
   try {
     url = new URL(urlParam.includes('://') ? urlParam : 'https://' + urlParam);
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Invalid URL format' }),
-    };
+    throw new Error('Invalid URL format');
   }
   url.pathname = '';
   
   for (let path of SECURITY_TXT_PATHS) {
     try {
       const result = await fetchSecurityTxt(url, path);
-      if (result && result.includes('<html')) return {
-        statusCode: 200,
-        body: JSON.stringify({ isPresent: false }),
-      };
+      if (result && result.includes('<html')) return { isPresent: false };
       if (result) {
         return {
-          statusCode: 200,
-          body: JSON.stringify({
-            isPresent: true,
-            foundIn: path,
-            content: result,
-            isPgpSigned: isPgpSigned(result),
-            fields: parseResult(result),
-          }),
+          isPresent: true,
+          foundIn: path,
+          content: result,
+          isPgpSigned: isPgpSigned(result),
+          fields: parseResult(result),
         };
       }
     } catch (error) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: error.message }),
-      };
+      throw new Error(error.message);
     }
   }
   
-  return {
-    statusCode: 404,
-    body: JSON.stringify({ isPresent: false }),
-  };
+  return { isPresent: false };
 };
+
+exports.handler = middleware(securityTxtHandler);
 
 async function fetchSecurityTxt(baseURL, path) {
   return new Promise((resolve, reject) => {

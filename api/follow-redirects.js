@@ -1,9 +1,8 @@
-exports.handler = async (event) => {
-  const url = (event.queryStringParameters || event.query).url;
+const handler = async (url) => {
   const redirects = [url];
+  const got = await import('got');
 
   try {
-    const got = await import('got');
     await got.default(url, {
       followRedirect: true,
       maxRedirects: 12,
@@ -17,19 +16,12 @@ exports.handler = async (event) => {
     });
 
     return {
-      statusCode: 200,
-      body: JSON.stringify({
-        redirects: redirects,
-      }),
+      redirects: redirects,
     };
   } catch (error) {
-    return errorResponse(`Error: ${error.message}`);
+    throw new Error(`Error: ${error.message}`);
   }
 };
 
-const errorResponse = (message, statusCode = 444) => {
-  return {
-    statusCode: statusCode,
-    body: JSON.stringify({ error: message }),
-  };
-};
+const middleware = require('./_common/middleware');
+exports.handler = middleware(handler);

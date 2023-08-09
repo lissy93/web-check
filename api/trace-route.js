@@ -1,55 +1,31 @@
 const traceroute = require('traceroute');
 const url = require('url');
+const middleware = require('./_common/middleware');
 
-exports.handler = async function(event, context) {
-  const urlString = (event.queryStringParameters || event.query).url;
+const executeTraceroute = async (urlString, context) => {
+  // Parse the URL and get the hostname
+  const urlObject = url.parse(urlString);
+  const host = urlObject.hostname;
 
-  try {
-    if (!urlString) {
-      throw new Error('URL parameter is missing!');
-    }
+  if (!host) {
+    throw new Error('Invalid URL provided');
+  }
 
-    // Parse the URL and get the hostname
-    const urlObject = url.parse(urlString);
-    const host = urlObject.hostname;
-
-    if (!host) {
-      throw new Error('Invalid URL provided');
-    }
-
-    // Traceroute with callback
-    const result = await new Promise((resolve, reject) => {
-      traceroute.trace(host, (err, hops) => {
-        if (err || !hops) {
-          reject(err || new Error('No hops found'));
-        } else {
-          resolve(hops);
-        }
-      });
-
-      // Check if remaining time is less than 8.8 seconds, then reject promise
-      if (context.getRemainingTimeInMillis() < 8800) {
-        reject(new Error('Lambda is about to timeout'));
+  // Traceroute with callback
+  const result = await new Promise((resolve, reject) => {
+    traceroute.trace(host, (err, hops) => {
+      if (err || !hops) {
+        reject(err || new Error('No hops found'));
+      } else {
+        resolve(hops);
       }
     });
+  });
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: "Traceroute completed!",
-        result,
-      }),
-    };
-  } catch (err) {
-    const message = err.code === 'ENOENT'
-      ? 'Traceroute command is not installed on the host.'
-      : err.message;
-
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: message,
-      }),
-    };
-  }
+  return {
+    message: "Traceroute completed!",
+    result,
+  };
 };
+
+exports.handler = middleware(executeTraceroute);

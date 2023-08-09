@@ -1,26 +1,14 @@
 const axios = require('axios');
+const middleware = require('./_common/middleware');
 
-exports.handler = async function(event, context) {
-  const url = (event.queryStringParameters || event.query).url;
-
-  if (!url) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'url query string parameter is required' }),
-    };
-  }
-
+const handler = async (url, event, context) => {
   try {
     const response = await axios.get(url, {withCredentials: true});
     const cookies = response.headers['set-cookie'];
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ cookies }),
-    };
+    return { cookies };
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
-    };
+    throw new Error(error.message);
   }
 };
+
+exports.handler = middleware(handler);

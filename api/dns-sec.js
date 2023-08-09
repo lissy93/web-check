@@ -1,16 +1,7 @@
 const https = require('https');
+const commonMiddleware = require('./_common/middleware'); // Make sure this path is correct
 
-exports.handler = async function(event, context) {
-  const url = (event.queryStringParameters || event.query).url;
-
-  if (!url) {
-    return errorResponse('URL query parameter is required.');
-  }
-
-  // Extract hostname from URL
-  const parsedUrl = new URL(url);
-  const domain = parsedUrl.hostname;
-
+const fetchDNSRecords = async (domain, event, context) => {
   const dnsTypes = ['DNSKEY', 'DS', 'RRSIG'];
   const records = {};
 
@@ -48,22 +39,14 @@ exports.handler = async function(event, context) {
       if (dnsResponse.Answer) {
         records[type] = { isFound: true, answer: dnsResponse.Answer, response: dnsResponse.Answer };
       } else {
-        records[type] = { isFound: false, answer: null, response: dnsResponse};
+        records[type] = { isFound: false, answer: null, response: dnsResponse };
       }
     } catch (error) {
-      return errorResponse(`Error fetching ${type} record: ${error.message}`);
+      throw new Error(`Error fetching ${type} record: ${error.message}`); // This will be caught and handled by the commonMiddleware
     }
   }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(records),
-  };
+  return records;
 };
 
-const errorResponse = (message, statusCode = 444) => {
-  return {
-    statusCode: statusCode,
-    body: JSON.stringify({ error: message }),
-  };
-};
+exports.handler = commonMiddleware(fetchDNSRecords);

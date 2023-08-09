@@ -1,17 +1,11 @@
 const dns = require('dns').promises;
+const middleware = require('./_common/middleware');
 
-exports.handler = async (event) => {
-  let url = (event.queryStringParameters || event.query).url;
+const handler = async (url, event, context) => {
   try {
-  url = new URL(url);
-  } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: `Invalid URL ${error}` }),
-    };
-  }
-  try {
-    const txtRecords = await dns.resolveTxt(url.hostname);
+    const parsedUrl = new URL(url);
+    
+    const txtRecords = await dns.resolveTxt(parsedUrl.hostname);
 
     // Parsing and formatting TXT records into a single object
     const readableTxtRecords = txtRecords.reduce((acc, recordArray) => {
@@ -24,15 +18,15 @@ exports.handler = async (event) => {
       return { ...acc, ...recordObject };
     }, {});
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(readableTxtRecords),
-    };
+    return readableTxtRecords;
+
   } catch (error) {
-    console.error('Error:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
-    };
+    if (error.code === 'ERR_INVALID_URL') {
+      throw new Error(`Invalid URL ${error}`);
+    } else {
+      throw error;
+    }
   }
 };
+
+exports.handler = middleware(handler);

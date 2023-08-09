@@ -1,33 +1,21 @@
 const dns = require('dns');
+const middleware = require('./_common/middleware');
 
-/* Lambda function to fetch the IP address of a given URL */
-exports.handler = function (event, context, callback) {
-  const addressParam = (event.queryStringParameters || event.query).url;
-  
-  if (!addressParam) {
-    callback(null, errorResponse('Address parameter is missing.'));
-    return;
-  }
-
-  const address = decodeURIComponent(addressParam)
-    .replaceAll('https://', '')
-    .replaceAll('http://', '');
-
-  dns.lookup(address, (err, ip, family) => {
-    if (err) {
-      callback(null, errorResponse(err.message));
-    } else {
-      callback(null, {
-        statusCode: 200,
-        body: JSON.stringify({ ip, family }),
-      });
-    }
+const lookupAsync = (address) => {
+  return new Promise((resolve, reject) => {
+    dns.lookup(address, (err, ip, family) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({ ip, family });
+      }
+    });
   });
 };
 
-const errorResponse = (message, statusCode = 444) => {
-  return {
-    statusCode: statusCode,
-    body: JSON.stringify({ error: message }),
-  };
+const handler = async (url) => {
+  const address = url.replaceAll('https://', '').replaceAll('http://', '');
+  return await lookupAsync(address);
 };
+
+exports.handler = middleware(handler);
