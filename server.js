@@ -2,54 +2,75 @@ const express = require('express');
 const awsServerlessExpress = require('aws-serverless-express');
 const fs = require('fs');
 const path = require('path');
+const historyApiFallback = require('connect-history-api-fallback');
 require('dotenv').config();
 
 const app = express();
 
-const handlers = {};
+const API_DIR = '/api'; // Name of the dir containing the lambda functions
+const dirPath = path.join(__dirname, API_DIR); // Path to the lambda functions dir
 
-const dirPath = path.join(__dirname, '/api');
+// Execute the lambda function
+const executeHandler = async (handler, req) => {
+  return new Promise((resolve, reject) => {
+    const callback = (err, response) => err ? reject(err) : resolve(response);
+    const promise = handler(req, {}, callback);
 
+    if (promise && typeof promise.then === 'function') {
+      promise.then(resolve).catch(reject);
+    }
+  });
+};
+
+// Array of all the lambda function file names
 const fileNames = fs.readdirSync(dirPath, { withFileTypes: true })
   .filter(dirent => dirent.isFile() && dirent.name.endsWith('.js'))
   .map(dirent => dirent.name);
 
+const handlers = {};
+
 fileNames.forEach(file => {
-  const route = `/api/${file.split('.')[0]}`;
-  const handler = require(path.join(__dirname, '/api', file)).handler;
+  const routeName = file.split('.')[0];
+  const route = `${API_DIR}/${routeName}`;
+  const handler = require(path.join(dirPath, file)).handler;
+
   handlers[route] = handler;
   
   app.get(route, async (req, res) => {
     try {
-      const result = await new Promise((resolve, reject) => {
-        const cb = (err, response) => err ? reject(err) : resolve(response);
-        const promise = handler(req, {}, cb);
-        if (promise && typeof promise.then === 'function') {
-          promise.then(resolve).catch(reject);
-        }
-      });
-      res.status(result.statusCode).json(JSON.parse(result.body));
+      const { statusCode = 200, body = '' } = await executeHandler(handler, req);
+      res.status(statusCode).json(JSON.parse(body));
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
   });
 });
 
+const timeout = (ms, jobName = null) => {
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error(`Timed out after the ${ms}ms limit${jobName ? `, when executing the ${jobName} task` : ''}`));
+    }, ms);
+  });
+}
+
 app.get('/api', async (req, res) => {
   const results = {};
-  const url = req.query.url;
+  const { url } = req.query;
+  const maxExecutionTime = process.env.API_TIMEOUT_LIMIT || 10000;
+
   const handlerPromises = Object.entries(handlers).map(async ([route, handler]) => {
+    const routeName = route.replace(`${API_DIR}/`, '');
+
     try {
-      const result = await new Promise((resolve, reject) => {
-        const cb = (err, response) => err ? reject(err) : resolve(response);
-        const promise = handler({ query: { url } }, {}, cb);
-        if (promise && typeof promise.then === 'function') {
-          promise.then(resolve).catch(reject);
-        }
-      });
-      results[route.slice(5)] = JSON.parse(result.body);  // remove '/api/' prefix
+      const result = await Promise.race([
+        executeHandler(handler, { query: { url } }),
+        timeout(maxExecutionTime, routeName)
+      ]);
+      results[routeName] = JSON.parse((result || {}).body);
+      
     } catch (err) {
-      results[route.slice(5)] = { error: err.message };
+      results[routeName] = { error: err.message };
     }
   });
 
@@ -57,15 +78,24 @@ app.get('/api', async (req, res) => {
   res.json(results);
 });
 
+// Handle SPA routing
+app.use(historyApiFallback({
+  rewrites: [
+    { from: /^\/api\/.*$/, to: function(context) { return context.parsedUrl.path; } },
+  ]
+}));
+
+// Serve React App (static files from ./build)
+app.use(express.static(path.join(__dirname, 'build')));
+
+
 // Create serverless express server
-const port = process.env.API_PORT || 3001;
-const server = awsServerlessExpress
-.createServer(app)
-.listen(port, () => {
+const port = process.env.API_PORT || 3000;
+const server = awsServerlessExpress.createServer(app).listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
 exports.handler = (event, context) => {
-  console.log(`EVENT: ${JSON.stringify(event)}`);
+  // console.log(`EVENT: ${JSON.stringify(event)}`);
   awsServerlessExpress.proxy(server, event, context);
 };
