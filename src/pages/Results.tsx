@@ -132,7 +132,7 @@ const Results = (): JSX.Element => {
       }
       return newJobs;
     });
-  }, []);
+  }, [startTime]);
 
   const parseJson = (response: Response): Promise<any> => {
     return new Promise((resolve) => {
@@ -147,15 +147,6 @@ const Results = (): JSX.Element => {
     });
   };
 
-  useEffect(() => {
-    if (!addressType || addressType === 'empt') {
-      setAddressType(determineAddressType(address || ''));
-    }
-    if (addressType === 'ipV4' && address) {
-      setIpAddress(address);
-    }
-  }, []);  
-
   const urlTypeOnly = ['url'] as AddressType[]; // Many jobs only run with these address types
 
   const api = '/api';
@@ -169,6 +160,15 @@ const Results = (): JSX.Element => {
     .then(res => parseJson(res))
     .then(res => res.ip),
   });
+
+  useEffect(() => {
+    if (!addressType || addressType === 'empt') {
+      setAddressType(determineAddressType(address || ''));
+    }
+    if (addressType === 'ipV4' && address) {
+      setIpAddress(address);
+    }
+  }, [address, addressType, setIpAddress]);  
 
   // Fetch and parse SSL certificate info
   const [sslResults, updateSslResults] = useMotherHook({
