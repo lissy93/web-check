@@ -57,13 +57,13 @@ const Modal: React.FC<ModalProps> = ({ children, isOpen, closeModal }) => {
     }
   };
 
-  const handleEscPress = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      closeModal();
-    }
-  };
-
   React.useEffect(() => {
+    const handleEscPress = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    };
+
     if (isOpen) {
       window.addEventListener('keydown', handleEscPress);
     }
@@ -71,7 +71,7 @@ const Modal: React.FC<ModalProps> = ({ children, isOpen, closeModal }) => {
     return () => {
       window.removeEventListener('keydown', handleEscPress);
     };
-  }, [isOpen]);
+  }, [isOpen, closeModal]);
 
   if (!isOpen) {
     return null;

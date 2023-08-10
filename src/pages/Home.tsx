@@ -38,6 +38,7 @@ const UserInputMain = styled.form`
   z-index: 2;
 `;
 
+/*
 const FindIpButton = styled.a`
   margin: 0.5rem;
   cursor: pointer;
@@ -46,6 +47,7 @@ const FindIpButton = styled.a`
   color: ${colors.primary};
   text-decoration: underline;
 `;
+*/
 
 const ErrorMessage = styled.p`
   color: ${colors.danger};
@@ -126,6 +128,8 @@ const Home = (): JSX.Element => {
     if (!isError) setErrMsg('');
   };
 
+ 
+  // eslint-disable-next-line
   const findIpAddress = () => {
     setUserInput('');
     setPlaceholder('Looking up your IP...');
@@ -142,6 +146,7 @@ const Home = (): JSX.Element => {
         console.log('Failed to get IP address :\'(', error)
       });
   };
+
 
   const formSubmitEvent = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
