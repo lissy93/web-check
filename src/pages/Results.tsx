@@ -165,7 +165,7 @@ const Results = (): JSX.Element => {
     jobId: 'get-ip',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/find-url-ip?url=${address}`)
+    fetchRequest: () => fetch(`${api}/get-ip?url=${address}`)
     .then(res => parseJson(res))
     .then(res => res.ip),
   });
@@ -175,7 +175,7 @@ const Results = (): JSX.Element => {
     jobId: 'ssl',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/ssl-check?url=${address}`).then((res) => parseJson(res)),
+    fetchRequest: () => fetch(`${api}/ssl?url=${address}`).then((res) => parseJson(res)),
   });
 
   // Fetch and parse cookies info
@@ -183,7 +183,7 @@ const Results = (): JSX.Element => {
     jobId: 'cookies',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/get-cookies?url=${address}`)
+    fetchRequest: () => fetch(`${api}/cookies?url=${address}`)
       .then(res => parseJson(res))
       .then(res => parseCookies(res.cookies)),
   });
@@ -193,9 +193,8 @@ const Results = (): JSX.Element => {
     jobId: 'robots-txt',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/read-robots-txt?url=${address}`)
-      .then(res => res.text())
-      .then(res => parseRobotsTxt(res)),
+    fetchRequest: () => fetch(`${api}/robots-txt?url=${address}`)
+      .then(res => parseJson(res)),
   });
 
   // Fetch and parse headers
@@ -203,7 +202,7 @@ const Results = (): JSX.Element => {
     jobId: 'headers',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/get-headers?url=${address}`).then(res => parseJson(res)),
+    fetchRequest: () => fetch(`${api}/headers?url=${address}`).then(res => parseJson(res)),
   });
 
   // Fetch and parse DNS records
@@ -211,7 +210,7 @@ const Results = (): JSX.Element => {
     jobId: 'dns',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/get-dns?url=${address}`).then(res => parseJson(res)),
+    fetchRequest: () => fetch(`${api}/dns?url=${address}`).then(res => parseJson(res)),
   });
 
   // Fetch and parse Lighthouse performance data
@@ -219,7 +218,7 @@ const Results = (): JSX.Element => {
     jobId: 'quality',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/lighthouse-report?url=${address}`)
+    fetchRequest: () => fetch(`${api}/quality?url=${address}`)
       .then(res => parseJson(res))
       .then(res => res?.lighthouseResult || { error: 'No Data'}),
   });
@@ -249,7 +248,7 @@ const Results = (): JSX.Element => {
     jobId: 'ports',
     updateLoadingJobs,
     addressInfo: { address: ipAddress, addressType: 'ipV4', expectedAddressTypes: ['ipV4', 'ipV6'] },
-    fetchRequest: () => fetch(`${api}/check-ports?url=${ipAddress}`)
+    fetchRequest: () => fetch(`${api}/ports?url=${ipAddress}`)
       .then(res => parseJson(res)),
   });
 
@@ -268,7 +267,7 @@ const Results = (): JSX.Element => {
     jobId: 'txt-records',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/get-txt?url=${address}`).then(res => parseJson(res)),
+    fetchRequest: () => fetch(`${api}/txt-records?url=${address}`).then(res => parseJson(res)),
   });
 
   // Fetches URL redirects
@@ -276,7 +275,7 @@ const Results = (): JSX.Element => {
     jobId: 'redirects',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/follow-redirects?url=${address}`).then(res => parseJson(res)),
+    fetchRequest: () => fetch(`${api}/redirects?url=${address}`).then(res => parseJson(res)),
   });
 
   // Get current status and response time of server
@@ -284,7 +283,7 @@ const Results = (): JSX.Element => {
     jobId: 'status',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/server-status?url=${address}`).then(res => parseJson(res)),
+    fetchRequest: () => fetch(`${api}/status?url=${address}`).then(res => parseJson(res)),
   });
 
   // Get current status and response time of server
@@ -308,7 +307,7 @@ const Results = (): JSX.Element => {
     jobId: 'carbon',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/get-carbon?url=${address}`).then(res => parseJson(res)),
+    fetchRequest: () => fetch(`${api}/carbon?url=${address}`).then(res => parseJson(res)),
   });
 
   // Check if a site is on the HSTS preload list
@@ -316,7 +315,7 @@ const Results = (): JSX.Element => {
     jobId: 'hsts',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/check-hsts?url=${address}`).then(res => parseJson(res)),
+    fetchRequest: () => fetch(`${api}/hsts?url=${address}`).then(res => parseJson(res)),
   });
 
   // Get a websites listed pages, from sitemap
@@ -356,7 +355,7 @@ const Results = (): JSX.Element => {
     jobId: 'features',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/site-features?url=${address}`)
+    fetchRequest: () => fetch(`${api}/features?url=${address}`)
     .then(res => parseJson(res))
     .then(res => {
       if (res.Errors && res.Errors.length > 0) {
@@ -371,7 +370,7 @@ const Results = (): JSX.Element => {
     jobId: 'dnssec',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/dns-sec?url=${address}`).then(res => parseJson(res)),
+    fetchRequest: () => fetch(`${api}/dnssec?url=${address}`).then(res => parseJson(res)),
   });
 
   // Run a manual whois lookup on the domain
@@ -379,7 +378,7 @@ const Results = (): JSX.Element => {
     jobId: 'domain',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/whois-lookup?url=${address}`).then(res => parseJson(res)),
+    fetchRequest: () => fetch(`${api}/whois?url=${address}`).then(res => parseJson(res)),
   });
 
   // Get the DNS server(s) for a domain, and test DoH/DoT support
@@ -395,7 +394,7 @@ const Results = (): JSX.Element => {
     jobId: 'linked-pages',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/content-links?url=${address}`).then(res => parseJson(res)),
+    fetchRequest: () => fetch(`${api}/linked-pages?url=${address}`).then(res => parseJson(res)),
   });
 
   // Get mail config for server, based on DNS records

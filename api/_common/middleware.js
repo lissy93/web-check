@@ -27,7 +27,6 @@ const commonMiddleware = (handler) => {
         });
       }
     } catch (error) {
-      console.log(error);
       callback(null, {
         statusCode: 500,
         body: JSON.stringify({ error: error.message }),
