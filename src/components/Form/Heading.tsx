@@ -10,6 +10,7 @@ interface HeadingProps {
   inline?: boolean;
   children: React.ReactNode;
   id?: string;
+  className?: string;
 };
 
 const StyledHeading = styled.h1<HeadingProps>`
@@ -47,10 +48,14 @@ const StyledHeading = styled.h1<HeadingProps>`
   ${props => props.inline ? 'display: inline;' : '' }
 `;
 
+const makeAnchor = (title: string): string => {
+  return title.toLowerCase().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "-");
+};
+
 const Heading = (props: HeadingProps): JSX.Element => {
-  const { children, as, size, align, color, inline, id } = props;
+  const { children, as, size, align, color, inline, id, className } = props;
   return (
-    <StyledHeading as={as} size={size} align={align} color={color} inline={inline} id={id}>
+    <StyledHeading as={as} size={size} align={align} color={color} inline={inline} className={className} id={id || makeAnchor((children || '')?.toString())}>
       {children}
     </StyledHeading>
   );

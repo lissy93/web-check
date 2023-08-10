@@ -43,9 +43,8 @@ const getPathName = (link: string) => {
 };
 
 const ContentLinksCard = (props: { data: any, title: string, actionButtons: any }): JSX.Element => {
-  const { internal, external} = props.data;
-  console.log('Internal Links', internal);
-  console.log('External Links', external);
+  const internal = props.data.internal || [];
+  const external = props.data.external || [];
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       <Heading as="h3" size="small" color={colors.primary}>Summary</Heading>
@@ -71,17 +70,6 @@ const ContentLinksCard = (props: { data: any, title: string, actionButtons: any 
           ))}
         </details>
       )}
-      {/* {portData.openPorts.map((port: any) => (
-          <Row key={port} lbl="" val="">
-            <span>{port}</span>
-          </Row>
-        )
-      )}
-      <br />
-      <small>
-        Unable to establish connections to:<br />
-        {portData.failedPorts.join(', ')}
-      </small> */}
     </Card>
   );
 }

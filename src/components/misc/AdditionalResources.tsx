@@ -8,12 +8,13 @@ margin: 0;
 padding: 1rem;
 display: grid;
 gap: 0.5rem;
-grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
 li a.resource-wrap {
   display: flex;
+  flex-direction: column;
   align-items: start;
   gap: 0.25rem;
-  padding: 0.25rem;
+  padding: 0.25rem 0.5rem;
   background: ${colors.background};
   border-radius: 8px;
   text-decoration: none;
@@ -37,27 +38,32 @@ li a.resource-wrap {
   }
 }
 img {
-  width: 4rem;
+  width: 2.5rem;
   border-radius: 4px;
   margin: 0.25rem 0.1rem 0.1rem 0.1rem;
+}
+p, a {
+  margin: 0;
+}
+a.resource-link {
+  color: ${colors.primary};
+  opacity: 0.75;
+  font-size: 0.9rem;
+  transition: all 0.2s ease-in-out;
+}
+.resource-title {
+  font-weight: bold;
+}
+.resource-lower {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 .resource-details {
   max-width: 20rem;
   display: flex;
   flex-direction: column;
   gap: 0.1rem;
-  p, a {
-    margin: 0;
-  }
-  a.resource-link {
-    color: ${colors.primary};
-    opacity: 0.75;
-    font-size: 0.9rem;
-    transition: all 0.2s ease-in-out;
-  }
-  .resource-title {
-    font-weight: bold;
-  }
   .resource-description {
     color: ${colors.textColorSecondary};
     font-size: 0.9rem;
@@ -156,6 +162,13 @@ const resources = [
     searchLink: 'https://developers.google.com/speed/pagespeed/insights/?url={URL}',
   },
   {
+    title: 'Built With',
+    link: 'https://builtwith.com/',
+    icon: 'https://i.ibb.co/5LXBDfD/Built-with.png',
+    description: 'View the tech stack of a website',
+    searchLink: 'https://builtwith.com/{URL}',
+  },
+  {
     title: 'DNS Dumpster',
     link: 'https://dnsdumpster.com/',
     icon: 'https://i.ibb.co/DtQ2QXP/Trash-can-regular.png',
@@ -192,7 +205,7 @@ const resources = [
 ];
 
 const makeLink = (resource: any, scanUrl: string | undefined): string => {
-  return (scanUrl && resource.searchLink) ? resource.searchLink.replaceAll('{URL}', scanUrl.replace('https://', '')) : '#';
+  return (scanUrl && resource.searchLink) ? resource.searchLink.replaceAll('{URL}', scanUrl.replace('https://', '')) : resource.link;
 };
 
 const AdditionalResources = (props: { url?: string }): JSX.Element => {
@@ -203,12 +216,14 @@ const AdditionalResources = (props: { url?: string }): JSX.Element => {
           return (
             <li>
               <a className="resource-wrap" href={makeLink(resource, props.url)}>
-              <img src={resource.icon} alt="" />
-              <div className="resource-details">
                 <p className="resource-title">{resource.title}</p>
                 <a className="resource-link" href={resource.link} target="_blank" rel="noreferrer">{new URL(resource.link).hostname}</a>
-                <p className="resource-description">{resource.description}</p>
-              </div>
+                <div className="resource-lower">
+                  <img src={resource.icon} alt="" />
+                  <div className="resource-details">
+                    <p className="resource-description">{resource.description}</p>
+                  </div>
+                </div>
               </a>
             </li>
           );

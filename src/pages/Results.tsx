@@ -46,6 +46,8 @@ import DnsServerCard from 'components/Results/DnsServer';
 import TechStackCard from 'components/Results/TechStack';
 import SecurityTxtCard from 'components/Results/SecurityTxt';
 import ContentLinksCard from 'components/Results/ContentLinks';
+import SocialTagsCard from 'components/Results/SocialTags';
+import MailConfigCard from 'components/Results/MailConfig';
 
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
@@ -341,6 +343,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`${api}/security-txt?url=${address}`).then(res => parseJson(res)),
   });
 
+  // Get social media previews, from a sites social meta tags
+  const [socialTagResults, updateSocialTagResults] = useMotherHook({
+    jobId: 'social-tags',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`${api}/social-tags?url=${address}`).then(res => parseJson(res)),
+  });
+
   // Get site features from BuiltWith
   const [siteFeaturesResults, updateSiteFeaturesResults] = useMotherHook({
     jobId: 'features',
@@ -386,6 +396,14 @@ const Results = (): JSX.Element => {
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
     fetchRequest: () => fetch(`${api}/content-links?url=${address}`).then(res => parseJson(res)),
+  });
+
+  // Get mail config for server, based on DNS records
+  const [mailConfigResults, updateMailConfigResults] = useMotherHook({
+    jobId: 'mail-config',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`${api}/mail-config?url=${address}`).then(res => parseJson(res)),
   });
 
   /* Cancel remaining jobs after  10 second timeout */
@@ -434,7 +452,9 @@ const Results = (): JSX.Element => {
     { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },
     { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
     { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },
+    { id: 'mail-config', title: 'Email Configuration', result: mailConfigResults, Component: MailConfigCard, refresh: updateMailConfigResults },
     { id: 'dns-server', title: 'DNS Server', result: dnsServerResults, Component: DnsServerCard, refresh: updateDnsServerResults },
+    { id: 'social-tags', title: 'Social Tags', result: socialTagResults, Component: SocialTagsCard, refresh: updateSocialTagResults },
     { id: 'linked-pages', title: 'Linked Pages', result: linkedPagesResults, Component: ContentLinksCard, refresh: updateLinkedPagesResults },
     { id: 'features', title: 'Site Features', result: siteFeaturesResults, Component: SiteFeaturesCard, refresh: updateSiteFeaturesResults },
     { id: 'sitemap', title: 'Pages', result: sitemapResults, Component: SitemapCard, refresh: updateSitemapResults },

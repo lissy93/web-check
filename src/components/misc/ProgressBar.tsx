@@ -167,6 +167,9 @@ p {
 }
 pre {
   color: ${colors.danger};
+  &.info {
+    color: ${colors.warning};
+  }
 }
 `;
 
@@ -191,6 +194,7 @@ const jobNames = [
   'hosts',
   'quality',
   'cookies',
+  'ssl',
   // 'server-info',
   'redirects',
   'robots-txt',
@@ -202,7 +206,9 @@ const jobNames = [
   'sitemap',
   'hsts',
   'security-txt',
+  'social-tags',
   'linked-pages',
+  'mail-config',
   // 'whois',
   'features',
   'carbon',
@@ -360,7 +366,7 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[], showModal: (err: Reac
     }
   };
 
-  const showErrorModal = (name: string, state: LoadingState, timeTaken: number | undefined, error: string) => {
+  const showErrorModal = (name: string, state: LoadingState, timeTaken: number | undefined, error: string, isInfo?: boolean) => {
     const errorContent = (
       <ErrorModalContent>
         <Heading as="h3">Error Details for {name}</Heading>
@@ -368,7 +374,8 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[], showModal: (err: Reac
           The {name} job failed with an {state} state after {timeTaken} ms.
           The server responded with the following error:
         </p>
-        <pre>{error}</pre>
+        { /* If isInfo == true, then add .info className to pre */}
+        <pre className={isInfo ? 'info' : 'error'}>{error}</pre>
       </ErrorModalContent>
     );
     props.showModal(errorContent);
@@ -409,6 +416,7 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[], showModal: (err: Reac
                 <i>{(timeTaken && state !== 'loading') ? ` Took ${timeTaken} ms` : '' }</i>
                 { (retry && state !== 'success' && state !== 'loading') && <FailedJobActionButton onClick={retry}>↻ Retry</FailedJobActionButton> }
                 { (error && state === 'error') && <FailedJobActionButton onClick={() => showErrorModal(name, state, timeTaken, error)}>■ Show Error</FailedJobActionButton> }
+                { (error && state === 'skipped') && <FailedJobActionButton onClick={() => showErrorModal(name, state, timeTaken, error, true)}>■ Show Reason</FailedJobActionButton> }
               </li>
             );
           })
