@@ -20,6 +20,10 @@ const AboutContainer = styled.div`
     color: ${colors.primary};
   }
   .im-drink { font-size: 6rem; }
+  header {
+    width: auto;
+    margin: 1rem;
+  }
 `;
 
 const HeaderLinkContainer = styled.nav`
