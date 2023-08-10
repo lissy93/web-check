@@ -49,7 +49,7 @@ fileNames.forEach(file => {
 const timeout = (ms, jobName = null) => {
   return new Promise((_, reject) => {
     setTimeout(() => {
-      reject(new Error(`Timed out after the ${ms}ms limit${jobName ? `, when executing the ${jobName} task` : ''}`));
+      reject(new Error(`Timed out after the ${ms/1000} second limit${jobName ? `, when executing the ${jobName} task` : ''}`));
     }, ms);
   });
 }
@@ -57,7 +57,7 @@ const timeout = (ms, jobName = null) => {
 app.get('/api', async (req, res) => {
   const results = {};
   const { url } = req.query;
-  const maxExecutionTime = process.env.API_TIMEOUT_LIMIT || 10000;
+  const maxExecutionTime = process.env.API_TIMEOUT_LIMIT || 15000;
 
   const handlerPromises = Object.entries(handlers).map(async ([route, handler]) => {
     const routeName = route.replace(`${API_DIR}/`, '');
@@ -96,6 +96,5 @@ const server = awsServerlessExpress.createServer(app).listen(port, () => {
 });
 
 exports.handler = (event, context) => {
-  // console.log(`EVENT: ${JSON.stringify(event)}`);
   awsServerlessExpress.proxy(server, event, context);
 };
