@@ -9,6 +9,7 @@ const app = express();
 
 const API_DIR = '/api'; // Name of the dir containing the lambda functions
 const dirPath = path.join(__dirname, API_DIR); // Path to the lambda functions dir
+const guiPath = path.join(__dirname, 'build');
 
 // Execute the lambda function
 const executeHandler = async (handler, req) => {
@@ -85,12 +86,27 @@ app.use(historyApiFallback({
   ]
 }));
 
-// Serve React App (static files from ./build)
-app.use(express.static(path.join(__dirname, 'build')));
-
+// Serve up the GUI - if build dir exists, and GUI feature enabled
+if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
+  app.get('*', (req, res) => {
+      res.status(500).send(
+        'Welcome to Web-Check!<br />Access the API endpoints at '
+        +'<a href="/api"><code>/api</code></a>'
+      );
+  });
+} else if (!fs.existsSync(guiPath)) {
+  app.get('*', (req, res) => {
+    res.status(500).send(
+      'Welcome to Web-Check!<br />Looks like the GUI app has not yet been compiled, '
+      +'run <code>yarn build</code> to continue, then restart the server.'
+    );
+});
+} else { // GUI enabled, and build files present, let's go!!
+  app.use(express.static(guiPath));
+}
 
 // Create serverless express server
-const port = process.env.API_PORT || 3000;
+const port = process.env.PORT || 3000;
 const server = awsServerlessExpress.createServer(app).listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
