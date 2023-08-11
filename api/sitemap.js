@@ -1,8 +1,9 @@
+const commonMiddleware = require('./_common/middleware');
+
 const axios = require('axios');
 const xml2js = require('xml2js');
 
-exports.handler = async (event) => {
-  const url = event.queryStringParameters.url;
+const handler = async (url) => {
   let sitemapUrl = `${url}/sitemap.xml`;
 
   try {
@@ -59,3 +60,5 @@ exports.handler = async (event) => {
     }
   }
 };
+
+exports.handler = commonMiddleware(handler);

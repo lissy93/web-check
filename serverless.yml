@@ -1,0 +1,179 @@
+service: web-check-api
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+
+functions:
+  dnssec:
+    handler: api/dnssec.handler
+    events:
+      - http:
+          path: api/dnssec
+          method: get
+  linkedPages:
+    handler: api/linked-pages.handler
+    events:
+      - http:
+          path: api/linked-pages
+          method: get
+  robotsTxt:
+    handler: api/robots-txt.handler
+    events:
+      - http:
+          path: api/robots-txt
+          method: get
+  ssl:
+    handler: api/ssl.handler
+    events:
+      - http:
+          path: api/ssl
+          method: get
+  whois:
+    handler: api/whois.handler
+    events:
+      - http:
+          path: api/whois
+          method: get
+  carbon:
+    handler: api/carbon.handler
+    events:
+      - http:
+          path: api/carbon
+          method: get
+  features:
+    handler: api/features.handler
+    events:
+      - http:
+          path: api/features
+          method: get
+  mailConfig:
+    handler: api/mail-config.handler
+    events:
+      - http:
+          path: api/mail-config
+          method: get
+  screenshot:
+    handler: api/screenshot.handler
+    events:
+      - http:
+          path: api/screenshot
+          method: get
+  status:
+    handler: api/status.handler
+    events:
+      - http:
+          path: api/status
+          method: get
+  cookies:
+    handler: api/cookies.handler
+    events:
+      - http:
+          path: api/cookies
+          method: get
+  getIp:
+    handler: api/get-ip.handler
+    events:
+      - http:
+          path: api/get-ip
+          method: get
+  ports:
+    handler: api/ports.handler
+    events:
+      - http:
+          path: api/ports
+          method: get
+  securityTxt:
+    handler: api/security-txt.handler
+    events:
+      - http:
+          path: api/security-txt
+          method: get
+  techStack:
+    handler: api/tech-stack.handler
+    events:
+      - http:
+          path: api/tech-stack
+          method: get
+  dnsServer:
+    handler: api/dns-server.handler
+    events:
+      - http:
+          path: api/dns-server
+          method: get
+  headers:
+    handler: api/headers.handler
+    events:
+      - http:
+          path: api/headers
+          method: get
+  quality:
+    handler: api/quality.handler
+    events:
+      - http:
+          path: api/quality
+          method: get
+  sitemap:
+    handler: api/sitemap.handler
+    events:
+      - http:
+          path: api/sitemap
+          method: get
+  traceRoute:
+    handler: api/trace-route.handler
+    events:
+      - http:
+          path: api/trace-route
+          method: get
+  dns:
+    handler: api/dns.handler
+    events:
+      - http:
+          path: api/dns
+          method: get
+  hsts:
+    handler: api/hsts.handler
+    events:
+      - http:
+          path: api/hsts
+          method: get
+  redirects:
+    handler: api/redirects.handler
+    events:
+      - http:
+          path: api/redirects
+          method: get
+  socialTags:
+    handler: api/social-tags.handler
+    events:
+      - http:
+          path: api/social-tags
+          method: get
+  txtRecords:
+    handler: api/txt-records.handler
+    events:
+      - http:
+          path: api/txt-records
+          method: get
+
+
+plugins:
+  # - serverless-webpack
+  - serverless-domain-manager
+  - serverless-offline
+
+custom:
+  webpack:
+    webpackConfig: 'api/_common/aws-webpack.config.js'
+    includeModules: true
+
+  customDomain:
+    domainName: example.com
+    basePath: 'api'
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+
+  serverless-offline:
+    prefix: ''
+    httpPort: 3000

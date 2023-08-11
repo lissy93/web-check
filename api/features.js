@@ -1,22 +1,15 @@
 const https = require('https');
+const middleware = require('./_common/middleware');
 
-exports.handler = async function (event, context) {
-  const { url } = event.queryStringParameters;
+const builtWithHandler = async (url) => {
   const apiKey = process.env.BUILT_WITH_API_KEY;
 
-  const errorResponse = (message, statusCode = 500) => {
-    return {
-      statusCode: statusCode,
-      body: JSON.stringify({ error: message }),
-    };
-  };
-
   if (!url) {
-    return errorResponse('URL query parameter is required', 400);
+    throw new Error('URL query parameter is required');
   }
 
   if (!apiKey) {
-    return errorResponse('Missing BuiltWith API key in environment variables', 500);
+    throw new Error('Missing BuiltWith API key in environment variables');
   }
 
   const apiUrl = `https://api.builtwith.com/free1/api.json?KEY=${apiKey}&LOOKUP=${encodeURIComponent(url)}`;
@@ -46,11 +39,10 @@ exports.handler = async function (event, context) {
       req.end();
     });
 
-    return {
-      statusCode: 200,
-      body: response,
-    };
+    return response;
   } catch (error) {
-    return errorResponse(`Error making request: ${error.message}`);
+    throw new Error(`Error making request: ${error.message}`);
   }
 };
+
+exports.handler = middleware(builtWithHandler);

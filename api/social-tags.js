@@ -1,8 +1,9 @@
+const commonMiddleware = require('./_common/middleware');
+
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-exports.handler = async (event, context) => {
-  let url = event.queryStringParameters.url;
+const handler = async (url) => {
   
   // Check if url includes protocol
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -66,3 +67,5 @@ exports.handler = async (event, context) => {
     };
   }
 };
+
+exports.handler = commonMiddleware(handler);

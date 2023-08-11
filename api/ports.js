@@ -1,4 +1,5 @@
 const net = require('net');
+const middleware = require('./_common/middleware');
 
 // A list of commonly used ports.
 const PORTS = [
@@ -12,7 +13,7 @@ async function checkPort(port, domain) {
     return new Promise((resolve, reject) => {
         const socket = new net.Socket();
 
-        socket.setTimeout(1500); // you may want to adjust the timeout
+        socket.setTimeout(1500);
 
         socket.once('connect', () => {
             socket.destroy();
@@ -33,13 +34,9 @@ async function checkPort(port, domain) {
     });
 }
 
-exports.handler = async (event, context) => {
-  const domain = event.queryStringParameters.url;
+const handler = async (url, event, context) => {
+  const domain = url.replace(/(^\w+:|^)\/\//, '');
   
-  if (!domain) {
-    return errorResponse('Missing domain parameter.');
-  }
-
   const delay = ms => new Promise(res => setTimeout(res, ms));
   const timeout = delay(9000);
 
@@ -88,3 +85,5 @@ const errorResponse = (message, statusCode = 444) => {
     body: JSON.stringify({ error: message }),
   };
 };
+
+exports.handler = middleware(handler);

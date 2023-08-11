@@ -1,14 +1,10 @@
 const https = require('https');
 const { performance, PerformanceObserver } = require('perf_hooks');
+const middleware = require('./_common/middleware');
 
-exports.handler = async function(event, context) {
-  const { url } = event.queryStringParameters;
-
+const checkURLHandler = async (url) => {
   if (!url) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'You must provide a URL query parameter!' }),
-    };
+    throw new Error('You must provide a URL query parameter!');
   }
 
   let dnsLookupTime;
@@ -43,10 +39,7 @@ exports.handler = async function(event, context) {
     });
 
     if (responseCode < 200 || responseCode >= 400) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ error: `Received non-success response code: ${responseCode}` }),
-      };
+      throw new Error(`Received non-success response code: ${responseCode}`);
     }
 
     performance.mark('B');
@@ -54,16 +47,12 @@ exports.handler = async function(event, context) {
     let responseTime = performance.now() - startTime;
     obs.disconnect();
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ isUp: true, dnsLookupTime, responseTime, responseCode }),
-    };
+    return { isUp: true, dnsLookupTime, responseTime, responseCode };
 
   } catch (error) {
     obs.disconnect();
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ error: `Error during operation: ${error.message}` }),
-    };
+    throw error;
   }
 };
+
+exports.handler = middleware(checkURLHandler);

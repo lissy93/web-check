@@ -1,14 +1,7 @@
 const https = require('https');
+const middleware = require('./_common/middleware');
 
-exports.handler = async (event, context) => {
-  const { url } = event.queryStringParameters;
-
-  if (!url) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'url query parameter is required' }),
-    };
-  }
+const handler = async (url) => {
 
   // First, get the size of the website's HTML
   const getHtmlSize = (url) => new Promise((resolve, reject) => {
@@ -49,14 +42,10 @@ exports.handler = async (event, context) => {
     }
 
     carbonData.scanUrl = url;
-    return {
-      statusCode: 200,
-      body: JSON.stringify(carbonData),
-    };
+    return carbonData;
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: `Error: ${error.message}` }),
-    };
+    throw new Error(`Error: ${error.message}`);
   }
 };
+
+exports.handler = middleware(handler);

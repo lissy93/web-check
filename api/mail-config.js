@@ -1,11 +1,11 @@
+const commonMiddleware = require('./_common/middleware');
+
 const dns = require('dns').promises;
 const URL = require('url-parse');
 
-exports.handler = async (event, context) => {
+const handler = async (url, event, context) => {
   try {
-    let domain = event.queryStringParameters.url;
-    const parsedUrl = new URL(domain);
-    domain = parsedUrl.hostname || parsedUrl.pathname;
+    const domain = new URL(url).hostname || new URL(url).pathname;
 
     // Get MX records
     const mxRecords = await dns.resolveMx(domain);
@@ -56,19 +56,13 @@ exports.handler = async (event, context) => {
     }
 
     return {
-      statusCode: 200,
-      body: JSON.stringify({
         mxRecords,
         txtRecords: emailTxtRecords,
         mailServices,
-      }),
-    };
+      };
   } catch (error) {
     if (error.code === 'ENOTFOUND' || error.code === 'ENODATA') {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ skipped: 'No mail server in use on this domain' }),
-      };
+      return { skipped: 'No mail server in use on this domain' };
     } else {
       return {
         statusCode: 500,
@@ -77,3 +71,5 @@ exports.handler = async (event, context) => {
     }
   }
 };
+
+module.exports.handler = commonMiddleware(handler);

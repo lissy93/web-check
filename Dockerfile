@@ -7,6 +7,7 @@ RUN apt-get update && \
     chmod 755 /usr/bin/chromium && \
     rm -rf /var/lib/apt/lists/*
 RUN npm install --force
-EXPOSE 8888
+RUN npm run build
+EXPOSE ${PORT:-3000}
 ENV CHROME_PATH='/usr/bin/chromium'
-CMD ["npm", "run", "serve"]
+CMD ["npm", "start"]

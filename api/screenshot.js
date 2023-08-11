@@ -1,16 +1,11 @@
 const puppeteer = require('puppeteer-core');
 const chromium = require('chrome-aws-lambda');
+const middleware = require('./_common/middleware');
 
-exports.handler = async (event, context, callback) => {
-  let browser = null;
-  let targetUrl = event.queryStringParameters.url;
+const screenshotHandler = async (targetUrl) => {
 
   if (!targetUrl) {
-    callback(null, {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'URL is missing from queryStringParameters' }),
-    });
-    return;
+    throw new Error('URL is missing from queryStringParameters');
   }
 
   if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
@@ -20,13 +15,10 @@ exports.handler = async (event, context, callback) => {
   try {
     new URL(targetUrl);
   } catch (error) {
-    callback(null, {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'URL provided is invalid' }),
-    });
-    return;
+    throw new Error('URL provided is invalid');
   }
 
+  let browser = null;
   try {
       browser = await puppeteer.launch({
       args: chromium.args,
@@ -40,9 +32,7 @@ exports.handler = async (event, context, callback) => {
     let page = await browser.newPage();
 
     await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }]);
-
     page.setDefaultNavigationTimeout(8000);
-
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
 
     await page.evaluate(() => {
@@ -57,24 +47,15 @@ exports.handler = async (event, context, callback) => {
     });
 
     const screenshotBuffer = await page.screenshot();
-
     const base64Screenshot = screenshotBuffer.toString('base64');
 
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify({ image: base64Screenshot }),
-    };
+    return { image: base64Screenshot };
 
-    callback(null, response);
-  } catch (error) {
-    console.log(error);
-    callback(null, {
-      statusCode: 500,
-      body: JSON.stringify({ error: `An error occurred: ${error.message}` }),
-    });
   } finally {
     if (browser !== null) {
       await browser.close();
     }
   }
 };
+
+exports.handler = middleware(screenshotHandler);

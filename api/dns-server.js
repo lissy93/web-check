@@ -1,11 +1,11 @@
 const dns = require('dns');
 const dnsPromises = dns.promises;
-// const https = require('https');
 const axios = require('axios');
+const commonMiddleware = require('./_common/middleware');
 
-exports.handler = async (event) => {
-  const domain = event.queryStringParameters.url.replace(/^(?:https?:\/\/)?/i, "");
+const handler = async (url) => {
   try {
+    const domain = url.replace(/^(?:https?:\/\/)?/i, "");
     const addresses = await dnsPromises.resolve4(domain);
     const results = await Promise.all(addresses.map(async (address) => {
       const hostname = await dnsPromises.reverse(address).catch(() => null);
@@ -22,6 +22,7 @@ exports.handler = async (event) => {
         dohDirectSupports,
       };
     }));
+
     // let dohMozillaSupport = false;
     // try {
     //   const mozillaList = await axios.get('https://firefox.settings.services.mozilla.com/v1/buckets/security-state/collections/onecrl/records');
@@ -29,20 +30,15 @@ exports.handler = async (event) => {
     // } catch (error) {
     //   console.error(error);
     // }
+
     return {
-      statusCode: 200,
-      body: JSON.stringify({
-        domain,
-        dns: results,
-        // dohMozillaSupport,
-      }),
+      domain,
+      dns: results,
+      // dohMozillaSupport,
     };
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: `An error occurred while resolving DNS. ${error.message}`,
-      }),
-    };
+    throw new Error(`An error occurred while resolving DNS. ${error.message}`); // This will be caught and handled by the commonMiddleware
   }
 };
+
+exports.handler = commonMiddleware(handler);
