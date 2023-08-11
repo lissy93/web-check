@@ -4,8 +4,8 @@ const normalizeUrl = (url) => {
 
 const commonMiddleware = (handler) => {
   return async (event, context, callback) => {
-    
-    const rawUrl = (event.queryStringParameters || event.query).url;
+    const queryParams = event.queryStringParameters || event.query || {};
+    const rawUrl = queryParams.url;
     
     if (!rawUrl) {
       callback(null, {
