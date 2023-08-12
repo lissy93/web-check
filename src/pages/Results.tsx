@@ -50,6 +50,7 @@ import SocialTagsCard from 'components/Results/SocialTags';
 import MailConfigCard from 'components/Results/MailConfig';
 import HttpSecurityCard from 'components/Results/HttpSecurity';
 import FirewallCard from 'components/Results/Firewall';
+import ArchivesCard from 'components/Results/Archives';
 
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
@@ -423,6 +424,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`${api}/http-security?url=${address}`).then(res => parseJson(res)),
   });
 
+  // Get list of archives from the Wayback Machine
+  const [archivesResults, updateArchivesResults] = useMotherHook({
+    jobId: 'archives',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`${api}/archives?url=${address}`).then(res => parseJson(res)),
+  });
+
   /* Cancel remaining jobs after  10 second timeout */
   useEffect(() => {
     const checkJobs = () => {
@@ -471,6 +480,7 @@ const Results = (): JSX.Element => {
     { id: 'screenshot', title: 'Screenshot', result: screenshotResult || lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateScreenshotResult },
     { id: 'mail-config', title: 'Email Configuration', result: mailConfigResults, Component: MailConfigCard, refresh: updateMailConfigResults },
     { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
+    { id: 'archives', title: 'Archive History', result: archivesResults, Component: ArchivesCard, refresh: updateArchivesResults },
     { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },
     { id: 'dns-server', title: 'DNS Server', result: dnsServerResults, Component: DnsServerCard, refresh: updateDnsServerResults },
     { id: 'linked-pages', title: 'Linked Pages', result: linkedPagesResults, Component: ContentLinksCard, refresh: updateLinkedPagesResults },

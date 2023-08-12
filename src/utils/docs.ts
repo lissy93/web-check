@@ -441,6 +441,16 @@ const docs: Doc[] = [
     ],
     screenshot: 'https://i.ibb.co/LP05HMV/Screenshot-from-2023-08-12-15-40-28.png',
   },
+  {
+    id: 'archives',
+    title: 'Archive History',
+    description: 'Fetches full history of archives from the Wayback machine',
+    use: 'This is useful for understanding the history of a site, and how it has changed over time. It can also be useful for finding old versions of a site, or for finding content that has been removed.',
+    resources: [
+      { title: 'Wayback Machine', link: 'https://archive.org/web/'},
+    ],
+    screenshot: '',
+  },
   // {
   //   id: '',
   //   title: '',
