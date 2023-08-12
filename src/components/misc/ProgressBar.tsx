@@ -213,6 +213,8 @@ const jobNames = [
   'features',
   'carbon',
   'trace-route',
+  'firewall',
+  'http-security',
 ] as const;
 
 export const initialJobs = jobNames.map((job: string) => {
