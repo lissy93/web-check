@@ -4,5 +4,5 @@ services:
     container_name: Web-Check
     image: lissy93/web-check
     ports:
-      - 8888:8888
+      - 3000:3000
     restart: unless-stopped
