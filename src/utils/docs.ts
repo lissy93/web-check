@@ -310,6 +310,7 @@ const docs: Doc[] = [
     description: 'This check determines the DNS server(s) that the requested URL / IP resolves to. Also fires off a rudimentary check to see if the DNS server supports DoH, and weather it\'s vulnerable to DNS cache poisoning.',
     use: '',
     resources: [],
+    screenshot: 'https://i.ibb.co/tKpL8F9/Screenshot-from-2023-08-12-15-43-12.png',
   },
   {
     id: 'tech-stack',
@@ -323,6 +324,7 @@ const docs: Doc[] = [
       { title: 'Wappalyzer fingerprints', link: 'https://github.com/wappalyzer/wappalyzer/tree/master/src/technologies'},
       { title: 'BuiltWith - Check what tech a site is using', link: 'https://builtwith.com/'},
     ],
+    screenshot: 'https://i.ibb.co/bBQSQNz/Screenshot-from-2023-08-12-15-43-46.png',
   },
   {
     id: 'sitemap',
@@ -401,6 +403,43 @@ const docs: Doc[] = [
       { title: 'BIMI Group', link: 'https://bimigroup.org/' },
     ],
     screenshot: 'https://i.ibb.co/yqhwx5G/Screenshot-from-2023-07-29-18-22-20.png',
+  },
+  {
+    id: 'firewall',
+    title: 'Firewall Detection',
+    description: 'A WAF or web application firewall helps protect web applications by filtering and monitoring HTTP traffic between a web application and the Internet. It typically protects web applications from attacks such as cross-site forgery, cross-site-scripting (XSS), file inclusion, and SQL injection, among others.',
+    use: 'It\'s useful to understand if a site is using a WAF, and which firewall software / service it is using, as this provides an insight into the sites protection against several attack vectors, but also may reveal vulnerabilities in the firewall itself.',
+    resources: [
+      { title: 'What is a WAF (via Cloudflare Learning)', link: 'https://www.cloudflare.com/learning/ddos/glossary/web-application-firewall-waf/' },
+      { title: 'OWASP - Web Application Firewalls', link: 'https://owasp.org/www-community/Web_Application_Firewall' },
+      { title: 'Web Application Firewall Best Practices', link: 'https://owasp.org/www-pdf-archive/Best_Practices_Guide_WAF_v104.en.pdf' },
+      { title: 'WAF - Wiki', link: 'https://en.wikipedia.org/wiki/Web_application_firewall' },
+    ],
+    screenshot: 'https://i.ibb.co/MfcxQt2/Screenshot-from-2023-08-12-15-40-52.png',
+  },
+  {
+    id: 'http-security',
+    title: 'HTTP Security Features',
+    description: 'Correctly configured security HTTP headers adds a layer of protection against common attacks to your site. The main headers to be aware of are: '
+    + 'HTTP Strict Transport Security (HSTS): Enforces the use of HTTPS, mitigating man-in-the-middle attacks and protocol downgrade attempts. '
+    + 'Content Security Policy (CSP): Constrains web page resources to prevent cross-site scripting and data injection attacks. '
+    + 'X-Content-Type-Options: Prevents browsers from MIME-sniffing a response away from the declared content type, curbing MIME-type confusion attacks. '
+    + 'X-Frame-Options: Protects users from clickjacking attacks by controlling whether a browser should render the page in a <frame>, <iframe>, <embed>, or <object>. ',
+    use: 'Reviewing security headers is important, as it offers insights into a site\'s defensive posture and potential vulnerabilities, enabling proactive mitigation and ensuring compliance with security best practices.',
+    resources: [
+      { title: 'OWASP Secure Headers Project', link: 'https://owasp.org/www-project-secure-headers/'},
+      { title: 'HTTP Header Cheatsheet', link: 'https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html' },
+      { title: 'content-security-policy.com', link: 'https://content-security-policy.com/' },
+      { title: 'resourcepolicy.fyi', link: 'https://resourcepolicy.fyi/' },
+      { title: 'HTTP Security Headers', link: 'https://securityheaders.com/' },
+      { title: 'Mozilla Observatory', link: 'https://observatory.mozilla.org/' },
+      { title: 'CSP Docs', link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP' },
+      { title: 'HSTS Docs', link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security' },
+      { title: 'X-Content-Type-Options Docs', link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options' },
+      { title: 'X-Frame-Options Docs', link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options' },
+      { title: 'X-XSS-Protection Docs', link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection' },
+    ],
+    screenshot: 'https://i.ibb.co/LP05HMV/Screenshot-from-2023-08-12-15-40-28.png',
   },
   // {
   //   id: '',
