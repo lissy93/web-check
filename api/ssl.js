@@ -1,10 +1,20 @@
 const https = require('https');
 const middleware = require('./_common/middleware');
+const urlModule = require('url');
 
-const fetchSiteCertificateHandler = async (url) => {
+const fetchSiteCertificateHandler = async (urlString) => {
   try {
+    const parsedUrl = urlModule.parse(urlString);
+    const options = {
+      host: parsedUrl.hostname,
+      port: parsedUrl.port || 443, // Default port for HTTPS
+      method: 'GET',
+      servername: parsedUrl.hostname, // For SNI
+      rejectUnauthorized: false // Disable strict SSL verification (use with caution)
+    };
+
     const response = await new Promise((resolve, reject) => {
-      const req = https.request(url, res => {
+      const req = https.request(options, res => {
         
         // Check if the SSL handshake was authorized
         if (!res.socket.authorized) {
@@ -14,7 +24,6 @@ const fetchSiteCertificateHandler = async (url) => {
           if (!cert || Object.keys(cert).length === 0) {
             reject(new Error("No certificate presented by the server."));
           } else {
-            // omit the raw and issuerCertificate fields
             const { raw, issuerCertificate, ...certWithoutRaw } = cert;
             resolve(certWithoutRaw);
           }
