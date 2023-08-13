@@ -140,25 +140,6 @@ export type Cookie = {
   attributes: Record<string, string>;
 };
 
-export const parseCookies = (cookiesHeader: string[]): {cookies: Cookie[]} => {
-  if (!cookiesHeader || !cookiesHeader.length) return {cookies: []};
-
-  const cookies = cookiesHeader.flatMap(cookieHeader => {
-    return cookieHeader.split(/,(?=\s[A-Za-z0-9]+=)/).map(cookieString => {
-      const [nameValuePair, ...attributePairs] = cookieString.split('; ').map(part => part.trim());
-      const [name, value] = nameValuePair.split('=');
-      const attributes: Record<string, string> = {};
-      attributePairs.forEach(pair => {
-        const [attributeName, attributeValue = ''] = pair.split('=');
-        attributes[attributeName] = attributeValue;
-      });
-      return { name, value, attributes };
-    });
-  });
-
-  return { cookies };
-};
-
 export const parseRobotsTxt = (content: string): { robots: RowProps[] } => {
   const lines = content.split('\n');
   const rules: RowProps[] = [];
