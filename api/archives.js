@@ -36,8 +36,8 @@ const getScanFrequency = (firstScan, lastScan, totalScans, changeCount) => {
   const dayFactor = (lastScan - firstScan) / (1000 * 60 * 60 * 24);  
   const daysBetweenScans = formatToTwoDecimal(dayFactor / totalScans);
   const daysBetweenChanges = formatToTwoDecimal(dayFactor / changeCount);
-  const scansPerDay = formatToTwoDecimal((totalScans - 1) / daysBetweenScans);
-  const changesPerDay = formatToTwoDecimal(changeCount / daysBetweenScans);
+  const scansPerDay = formatToTwoDecimal((totalScans - 1) / dayFactor);
+  const changesPerDay = formatToTwoDecimal(changeCount / dayFactor);
   return {
     daysBetweenScans,
     daysBetweenChanges,
