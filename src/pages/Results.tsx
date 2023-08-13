@@ -57,8 +57,7 @@ import { determineAddressType, AddressType } from 'utils/address-type-checker';
 import useMotherHook from 'hooks/motherOfAllHooks';
 import {
   getLocation, ServerLocation,
-  parseCookies, Cookie,
-  parseRobotsTxt,
+  Cookie,
   applyWhoIsResults, Whois,
   parseShodanResults, ShodanResults
 } from 'utils/result-processor';
@@ -187,8 +186,7 @@ const Results = (): JSX.Element => {
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
     fetchRequest: () => fetch(`${api}/cookies?url=${address}`)
-      .then(res => parseJson(res))
-      .then(res => parseCookies(res.cookies)),
+      .then(res => parseJson(res)),
   });
 
   // Fetch and parse crawl rules from robots.txt
