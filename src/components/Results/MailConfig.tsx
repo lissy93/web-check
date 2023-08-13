@@ -18,22 +18,22 @@ const MailConfigCard = (props: {data: any, title: string, actionButtons: any }):
       <Row lbl="BIMI" val={txtRecords.includes('bimi')} />
 
       { mailServer.mxRecords && <Heading as="h3" color={colors.primary} size="small">MX Records</Heading>}
-      { mailServer.mxRecords && mailServer.mxRecords.map((record: any) => (
-          <Row lbl="" val="">
+      { mailServer.mxRecords && mailServer.mxRecords.map((record: any, index: number) => (
+          <Row lbl="" val="" key={index}>
             <span>{record.exchange}</span>
             <span>{record.priority ? `Priority: ${record.priority}` : ''}</span>
           </Row>
         ))
       }
       { mailServer.mailServices.length > 0 && <Heading as="h3" color={colors.primary} size="small">External Mail Services</Heading>}
-      { mailServer.mailServices && mailServer.mailServices.map((service: any) => (
-        <Row lbl={service.provider} val={service.value} />
+      { mailServer.mailServices && mailServer.mailServices.map((service: any, index: number) => (
+        <Row lbl={service.provider} val={service.value} key={index} />
         ))
       }
 
       { mailServer.txtRecords && <Heading as="h3" color={colors.primary} size="small">Mail-related TXT Records</Heading>}
-      { mailServer.txtRecords && mailServer.txtRecords.map((record: any) => (
-          <Row lbl="" val="">
+      { mailServer.txtRecords && mailServer.txtRecords.map((record: any, index: number) => (
+          <Row lbl="" val="" key={index}>
             <span>{record}</span>
           </Row>
         ))
