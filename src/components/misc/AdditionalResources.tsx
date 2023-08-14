@@ -45,11 +45,13 @@ img {
 p, a {
   margin: 0;
 }
-a.resource-link {
+.resource-link {
   color: ${colors.primary};
   opacity: 0.75;
   font-size: 0.9rem;
   transition: all 0.2s ease-in-out;
+  text-decoration: underline;
+  cursor: pointer;
 }
 .resource-title {
   font-weight: bold;
@@ -214,10 +216,12 @@ const AdditionalResources = (props: { url?: string }): JSX.Element => {
       {
         resources.map((resource, index) => {
           return (
-            <li>
-              <a className="resource-wrap" href={makeLink(resource, props.url)}>
+            <li key={index}>
+              <a className="resource-wrap" target="_blank" rel="noreferrer" href={makeLink(resource, props.url)}>
                 <p className="resource-title">{resource.title}</p>
-                <a className="resource-link" href={resource.link} target="_blank" rel="noreferrer">{new URL(resource.link).hostname}</a>
+                <span className="resource-link" onClick={()=> window.open(resource.link, '_blank')} title={`Open: ${resource.link}`}>
+                  {new URL(resource.link).hostname}
+                </span>
                 <div className="resource-lower">
                   <img src={resource.icon} alt="" />
                   <div className="resource-details">

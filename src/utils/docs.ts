@@ -449,7 +449,18 @@ const docs: Doc[] = [
     resources: [
       { title: 'Wayback Machine', link: 'https://archive.org/web/'},
     ],
-    screenshot: '',
+    screenshot: 'https://i.ibb.co/nB9szT1/Screenshot-from-2023-08-14-22-31-16.png',
+  },
+  {
+    id: 'rank',
+    title: 'Global Ranking',
+    description: 'This check shows the global rank of the requested site. This is only accurate for websites which are in the top 100 million list. We\'re using data from the Tranco project (see below), which collates the top sites on the web from Umbrella, Majestic, Quantcast, the Chrome User Experience Report and Cloudflare Radar.',
+    use: 'Knowing a websites overall global rank can be useful for understanding the scale of the site, and for comparing it to other sites. It can also be useful for understanding the relative popularity of a site, and for identifying potential trends.',
+    resources: [
+      { title: 'Tranco List', link: 'https://tranco-list.eu/' },
+      { title: 'Tranco Research Paper', link: 'https://tranco-list.eu/assets/tranco-ndss19.pdf'},
+    ],
+    screenshot: 'https://i.ibb.co/nkbczgb/Screenshot-from-2023-08-14-22-02-40.png',
   },
   // {
   //   id: '',

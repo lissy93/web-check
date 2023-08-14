@@ -11,7 +11,7 @@ span.val {
 `;
 
 const DomainLookupCard = (props: { data: any, title: string, actionButtons: any }): JSX.Element => {
-  const domain = props.data;
+  const domain = props.data.internicData || {};
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       { domain.Domain_Name && <Row lbl="Registered Domain" val={domain.Domain_Name} /> }
@@ -25,13 +25,6 @@ const DomainLookupCard = (props: { data: any, title: string, actionButtons: any 
         <span className="val"><a href={domain.Registrar_URL || '#'}>{domain.Registrar}</a></span>
       </Row> }
       { domain.Registrar_IANA_ID && <Row lbl="Registrar IANA ID" val={domain.Registrar_IANA_ID} /> }
-
-      {/* <Row lbl="" val="">
-        <span className="lbl">Is Up?</span>
-        { serverStatus.isUp ? <span className="val up">✅ Online</span> : <span className="val down">❌ Offline</span>}
-      </Row>
-      <Row lbl="Status Code" val={serverStatus.responseCode} />
-      { serverStatus.responseTime && <Row lbl="Response Time" val={`${Math.round(serverStatus.responseTime)}ms`} /> } */}
     </Card>
   );
 }
