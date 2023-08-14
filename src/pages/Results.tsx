@@ -51,6 +51,7 @@ import MailConfigCard from 'components/Results/MailConfig';
 import HttpSecurityCard from 'components/Results/HttpSecurity';
 import FirewallCard from 'components/Results/Firewall';
 import ArchivesCard from 'components/Results/Archives';
+import RankCard from 'components/Results/Rank';
 
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
@@ -430,6 +431,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`${api}/archives?url=${address}`).then(res => parseJson(res)),
   });
 
+  // Get website's global ranking, from Tranco
+  const [rankResults, updateRankResults] = useMotherHook({
+    jobId: 'rank',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`${api}/rank?url=${address}`).then(res => parseJson(res)),
+  });
+
   /* Cancel remaining jobs after  10 second timeout */
   useEffect(() => {
     const checkJobs = () => {
@@ -475,6 +484,7 @@ const Results = (): JSX.Element => {
     { id: 'status', title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard, refresh: updateServerStatusResults },
     { id: 'ports', title: 'Open Ports', result: portsResults, Component: OpenPortsCard, refresh: updatePortsResults },
     { id: 'security-txt', title: 'Security.Txt', result: securityTxtResults, Component: SecurityTxtCard, refresh: updateSecurityTxtResults },
+    { id: 'rank', title: 'Global Ranking', result: rankResults, Component: RankCard, refresh: updateRankResults },
     { id: 'screenshot', title: 'Screenshot', result: screenshotResult || lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateScreenshotResult },
     { id: 'mail-config', title: 'Email Configuration', result: mailConfigResults, Component: MailConfigCard, refresh: updateMailConfigResults },
     { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
