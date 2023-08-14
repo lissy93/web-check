@@ -1,5 +1,6 @@
 const net = require('net');
 const psl = require('psl');
+const axios = require('axios');
 const middleware = require('./_common/middleware');
 
 const getBaseDomain = (url) => {
@@ -44,18 +45,7 @@ const parseWhoisData = (data) => {
   return parsedData;
 };
 
-const fetchWhoisData = async (url) => {
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    url = 'http://' + url;
-  }
-
-  let hostname;
-  try {
-    hostname = getBaseDomain(new URL(url).hostname);
-  } catch (error) {
-    throw new Error(`Unable to parse URL: ${error}`);
-  }
-
+const fetchFromInternic = async (hostname) => {
   return new Promise((resolve, reject) => {
     const client = net.createConnection({ port: 43, host: 'whois.internic.net' }, () => {
       client.write(hostname + '\r\n');
@@ -79,6 +69,41 @@ const fetchWhoisData = async (url) => {
       reject(err);
     });
   });
+};
+
+const fetchFromMyAPI = async (hostname) => {
+  try {
+    const response = await axios.post('https://whois-api-zeta.vercel.app/', {
+      domain: hostname
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data from your API:', error.message);
+    return null;
+  }
+};
+
+const fetchWhoisData = async (url) => {
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = 'http://' + url;
+  }
+
+  let hostname;
+  try {
+    hostname = getBaseDomain(new URL(url).hostname);
+  } catch (error) {
+    throw new Error(`Unable to parse URL: ${error}`);
+  }
+
+  const [internicData, whoisData] = await Promise.all([
+    fetchFromInternic(hostname),
+    fetchFromMyAPI(hostname)
+  ]);
+
+  return {
+    internicData,
+    whoisData
+  };
 };
 
 exports.handler = middleware(fetchWhoisData);
