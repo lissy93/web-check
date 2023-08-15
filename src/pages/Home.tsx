@@ -69,6 +69,9 @@ const SiteFeaturesWrapper = styled(StyledCard)`
         width: calc(100% - 2rem);
       }
     }
+    @media(max-width: 600px) {
+      flex-wrap: wrap;
+    }
   }
   ul {
     -webkit-column-width: 150px;
