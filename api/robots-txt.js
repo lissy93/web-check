@@ -48,7 +48,11 @@ const handler = async function(url) {
     const response = await axios.get(robotsURL);
 
     if (response.status === 200) {
-      return parseRobotsTxt(response.data);
+      const parsedData = parseRobotsTxt(response.data);
+      if (!parsedData.robots || parsedData.robots.length === 0) {
+        return { skipped: 'No robots.txt file present, unable to continue' };
+      }
+      return parsedData;
     } else {
       return {
         statusCode: response.status,
