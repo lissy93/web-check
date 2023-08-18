@@ -52,6 +52,7 @@ import HttpSecurityCard from 'components/Results/HttpSecurity';
 import FirewallCard from 'components/Results/Firewall';
 import ArchivesCard from 'components/Results/Archives';
 import RankCard from 'components/Results/Rank';
+import BlockListsCard from 'components/Results/BlockLists';
 
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
@@ -439,6 +440,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`${api}/rank?url=${address}`).then(res => parseJson(res)),
   });
 
+  // Check site against DNS blocklists
+  const [blockListsResults, updateBlockListsResults] = useMotherHook({
+    jobId: 'block-lists',
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`${api}/block-lists?url=${address}`).then(res => parseJson(res)),
+  });
+
   /* Cancel remaining jobs after  10 second timeout */
   useEffect(() => {
     const checkJobs = () => {
@@ -493,6 +502,7 @@ const Results = (): JSX.Element => {
     { id: 'dns-server', title: 'DNS Server', result: dnsServerResults, Component: DnsServerCard, refresh: updateDnsServerResults },
     { id: 'linked-pages', title: 'Linked Pages', result: linkedPagesResults, Component: ContentLinksCard, refresh: updateLinkedPagesResults },
     { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },    
+    { id: 'block-lists', title: 'Block Lists', result: blockListsResults, Component: BlockListsCard, refresh: updateBlockListsResults },    
     { id: 'features', title: 'Site Features', result: siteFeaturesResults, Component: SiteFeaturesCard, refresh: updateSiteFeaturesResults },
     { id: 'sitemap', title: 'Pages', result: sitemapResults, Component: SitemapCard, refresh: updateSitemapResults },
     { id: 'carbon', title: 'Carbon Footprint', result: carbonResults, Component: CarbonFootprintCard, refresh: updateCarbonResults },

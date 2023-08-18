@@ -99,7 +99,7 @@ exports.handler = middleware(async (url) => {
   const results = await checkDomainAgainstDnsServers(domain);
   return {
     statusCode: 200,
-    body: JSON.stringify(results)
+    body: JSON.stringify({ blocklists: results })
   };
 });
 

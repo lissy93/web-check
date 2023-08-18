@@ -462,6 +462,14 @@ const docs: Doc[] = [
     ],
     screenshot: 'https://i.ibb.co/nkbczgb/Screenshot-from-2023-08-14-22-02-40.png',
   },
+  {
+    id: 'block-lists',
+    title: 'Block Detection',
+    description: 'Checks access to the URL using 10+ of the most popular privacy, malware and parental control blocking DNS servers.',
+    use: '',
+    resources: [],
+    screenshot: '',
+  },
   // {
   //   id: '',
   //   title: '',
