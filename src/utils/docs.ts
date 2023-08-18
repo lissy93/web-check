@@ -470,6 +470,17 @@ const docs: Doc[] = [
     resources: [],
     screenshot: '',
   },
+  {
+    id: 'malware',
+    title: 'Malware & Phishing Detection',
+    description: '',
+    use: '',
+    resources: [
+      { title: 'URLHaus', link: 'https://urlhaus-api.abuse.ch/'},
+      { title: 'PhishTank', link: 'https://www.phishtank.com/'},
+    ],
+    screenshot: '',
+  },
   // {
   //   id: '',
   //   title: '',
