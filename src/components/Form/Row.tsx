@@ -6,7 +6,7 @@ import Heading from 'components/Form/Heading';
 export interface RowProps {
   lbl: string,
   val: string,
-  // key?: string,
+  key?: string | number,
   children?: ReactNode,
   rowList?: RowProps[],
   title?: string,
