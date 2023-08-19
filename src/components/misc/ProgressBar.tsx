@@ -218,6 +218,7 @@ const jobNames = [
   'rank',
   'archives',
   'block-lists',
+  'threats',
 ] as const;
 
 export const initialJobs = jobNames.map((job: string) => {
