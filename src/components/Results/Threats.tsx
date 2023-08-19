@@ -33,8 +33,22 @@ const convertToDate = (dateString: string): string => {
 
 const MalwareCard = (props: {data: any, title: string, actionButtons: any }): JSX.Element => {
   const urlHaus = props.data.urlHaus;
+  const phishTank = props.data.phishTank;
+  const cloudmersive = props.data.cloudmersive;
   return (
     <Card heading={props.title} actionButtons={props.actionButtons}>
+      { cloudmersive && !cloudmersive.error && (
+        <Row lbl="Threat Type" val={cloudmersive.WebsiteThreatType} />
+      )}
+      { phishTank && !phishTank.error && (
+        <Row lbl="Phishing Status" val={phishTank.url0 ? '❌ Phishing Identified' : '✅ No Phishing Identified!'} />
+      )}
+      { phishTank.url0 && phishTank.url0.phish_detail_page && (
+        <Row lbl="" val="">
+          <span className="lbl">Phish Info</span>
+          <span className="val"><a href={phishTank.url0.phish_detail_page}>{phishTank.url0.phish_id}</a></span>  
+        </Row>
+      )}
       { urlHaus.query_status === 'no_results' && <Row lbl="Status" val="✅ Nothing Found!" />}
       { urlHaus.query_status === 'ok' && (
         <>

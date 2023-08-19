@@ -52,6 +52,9 @@ const handler = async (url) => {
     const urlHaus = await getUrlHausResult(url);
     const phishTank = await getPhishTankResult(url);
     const cloudmersive = await getCloudmersiveResult(url);
+    if (urlHaus.error && phishTank.error && cloudmersive.error) {
+      throw new Error(`All requests failed - ${urlHaus.error} ${phishTank.error} ${cloudmersive.error}`);
+    }
     return JSON.stringify({ urlHaus, phishTank, cloudmersive });
   } catch (error) {
     throw new Error(error.message);

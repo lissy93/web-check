@@ -53,7 +53,7 @@ import FirewallCard from 'components/Results/Firewall';
 import ArchivesCard from 'components/Results/Archives';
 import RankCard from 'components/Results/Rank';
 import BlockListsCard from 'components/Results/BlockLists';
-import MalwareCard from 'components/Results/Malware';
+import ThreatsCard from 'components/Results/Threats';
 
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
@@ -450,11 +450,11 @@ const Results = (): JSX.Element => {
   });
 
   // Check if a host is present on the URLHaus malware list
-  const [malwareResults, updateMalwareResults] = useMotherHook({
-    jobId: 'malware',
+  const [threatResults, updateThreatResults] = useMotherHook({
+    jobId: 'threats',
     updateLoadingJobs,
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
-    fetchRequest: () => fetch(`${api}/malware?url=${address}`).then(res => parseJson(res)),
+    fetchRequest: () => fetch(`${api}/threats?url=${address}`).then(res => parseJson(res)),
   });
 
   /* Cancel remaining jobs after  10 second timeout */
@@ -512,7 +512,7 @@ const Results = (): JSX.Element => {
     { id: 'linked-pages', title: 'Linked Pages', result: linkedPagesResults, Component: ContentLinksCard, refresh: updateLinkedPagesResults },
     { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },    
     { id: 'block-lists', title: 'Block Lists', result: blockListsResults, Component: BlockListsCard, refresh: updateBlockListsResults },    
-    { id: 'malware', title: 'Malware', result: malwareResults, Component: MalwareCard, refresh: updateMalwareResults },    
+    { id: 'threats', title: 'Threats', result: threatResults, Component: ThreatsCard, refresh: updateThreatResults },    
     { id: 'features', title: 'Site Features', result: siteFeaturesResults, Component: SiteFeaturesCard, refresh: updateSiteFeaturesResults },
     { id: 'sitemap', title: 'Pages', result: sitemapResults, Component: SitemapCard, refresh: updateSitemapResults },
     { id: 'carbon', title: 'Carbon Footprint', result: carbonResults, Component: CarbonFootprintCard, refresh: updateCarbonResults },
