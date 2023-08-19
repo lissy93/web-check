@@ -32,13 +32,17 @@ const convertToDate = (dateString: string): string => {
 }
 
 const MalwareCard = (props: {data: any, title: string, actionButtons: any }): JSX.Element => {
-  const urlHaus = props.data.urlHaus;
-  const phishTank = props.data.phishTank;
-  const cloudmersive = props.data.cloudmersive;
+  const urlHaus = props.data.urlHaus || {};
+  const phishTank = props.data.phishTank || {};
+  const cloudmersive = props.data.cloudmersive || {};
+  const safeBrowsing = props.data.safeBrowsing || {};
   return (
     <Card heading={props.title} actionButtons={props.actionButtons}>
-      { cloudmersive && !cloudmersive.error && (
-        <Row lbl="Threat Type" val={cloudmersive.WebsiteThreatType} />
+      { safeBrowsing && !safeBrowsing.error && (
+        <Row lbl="Google Safe Browsing" val={safeBrowsing.unsafe ? '❌ Unsafe' : '✅ Safe'} />
+      )}
+      { ((cloudmersive && !cloudmersive.error) || safeBrowsing?.details) && (
+        <Row lbl="Threat Type" val={safeBrowsing?.details?.threatType || cloudmersive.WebsiteThreatType || 'None :)'} />
       )}
       { phishTank && !phishTank.error && (
         <Row lbl="Phishing Status" val={phishTank.url0 ? '❌ Phishing Identified' : '✅ No Phishing Identified!'} />
