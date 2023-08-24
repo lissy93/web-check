@@ -27,7 +27,7 @@ const MailConfigCard = (props: {data: any, title: string, actionButtons: any }):
       }
       { mailServer.mailServices.length > 0 && <Heading as="h3" color={colors.primary} size="small">External Mail Services</Heading>}
       { mailServer.mailServices && mailServer.mailServices.map((service: any, index: number) => (
-        <Row lbl={service.provider} val={service.value} key={index} />
+        <Row lbl={service.provider} title={service.value} val="" key={index} />
         ))
       }
 
