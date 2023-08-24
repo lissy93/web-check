@@ -54,6 +54,9 @@ import ArchivesCard from 'components/Results/Archives';
 import RankCard from 'components/Results/Rank';
 import BlockListsCard from 'components/Results/BlockLists';
 import ThreatsCard from 'components/Results/Threats';
+import TlsCipherSuitesCard from 'components/Results/TlsCipherSuites';
+import TlsIssueAnalysisCard from 'components/Results/TlsIssueAnalysis';
+import TlsClientSupportCard from 'components/Results/TlsClientSupport';
 
 import keys from 'utils/get-keys';
 import { determineAddressType, AddressType } from 'utils/address-type-checker';
@@ -96,12 +99,13 @@ const Results = (): JSX.Element => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(<></>);
 
-  const updateLoadingJobs = useCallback((job: string, newState: LoadingState, error?: string, retry?: () => void, data?: any) => {
+  const updateLoadingJobs = useCallback((jobs: string | string[], newState: LoadingState, error?: string, retry?: () => void, data?: any) => {
+    (typeof jobs === 'string' ? [jobs] : jobs).forEach((job: string) => {
     const now = new Date();
     const timeTaken = now.getTime() - startTime;
     setLoadingJobs((prevJobs) => {
       const newJobs = prevJobs.map((loadingJob: LoadingJob) => {
-        if (loadingJob.name === job) {
+        if (job.includes(loadingJob.name)) {
           return { ...loadingJob, error, state: newState, timeTaken, retry };
         }
         return loadingJob;
@@ -137,6 +141,7 @@ const Results = (): JSX.Element => {
       }
       return newJobs;
     });
+  });
   }, [startTime]);
 
   const parseJson = (response: Response): Promise<any> => {
@@ -239,7 +244,7 @@ const Results = (): JSX.Element => {
 
   // Get hostnames and associated domains from Shodan
   const [shoadnResults, updateShodanResults] = useMotherHook<ShodanResults>({
-    jobId: 'hosts',
+    jobId: ['hosts', 'server-info'],
     updateLoadingJobs,
     addressInfo: { address: ipAddress, addressType: 'ipV4', expectedAddressTypes: ['ipV4', 'ipV6'] },
     fetchRequest: () => fetch(`https://api.shodan.io/shodan/host/${ipAddress}?key=${keys.shodan}`)
@@ -457,6 +462,14 @@ const Results = (): JSX.Element => {
     fetchRequest: () => fetch(`${api}/threats?url=${address}`).then(res => parseJson(res)),
   });
 
+  // Get TLS security info, from Mozilla Observatory
+  const [tlsResults, updateTlsResults] = useMotherHook({
+    jobId: ['tls-cipher-suites', 'tls-security-config', 'tls-client-support'],
+    updateLoadingJobs,
+    addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
+    fetchRequest: () => fetch(`${api}/tls?url=${address}`).then(res => parseJson(res)),
+  });
+
   /* Cancel remaining jobs after  10 second timeout */
   useEffect(() => {
     const checkJobs = () => {
@@ -470,7 +483,7 @@ const Results = (): JSX.Element => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [loadingJobs, updateLoadingJobs]); // dependencies for the effect
+  }, [loadingJobs, updateLoadingJobs]);
 
   const makeSiteName = (address: string): string => {
     try {
@@ -483,40 +496,42 @@ const Results = (): JSX.Element => {
   // A list of state sata, corresponding component and title for each card
   const resultCardData = [
     { id: 'location', title: 'Server Location', result: locationResults, Component: ServerLocationCard, refresh: updateLocationResults },
-    { id: 'ssl', title: 'SSL Info', result: sslResults, Component: SslCertCard, refresh: updateSslResults },
+    { id: 'ssl', title: 'SSL Certificate', result: sslResults, Component: SslCertCard, refresh: updateSslResults },
+    { id: 'domain', title: 'Domain Whois', result: domainLookupResults, Component: DomainLookup, refresh: updateDomainLookupResults },
+    { id: 'quality', title: 'Quality Summary', result: lighthouseResults, Component: LighthouseCard, refresh: updateLighthouseResults },
+    { id: 'tech-stack', title: 'Tech Stack', result: techStackResults, Component: TechStackCard, refresh: updateTechStackResults },
+    { id: 'server-info', title: 'Server Info', result: shoadnResults?.serverInfo, Component: ServerInfoCard, refresh: updateShodanResults },
+    { id: 'cookies', title: 'Cookies', result: cookieResults, Component: CookiesCard, refresh: updateCookieResults },
     { id: 'headers', title: 'Headers', result: headersResults, Component: HeadersCard, refresh: updateHeadersResults },
-    { id: 'domain', title: 'Whois', result: domainLookupResults, Component: DomainLookup, refresh: updateDomainLookupResults },
     { id: 'dns', title: 'DNS Records', result: dnsResults, Component: DnsRecordsCard, refresh: updateDnsResults },
     { id: 'hosts', title: 'Host Names', result: shoadnResults?.hostnames, Component: HostNamesCard, refresh: updateShodanResults },
     { id: 'http-security', title: 'HTTP Security', result: httpSecurityResults, Component: HttpSecurityCard, refresh: updateHttpSecurityResults },
-    { id: 'tech-stack', title: 'Tech Stack', result: techStackResults, Component: TechStackCard, refresh: updateTechStackResults },
-    { id: 'quality', title: 'Quality Summary', result: lighthouseResults, Component: LighthouseCard, refresh: updateLighthouseResults },
     { id: 'social-tags', title: 'Social Tags', result: socialTagResults, Component: SocialTagsCard, refresh: updateSocialTagResults },
-    { id: 'cookies', title: 'Cookies', result: cookieResults, Component: CookiesCard, refresh: updateCookieResults },
     { id: 'trace-route', title: 'Trace Route', result: traceRouteResults, Component: TraceRouteCard, refresh: updateTraceRouteResults },
+    { id: 'screenshot', title: 'Screenshot', result: screenshotResult || lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateScreenshotResult },
+    { id: 'security-txt', title: 'Security.Txt', result: securityTxtResults, Component: SecurityTxtCard, refresh: updateSecurityTxtResults },
+    { id: 'dns-server', title: 'DNS Server', result: dnsServerResults, Component: DnsServerCard, refresh: updateDnsServerResults },
     { id: 'firewall', title: 'Firewall', result: firewallResults, Component: FirewallCard, refresh: updateFirewallResults },
-    { id: 'server-info', title: 'Server Info', result: shoadnResults?.serverInfo, Component: ServerInfoCard, refresh: updateShodanResults },
-    { id: 'redirects', title: 'Redirects', result: redirectResults, Component: RedirectsCard, refresh: updateRedirectResults },
-    { id: 'robots-txt', title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard, refresh: updateRobotsTxtResults },
     { id: 'dnssec', title: 'DNSSEC', result: dnsSecResults, Component: DnsSecCard, refresh: updateDnsSecResults },
+    { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
+    { id: 'threats', title: 'Threats', result: threatResults, Component: ThreatsCard, refresh: updateThreatResults },
+    { id: 'mail-config', title: 'Email Configuration', result: mailConfigResults, Component: MailConfigCard, refresh: updateMailConfigResults },
+    { id: 'archives', title: 'Archive History', result: archivesResults, Component: ArchivesCard, refresh: updateArchivesResults },
+    { id: 'rank', title: 'Global Ranking', result: rankResults, Component: RankCard, refresh: updateRankResults },
+    { id: 'tls-cipher-suites', title: 'TLS Cipher Suites', result: tlsResults, Component: TlsCipherSuitesCard, refresh: updateTlsResults },
+    { id: 'tls-security-config', title: 'TLS Security Issues', result: tlsResults, Component: TlsIssueAnalysisCard, refresh: updateTlsResults },
+    { id: 'tls-client-support', title: 'TLS Handshake Simulation', result: tlsResults, Component: TlsClientSupportCard, refresh: updateTlsResults },
+    { id: 'redirects', title: 'Redirects', result: redirectResults, Component: RedirectsCard, refresh: updateRedirectResults },
+    { id: 'linked-pages', title: 'Linked Pages', result: linkedPagesResults, Component: ContentLinksCard, refresh: updateLinkedPagesResults },
+    { id: 'robots-txt', title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard, refresh: updateRobotsTxtResults },
     { id: 'status', title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard, refresh: updateServerStatusResults },
     { id: 'ports', title: 'Open Ports', result: portsResults, Component: OpenPortsCard, refresh: updatePortsResults },
-    { id: 'security-txt', title: 'Security.Txt', result: securityTxtResults, Component: SecurityTxtCard, refresh: updateSecurityTxtResults },
-    { id: 'rank', title: 'Global Ranking', result: rankResults, Component: RankCard, refresh: updateRankResults },
-    { id: 'screenshot', title: 'Screenshot', result: screenshotResult || lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateScreenshotResult },
-    { id: 'mail-config', title: 'Email Configuration', result: mailConfigResults, Component: MailConfigCard, refresh: updateMailConfigResults },
-    { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
-    { id: 'archives', title: 'Archive History', result: archivesResults, Component: ArchivesCard, refresh: updateArchivesResults },
     { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },
-    { id: 'dns-server', title: 'DNS Server', result: dnsServerResults, Component: DnsServerCard, refresh: updateDnsServerResults },
-    { id: 'linked-pages', title: 'Linked Pages', result: linkedPagesResults, Component: ContentLinksCard, refresh: updateLinkedPagesResults },
     { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },    
     { id: 'block-lists', title: 'Block Lists', result: blockListsResults, Component: BlockListsCard, refresh: updateBlockListsResults },    
-    { id: 'threats', title: 'Threats', result: threatResults, Component: ThreatsCard, refresh: updateThreatResults },    
     { id: 'features', title: 'Site Features', result: siteFeaturesResults, Component: SiteFeaturesCard, refresh: updateSiteFeaturesResults },
     { id: 'sitemap', title: 'Pages', result: sitemapResults, Component: SitemapCard, refresh: updateSitemapResults },
     { id: 'carbon', title: 'Carbon Footprint', result: carbonResults, Component: CarbonFootprintCard, refresh: updateCarbonResults },
-    
   ];
 
   const MakeActionButtons = (title: string, refresh: () => void, showInfo: (id: string) => void): ReactNode => {
