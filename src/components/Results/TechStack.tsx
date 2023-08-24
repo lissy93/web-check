@@ -80,7 +80,7 @@ h4 {
 
 const TechStackCard = (props: {data: any, title: string, actionButtons: any }): JSX.Element => {
   const technologies = props.data.technologies;
-  const iconsCdn = 'https://raw.githubusercontent.com/wappalyzer/wappalyzer/master/src/images/icons/';
+  const iconsCdn = 'https://www.wappalyzer.com/images/icons/';
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       {technologies.map((tech: any, index: number) => {
