@@ -481,6 +481,14 @@ const docs: Doc[] = [
     ],
     screenshot: '',
   },
+  {
+    id: 'tls',
+    title: 'TLS Configuration',
+    description: '',
+    use: '',
+    resources: [],
+    screenshot: '',
+  },
   // {
   //   id: '',
   //   title: '',

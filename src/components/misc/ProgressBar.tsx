@@ -195,7 +195,7 @@ const jobNames = [
   'quality',
   'cookies',
   'ssl',
-  // 'server-info',
+  'server-info',
   'redirects',
   'robots-txt',
   'dnssec',
@@ -219,6 +219,9 @@ const jobNames = [
   'archives',
   'block-lists',
   'threats',
+  'tls-cipher-suites',
+  'tls-security-config',
+  'tls-client-support',
 ] as const;
 
 export const initialJobs = jobNames.map((job: string) => {
