@@ -102,7 +102,7 @@ const FilterButtons = styled.div`
     gap: 1rem;
     align-items: center;
   }
-  button, input {
+  button, input, .toggle-filters {
     background: ${colors.backgroundLighter};
     color: ${colors.textColor};
     border: none;
@@ -112,7 +112,7 @@ const FilterButtons = styled.div`
     border: 1px solid transparent;
     transition: all 0.2s ease-in-out;
   }
-  button {
+  button, .toggle-filters {
     cursor: pointer;
     text-transform: capitalize;
     box-shadow: 2px 2px 0px ${colors.bgShadowColor};
@@ -137,6 +137,9 @@ const FilterButtons = styled.div`
     font-size: 0.8rem;
     opacity: 0.8;
   }
+  .toggle-filters  {
+    font-size: 0.8rem;
+  }
 `;
 
 const Results = (): JSX.Element => {
@@ -148,6 +151,7 @@ const Results = (): JSX.Element => {
   const [loadingJobs, setLoadingJobs] = useState<LoadingJob[]>(initialJobs);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(<></>);
+  const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [tags, setTags] = useState<string[]>([]);
 
@@ -648,13 +652,6 @@ const Results = (): JSX.Element => {
     refresh: updateTraceRouteResults,
     tags: ['server'],
   }, {
-    id: 'screenshot',
-    title: 'Screenshot',
-    result: screenshotResult || lighthouseResults?.fullPageScreenshot?.screenshot,
-    Component: ScreenshotCard,
-    refresh: updateScreenshotResult,
-    tags: ['client', 'meta'],
-  }, {
     id: 'security-txt',
     title: 'Security.Txt',
     result: securityTxtResults,
@@ -717,6 +714,13 @@ const Results = (): JSX.Element => {
     Component: RankCard,
     refresh: updateRankResults,
     tags: ['meta'],
+  }, {
+    id: 'screenshot',
+    title: 'Screenshot',
+    result: screenshotResult || lighthouseResults?.fullPageScreenshot?.screenshot,
+    Component: ScreenshotCard,
+    refresh: updateScreenshotResult,
+    tags: ['client', 'meta'],
   }, {
     id: 'tls-cipher-suites',
     title: 'TLS Cipher Suites',
@@ -851,7 +855,7 @@ const Results = (): JSX.Element => {
       <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
       { address?.includes(window?.location?.hostname || 'web-check.as93.net') && <SelfScanMsg />}
       <Loader show={loadingJobs.filter((job: LoadingJob) => job.state !== 'loading').length < 5} />
-      <FilterButtons>
+      <FilterButtons>{ showFilters ? <>
         <div className="one-half">
         <span className="group-label">Filter by</span>
         {['server', 'client', 'meta'].map((tag: string) => (
@@ -873,6 +877,9 @@ const Results = (): JSX.Element => {
         />
         <span className="group-label">Search</span>
         </div>
+        </> : (
+          <span className="toggle-filters" onClick={() => setShowFilters(true)}>Show Filters</span>
+      ) }
       </FilterButtons>
       <ResultsContent>
         <Masonry
@@ -881,12 +888,11 @@ const Results = (): JSX.Element => {
           columnClassName="masonry-grid-col">
           {
             resultCardData
-            .filter(({ tags: cardTags, title }) => (
-              tags.length === 0 || tags.some(tag => cardTags.includes(tag))) &&
-              title.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            .map(({ id, title, result, refresh, Component }, index: number) => (
-              (result && !result.error) ? (
+            .map(({ id, title, result, tags, refresh, Component }, index: number) => {
+              const show = (tags.length === 0 || tags.some(tag => tags.includes(tag)))
+              && title.toLowerCase().includes(searchTerm.toLowerCase())
+              && (result && !result.error);
+              return show ? (
                 <ErrorBoundary title={title}>
                   <Component
                     key={`${title}-${index}`}
@@ -895,8 +901,7 @@ const Results = (): JSX.Element => {
                     actionButtons={refresh ? makeActionButtons(title, refresh, () => showInfo(id)) : undefined}
                   />
                 </ErrorBoundary>
-              ) : <></>
-            ))
+            ) : null})
           }
           </Masonry>
       </ResultsContent>
