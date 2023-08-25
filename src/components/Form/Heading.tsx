@@ -28,6 +28,7 @@ const StyledHeading = styled.h1<HeadingProps>`
   a { // If a title is a link, keep title styles
     color: inherit;
     text-decoration: none;
+    display: flex;
   }
   ${props => {
     switch (props.size) {

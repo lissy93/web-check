@@ -1,22 +1,8 @@
 
 import { useState } from 'react';
-import styled from 'styled-components';
-import colors from 'styles/colors';
 import { Card } from 'components/Form/Card';
 import Button from 'components/Form/Button';
-import Row, { ExpandableRow } from 'components/Form/Row';
-
-
-// "name": "Android",
-// "curve": "secp256r1",
-// "version": "6.0",
-// "platform": "",
-// "protocol": "TLSv1.2",
-// "curve_code": 23,
-// "ciphersuite": "ECDHE-RSA-CHACHA20-POLY1305-OLD",
-// "is_supported": true,
-// "protocol_code": 771,
-// "ciphersuite_code": 52243
+import { ExpandableRow } from 'components/Form/Row';
 
 const makeClientSupport = (results: any) => {
   if (!results?.analysis) return [];

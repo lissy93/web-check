@@ -1,10 +1,8 @@
 
 import { useState } from 'react';
-import styled from 'styled-components';
-import colors from 'styles/colors';
 import { Card } from 'components/Form/Card';
 import Button from 'components/Form/Button';
-import Row, { ExpandableRow } from 'components/Form/Row';
+import { ExpandableRow } from 'components/Form/Row';
 
 const makeCipherSuites = (results: any) => {
   if (!results || !results.connection_info || (results.connection_info.ciphersuite || [])?.length === 0) {

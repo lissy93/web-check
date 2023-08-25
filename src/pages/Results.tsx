@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, ReactNode } from 'react';
-import {   useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { ToastContainer } from 'react-toastify';
 import Masonry from 'react-masonry-css'
@@ -89,6 +89,56 @@ const ResultsContent = styled.section`
   padding-bottom: 1rem;
 `;
 
+const FilterButtons = styled.div`
+  width: 95vw;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  .one-half {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+  }
+  button, input {
+    background: ${colors.backgroundLighter};
+    color: ${colors.textColor};
+    border: none;
+    border-radius: 4px;
+    font-family: 'PTMono';
+    padding: 0.25rem 0.5rem;
+    border: 1px solid transparent;
+    transition: all 0.2s ease-in-out;
+  }
+  button {
+    cursor: pointer;
+    text-transform: capitalize;
+    box-shadow: 2px 2px 0px ${colors.bgShadowColor};
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      box-shadow: 4px 4px 0px ${colors.bgShadowColor};
+      color: ${colors.primary};
+    }
+    &.selected {
+      border: 1px solid ${colors.primary};
+      color: ${colors.primary};
+    }
+  }
+  input:focus {
+    border: 1px solid ${colors.primary};
+    outline: none;
+  }
+  .clear {
+    color: ${colors.textColor};
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.8rem;
+    opacity: 0.8;
+  }
+`;
+
 const Results = (): JSX.Element => {
   const startTime = new Date().getTime();
 
@@ -98,6 +148,18 @@ const Results = (): JSX.Element => {
   const [loadingJobs, setLoadingJobs] = useState<LoadingJob[]>(initialJobs);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(<></>);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [tags, setTags] = useState<string[]>([]);
+
+  const clearFilters = () => {
+    setTags([]);
+    setSearchTerm('');
+  };
+  const updateTags = (tag: string) => {
+    // Remove current tag if it exists, otherwise add it
+    // setTags(tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]);
+    setTags(tags.includes(tag) ? tags.filter(t => t !== tag) : [tag]);
+  };
 
   const updateLoadingJobs = useCallback((jobs: string | string[], newState: LoadingState, error?: string, retry?: () => void, data?: any) => {
     (typeof jobs === 'string' ? [jobs] : jobs).forEach((job: string) => {
@@ -494,47 +556,269 @@ const Results = (): JSX.Element => {
   }
 
   // A list of state sata, corresponding component and title for each card
-  const resultCardData = [
-    { id: 'location', title: 'Server Location', result: locationResults, Component: ServerLocationCard, refresh: updateLocationResults },
-    { id: 'ssl', title: 'SSL Certificate', result: sslResults, Component: SslCertCard, refresh: updateSslResults },
-    { id: 'domain', title: 'Domain Whois', result: domainLookupResults, Component: DomainLookup, refresh: updateDomainLookupResults },
-    { id: 'quality', title: 'Quality Summary', result: lighthouseResults, Component: LighthouseCard, refresh: updateLighthouseResults },
-    { id: 'tech-stack', title: 'Tech Stack', result: techStackResults, Component: TechStackCard, refresh: updateTechStackResults },
-    { id: 'server-info', title: 'Server Info', result: shoadnResults?.serverInfo, Component: ServerInfoCard, refresh: updateShodanResults },
-    { id: 'cookies', title: 'Cookies', result: cookieResults, Component: CookiesCard, refresh: updateCookieResults },
-    { id: 'headers', title: 'Headers', result: headersResults, Component: HeadersCard, refresh: updateHeadersResults },
-    { id: 'dns', title: 'DNS Records', result: dnsResults, Component: DnsRecordsCard, refresh: updateDnsResults },
-    { id: 'hosts', title: 'Host Names', result: shoadnResults?.hostnames, Component: HostNamesCard, refresh: updateShodanResults },
-    { id: 'http-security', title: 'HTTP Security', result: httpSecurityResults, Component: HttpSecurityCard, refresh: updateHttpSecurityResults },
-    { id: 'social-tags', title: 'Social Tags', result: socialTagResults, Component: SocialTagsCard, refresh: updateSocialTagResults },
-    { id: 'trace-route', title: 'Trace Route', result: traceRouteResults, Component: TraceRouteCard, refresh: updateTraceRouteResults },
-    { id: 'screenshot', title: 'Screenshot', result: screenshotResult || lighthouseResults?.fullPageScreenshot?.screenshot, Component: ScreenshotCard, refresh: updateScreenshotResult },
-    { id: 'security-txt', title: 'Security.Txt', result: securityTxtResults, Component: SecurityTxtCard, refresh: updateSecurityTxtResults },
-    { id: 'dns-server', title: 'DNS Server', result: dnsServerResults, Component: DnsServerCard, refresh: updateDnsServerResults },
-    { id: 'firewall', title: 'Firewall', result: firewallResults, Component: FirewallCard, refresh: updateFirewallResults },
-    { id: 'dnssec', title: 'DNSSEC', result: dnsSecResults, Component: DnsSecCard, refresh: updateDnsSecResults },
-    { id: 'hsts', title: 'HSTS Check', result: hstsResults, Component: HstsCard, refresh: updateHstsResults },
-    { id: 'threats', title: 'Threats', result: threatResults, Component: ThreatsCard, refresh: updateThreatResults },
-    { id: 'mail-config', title: 'Email Configuration', result: mailConfigResults, Component: MailConfigCard, refresh: updateMailConfigResults },
-    { id: 'archives', title: 'Archive History', result: archivesResults, Component: ArchivesCard, refresh: updateArchivesResults },
-    { id: 'rank', title: 'Global Ranking', result: rankResults, Component: RankCard, refresh: updateRankResults },
-    { id: 'tls-cipher-suites', title: 'TLS Cipher Suites', result: tlsResults, Component: TlsCipherSuitesCard, refresh: updateTlsResults },
-    { id: 'tls-security-config', title: 'TLS Security Issues', result: tlsResults, Component: TlsIssueAnalysisCard, refresh: updateTlsResults },
-    { id: 'tls-client-support', title: 'TLS Handshake Simulation', result: tlsResults, Component: TlsClientSupportCard, refresh: updateTlsResults },
-    { id: 'redirects', title: 'Redirects', result: redirectResults, Component: RedirectsCard, refresh: updateRedirectResults },
-    { id: 'linked-pages', title: 'Linked Pages', result: linkedPagesResults, Component: ContentLinksCard, refresh: updateLinkedPagesResults },
-    { id: 'robots-txt', title: 'Crawl Rules', result: robotsTxtResults, Component: RobotsTxtCard, refresh: updateRobotsTxtResults },
-    { id: 'status', title: 'Server Status', result: serverStatusResults, Component: ServerStatusCard, refresh: updateServerStatusResults },
-    { id: 'ports', title: 'Open Ports', result: portsResults, Component: OpenPortsCard, refresh: updatePortsResults },
-    { id: 'whois', title: 'Domain Info', result: whoIsResults, Component: WhoIsCard, refresh: updateWhoIsResults },
-    { id: 'txt-records', title: 'TXT Records', result: txtRecordResults, Component: TxtRecordCard, refresh: updateTxtRecordResults },    
-    { id: 'block-lists', title: 'Block Lists', result: blockListsResults, Component: BlockListsCard, refresh: updateBlockListsResults },    
-    { id: 'features', title: 'Site Features', result: siteFeaturesResults, Component: SiteFeaturesCard, refresh: updateSiteFeaturesResults },
-    { id: 'sitemap', title: 'Pages', result: sitemapResults, Component: SitemapCard, refresh: updateSitemapResults },
-    { id: 'carbon', title: 'Carbon Footprint', result: carbonResults, Component: CarbonFootprintCard, refresh: updateCarbonResults },
-  ];
+  const resultCardData = [{
+    id: 'location',
+    title: 'Server Location',
+    result: locationResults,
+    Component: ServerLocationCard,
+    refresh: updateLocationResults,
+    tags: ['server'],
+  }, {
+    id: 'ssl',
+    title: 'SSL Certificate',
+    result: sslResults,
+    Component: SslCertCard,
+    refresh: updateSslResults,
+    tags: ['server', 'security'],
+  }, {
+    id: 'domain',
+    title: 'Domain Whois',
+    result: domainLookupResults,
+    Component: DomainLookup,
+    refresh: updateDomainLookupResults,
+    tags: ['server'],
+  }, {
+    id: 'quality',
+    title: 'Quality Summary',
+    result: lighthouseResults,
+    Component: LighthouseCard,
+    refresh: updateLighthouseResults,
+    tags: ['client'],
+  }, {
+    id: 'tech-stack',
+    title: 'Tech Stack',
+    result: techStackResults,
+    Component: TechStackCard,
+    refresh: updateTechStackResults,
+    tags: ['client', 'meta'],
+  }, {
+    id: 'server-info',
+    title: 'Server Info',
+    result: shoadnResults?.serverInfo,
+    Component: ServerInfoCard,
+    refresh: updateShodanResults,
+    tags: ['server'],
+  }, {
+    id: 'cookies',
+    title: 'Cookies',
+    result: cookieResults,
+    Component: CookiesCard,
+    refresh: updateCookieResults,
+    tags: ['client', 'security'],
+  }, {
+    id: 'headers',
+    title: 'Headers',
+    result: headersResults,
+    Component: HeadersCard,
+    refresh: updateHeadersResults,
+    tags: ['client', 'security'],
+  }, {
+    id: 'dns',
+    title: 'DNS Records',
+    result: dnsResults,
+    Component: DnsRecordsCard,
+    refresh: updateDnsResults,
+    tags: ['server'],
+  }, {
+    id: 'hosts',
+    title: 'Host Names',
+    result: shoadnResults?.hostnames,
+    Component: HostNamesCard,
+    refresh: updateShodanResults,
+    tags: ['server'],
+  }, {
+    id: 'http-security',
+    title: 'HTTP Security',
+    result: httpSecurityResults,
+    Component: HttpSecurityCard,
+    refresh: updateHttpSecurityResults,
+    tags: ['security'],
+  }, {
+    id: 'social-tags',
+    title: 'Social Tags',
+    result: socialTagResults,
+    Component: SocialTagsCard,
+    refresh: updateSocialTagResults,
+    tags: ['client', 'meta'],
+  }, {
+    id: 'trace-route',
+    title: 'Trace Route',
+    result: traceRouteResults,
+    Component: TraceRouteCard,
+    refresh: updateTraceRouteResults,
+    tags: ['server'],
+  }, {
+    id: 'screenshot',
+    title: 'Screenshot',
+    result: screenshotResult || lighthouseResults?.fullPageScreenshot?.screenshot,
+    Component: ScreenshotCard,
+    refresh: updateScreenshotResult,
+    tags: ['client', 'meta'],
+  }, {
+    id: 'security-txt',
+    title: 'Security.Txt',
+    result: securityTxtResults,
+    Component: SecurityTxtCard,
+    refresh: updateSecurityTxtResults,
+    tags: ['security'],
+  }, {
+    id: 'dns-server',
+    title: 'DNS Server',
+    result: dnsServerResults,
+    Component: DnsServerCard,
+    refresh: updateDnsServerResults,
+    tags: ['server'],
+  }, {
+    id: 'firewall',
+    title: 'Firewall',
+    result: firewallResults,
+    Component: FirewallCard,
+    refresh: updateFirewallResults,
+    tags: ['server', 'security'],
+  }, {
+    id: 'dnssec',
+    title: 'DNSSEC',
+    result: dnsSecResults,
+    Component: DnsSecCard,
+    refresh: updateDnsSecResults,
+    tags: ['security'],
+  }, {
+    id: 'hsts',
+    title: 'HSTS Check',
+    result: hstsResults,
+    Component: HstsCard,
+    refresh: updateHstsResults,
+    tags: ['security'],
+  }, {
+    id: 'threats',
+    title: 'Threats',
+    result: threatResults,
+    Component: ThreatsCard,
+    refresh: updateThreatResults,
+    tags: ['security'],
+  }, {
+    id: 'mail-config',
+    title: 'Email Configuration',
+    result: mailConfigResults,
+    Component: MailConfigCard,
+    refresh: updateMailConfigResults,
+    tags: ['server'],
+  }, {
+    id: 'archives',
+    title: 'Archive History',
+    result: archivesResults,
+    Component: ArchivesCard,
+    refresh: updateArchivesResults,
+    tags: ['meta'],
+  }, {
+    id: 'rank',
+    title: 'Global Ranking',
+    result: rankResults,
+    Component: RankCard,
+    refresh: updateRankResults,
+    tags: ['meta'],
+  }, {
+    id: 'tls-cipher-suites',
+    title: 'TLS Cipher Suites',
+    result: tlsResults,
+    Component: TlsCipherSuitesCard,
+    refresh: updateTlsResults,
+    tags: ['server', 'security'],
+  }, {
+    id: 'tls-security-config',
+    title: 'TLS Security Issues',
+    result: tlsResults,
+    Component: TlsIssueAnalysisCard,
+    refresh: updateTlsResults,
+    tags: ['security'],
+  }, {
+    id: 'tls-client-support',
+    title: 'TLS Handshake Simulation',
+    result: tlsResults,
+    Component: TlsClientSupportCard,
+    refresh: updateTlsResults,
+    tags: ['security'],
+  }, {
+    id: 'redirects',
+    title: 'Redirects',
+    result: redirectResults,
+    Component: RedirectsCard,
+    refresh: updateRedirectResults,
+    tags: ['meta'],
+  }, {
+    id: 'linked-pages',
+    title: 'Linked Pages',
+    result: linkedPagesResults,
+    Component: ContentLinksCard,
+    refresh: updateLinkedPagesResults,
+    tags: ['client', 'meta'],
+  }, {
+    id: 'robots-txt',
+    title: 'Crawl Rules',
+    result: robotsTxtResults,
+    Component: RobotsTxtCard,
+    refresh: updateRobotsTxtResults,
+    tags: ['meta'],
+  }, {
+    id: 'status',
+    title: 'Server Status',
+    result: serverStatusResults,
+    Component: ServerStatusCard,
+    refresh: updateServerStatusResults,
+    tags: ['server'],
+  }, {
+    id: 'ports',
+    title: 'Open Ports',
+    result: portsResults,
+    Component: OpenPortsCard,
+    refresh: updatePortsResults,
+    tags: ['server'],
+  }, {
+    id: 'whois',
+    title: 'Domain Info',
+    result: whoIsResults,
+    Component: WhoIsCard,
+    refresh: updateWhoIsResults,
+    tags: ['server'],
+  }, {
+    id: 'txt-records',
+    title: 'TXT Records',
+    result: txtRecordResults,
+    Component: TxtRecordCard,
+    refresh: updateTxtRecordResults,
+    tags: ['server'],
+  }, {
+    id: 'block-lists',
+    title: 'Block Lists',
+    result: blockListsResults,
+    Component: BlockListsCard,
+    refresh: updateBlockListsResults,
+    tags: ['security', 'meta'],
+  }, {
+    id: 'features',
+    title: 'Site Features',
+    result: siteFeaturesResults,
+    Component: SiteFeaturesCard,
+    refresh: updateSiteFeaturesResults,
+    tags: ['meta'],
+  }, {
+    id: 'sitemap',
+    title: 'Pages',
+    result: sitemapResults,
+    Component: SitemapCard,
+    refresh: updateSitemapResults,
+    tags: ['meta'],
+  }, {
+    id: 'carbon',
+    title: 'Carbon Footprint',
+    result: carbonResults,
+    Component: CarbonFootprintCard,
+    refresh: updateCarbonResults,
+    tags: ['meta'],
+  },
+];
 
-  const MakeActionButtons = (title: string, refresh: () => void, showInfo: (id: string) => void): ReactNode => {
+  const makeActionButtons = (title: string, refresh: () => void, showInfo: (id: string) => void): ReactNode => {
     const actions = [
       { label: `Info about ${title}`, onClick: showInfo, icon: 'ⓘ'},
       { label: `Re-fetch ${title} data`, onClick: refresh, icon: '↻'},
@@ -559,7 +843,7 @@ const Results = (): JSX.Element => {
       <Nav>
       { address && 
         <Heading color={colors.textColor} size="medium">
-          { addressType === 'url' && <img width="32px" src={`https://icon.horse/icon/${makeSiteName(address)}`} alt="" /> }
+          { addressType === 'url' && <a href={address}><img width="32px" src={`https://icon.horse/icon/${makeSiteName(address)}`} alt="" /></a> }
           {makeSiteName(address)}
         </Heading>
         }
@@ -567,21 +851,48 @@ const Results = (): JSX.Element => {
       <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
       { address?.includes(window?.location?.hostname || 'web-check.as93.net') && <SelfScanMsg />}
       <Loader show={loadingJobs.filter((job: LoadingJob) => job.state !== 'loading').length < 5} />
+      <FilterButtons>
+        <div className="one-half">
+        <span className="group-label">Filter by</span>
+        {['server', 'client', 'meta'].map((tag: string) => (
+          <button
+            key={tag}
+            className={tags.includes(tag) ? 'selected' : ''}
+            onClick={() => updateTags(tag)}>
+              {tag}
+          </button>
+        ))}
+        {(tags.length > 0 || searchTerm.length > 0) && <span onClick={clearFilters} className="clear">Clear Filters</span> }
+        </div>
+        <div className="one-half">
+        <input 
+          type="text" 
+          placeholder="Filter Results" 
+          value={searchTerm} 
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <span className="group-label">Search</span>
+        </div>
+      </FilterButtons>
       <ResultsContent>
-        
-      <Masonry
+        <Masonry
           breakpointCols={{ 10000: 12, 4000: 9, 3600: 8, 3200: 7, 2800: 6, 2400: 5, 2000: 4, 1600: 3, 1200: 2, 800: 1 }}
           className="masonry-grid"
           columnClassName="masonry-grid-col">
           {
-            resultCardData.map(({ id, title, result, refresh, Component }, index: number) => (
+            resultCardData
+            .filter(({ tags: cardTags, title }) => (
+              tags.length === 0 || tags.some(tag => cardTags.includes(tag))) &&
+              title.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map(({ id, title, result, refresh, Component }, index: number) => (
               (result && !result.error) ? (
                 <ErrorBoundary title={title}>
                   <Component
                     key={`${title}-${index}`}
                     data={{...result}}
                     title={title}
-                    actionButtons={refresh ? MakeActionButtons(title, refresh, () => showInfo(id)) : undefined}
+                    actionButtons={refresh ? makeActionButtons(title, refresh, () => showInfo(id)) : undefined}
                   />
                 </ErrorBoundary>
               ) : <></>
