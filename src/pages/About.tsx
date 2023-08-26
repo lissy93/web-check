@@ -7,7 +7,7 @@ import Nav from 'components/Form/Nav';
 import Button from 'components/Form/Button';
 import AdditionalResources from 'components/misc/AdditionalResources';
 import { StyledCard } from 'components/Form/Card';
-import docs, { about, license, fairUse, supportUs } from 'utils/docs';
+import docs, { about, featureIntro, license, fairUse, supportUs } from 'utils/docs';
 
 const AboutContainer = styled.div`
 width: 95vw;
@@ -120,10 +120,20 @@ const About = (): JSX.Element => {
         {about.map((para, index: number) => (
           <p key={index}>{para}</p>
         ))}
+        <hr />
+        <p>
+          Web-Check is developed and maintained by <a href="https://aliciasykes.com">Alicia Sykes</a>.
+          It's licensed under the <a href="https://github.com/Lissy93/web-check/blob/master/LICENSE">MIT license</a>,
+          and is completely free to use, modify and distribute in both personal and commercial settings.<br />
+          Source code and self-hosting docs are available on <a href="https://github.com/lissy93/web-check">GitHub</a>.
+          If you've found this service useful, consider <a href="https://github.com/sponsors/Lissy93">sponsoring me</a> from $1/month,
+          to help with the ongoing hosting and development costs.
+        </p>
       </Section>
       
       <Heading as="h2" size="medium" color={colors.primary}>Features</Heading>
       <Section>
+        {featureIntro.map((fi: string, i: number) => (<p key={i}>{fi}</p>))}
         <div className="contents">
         <Heading as="h3" size="small" id="#feature-contents" color={colors.primary}>Contents</Heading>
           <ul>
@@ -165,7 +175,6 @@ const About = (): JSX.Element => {
                 ))}
               </ul>
             </>}
-            {/* { sectionIndex < docs.length - 1 && <hr /> } */}
           </section>
         ))}
       </Section>

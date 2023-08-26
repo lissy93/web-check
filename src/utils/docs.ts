@@ -468,26 +468,48 @@ const docs: Doc[] = [
     description: 'Checks access to the URL using 10+ of the most popular privacy, malware and parental control blocking DNS servers.',
     use: '',
     resources: [],
-    screenshot: '',
+    screenshot: 'https://i.ibb.co/M5JSXbW/Screenshot-from-2023-08-26-12-12-43.png',
   },
   {
-    id: 'malware',
+    id: 'threats',
     title: 'Malware & Phishing Detection',
-    description: '',
-    use: '',
+    description: 'Checks if a site appears in several common malware and phishing lists, to determine it\'s threat level.',
+    use: 'Knowing if a site is listed as a threat by any of these services can be useful for understanding the reputation of a site, and for identifying potential trends.',
     resources: [
       { title: 'URLHaus', link: 'https://urlhaus-api.abuse.ch/'},
       { title: 'PhishTank', link: 'https://www.phishtank.com/'},
     ],
-    screenshot: '',
+    screenshot: 'https://i.ibb.co/hYgy621/Screenshot-from-2023-08-26-12-07-47.png',
   },
   {
-    id: 'tls',
-    title: 'TLS Configuration',
-    description: '',
-    use: '',
+    id: 'tls-cipher-suites',
+    title: 'TLS Cipher Suites',
+    description: 'These are combinations of cryptographic algorithms used by the server to establish a secure connection. It includes the key exchange algorithm, bulk encryption algorithm, MAC algorithm, and PRF (pseudorandom function).',
+    use: 'This is important info to test for from a security perspective. Because a cipher suite is only as secure as the algorithms that it contains. If the version of encryption or authentication algorithm in a cipher suite have known vulnerabilities the cipher suite and TLS connection may then vulnerable to a downgrade or other attack',
+    resources: [
+      { title: 'sslscan2 CLI', link: 'https://github.com/rbsec/sslscan' },
+      { title: 'ssl-enum-ciphers (NPMAP script)', link: 'https://nmap.org/nsedoc/scripts/ssl-enum-ciphers.html' }
+    ],
+    screenshot: 'https://i.ibb.co/6ydtH5R/Screenshot-from-2023-08-26-12-09-58.png',
+  },
+  {
+    id: 'tls-security-config',
+    title: 'TLS Security Config',
+    description: 'This uses guidelines from Mozilla\'s TLS Observatory to check the security of the TLS configuration. It checks for bad configurations, which may leave the site vulnerable to attack, as well as giving advice on how to fix. It will also give suggestions around outdated and modern TLS configs',
+    use: 'Understanding issues with a site\'s TLS configuration will help you address potential vulnerabilities, and ensure the site is using the latest and most secure TLS configuration.',
     resources: [],
-    screenshot: '',
+    screenshot: 'https://i.ibb.co/FmksZJt/Screenshot-from-2023-08-26-12-12-09.png',
+  },
+  {
+    id: 'tls-client-support',
+    title: 'TLS Handshake Simulation',
+    description: 'This simulates how different clients (browsers, operating systems) would perform a TLS handshake with the server. It helps identify compatibility issues and insecure configurations.',
+    use: '',
+    resources: [
+      { title: 'TLS Handshakes (via Cloudflare Learning)', link: 'https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/' },
+      { title: 'SSL Test (via SSL Labs)', link: 'https://www.ssllabs.com/ssltest/' },
+    ],
+    screenshot: 'https://i.ibb.co/F7qRZkh/Screenshot-from-2023-08-26-12-11-28.png',
   },
   // {
   //   id: '',
@@ -499,29 +521,24 @@ const docs: Doc[] = [
   // },
 ];
 
+export const featureIntro = [
+  'When conducting an OSINT investigation on a given website or host, there are several key areas to look at. Each of these are documented below, along with links to the tools and techniques you can use to gather the relevant information.',
+  'Web-Check can automate the process of gathering this data, but it will be up to you to interpret the results and draw conclusions.',
+];
+
 export const about = [
 `Web-Check is a powerful all-in-one tool for discovering information about a website/host.
 The core philosophy is simple: feed Web-Check a URL and let it gather, collate, and present a broad array of open data for you to delve into.`,
 
 `The report shines a spotlight onto potential attack vectors, existing security measures,
-and the intricate web of connections within a site's architecture.
+and the web of connections within a site's architecture.
 The results can also help optimizing server responses, configuring redirects,
 managing cookies, or fine-tuning DNS records for your site.`,
 
 `So, weather you're a developer, system administrator, security researcher, penetration
 tester or are just interested in discovering the underlying technologies of a given site 
 - I'm sure you'll find this a useful addition to your toolbox.`,
-
-`It works using a series of lambda functions, each of which makes a crafted fetch
-request to the host, processes the returned data, then responds with the results.
-The web UI is just a simple React TypeScript app.`,
-
-`There's a managed instance (hosted on Netlify), which you can use for free
-(until my lambda function credits run out!), or you can easily deploy your own
-instance locally or remotely.
-All the code is open source, so feel free to fork and modify to your liking.
-For development and deployment instructions, as well as contributing guidelines, see the GitHub repo.
-`];
+];
 
 export const license = `The MIT License (MIT)
 Copyright (c) Alicia Sykes <alicia@omg.com> 
@@ -545,7 +562,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 `;
 
 export const supportUs = [
-  "The hosted app is free to use without restriction. All the code is open source, so you're also free to deploy your own instance, or make any modifications.",
+  "Web-Check is free to use without restriction.",
+  "All the code is open source, so you're also free to deploy your own instance, as well as fork, modify and distribute the code in both private and commerical settings.",
   "Running web-check does cost me a small amount of money each month, so if you're finding the app useful, consider <a href='https://github.com/sponsors/Lissy93'>sponsoring me on GitHub</a> if you're able to. Even just $1 or $2/month would be a huge help in supporting the ongoing project running costs.",
   "Otherwise, there are other ways you can help out, like submitting or reviewing a pull request to the <a href='https://github.com/Lissy93/web-check'>GitHub repo</a>, upvoting us on <a href='https://www.producthunt.com/posts/web-check'>Product Hunt</a>, or by sharing with your network.",
   "But don't feel obliged to do anything, as this app (and all my other projects) will always remain 100% free and open source, and I will do my best to ensure the managed instances remain up and available for as long as possible :)",
