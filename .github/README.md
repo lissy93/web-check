@@ -391,7 +391,20 @@ You can get the Docker image from:
 
 ### Deploying - Option #3: From Source
 
-Follow the instructions in the [Developing](#developing) section above, then run `yarn build` && `yarn start` to build and serve the application.
+Follow the instructions in the [Developing](#developing) section above, then run `yarn build` && `yarn serve` to build and serve the application.
+
+<details>
+<summary>Show me</summary>
+
+```bash
+git clone https://github.com/Lissy93/web-check.git # Grab the code
+cd web-check # Move into the project directory
+yarn install # Install dependencies
+yarn build # Build the app for production
+yarn serve # Start the app (API and GUI)
+```
+
+</details>
 
 ### Configuring
 
