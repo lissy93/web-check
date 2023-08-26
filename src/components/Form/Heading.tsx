@@ -10,12 +10,14 @@ interface HeadingProps {
   inline?: boolean;
   children: React.ReactNode;
   id?: string;
+  className?: string;
 };
 
 const StyledHeading = styled.h1<HeadingProps>`
   margin: 0.5rem 0;
   text-shadow: 2px 2px 0px ${colors.bgShadowColor};
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
   font-size: ${TextSizes.medium};
@@ -26,6 +28,7 @@ const StyledHeading = styled.h1<HeadingProps>`
   a { // If a title is a link, keep title styles
     color: inherit;
     text-decoration: none;
+    display: flex;
   }
   ${props => {
     switch (props.size) {
@@ -47,10 +50,14 @@ const StyledHeading = styled.h1<HeadingProps>`
   ${props => props.inline ? 'display: inline;' : '' }
 `;
 
+const makeAnchor = (title: string): string => {
+  return title.toLowerCase().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "-");
+};
+
 const Heading = (props: HeadingProps): JSX.Element => {
-  const { children, as, size, align, color, inline, id } = props;
+  const { children, as, size, align, color, inline, id, className } = props;
   return (
-    <StyledHeading as={as} size={size} align={align} color={color} inline={inline} id={id}>
+    <StyledHeading as={as} size={size} align={align} color={color} inline={inline} className={className} id={id || makeAnchor((children || '')?.toString())}>
       {children}
     </StyledHeading>
   );

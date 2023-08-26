@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 
 const FancyBackground = (): JSX.Element => {
@@ -25,7 +25,7 @@ const FancyBackground = (): JSX.Element => {
     return result;
   };
   
-  const App: any = {};
+  const App: any = useMemo(() => [], []);
   
   App.setup = function () {
 
@@ -335,7 +335,7 @@ const FancyBackground = (): JSX.Element => {
       requestAnimationFrame(frame);
     };
     frame();
-  }, []);
+  }, [App]);
   
   
 

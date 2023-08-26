@@ -41,7 +41,7 @@ const Link = styled.a`
 `;
 
 const Footer = (props: { isFixed?: boolean }): JSX.Element => {
-  const licenseUrl = 'https://github.com/lissy93/web-check/blob/main/LICENSE';
+  const licenseUrl = 'https://github.com/lissy93/web-check/blob/master/LICENSE';
   const authorUrl = 'https://aliciasykes.com';
   const githubUrl = 'https://github.com/lissy93/web-check';
   return (

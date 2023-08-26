@@ -42,7 +42,7 @@ const SitemapCard = (props: {data: any, title: string, actionButtons: any }): JS
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       {
         normalSiteMap && normalSiteMap.map((subpage: any, index: number) => {
-          return (<ExpandableRow lbl={getPathFromUrl(subpage.loc[0])} val="" rowList={makeExpandableRowData(subpage)}></ExpandableRow>)
+          return (<ExpandableRow lbl={getPathFromUrl(subpage.loc[0])} key={index} val="" rowList={makeExpandableRowData(subpage)}></ExpandableRow>)
         })
       }
       { siteMapIndex && <p>
@@ -50,7 +50,7 @@ const SitemapCard = (props: {data: any, title: string, actionButtons: any }): JS
       </p>}
       {
         siteMapIndex && siteMapIndex.map((subpage: any, index: number) => {
-          return (<Row lbl="" val=""><a href={subpage.loc[0]}>{getPathFromUrl(subpage.loc[0])}</a></Row>);
+          return (<Row lbl="" val="" key={index}><a href={subpage.loc[0]}>{getPathFromUrl(subpage.loc[0])}</a></Row>);
         })
       }
     </Card>

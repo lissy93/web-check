@@ -167,6 +167,9 @@ p {
 }
 pre {
   color: ${colors.danger};
+  &.info {
+    color: ${colors.warning};
+  }
 }
 `;
 
@@ -183,30 +186,42 @@ export interface LoadingJob {
 const jobNames = [
   'get-ip',
   'location',
-  'headers',
+  'ssl',
   'domain',
-  'dns',
-  'dns-server',
-  'tech-stack',
-  'hosts',
   'quality',
+  'tech-stack',
+  'server-info',
   'cookies',
-  // 'server-info',
-  'redirects',
-  'robots-txt',
+  'headers',
+  'dns',
+  'hosts',
+  'http-security',
+  'social-tags',
+  'trace-route',
+  'security-txt',
+  'dns-server',
+  'firewall',
   'dnssec',
+  'hsts',
+  'threats',
+  'mail-config',
+  'archives',
+  'rank',
+  'screenshot',
+  'tls-cipher-suites',
+  'tls-security-config',
+  'tls-client-support',
+  'redirects',
+  'linked-pages',
+  'robots-txt',
   'status',
   'ports',
-  'screenshot',
-  'txt-records',
-  'sitemap',
-  'hsts',
-  'security-txt',
-  'linked-pages',
   // 'whois',
+  'txt-records',
+  'block-lists',
   'features',
+  'sitemap',
   'carbon',
-  'trace-route',
 ] as const;
 
 export const initialJobs = jobNames.map((job: string) => {
@@ -360,7 +375,7 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[], showModal: (err: Reac
     }
   };
 
-  const showErrorModal = (name: string, state: LoadingState, timeTaken: number | undefined, error: string) => {
+  const showErrorModal = (name: string, state: LoadingState, timeTaken: number | undefined, error: string, isInfo?: boolean) => {
     const errorContent = (
       <ErrorModalContent>
         <Heading as="h3">Error Details for {name}</Heading>
@@ -368,7 +383,8 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[], showModal: (err: Reac
           The {name} job failed with an {state} state after {timeTaken} ms.
           The server responded with the following error:
         </p>
-        <pre>{error}</pre>
+        { /* If isInfo == true, then add .info className to pre */}
+        <pre className={isInfo ? 'info' : 'error'}>{error}</pre>
       </ErrorModalContent>
     );
     props.showModal(errorContent);
@@ -409,6 +425,7 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[], showModal: (err: Reac
                 <i>{(timeTaken && state !== 'loading') ? ` Took ${timeTaken} ms` : '' }</i>
                 { (retry && state !== 'success' && state !== 'loading') && <FailedJobActionButton onClick={retry}>↻ Retry</FailedJobActionButton> }
                 { (error && state === 'error') && <FailedJobActionButton onClick={() => showErrorModal(name, state, timeTaken, error)}>■ Show Error</FailedJobActionButton> }
+                { (error && state === 'skipped') && <FailedJobActionButton onClick={() => showErrorModal(name, state, timeTaken, error, true)}>■ Show Reason</FailedJobActionButton> }
               </li>
             );
           })

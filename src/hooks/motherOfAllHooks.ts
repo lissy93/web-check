@@ -7,11 +7,11 @@ import { AddressType } from 'utils/address-type-checker';
 
 interface UseIpAddressProps<ResultType = any> {
   // Unique identifier for this job type
-  jobId: string;
+  jobId: string | string[];
   // The actual fetch request
   fetchRequest: () => Promise<ResultType>;
   // Function to call to update the loading state in parent
-  updateLoadingJobs: (job: string, newState: LoadingState, error?: string, retry?: (data?: any) => void | null, data?: any) => void;
+  updateLoadingJobs: (job: string | string[], newState: LoadingState, error?: string, retry?: (data?: any) => void | null, data?: any) => void;
   addressInfo: {
     // The hostname/ip address that we're checking
     address: string | undefined;
@@ -38,21 +38,20 @@ const useMotherOfAllHooks = <ResultType = any>(params: UseIpAddressProps<ResultT
   const doTheFetch = () => {
     return fetchRequest()
     .then((res: any) => {
-      if (!res) {
+      if (!res) { // No response :(
+        updateLoadingJobs(jobId, 'error', res.error || 'No response', reset);
+      } else if (res.error) { // Response returned an error message
         updateLoadingJobs(jobId, 'error', res.error, reset);
-        throw new Error('No response');
+      } else if (res.skipped) { // Response returned a skipped message
+        updateLoadingJobs(jobId, 'skipped', res.skipped, reset);
+      }  else { // Yay, everything went to plan :)
+        setResult(res);
+        updateLoadingJobs(jobId, 'success', '', undefined, res);
       }
-      if (res.error) {
-        updateLoadingJobs(jobId, 'error', res.error, reset);
-        throw new Error(res.error);
-      }
-      // All went to plan, set results and mark as done
-      setResult(res);
-      updateLoadingJobs(jobId, 'success', '', undefined, res);
     })
     .catch((err) => {
-      // Something fucked up, log the error
-      updateLoadingJobs(jobId, 'error', err.error || err.message, reset);
+      // Something fucked up
+      updateLoadingJobs(jobId, 'error', err.error || err.message || 'Unknown error', reset);
       throw err;
     })
   }
@@ -69,6 +68,7 @@ const useMotherOfAllHooks = <ResultType = any>(params: UseIpAddressProps<ResultT
         pending: `Updating Data (${jobId})`,
         success: `Completed (${jobId})`,
         error: `Failed to update (${jobId})`,
+        skipped: `Skipped job (${jobId}), as no valid results for host`,
       };
       // Initiate fetch, and show progress toast
       toast.promise(fetchyFetch, toastOptions).catch(() => {});
