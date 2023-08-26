@@ -98,8 +98,8 @@ const Home = (): JSX.Element => {
   const defaultPlaceholder = 'e.g. https://duck.com/';
   const [userInput, setUserInput] = useState('');
   const [errorMsg, setErrMsg] = useState('');
-  const [placeholder, setPlaceholder] = useState(defaultPlaceholder);
-  const [inputDisabled, setInputDisabled] = useState(false);
+  const [placeholder] = useState(defaultPlaceholder);
+  const [inputDisabled] = useState(false);
   const navigate = useNavigate();
 
   /* Check is valid address, either show err or redirect to results page */
