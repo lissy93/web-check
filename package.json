@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev": "netlify dev",
-    "serve": "node serve",
+    "serve": "node server",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
