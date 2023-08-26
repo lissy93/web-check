@@ -48,6 +48,8 @@ The aim is to help you easily understand, optimize and secure your website.
       
 </details>
 
+[![Screenshot](https://i.ibb.co/r0jXN6s/web-check.png)](https://github.com/Lissy93/web-check/tree/master/.github/screenshots)
+
 ### Live Demo
 A hosted version can be accessed at: **[web-check.as93.net](https://web-check.as93.net)**
 
@@ -782,8 +784,6 @@ By default, no configuration is needed.
 But there are some optional environmental variables that you can set to give you access to some additional checks, or to increase rate-limits for some checks that use external APIs.
 
 Note that keys that are prefixed with `REACT_APP_` are used client-side, and as such they must be scoped correctly with minimum privileges.
-
-# Configuration settings
 
 **API Keys & Credentials**:
 - `GOOGLE_CLOUD_API_KEY` - A Google API key ([get here](https://cloud.google.com/api-gateway/docs/authenticate-api-keys)). This can be used to return quality metrics for a site
