@@ -45,7 +45,7 @@ const MalwareCard = (props: {data: any, title: string, actionButtons: any }): JS
         <Row lbl="Threat Type" val={safeBrowsing?.details?.threatType || cloudmersive.WebsiteThreatType || 'None :)'} />
       )}
       { phishTank && !phishTank.error && (
-        <Row lbl="Phishing Status" val={phishTank.url0 ? '❌ Phishing Identified' : '✅ No Phishing Identified!'} />
+        <Row lbl="Phishing Status" val={phishTank.url0.in_database ? '❌ Phishing Identified' : '✅ No Phishing Identified!'} />
       )}
       { phishTank.url0 && phishTank.url0.phish_detail_page && (
         <Row lbl="" val="">
