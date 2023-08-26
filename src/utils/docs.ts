@@ -297,14 +297,6 @@ const docs: Doc[] = [
     screenshot: 'https://i.ibb.co/k253fq4/Screenshot-from-2023-07-17-20-10-52.png',
   },
   {
-    id: 'screenshot',
-    title: 'Screenshot',
-    description: 'This check takes a screenshot of webpage that the requested URL / IP resolves to, and displays it.',
-    use: 'This may be useful to see what a given website looks like, free of the constraints of your browser, IP, or location.',
-    resources: [],
-    screenshot: 'https://i.ibb.co/2F0x8kP/Screenshot-from-2023-07-29-18-34-48.png',
-  },
-  {
     id: 'dns-server',
     title: 'DNS Server',
     description: 'This check determines the DNS server(s) that the requested URL / IP resolves to. Also fires off a rudimentary check to see if the DNS server supports DoH, and weather it\'s vulnerable to DNS cache poisoning.',
@@ -513,14 +505,14 @@ const docs: Doc[] = [
     ],
     screenshot: 'https://i.ibb.co/F7qRZkh/Screenshot-from-2023-08-26-12-11-28.png',
   },
-  // {
-  //   id: '',
-  //   title: '',
-  //   description: '',
-  //   use: '',
-  //   resources: [],
-  //   screenshot: '',
-  // },
+  {
+    id: 'screenshot',
+    title: 'Screenshot',
+    description: 'This check takes a screenshot of webpage that the requested URL / IP resolves to, and displays it.',
+    use: 'This may be useful to see what a given website looks like, free of the constraints of your browser, IP, or location.',
+    resources: [],
+    screenshot: 'https://i.ibb.co/2F0x8kP/Screenshot-from-2023-07-29-18-34-48.png',
+  },
 ];
 
 export const featureIntro = [
