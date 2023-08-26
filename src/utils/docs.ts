@@ -467,7 +467,9 @@ const docs: Doc[] = [
     title: 'Block Detection',
     description: 'Checks access to the URL using 10+ of the most popular privacy, malware and parental control blocking DNS servers.',
     use: '',
-    resources: [],
+    resources: [
+      { title: 'ThreatJammer Lists', link: 'https://threatjammer.com/osint-lists'},
+    ],
     screenshot: 'https://i.ibb.co/M5JSXbW/Screenshot-from-2023-08-26-12-12-43.png',
   },
   {
