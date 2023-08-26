@@ -45,7 +45,7 @@ const MalwareCard = (props: {data: any, title: string, actionButtons: any }): JS
         <Row lbl="Threat Type" val={safeBrowsing?.details?.threatType || cloudmersive.WebsiteThreatType || 'None :)'} />
       )}
       { phishTank && !phishTank.error && (
-        <Row lbl="Phishing Status" val={phishTank.url0.in_database ? '❌ Phishing Identified' : '✅ No Phishing Identified!'} />
+        <Row lbl="Phishing Status" val={phishTank?.url0?.in_database !== 'false' ? '❌ Phishing Identified' : '✅ No Phishing Found'} />
       )}
       { phishTank.url0 && phishTank.url0.phish_detail_page && (
         <Row lbl="" val="">
@@ -53,10 +53,10 @@ const MalwareCard = (props: {data: any, title: string, actionButtons: any }): JS
           <span className="val"><a href={phishTank.url0.phish_detail_page}>{phishTank.url0.phish_id}</a></span>  
         </Row>
       )}
-      { urlHaus.query_status === 'no_results' && <Row lbl="Status" val="✅ Nothing Found!" />}
+      { urlHaus.query_status === 'no_results' && <Row lbl="Malware Status" val="✅ No Malwares Found" />}
       { urlHaus.query_status === 'ok' && (
         <>
-        <Row lbl="Status" val="❌ Malware Found" />
+        <Row lbl="Status" val="❌ Malware Identified" />
         <Row lbl="First Seen" val={convertToDate(urlHaus.firstseen)} />
         <Row lbl="Bad URLs Count" val={urlHaus.url_count} />
         </>

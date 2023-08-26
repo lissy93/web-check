@@ -7,11 +7,11 @@ import { AddressType } from 'utils/address-type-checker';
 
 interface UseIpAddressProps<ResultType = any> {
   // Unique identifier for this job type
-  jobId: string;
+  jobId: string | string[];
   // The actual fetch request
   fetchRequest: () => Promise<ResultType>;
   // Function to call to update the loading state in parent
-  updateLoadingJobs: (job: string, newState: LoadingState, error?: string, retry?: (data?: any) => void | null, data?: any) => void;
+  updateLoadingJobs: (job: string | string[], newState: LoadingState, error?: string, retry?: (data?: any) => void | null, data?: any) => void;
   addressInfo: {
     // The hostname/ip address that we're checking
     address: string | undefined;
