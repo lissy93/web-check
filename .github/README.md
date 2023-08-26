@@ -11,6 +11,27 @@
 
 ---
 
+#### Contents
+
+- **[About](#about)**
+  - [Screenshot](#screenshot)
+  - [Live Demo](#live-demo)
+  - [Mirror](#mirror)
+  - [Features](#features)
+- **[Usage](#usage)**
+  - [Developer Setup](#developing)
+  - [Deploying, Option#1: Netlify](#deploying---option-1-netlify)
+  - [Deploying, Option#2: Docker](#deploying---option-2-docker)
+  - [Deploying, Option#3: Source](#deploying---option-3-from-source)
+  - [Configuration Options](#configuring)
+- **[Community](#community)**
+  - [Contributing](#contributing)
+  - [Bugs](#reporting-bugs)
+  - [Support](#supporting)
+- **[License](#license)**
+
+---
+
 ## About
 Get an insight into the inner-workings of a given website: uncover potential attack vectors, analyse server architecture, view security configurations, and learn what technologies a site is using.
 
@@ -19,7 +40,13 @@ Currently the dashboard will show: IP info, SSL chain, DNS records, cookies, hea
 The aim is to help you easily understand, optimize and secure your website.
 
 ### Screenshot
+
+<details>
+      <summary>Expand Screenshot</summary>
+
 [![Screenshot](https://raw.githubusercontent.com/Lissy93/web-check/master/.github/screenshots/web-check-screenshot1.png)](https://web-check.as93.net/)
+      
+</details>
 
 ### Live Demo
 A hosted version can be accessed at: **[web-check.as93.net](https://web-check.as93.net)**
