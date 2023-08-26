@@ -1,43 +1,40 @@
-const https = require('https');
+const tls = require('tls');
 const middleware = require('./_common/middleware');
-const urlModule = require('url');
 
 const fetchSiteCertificateHandler = async (urlString) => {
   try {
-    const parsedUrl = urlModule.parse(urlString);
+    const parsedUrl = new URL(urlString);
     const options = {
       host: parsedUrl.hostname,
-      port: parsedUrl.port || 443, // Default port for HTTPS
-      method: 'GET',
-      servername: parsedUrl.hostname, // For SNI
-      rejectUnauthorized: false // Disable strict SSL verification (use with caution)
+      port: parsedUrl.port || 443,
+      servername: parsedUrl.hostname,
+      rejectUnauthorized: false,
     };
 
-    const response = await new Promise((resolve, reject) => {
-      const req = https.request(options, res => {
-        
-        // Check if the SSL handshake was authorized
-        if (!res.socket.authorized) {
-          reject(new Error(`SSL handshake not authorized. Reason: ${res.socket.authorizationError}`));
-        } else {
-          let cert = res.socket.getPeerCertificate(true);
-          if (!cert || Object.keys(cert).length === 0) {
-            reject(new Error("No certificate presented by the server."));
-          } else {
-            const { raw, issuerCertificate, ...certWithoutRaw } = cert;
-            resolve(certWithoutRaw);
-          }
+    return new Promise((resolve, reject) => {
+      const socket = tls.connect(options, () => {
+        if (!socket.authorized) {
+          return reject(new Error(`SSL handshake not authorized. Reason: ${socket.authorizationError}`));
         }
+
+        const cert = socket.getPeerCertificate();
+        if (!cert || Object.keys(cert).length === 0) {
+          return reject(new Error(`
+          No certificate presented by the server.\n
+          The server is possibly not using SNI (Server Name Indication) to identify itself, and you are connecting to a hostname-aliased IP address.
+          Or it may be due to an invalid SSL certificate, or an incomplete SSL handshake at the time the cert is being read.`));
+        }
+
+        const { raw, issuerCertificate, ...certWithoutRaw } = cert;
+        resolve(certWithoutRaw);
+        socket.end();
       });
 
-      req.on('error', error => {
+      socket.on('error', (error) => {
         reject(new Error(`Error fetching site certificate: ${error.message}`));
       });
-
-      req.end();
     });
 
-    return response;
   } catch (error) {
     throw new Error(error.message);
   }
