@@ -38,16 +38,14 @@ const UserInputMain = styled.form`
   z-index: 2;
 `;
 
-/*
-const FindIpButton = styled.a`
-  margin: 0.5rem;
-  cursor: pointer;
-  display: block;
-  text-align: center;
-  color: ${colors.primary};
-  text-decoration: underline;
-`;
-*/
+// const FindIpButton = styled.a`
+//   margin: 0.5rem;
+//   cursor: pointer;
+//   display: block;
+//   text-align: center;
+//   color: ${colors.primary};
+//   text-decoration: underline;
+// `;
 
 const ErrorMessage = styled.p`
   color: ${colors.danger};
@@ -131,25 +129,22 @@ const Home = (): JSX.Element => {
     if (!isError) setErrMsg('');
   };
 
- 
-  // eslint-disable-next-line
-  const findIpAddress = () => {
-    setUserInput('');
-    setPlaceholder('Looking up your IP...');
-    setInputDisabled(true);
-    fetch('https://ipapi.co/json/')
-      .then(function(response) {
-        response.json().then(jsonData => {
-          setUserInput(jsonData.ip);
-          setPlaceholder(defaultPlaceholder);
-          setInputDisabled(true);
-        });
-      })
-      .catch(function(error) {
-        console.log('Failed to get IP address :\'(', error)
-      });
-  };
-
+  // const findIpAddress = () => {
+  //   setUserInput('');
+  //   setPlaceholder('Looking up your IP...');
+  //   setInputDisabled(true);
+  //   fetch('https://ipapi.co/json/')
+  //     .then(function(response) {
+  //       response.json().then(jsonData => {
+  //         setUserInput(jsonData.ip);
+  //         setPlaceholder(defaultPlaceholder);
+  //         setInputDisabled(true);
+  //       });
+  //     })
+  //     .catch(function(error) {
+  //       console.log('Failed to get IP address :\'(', error)
+  //     });
+  // };
 
   const formSubmitEvent = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
