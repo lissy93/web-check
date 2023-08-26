@@ -10,4 +10,4 @@ RUN npm install --force
 RUN npm run build
 EXPOSE ${PORT:-3000}
 ENV CHROME_PATH='/usr/bin/chromium'
-CMD ["npm", "start"]
+CMD ["npm", "run", "serve"]
