@@ -837,11 +837,23 @@ But due to the amount of traffic that the hosted instance gets, the lambda funct
 [![Sponsor Lissy93 on GitHub](https://img.shields.io/badge/Sponsor_on_GitHub-Lissy93-%23ff4dda?style=for-the-badge&logo=githubsponsors&logoColor=ff4dda)](https://github.com/sponsors/Lissy93)
 
 
+### Contributors
+
+Credit to the following users for contributing to Web-Check
+
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->
+
+### Sponsors
+
+Huge thanks to these wonderful people, who sponsor me on GitHub, their support helps cover the costs required to keep Web-Check and my other projects free for everyone. Consider joining them, by [sponsoring me on GitHub](https://github.com/sponsors/Lissy93) if you're able.
+
+<!-- readme: sponsors -start -->
+<!-- readme: sponsors -end -->
+
 ---
 
-
 ## License
-
 
 > _**[Lissy93/Web-Check](https://github.com/Lissy93/web-check)** is licensed under [MIT](https://github.com/Lissy93/web-check/blob/HEAD/LICENSE) © [Alicia Sykes](https://aliciasykes.com) 2023._<br>
 > <sup align="right">For information, see <a href="https://tldrlegal.com/license/mit-license">TLDR Legal > MIT</a></sup>

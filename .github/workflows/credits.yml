@@ -1,0 +1,37 @@
+# Inserts list of community members into ./README.md
+name: 💓 Inserts Contributors & Sponsors
+on:
+  workflow_dispatch: # Manual dispatch
+  schedule:
+    - cron: '45 1 * * 0' # At 01:45 on Sunday.
+
+jobs:
+  # Job #1 - Fetches sponsors and inserts table into readme
+  insert-sponsors:
+    runs-on: ubuntu-latest
+    name: Inserts Sponsors 💓
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Updates readme with sponsors
+        uses: JamesIves/github-sponsors-readme-action@1.0.5
+        with:
+          token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          file: .github/README.md
+
+  # Job #2 - Fetches contributors and inserts table into readme
+  insert-contributors:
+    runs-on: ubuntu-latest
+    name: Inserts Contributors 💓
+    steps:
+      - name: Updates readme with contributors
+        uses: akhilmhdh/contributors-readme-action@v2.3.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+        with:
+          image_size: 80
+          readme_path: .github/README.md
+          columns_per_row: 6
+          commit_message: 'docs: Updates contributors list'
+          committer_username: liss-bot
+          committer_email: liss-bot@d0h.co
