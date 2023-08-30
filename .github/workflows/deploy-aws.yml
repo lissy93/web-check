@@ -60,7 +60,7 @@ jobs:
         aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
         aws_bucket: 'web-check-frontend'
-        source_dir: ''
+        source_dir: './'
 
     - name: Invalidate CloudFront cache
       uses: chetan/invalidate-cloudfront-action@v2.4
