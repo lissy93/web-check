@@ -54,7 +54,7 @@ jobs:
         yarn build
 
     - name: Upload to S3
-      uses: shallwefootball/s3-upload-action@master
+      uses: shallwefootball/s3-upload-action@v1.3.3
       id: S3
       with:
         aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
