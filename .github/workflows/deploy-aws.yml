@@ -52,15 +52,18 @@ jobs:
       run: |
         yarn install
         yarn build
+    
+    - name: Setup AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
 
     - name: Upload to S3
-      uses: shallwefootball/s3-upload-action@v1.3.3
-      id: S3
-      with:
-        aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
-        aws_bucket: 'web-check-frontend'
-        source_dir: './'
+      env:
+        AWS_S3_BUCKET: 'web-check-frontend'
+      run: aws s3 sync ./build/ s3://$AWS_S3_BUCKET/ --delete
 
     - name: Invalidate CloudFront cache
       uses: chetan/invalidate-cloudfront-action@v2.4
