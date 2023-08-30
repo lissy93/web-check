@@ -64,7 +64,7 @@ jobs:
         AWS_REGION: 'us-east-1'
 
     - name: Invalidate CloudFront cache
-      uses: chetan/invalidate-cloudfront-action@1.3
+      uses: chetan/invalidate-cloudfront-action@2.4
       env:
         DISTRIBUTION: E30XKAM2TG9FD8
         PATHS: '/*'
