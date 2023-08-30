@@ -27,7 +27,7 @@ jobs:
 
     - name: Install Serverless CLI and dependencies
       run: |
-        yarn add -g serverless
+        npm i -g serverless
         yarn
     - name: Deploy to AWS
       env:
