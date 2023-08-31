@@ -26,12 +26,20 @@ jobs:
       with:
         node-version: 16
 
-    - uses: chrnorm/deployment-action@releases/v1
-      name: Create GitHub deployment for API
+    - name: Cache node_modules
+      uses: actions/cache@v2
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Create GitHub deployment for API
+      uses: chrnorm/deployment-action@releases/v1
       id: deployment_api
       with:
         token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
-        environment: api
+        environment: AWS (Backend API)
         ref: ${{ github.ref }}
       
     - name: Install Serverless CLI and dependencies
@@ -65,13 +73,21 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 16
+    
+    - name: Cache node_modules
+      uses: actions/cache@v2
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
 
-    - uses: chrnorm/deployment-action@releases/v1
-      name: Create GitHub deployment for Frontend
+    - name: Create GitHub deployment for Frontend
+      uses: chrnorm/deployment-action@releases/v1
       id: deployment_frontend
       with:
         token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
-        environment: frontend
+        environment: AWS (Frontend Web UI)
         ref: ${{ github.ref }}
         
     - name: Install dependencies and build
@@ -108,4 +124,4 @@ jobs:
         state: "${{ job.status }}"
         deployment_id: ${{ steps.deployment_frontend.outputs.deployment_id }}
         ref: ${{ github.ref }}
-        
+
