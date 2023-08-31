@@ -11,6 +11,7 @@ on:
       - api/**
       - serverless.yml
       - package.json
+      - .github/workflows/deploy-aws.yml
 
 jobs:
   deploy-api:
@@ -25,16 +26,33 @@ jobs:
       with:
         node-version: 16
 
+    - uses: chrnorm/deployment-action@releases/v1
+      name: Create GitHub deployment for API
+      id: deployment_api
+      with:
+        token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+        environment: api
+        ref: ${{ github.ref }}
+      
     - name: Install Serverless CLI and dependencies
       run: |
         npm i -g serverless
         yarn
+
     - name: Deploy to AWS
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: serverless deploy
-
+      
+    - name: Update GitHub deployment status (API)
+      if: always()
+      uses: chrnorm/deployment-status@releases/v1
+      with:
+        token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+        state: "${{ job.status }}"
+        deployment_id: ${{ steps.deployment_api.outputs.deployment_id }}
+        ref: ${{ github.ref }}
 
   deploy-frontend:
     runs-on: ubuntu-latest
@@ -48,6 +66,14 @@ jobs:
       with:
         node-version: 16
 
+    - uses: chrnorm/deployment-action@releases/v1
+      name: Create GitHub deployment for Frontend
+      id: deployment_frontend
+      with:
+        token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+        environment: frontend
+        ref: ${{ github.ref }}
+        
     - name: Install dependencies and build
       run: |
         yarn install
@@ -73,3 +99,13 @@ jobs:
         AWS_REGION: 'us-east-1'
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        
+    - name: Update GitHub deployment status (Frontend)
+      if: always()
+      uses: chrnorm/deployment-status@releases/v1
+      with:
+        token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+        state: "${{ job.status }}"
+        deployment_id: ${{ steps.deployment_frontend.outputs.deployment_id }}
+        ref: ${{ github.ref }}
+        
