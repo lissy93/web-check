@@ -1,13 +1,23 @@
-FROM node:16-buster-slim AS base
-WORKDIR /app
-FROM base AS builder
-COPY . .
+FROM node:16-buster-slim
+
 RUN apt-get update && \
     apt-get install -y chromium traceroute && \
     chmod 755 /usr/bin/chromium && \
     rm -rf /var/lib/apt/lists/*
-RUN npm install --force
-RUN npm run build
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+
+RUN yarn install && \
+    rm -rf /app/node_modules/.cache
+
+COPY . .
+
+RUN yarn build
+
 EXPOSE ${PORT:-3000}
+
 ENV CHROME_PATH='/usr/bin/chromium'
-CMD ["npm", "run", "serve"]
+
+CMD ["yarn", "serve"]
