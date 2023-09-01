@@ -11,6 +11,7 @@ on:
       - api/**
       - serverless.yml
       - package.json
+      - .github/workflows/deploy-aws.yml
 
 jobs:
   deploy-api:
@@ -25,16 +26,41 @@ jobs:
       with:
         node-version: 16
 
+    - name: Cache node_modules
+      uses: actions/cache@v2
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Create GitHub deployment for API
+      uses: chrnorm/deployment-action@releases/v1
+      id: deployment_api
+      with:
+        token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+        environment: AWS (Backend API)
+        ref: ${{ github.ref }}
+      
     - name: Install Serverless CLI and dependencies
       run: |
         npm i -g serverless
         yarn
+
     - name: Deploy to AWS
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: serverless deploy
-
+      
+    - name: Update GitHub deployment status (API)
+      if: always()
+      uses: chrnorm/deployment-status@releases/v1
+      with:
+        token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+        state: "${{ job.status }}"
+        deployment_id: ${{ steps.deployment_api.outputs.deployment_id }}
+        ref: ${{ github.ref }}
 
   deploy-frontend:
     runs-on: ubuntu-latest
@@ -47,20 +73,39 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 16
+    
+    - name: Cache node_modules
+      uses: actions/cache@v2
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
 
+    - name: Create GitHub deployment for Frontend
+      uses: chrnorm/deployment-action@releases/v1
+      id: deployment_frontend
+      with:
+        token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+        environment: AWS (Frontend Web UI)
+        ref: ${{ github.ref }}
+        
     - name: Install dependencies and build
       run: |
         yarn install
         yarn build
+    
+    - name: Setup AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
 
     - name: Upload to S3
-      uses: shallwefootball/s3-upload-action@v1.3.3
-      id: S3
-      with:
-        aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
-        aws_bucket: 'web-check-frontend'
-        source_dir: './'
+      env:
+        AWS_S3_BUCKET: 'web-check-frontend'
+      run: aws s3 sync ./build/ s3://$AWS_S3_BUCKET/ --delete
 
     - name: Invalidate CloudFront cache
       uses: chetan/invalidate-cloudfront-action@v2.4
@@ -70,3 +115,13 @@ jobs:
         AWS_REGION: 'us-east-1'
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        
+    - name: Update GitHub deployment status (Frontend)
+      if: always()
+      uses: chrnorm/deployment-status@releases/v1
+      with:
+        token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+        state: "${{ job.status }}"
+        deployment_id: ${{ steps.deployment_frontend.outputs.deployment_id }}
+        ref: ${{ github.ref }}
+
