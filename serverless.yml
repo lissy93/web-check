@@ -21,17 +21,17 @@ provider:
       Action:
         - ssm:GetParameter
       Resource:
-        - arn:aws:ssm:us-east-1:590320761284:parameter/GOOGLE_CLOUD_API_KEY
-        - arn:aws:ssm:us-east-1:590320761284:parameter/TORRENT_IP_API_KEY
-        - arn:aws:ssm:us-east-1:590320761284:parameter/SECURITY_TRAILS_API_KEY
-        - arn:aws:ssm:us-east-1:590320761284:parameter/BUILT_WITH_API_KEY
-        - arn:aws:ssm:us-east-1:590320761284:parameter/URL_SCAN_API_KEY
-        - arn:aws:ssm:us-east-1:590320761284:parameter/TRANCO_USERNAME
-        - arn:aws:ssm:us-east-1:590320761284:parameter/TRANCO_API_KEY
-        - arn:aws:ssm:us-east-1:590320761284:parameter/CLOUDMERSIVE_API_KEY
-        - arn:aws:ssm:us-east-1:590320761284:parameter/CHROME_PATH
-        - arn:aws:ssm:us-east-1:590320761284:parameter/API_TIMEOUT_LIMIT
-        - arn:aws:ssm:us-east-1:590320761284:parameter/API_CORS_ORIGIN
+        - arn:aws:ssm:us-east-1:${env:AWS_ACCOUNT_ID}:parameter/GOOGLE_CLOUD_API_KEY
+        - arn:aws:ssm:us-east-1:${env:AWS_ACCOUNT_ID}:parameter/TORRENT_IP_API_KEY
+        - arn:aws:ssm:us-east-1:${env:AWS_ACCOUNT_ID}:parameter/SECURITY_TRAILS_API_KEY
+        - arn:aws:ssm:us-east-1:${env:AWS_ACCOUNT_ID}:parameter/BUILT_WITH_API_KEY
+        - arn:aws:ssm:us-east-1:${env:AWS_ACCOUNT_ID}:parameter/URL_SCAN_API_KEY
+        - arn:aws:ssm:us-east-1:${env:AWS_ACCOUNT_ID}:parameter/TRANCO_USERNAME
+        - arn:aws:ssm:us-east-1:${env:AWS_ACCOUNT_ID}:parameter/TRANCO_API_KEY
+        - arn:aws:ssm:us-east-1:${env:AWS_ACCOUNT_ID}:parameter/CLOUDMERSIVE_API_KEY
+        - arn:aws:ssm:us-east-1:${env:AWS_ACCOUNT_ID}:parameter/CHROME_PATH
+        - arn:aws:ssm:us-east-1:${env:AWS_ACCOUNT_ID}:parameter/API_TIMEOUT_LIMIT
+        - arn:aws:ssm:us-east-1:${env:AWS_ACCOUNT_ID}:parameter/API_CORS_ORIGIN
 functions:
   archives:
     handler: api/archives.handler
