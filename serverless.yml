@@ -4,7 +4,34 @@ provider:
   name: aws
   runtime: nodejs14.x
   region: us-east-1
-
+  environment:
+    GOOGLE_CLOUD_API_KEY: ${ssm:GOOGLE_CLOUD_API_KEY~true, ''}
+    TORRENT_IP_API_KEY: ${ssm:TORRENT_IP_API_KEY~true, ''}
+    SECURITY_TRAILS_API_KEY: ${ssm:SECURITY_TRAILS_API_KEY~true, ''}
+    BUILT_WITH_API_KEY: ${ssm:BUILT_WITH_API_KEY~true, ''}
+    URL_SCAN_API_KEY: ${ssm:URL_SCAN_API_KEY~true, ''}
+    TRANCO_USERNAME: ${ssm:TRANCO_USERNAME~true, ''}
+    TRANCO_API_KEY: ${ssm:TRANCO_API_KEY~true, ''}
+    CLOUDMERSIVE_API_KEY: ${ssm:CLOUDMERSIVE_API_KEY~true, ''}
+    CHROME_PATH: ${ssm:CHROME_PATH~true, ''}
+    API_TIMEOUT_LIMIT: ${ssm:API_TIMEOUT_LIMIT~true, ''}
+    API_CORS_ORIGIN: ${ssm:API_CORS_ORIGIN~true, ''}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ssm:GetParameter
+      Resource:
+        - arn:aws:ssm:us-east-1:590320761284:parameter/GOOGLE_CLOUD_API_KEY
+        - arn:aws:ssm:us-east-1:590320761284:parameter/TORRENT_IP_API_KEY
+        - arn:aws:ssm:us-east-1:590320761284:parameter/SECURITY_TRAILS_API_KEY
+        - arn:aws:ssm:us-east-1:590320761284:parameter/BUILT_WITH_API_KEY
+        - arn:aws:ssm:us-east-1:590320761284:parameter/URL_SCAN_API_KEY
+        - arn:aws:ssm:us-east-1:590320761284:parameter/TRANCO_USERNAME
+        - arn:aws:ssm:us-east-1:590320761284:parameter/TRANCO_API_KEY
+        - arn:aws:ssm:us-east-1:590320761284:parameter/CLOUDMERSIVE_API_KEY
+        - arn:aws:ssm:us-east-1:590320761284:parameter/CHROME_PATH
+        - arn:aws:ssm:us-east-1:590320761284:parameter/API_TIMEOUT_LIMIT
+        - arn:aws:ssm:us-east-1:590320761284:parameter/API_CORS_ORIGIN
 functions:
   archives:
     handler: api/archives.handler
