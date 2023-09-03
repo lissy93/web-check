@@ -37,7 +37,6 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/react-simple-maps": "^3.0.0",
     "@types/styled-components": "^5.1.26",
-    "aws-serverless-express": "^3.4.0",
     "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
     "chrome-aws-lambda": "^10.1.0",

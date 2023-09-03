@@ -1,5 +1,4 @@
 const express = require('express');
-const awsServerlessExpress = require('aws-serverless-express');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
@@ -8,87 +7,89 @@ require('dotenv').config();
 
 const app = express();
 
+const port = process.env.PORT || 3000; // The port to run the server on
 const API_DIR = '/api'; // Name of the dir containing the lambda functions
 const dirPath = path.join(__dirname, API_DIR); // Path to the lambda functions dir
 const guiPath = path.join(__dirname, 'build');
+const handlers = {}; // Will store list of API endpoints
+process.env.WC_SERVER = 'true'; // Tells middleware to return in non-lambda mode
 
 // Enable CORS
 app.use(cors({
   origin: process.env.API_CORS_ORIGIN || '*',
 }));
 
-// Execute the lambda function
-const executeHandler = async (handler, req) => {
-  return new Promise((resolve, reject) => {
-    const callback = (err, response) => err ? reject(err) : resolve(response);
-    const promise = handler(req, {}, callback);
-
-    if (promise && typeof promise.then === 'function') {
-      promise.then(resolve).catch(reject);
-    }
-  });
-};
-
-// Array of all the lambda function file names
-const fileNames = fs.readdirSync(dirPath, { withFileTypes: true })
+// Read and register each API function as an Express routes
+fs.readdirSync(dirPath, { withFileTypes: true })
   .filter(dirent => dirent.isFile() && dirent.name.endsWith('.js'))
-  .map(dirent => dirent.name);
+  .forEach(dirent => {
+    const routeName = dirent.name.split('.')[0];
+    const route = `${API_DIR}/${routeName}`;
+    const handler = require(path.join(dirPath, dirent.name));
+    handlers[route] = handler;
 
-const handlers = {};
+    app.get(route, async (req, res) => {
+      try {
+        await handler(req, res);
+      } catch (err) {
+        res.status(500).json({ error: err.message });
+      }
+    });
+  });
 
-fileNames.forEach(file => {
-  const routeName = file.split('.')[0];
-  const route = `${API_DIR}/${routeName}`;
-  const handler = require(path.join(dirPath, file)).handler;
-
-  handlers[route] = handler;
+  // Create a single API endpoint to execute all lambda functions
+  app.get('/api', async (req, res) => {
+    const results = {};
+    const { url } = req.query;
+    const maxExecutionTime = process.env.API_TIMEOUT_LIMIT || 20000;
   
-  app.get(route, async (req, res) => {
-    try {
-      const { statusCode = 200, body = '' } = await executeHandler(handler, req);
-      res.status(statusCode).json(JSON.parse(body));
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
+    const executeHandler = async (handler, req, res) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const mockRes = {
+            status: (statusCode) => mockRes,
+            json: (body) => resolve({ body }),
+          };
+          await handler({ ...req, query: { url } }, mockRes);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    };
+  
+    const timeout = (ms, jobName = null) => {
+      return new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error(
+            `Timed out after ${ms/1000} seconds${jobName ? `, when executing ${jobName}` : ''}`
+          ));
+        }, ms);
+      });
+    };
+  
+    const handlerPromises = Object.entries(handlers).map(async ([route, handler]) => {
+      const routeName = route.replace(`${API_DIR}/`, '');
+  
+      try {
+        const result = await Promise.race([
+          executeHandler(handler, req, res),
+          timeout(maxExecutionTime, routeName)
+        ]);
+        results[routeName] = result.body;
+      } catch (err) {
+        results[routeName] = { error: err.message };
+      }
+    });
+  
+    await Promise.all(handlerPromises);
+    res.json(results);
   });
-});
-
-const timeout = (ms, jobName = null) => {
-  return new Promise((_, reject) => {
-    setTimeout(() => {
-      reject(new Error(`Timed out after the ${ms/1000} second limit${jobName ? `, when executing the ${jobName} task` : ''}`));
-    }, ms);
-  });
-}
-
-app.get('/api', async (req, res) => {
-  const results = {};
-  const { url } = req.query;
-  const maxExecutionTime = process.env.API_TIMEOUT_LIMIT || 15000;
-
-  const handlerPromises = Object.entries(handlers).map(async ([route, handler]) => {
-    const routeName = route.replace(`${API_DIR}/`, '');
-
-    try {
-      const result = await Promise.race([
-        executeHandler(handler, { query: { url } }),
-        timeout(maxExecutionTime, routeName)
-      ]);
-      results[routeName] = JSON.parse((result || {}).body);
-      
-    } catch (err) {
-      results[routeName] = { error: err.message };
-    }
-  });
-
-  await Promise.all(handlerPromises);
-  res.json(results);
-});
+  
 
 // Handle SPA routing
 app.use(historyApiFallback({
   rewrites: [
-    { from: /^\/api\/.*$/, to: function(context) { return context.parsedUrl.path; } },
+    { from: /^\/api\/.*$/, to: (context) => context.parsedUrl.path },
   ]
 }));
 
@@ -111,12 +112,25 @@ if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
   app.use(express.static(guiPath));
 }
 
-// Create serverless express server
-const port = process.env.PORT || 3000;
-const server = awsServerlessExpress.createServer(app).listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+// Print nice welcome message to user
+const printMessage = () => {
+  console.log(
+    `\x1b[36m\n` +
+    '    __      __   _         ___ _           _   \n' +
+    '    \\ \\    / /__| |__ ___ / __| |_  ___ __| |__\n' +
+    '     \\ \\/\\/ / -_) \'_ \\___| (__| \' \\/ -_) _| / /\n' +
+    '      \\_/\\_/\\___|_.__/    \\___|_||_\\___\\__|_\\_\\\n' +
+    `\x1b[0m\n`,
+    `\x1b[1m\x1b[32m🚀 Web-Check is up and running at http://localhost:${port} \x1b[0m\n\n`,
+    `\x1b[2m\x1b[36m🛟 For documentation and support, visit the GitHub repo: ` +
+    `https://github.com/lissy93/web-check \n`,
+    `💖 Found Web-Check useful? Consider sponsoring us on GitHub ` +
+    `to help fund maintenance & development.\x1b[0m`
+  );
+};
+
+// Create server
+app.listen(port, () => {
+  printMessage();
 });
 
-exports.handler = (event, context) => {
-  awsServerlessExpress.proxy(server, event, context);
-};
