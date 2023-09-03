@@ -726,9 +726,7 @@ This may be useful to see what a given website looks like, free of the constrain
 
 </details>
 
-Read more here: **[web-check.as93.net/about](https://web-check.as93.net/about)**
-
-_Note that not all checks will work for all sites. Sometimes it's not possible to determine some information, and the demo instance has some limitations imposed by Netlify for the lambda functions._
+Read more here: **[web-check.xyz/about](https://web-check.xyz/about)**
 
 ---
 
@@ -748,7 +746,7 @@ Click the button below, to deploy to Vercel 👇
 
 ### Deploying - Option #3: Docker
 
-Run `docker run -p 3000:3000 lissy93/web-check`, then open `http://localhost:3000`
+Run `docker run -p 3000:3000 lissy93/web-check`, then open [`localhost:3000`](http://localhost:3000)
 
 <details>
 <summary>Docker Options</summary>
@@ -778,8 +776,6 @@ By default, no configuration is needed.
 
 But there are some optional environmental variables that you can set to give you access to some additional checks, or to increase rate-limits for some checks that use external APIs.
 
-Note that keys that are prefixed with `REACT_APP_` are used client-side, and as such they must be scoped correctly with minimum privileges.
-
 **API Keys & Credentials**:
 - `GOOGLE_CLOUD_API_KEY` - A Google API key ([get here](https://cloud.google.com/api-gateway/docs/authenticate-api-keys)). This can be used to return quality metrics for a site
 - `REACT_APP_SHODAN_API_KEY` - A Shodan API key ([get here](https://account.shodan.io/)). This will show associated host names for a given domain
@@ -801,6 +797,9 @@ Note that keys that are prefixed with `REACT_APP_` are used client-side, and as 
 
 The above can be added into an `.env` file in the projects root, or via the Netlify UI, or by passing directly to the Docker container with the --env flag.
 All variables are optional.
+
+Note that keys that are prefixed with `REACT_APP_` are used client-side, and as such they must be scoped correctly with minimum privileges.
+
 
 ### Developing
 
