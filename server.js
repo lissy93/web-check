@@ -11,6 +11,7 @@ const port = process.env.PORT || 3000; // The port to run the server on
 const API_DIR = '/api'; // Name of the dir containing the lambda functions
 const dirPath = path.join(__dirname, API_DIR); // Path to the lambda functions dir
 const guiPath = path.join(__dirname, 'build');
+const placeholderFilePath = path.join(__dirname, 'public', 'placeholder.html');
 const handlers = {}; // Will store list of API endpoints
 process.env.WC_SERVER = 'true'; // Tells middleware to return in non-lambda mode
 
@@ -95,22 +96,33 @@ app.use(historyApiFallback({
 
 // Serve up the GUI - if build dir exists, and GUI feature enabled
 if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
-  app.get('*', (req, res) => {
-      res.status(500).send(
-        'Welcome to Web-Check!<br />Access the API endpoints at '
-        +'<a href="/api"><code>/api</code></a>'
-      );
+  app.get('*', async (req, res) => {
+    const placeholderContent = await fs.promises.readFile(placeholderFilePath, 'utf-8');
+    const htmlContent = placeholderContent.replace(
+      '<!-- CONTENT -->', 
+      'Web-Check API is up and running!<br />Access the endpoints at '
+      +'<a href="/api"><code>/api</code></a>'
+    );
+
+    res.status(500).send(htmlContent);
   });
 } else if (!fs.existsSync(guiPath)) {
-  app.get('*', (req, res) => {
-    res.status(500).send(
-      'Welcome to Web-Check!<br />Looks like the GUI app has not yet been compiled, '
-      +'run <code>yarn build</code> to continue, then restart the server.'
+  app.get('*', async (req, res) => {
+    const placeholderContent = await fs.promises.readFile(placeholderFilePath, 'utf-8');
+    const htmlContent = placeholderContent.replace(
+      '<!-- CONTENT -->', 
+      'Looks like the GUI app has not yet been compiled.<br /> ' +
+      'Run <code>yarn build</code> to continue, then restart the server.'
     );
+    res.status(500).send(htmlContent);
 });
 } else { // GUI enabled, and build files present, let's go!!
   app.use(express.static(guiPath));
 }
+
+app.use((req, res, next) => {
+  res.status(404).sendFile(path.join(__dirname, 'public', 'error.html'));
+});
 
 // Print nice welcome message to user
 const printMessage = () => {
