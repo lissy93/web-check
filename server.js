@@ -2,6 +2,7 @@ const express = require('express');
 const awsServerlessExpress = require('aws-serverless-express');
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors');
 const historyApiFallback = require('connect-history-api-fallback');
 require('dotenv').config();
 
@@ -10,6 +11,11 @@ const app = express();
 const API_DIR = '/api'; // Name of the dir containing the lambda functions
 const dirPath = path.join(__dirname, API_DIR); // Path to the lambda functions dir
 const guiPath = path.join(__dirname, 'build');
+
+// Enable CORS
+app.use(cors({
+  origin: process.env.API_CORS_ORIGIN || '*',
+}));
 
 // Execute the lambda function
 const executeHandler = async (handler, req) => {

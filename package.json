@@ -20,7 +20,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev:vercel": "PLATFORM='vercel' npx vercel dev",
+    "dev:netlify": "PLATFORM='netlify' npx netlify dev",
+    "dev:node": "npx concurrently --names \"frontend,backend\" \"REACT_APP_API_ENDPOINT='http://localhost:3001/api' npx react-scripts start\" \"PLATFORM='node' DISABLE_GUI='true' PORT='3001' API_CORS_ORIGIN='*' npx nodemon server\""
   },
   "dependencies": {
     "@netlify/functions": "^1.6.0",
@@ -41,6 +43,7 @@
     "chrome-aws-lambda": "^10.1.0",
     "chromium": "^3.0.3",
     "connect-history-api-fallback": "^2.0.0",
+    "cors": "^2.8.5",
     "csv-parser": "^3.0.0",
     "dotenv": "^16.3.1",
     "flatted": "^3.2.7",
