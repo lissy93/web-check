@@ -8,11 +8,8 @@ const handler = async (url, event, context) => {
       body: JSON.stringify({ error: message }),
     };
   };
-  const hstsIncompatible = (message, statusCode = 200) => {
-    return {
-      statusCode: statusCode,
-      body: JSON.stringify({ message, compatible: false }),
-    };
+  const hstsIncompatible = (message, compatible = false, hstsHeader = null ) => {
+    return { message, compatible, hstsHeader };
   };
 
 
@@ -35,14 +32,7 @@ const handler = async (url, event, context) => {
         } else if (!preload) {
           resolve(hstsIncompatible(`HSTS header does not contain the preload directive.`));
         } else {
-          resolve({
-            statusCode: 200,
-            body: JSON.stringify({
-              message: "Site is compatible with the HSTS preload list!",
-              compatible: true,
-              hstsHeader: hstsHeader,
-            }),
-          });
+          resolve(hstsIncompatible(`Site is compatible with the HSTS preload list!`, true, hstsHeader));
         }
       }
     });

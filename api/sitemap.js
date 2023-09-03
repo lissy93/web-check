@@ -25,10 +25,7 @@ const handler = async (url) => {
         }
 
         if (!sitemapUrl) {
-          return {
-            statusCode: 404,
-            body: JSON.stringify({ skipped: 'No sitemap found' }),
-          };
+          return { skipped: 'No sitemap found' };
         }
 
         sitemapRes = await axios.get(sitemapUrl, { timeout: 5000 });
@@ -40,23 +37,14 @@ const handler = async (url) => {
     const parser = new xml2js.Parser();
     const sitemap = await parser.parseStringPromise(sitemapRes.data);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(sitemap),
-    };
+    return sitemap;
   } catch (error) {
     // If error occurs
     console.log(error.message);
     if (error.code === 'ECONNABORTED') {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Request timed out' }),
-      };
+      return { error: 'Request timed out' };
     } else {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: error.message }),
-      };
+      return { error: error.message };
     }
   }
 };

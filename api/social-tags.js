@@ -50,16 +50,9 @@ const handler = async (url) => {
     };
 
     if (Object.keys(metadata).length === 0) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ skipped: 'No metadata found' }),
-      };
+      return { skipped: 'No metadata found' };
     }
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(metadata),
-    };
+    return metadata;
   } catch (error) {
     return {
       statusCode: 500,

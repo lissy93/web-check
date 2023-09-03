@@ -73,17 +73,11 @@ const handler = async (url, event, context) => {
     return errorResponse('The function timed out before completing.');
   }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ openPorts, failedPorts }),
-  };
+  return { openPorts, failedPorts };
 };
 
 const errorResponse = (message, statusCode = 444) => {
-  return {
-    statusCode: statusCode,
-    body: JSON.stringify({ error: message }),
-  };
+  return { error: message };
 };
 
 module.exports = middleware(handler);
