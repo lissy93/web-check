@@ -70,14 +70,13 @@ const commonMiddleware = (handler) => {
     }
   };
 
-  let platform;
-  if (process.env.PLATFORM === 'vercel' || process.env.VERCEL) {
-    platform = 'vercel';
-  } else {
-    platform = 'netlify';
-  }
-  return platform === 'vercel' ? vercelHandler : netlifyHandler;
-  
+  // The format of the handlers varies between platforms
+  // E.g. Netlify + AWS expect Lambda functions, but Vercel or Node needs standard handler
+  const platformEnv = (process.env.PLATFORM || '').toUpperCase(); // Has user set platform manually?
+
+  const nativeMode = (['VERCEL', 'NODE'].includes(platformEnv) || process.env.VERCEL || process.env.WC_SERVER);
+
+  return nativeMode ? vercelHandler : netlifyHandler;
 };
 
 module.exports = commonMiddleware;
