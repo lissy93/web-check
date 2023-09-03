@@ -19,12 +19,12 @@
   - [Mirror](#mirror)
   - [Features](#features)
 - **[Usage](#usage)**
-  - [Developer Setup](#developing)
   - [Deploying, Option#1: Netlify](#deploying---option-1-netlify)
   - [Deploying, Option#2: Vercel](#deploying---option-2-vercel)
   - [Deploying, Option#3: Docker](#deploying---option-3-docker)
   - [Deploying, Option#4: Source](#deploying---option-4-from-source)
   - [Configuration Options](#configuring)
+  - [Developer Setup](#developing)
 - **[Community](#community)**
   - [Contributing](#contributing)
   - [Bugs](#reporting-bugs)
@@ -56,11 +56,6 @@ A hosted version can be accessed at: **[web-check.as93.net](https://web-check.as
 
 ### Mirror
 The source for this repo is mirrored to CodeBerg, available at: **[codeberg.org/alicia/web-check](https://codeberg.org/alicia/web-check)**
-
-### Motivation
-Often when you're looking into a website, there's several things you always initially check.
-
-None of this is hard to find with a series of basic curl commands and NPMAP plus a combination of online tools. But it's just so much easier to have everything done all at once, presented clearly and visible in one place :)
 
 ### Features
 
@@ -739,16 +734,6 @@ _Note that not all checks will work for all sites. Sometimes it's not possible t
 
 ## Usage
 
-### Developing
-
-1. Clone the repo, `git clone git@github.com:Lissy93/web-check.git`
-2. Cd into it, `cd web-check`
-3. Install dependencies: `yarn`
-4. Start the dev server, with `yarn dev`
-
-You'll need [Node.js](https://nodejs.org/en) (V 18.16.1 or later) installed, plus [yarn](https://yarnpkg.com/getting-started/install) as well as [git](https://git-scm.com/).
-Some checks also require `chromium`, `traceroute` and `dns` to be installed within your environment. These jobs will just be skipped if those packages aren't present.
-
 ### Deploying - Option #1: Netlify
 
 Click the button below, to deploy to Netlify 👇
@@ -759,22 +744,25 @@ Click the button below, to deploy to Netlify 👇
 
 Click the button below, to deploy to Vercel 👇
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Flissy93%2Fweb-check&env=PLATFORM&envDescription=Set%20PLATFORM%20to%20%60vercel%60.%20All%20other%20values%20are%20optional.%20Providing%20API%20keys%20can%20enable%20some%20extra%20checks%2C%20that%20make%20use%20of%20external%20services%2C%20requiring%20authentication.&envLink=https%3A%2F%2Fgithub.com%2Flissy93%2Fweb-check%23configuring&project-name=web-check&repository-name=web-check-fork&demo-title=Web-Check%20Demo&demo-description=Check%20out%20web-check.xyz%20to%20see%20a%20live%20demo%20of%20this%20application%20running.&demo-url=https%3A%2F%2Fweb-check.xyz&demo-image=https%3A%2F%2Fraw.githubusercontent.com%2FLissy93%2Fweb-check%2Fmaster%2F.github%2Fscreenshots%2Fweb-check-screenshot10.png)
-
+[![Deploy with Vercel](https://img.shields.io/badge/Deploy-Vercel-%23ffffff?style=for-the-badge&logo=vercel&labelColor=1e0e41)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Flissy93%2Fweb-check&project-name=web-check&repository-name=web-check-fork&demo-title=Web-Check%20Demo&demo-description=Check%20out%20web-check.xyz%20to%20see%20a%20live%20demo%20of%20this%20application%20running.&demo-url=https%3A%2F%2Fweb-check.xyz&demo-image=https%3A%2F%2Fraw.githubusercontent.com%2FLissy93%2Fweb-check%2Fmaster%2F.github%2Fscreenshots%2Fweb-check-screenshot10.png)
 
 ### Deploying - Option #3: Docker
 
-Run `docker run -p 8888:3000 lissy93/web-check`, then open `http://localhost:3000`
+Run `docker run -p 3000:3000 lissy93/web-check`, then open `http://localhost:3000`
+
+<details>
+<summary>Docker Options</summary>
 
 You can get the Docker image from:
 - DockerHub: [`lissy93/web-check`](https://hub.docker.com/r/lissy93/web-check)
 - GHCR: [`ghcr.io/lissy93/web-check`](https://github.com/Lissy93/web-check/pkgs/container/web-check)
 - Or build the image yourself by cloning the repo and running `docker build -t web-check .`
 
+</details>
+
 ### Deploying - Option #4: From Source
 
-Follow the instructions in the [Developing](#developing) section above, then run `yarn build` && `yarn serve` to build and serve the application.
-The following commands will work:
+Install the prerequisites listed in the [Developing](#developing) section, then run: 
 
 ```bash
 git clone https://github.com/Lissy93/web-check.git # Grab the code
@@ -783,7 +771,6 @@ yarn install # Install dependencies
 yarn build # Build the app for production
 yarn serve # Start the app (API and GUI)
 ```
-
 
 ### Configuring
 
@@ -814,6 +801,17 @@ Note that keys that are prefixed with `REACT_APP_` are used client-side, and as 
 
 The above can be added into an `.env` file in the projects root, or via the Netlify UI, or by passing directly to the Docker container with the --env flag.
 All variables are optional.
+
+### Developing
+
+1. Clone the repo, `git clone git@github.com:Lissy93/web-check.git`
+2. Cd into it, `cd web-check`
+3. Install dependencies: `yarn`
+4. Start the dev server, with `yarn dev`
+
+You'll need [Node.js](https://nodejs.org/en) (V 18.16.1 or later) installed, plus [yarn](https://yarnpkg.com/getting-started/install) as well as [git](https://git-scm.com/).
+Some checks also require `chromium`, `traceroute` and `dns` to be installed within your environment. These jobs will just be skipped if those packages aren't present.
+
 
 ---
 
