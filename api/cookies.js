@@ -54,4 +54,5 @@ const handler = async (url) => {
   return { headerCookies, clientCookies };
 };
 
-exports.handler = middleware(handler);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

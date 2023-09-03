@@ -1,7 +1,7 @@
 const https = require('https');
-const commonMiddleware = require('./_common/middleware'); // Make sure this path is correct
+const middleware = require('./_common/middleware'); // Make sure this path is correct
 
-const fetchDNSRecords = async (domain, event, context) => {
+const handler = async (domain) => {
   const dnsTypes = ['DNSKEY', 'DS', 'RRSIG'];
   const records = {};
 
@@ -49,4 +49,6 @@ const fetchDNSRecords = async (domain, event, context) => {
   return records;
 };
 
-exports.handler = commonMiddleware(fetchDNSRecords);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);
+

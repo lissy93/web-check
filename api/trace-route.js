@@ -2,7 +2,7 @@ const traceroute = require('traceroute');
 const url = require('url');
 const middleware = require('./_common/middleware');
 
-const executeTraceroute = async (urlString, context) => {
+const handler = async (urlString, context) => {
   // Parse the URL and get the hostname
   const urlObject = url.parse(urlString);
   const host = urlObject.hostname;
@@ -28,4 +28,5 @@ const executeTraceroute = async (urlString, context) => {
   };
 };
 
-exports.handler = middleware(executeTraceroute);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

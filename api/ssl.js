@@ -1,7 +1,7 @@
 const tls = require('tls');
 const middleware = require('./_common/middleware');
 
-const fetchSiteCertificateHandler = async (urlString) => {
+const handler = async (urlString) => {
   try {
     const parsedUrl = new URL(urlString);
     const options = {
@@ -40,4 +40,5 @@ const fetchSiteCertificateHandler = async (urlString) => {
   }
 };
 
-exports.handler = middleware(fetchSiteCertificateHandler);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

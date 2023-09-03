@@ -80,4 +80,5 @@ const getWaybackData = async (url) => {
   }
 };
 
-exports.handler = middleware(getWaybackData);
+module.exports = middleware(getWaybackData);
+module.exports.handler = middleware(getWaybackData);

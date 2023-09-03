@@ -10,7 +10,7 @@ const handler = async (url) => {
       { auth: { username: process.env.TRANCO_USERNAME, password: process.env.TRANCO_API_KEY } }
       : {};
     const response = await axios.get(
-      `https://tranco-list.eu/api/ranks/domain/${domain}`, { timeout: 2000 }, auth,
+      `https://tranco-list.eu/api/ranks/domain/${domain}`, { timeout: 5000 }, auth,
       );
     if (!response.data || !response.data.ranks || response.data.ranks.length === 0) {
       return { skipped: `Skipping, as ${domain} isn't ranked in the top 100 million sites yet.`};
@@ -21,4 +21,6 @@ const handler = async (url) => {
   }
 };
 
-exports.handler = middleware(handler);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);
+

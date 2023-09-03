@@ -5,6 +5,9 @@ const middleware = require('./_common/middleware');
 const getGoogleSafeBrowsingResult = async (url) => {
   try {
     const apiKey = process.env.GOOGLE_CLOUD_API_KEY;
+    if (!apiKey) {
+      return { error: 'GOOGLE_CLOUD_API_KEY is required for the Google Safe Browsing check' };
+    }
     const apiEndpoint = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${apiKey}`;
 
     const requestBody = {
@@ -63,11 +66,15 @@ const getPhishTankResult = async (url) => {
 }
 
 const getCloudmersiveResult = async (url) => {
+  const apiKey = process.env.CLOUDMERSIVE_API_KEY;
+  if (!apiKey) {
+    return { error: 'CLOUDMERSIVE_API_KEY is required for the Cloudmersive check' };
+  }
   try {
     const endpoint = 'https://api.cloudmersive.com/virus/scan/website';
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Apikey': process.env.CLOUDMERSIVE_API_KEY,
+      'Apikey': apiKey,
     };
     const data = `Url=${encodeURIComponent(url)}`;
     const response = await axios.post(endpoint, data, { headers });
@@ -92,4 +99,5 @@ const handler = async (url) => {
   }
 };
 
-exports.handler = middleware(handler);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

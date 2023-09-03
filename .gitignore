@@ -1,27 +1,60 @@
-
-# keys
+# ------------------------
+#   ENVIRONMENT SETTINGS
+# ------------------------
 .env
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# ------------------------
+#       PRODUCTION
+# ------------------------
+/build/
 
-# logs
+# ------------------------
+#         DEPLOYMENT
+# ------------------------
+.vercel/
+.netlify/
+.webpack/
+.serverless/
+
+# ------------------------
+#         DEPENDENCIES
+# ------------------------
+node_modules/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnpm/
+.pnp.*
+
+# ------------------------
+#            LOGS
+# ------------------------
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
 
-# testing
-/coverage
+# ------------------------
+#          TESTING
+# ------------------------
+coverage/
+.nyc_output/
 
-# production
-/build
-
-# Random AWS and Netlify crap
-.netlify
-.serverless
-.webpack
-
-# OS generated files
+# ------------------------
+#       OS SPECIFIC
+# ------------------------
 .DS_Store
+Thumbs.db
+
+# ------------------------
+#         EDITORS
+# ------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+
