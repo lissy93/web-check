@@ -1,4 +1,4 @@
-const commonMiddleware = require('./_common/middleware');
+const middleware = require('./_common/middleware');
 
 const axios = require('axios');
 const cheerio = require('cheerio');
@@ -68,4 +68,5 @@ const handler = async (url) => {
   }
 };
 
-exports.handler = commonMiddleware(handler);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

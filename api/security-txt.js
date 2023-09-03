@@ -38,7 +38,7 @@ const isPgpSigned = (result) => {
   return false;
 };
 
-const securityTxtHandler = async (urlParam) => {
+const handler = async (urlParam) => {
 
   let url;
   try {
@@ -69,8 +69,6 @@ const securityTxtHandler = async (urlParam) => {
   return { isPresent: false };
 };
 
-exports.handler = middleware(securityTxtHandler);
-
 async function fetchSecurityTxt(baseURL, path) {
   return new Promise((resolve, reject) => {
     const url = new URL(path, baseURL);
@@ -91,3 +89,6 @@ async function fetchSecurityTxt(baseURL, path) {
     });
   });
 }
+
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

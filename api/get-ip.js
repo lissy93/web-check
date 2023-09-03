@@ -18,4 +18,6 @@ const handler = async (url) => {
   return await lookupAsync(address);
 };
 
-exports.handler = middleware(handler);
+
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

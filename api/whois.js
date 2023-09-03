@@ -83,7 +83,7 @@ const fetchFromMyAPI = async (hostname) => {
   }
 };
 
-const fetchWhoisData = async (url) => {
+const handler = async (url) => {
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
     url = 'http://' + url;
   }
@@ -106,4 +106,6 @@ const fetchWhoisData = async (url) => {
   };
 };
 
-exports.handler = middleware(fetchWhoisData);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);
+

@@ -1,7 +1,7 @@
 const https = require('https');
 const middleware = require('./_common/middleware');
 
-const builtWithHandler = async (url) => {
+const handler = async (url) => {
   const apiKey = process.env.BUILT_WITH_API_KEY;
 
   if (!url) {
@@ -45,4 +45,5 @@ const builtWithHandler = async (url) => {
   }
 };
 
-exports.handler = middleware(builtWithHandler);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

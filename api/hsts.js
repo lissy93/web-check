@@ -1,7 +1,7 @@
 const https = require('https');
 const middleware = require('./_common/middleware');
 
-exports.handler = middleware(async (url, event, context) => {
+const handler = async (url, event, context) => {
   const errorResponse = (message, statusCode = 500) => {
     return {
       statusCode: statusCode,
@@ -53,5 +53,8 @@ exports.handler = middleware(async (url, event, context) => {
 
     req.end();
   });
-});
+};
+
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);
 

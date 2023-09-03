@@ -1,7 +1,7 @@
 const Wappalyzer = require('wappalyzer');
 const middleware = require('./_common/middleware');
 
-const analyzeSiteTechnologies = async (url) => {
+const handler = async (url) => {
   const options = {};
 
   const wappalyzer = new Wappalyzer(options);
@@ -27,4 +27,5 @@ const analyzeSiteTechnologies = async (url) => {
   }
 };
 
-exports.handler = middleware(analyzeSiteTechnologies);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

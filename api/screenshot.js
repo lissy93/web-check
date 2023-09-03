@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer-core');
 const chromium = require('chrome-aws-lambda');
 const middleware = require('./_common/middleware');
 
-const screenshotHandler = async (targetUrl) => {
+const handler = async (targetUrl) => {
 
   if (!targetUrl) {
     throw new Error('URL is missing from queryStringParameters');
@@ -58,4 +58,5 @@ const screenshotHandler = async (targetUrl) => {
   }
 };
 
-exports.handler = middleware(screenshotHandler);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

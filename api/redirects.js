@@ -24,4 +24,6 @@ const handler = async (url) => {
 };
 
 const middleware = require('./_common/middleware');
-exports.handler = middleware(handler);
+
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

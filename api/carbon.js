@@ -48,4 +48,5 @@ const handler = async (url) => {
   }
 };
 
-exports.handler = middleware(handler);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

@@ -94,7 +94,7 @@ const checkDomainAgainstDnsServers = async (domain) => {
   return results;
 };
 
-exports.handler = middleware(async (url) => {
+const handler = middleware(async (url) => {
   const domain = new URL(url).hostname;
   const results = await checkDomainAgainstDnsServers(domain);
   return {
@@ -102,4 +102,7 @@ exports.handler = middleware(async (url) => {
     body: JSON.stringify({ blocklists: results })
   };
 });
+
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);
 

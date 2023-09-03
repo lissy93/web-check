@@ -1,7 +1,7 @@
 const dns = require('dns');
 const dnsPromises = dns.promises;
 const axios = require('axios');
-const commonMiddleware = require('./_common/middleware');
+const middleware = require('./_common/middleware');
 
 const handler = async (url) => {
   try {
@@ -41,4 +41,5 @@ const handler = async (url) => {
   }
 };
 
-exports.handler = commonMiddleware(handler);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

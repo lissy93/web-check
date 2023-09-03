@@ -1,4 +1,4 @@
-const commonMiddleware = require('./_common/middleware');
+const middleware = require('./_common/middleware');
 
 const dns = require('dns').promises;
 const URL = require('url-parse');
@@ -72,4 +72,5 @@ const handler = async (url, event, context) => {
   }
 };
 
-module.exports.handler = commonMiddleware(handler);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);

@@ -86,4 +86,5 @@ const errorResponse = (message, statusCode = 444) => {
   };
 };
 
-exports.handler = middleware(handler);
+module.exports = middleware(handler);
+module.exports.handler = middleware(handler);
