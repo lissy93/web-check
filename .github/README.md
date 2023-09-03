@@ -21,8 +21,9 @@
 - **[Usage](#usage)**
   - [Developer Setup](#developing)
   - [Deploying, Option#1: Netlify](#deploying---option-1-netlify)
-  - [Deploying, Option#2: Docker](#deploying---option-2-docker)
-  - [Deploying, Option#3: Source](#deploying---option-3-from-source)
+  - [Deploying, Option#2: Vercel](#deploying---option-2-vercel)
+  - [Deploying, Option#3: Docker](#deploying---option-3-docker)
+  - [Deploying, Option#4: Source](#deploying---option-4-from-source)
   - [Configuration Options](#configuring)
 - **[Community](#community)**
   - [Contributing](#contributing)
@@ -754,7 +755,14 @@ Click the button below, to deploy to Netlify 👇
 
 [![Deploy to Netlify](https://img.shields.io/badge/Deploy-Netlify-%2330c8c9?style=for-the-badge&logo=netlify&labelColor=1e0e41 'Deploy Web-Check to Netlify, via 1-Click Script')](https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check)
 
-### Deploying - Option #2: Docker
+### Deploying - Option #2: Vercel
+
+Click the button below, to deploy to Vercel 👇
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Flissy93%2Fweb-check&env=PLATFORM&envDescription=Set%20PLATFORM%20to%20%60vercel%60.%20All%20other%20values%20are%20optional.%20Providing%20API%20keys%20can%20enable%20some%20extra%20checks%2C%20that%20make%20use%20of%20external%20services%2C%20requiring%20authentication.&envLink=https%3A%2F%2Fgithub.com%2Flissy93%2Fweb-check%23configuring&project-name=web-check&repository-name=web-check-fork&demo-title=Web-Check%20Demo&demo-description=Check%20out%20web-check.xyz%20to%20see%20a%20live%20demo%20of%20this%20application%20running.&demo-url=https%3A%2F%2Fweb-check.xyz&demo-image=https%3A%2F%2Fraw.githubusercontent.com%2FLissy93%2Fweb-check%2Fmaster%2F.github%2Fscreenshots%2Fweb-check-screenshot10.png)
+
+
+### Deploying - Option #3: Docker
 
 Run `docker run -p 8888:3000 lissy93/web-check`, then open `http://localhost:3000`
 
@@ -763,7 +771,7 @@ You can get the Docker image from:
 - GHCR: [`ghcr.io/lissy93/web-check`](https://github.com/Lissy93/web-check/pkgs/container/web-check)
 - Or build the image yourself by cloning the repo and running `docker build -t web-check .`
 
-### Deploying - Option #3: From Source
+### Deploying - Option #4: From Source
 
 Follow the instructions in the [Developing](#developing) section above, then run `yarn build` && `yarn serve` to build and serve the application.
 The following commands will work:
