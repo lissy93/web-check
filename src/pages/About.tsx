@@ -179,6 +179,79 @@ const About = (): JSX.Element => {
         ))}
       </Section>
 
+      <Heading as="h2" size="medium" color={colors.primary}>Deploy your own Instance</Heading>
+      <Section>
+        <p>Web-Check is designed to be easily self-hosted.</p>
+        <Heading as="h3" size="small" color={colors.primary}>Option #1 - Netlify</Heading>
+        <p>Click the button below to deploy to Netlify</p>
+        <a href="https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check">
+          <img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" />
+        </a>
+
+        <Heading as="h3" size="small" color={colors.primary}>Option #2 - Vercel</Heading>
+        <p>Click the button below to deploy to Vercel</p>
+        <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Flissy93%2Fweb-check&project-name=web-check&repository-name=web-check-fork&demo-title=Web-Check%20Demo&demo-description=Check%20out%20web-check.xyz%20to%20see%20a%20live%20demo%20of%20this%20application%20running.&demo-url=https%3A%2F%2Fweb-check.xyz&demo-image=https%3A%2F%2Fraw.githubusercontent.com%2FLissy93%2Fweb-check%2Fmaster%2F.github%2Fscreenshots%2Fweb-check-screenshot10.png">
+          <img src="https://vercel.com/button" alt="Deploy with Vercel" />
+        </a>
+
+        <Heading as="h3" size="small" color={colors.primary}>Option #3 - Docker</Heading>
+        <p>
+        A Docker container is published to <a href="https://hub.docker.com/r/lissy93/web-check">DockerHub</a>
+        <br />
+        Run this command, then open <code>localhost:3000</code>
+        <pre>docker run -p 3000:3000 lissy93/web-check</pre>
+        </p>
+
+        <Heading as="h3" size="small" color={colors.primary}>Option #4 - Manual</Heading>
+        <pre>
+        git clone https://github.com/Lissy93/web-check.git<br />
+        cd web-check # Move into the project directory<br />
+        yarn install # Install dependencies<br />
+        yarn build # Build the app for production<br />
+        yarn serve # Start the app (API and GUI)<br />
+        </pre>
+
+        <Heading as="h3" size="small" color={colors.primary}>Further Docs</Heading>
+        <p>
+          More detailed installation and setup instructions can be found in the
+          GitHub repository - <a href="https://github.com/lissy93/web-check#readme">github.com/lissy93/web-check</a>
+        </p>
+
+        <Heading as="h3" size="small" color={colors.primary}>Configuring</Heading>
+        <p>
+          There are some optional environmental variables you can specify to give you access to some additional Web-Checks.
+          See the README for full list of options.
+        </p>
+
+        <ul>
+          <li>
+            <code>GOOGLE_CLOUD_API_KEY</code>
+            : <a href="https://cloud.google.com/api-gateway/docs/authenticate-api-keys">A Google API key</a>
+            <i> Used to return quality metrics for a site</i>
+          </li>
+          <li>
+            <code>REACT_APP_SHODAN_API_KEY</code>
+            : <a href="https://account.shodan.io/">A Shodan API key</a>
+            <i> To show associated hosts for a domain</i>
+          </li>
+          <li>
+            <code>REACT_APP_WHO_API_KEY</code>
+            : <a href="https://whoapi.com/">A WhoAPI key</a>
+            <i> Allows for more comprehensive WhoIs records</i>
+          </li>
+        </ul>
+
+
+{/*     
+**Configuration Settings**:
+- `CHROME_PATH` (e.g. `/usr/bin/chromium`) - The path the the Chromium executable
+- `PORT` (e.g. `3000`) - Port to serve the API, when running server.js
+- `DISABLE_GUI` (e.g. `false`) - Disable the GUI, and only serve the API
+- `API_TIMEOUT_LIMIT` (e.g. `10000`) - The timeout limit for API requests, in milliseconds
+- `REACT_APP_API_ENDPOINT` (e.g. `/api`) - The endpoint for the API (can be local or remote)</p> */}
+
+      </Section>
+
       <Heading as="h2" size="medium" color={colors.primary}>API Documentation</Heading>
       <Section>
         {/* eslint-disable-next-line*/}
@@ -217,18 +290,6 @@ const About = (): JSX.Element => {
         <br />
         Neither your IP address, browser/OS/hardware info, nor any other data will ever be collected or logged.
         (You may verify this yourself, either by inspecting the source code or the using developer tools)
-        </p>
-        <hr />
-        <Heading as="h3" size="small" color={colors.primary}>Support</Heading>
-        <p>
-          If you've found something that doesn't work as expected, or would like to ask any questions,
-          you can open a ticket at <a href="https://github.com/lissy93/web-check/issues">github.com/lissy93/web-check/issues</a>
-        </p>
-        <hr />
-        <Heading as="h3" size="small" color={colors.primary}>Sponsor</Heading>
-        <p>
-          If you've found this service useful, consider sponsoring me on
-          GitHub - <a href="https://github.com/sponsors/Lissy93">github.com/sponsors/Lissy93</a> 💖
         </p>
       </Section>
     </AboutContainer>
