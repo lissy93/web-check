@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import colors from 'styles/colors';
 import { Card } from 'components/Form/Card';
@@ -73,6 +73,11 @@ const TlsCard = (props: {data: any, title: string, actionButtons: any }): JSX.El
   const [tlsRowData, setTlsRowWata] = useState(makeExpandableData(props.data));
   const [tlsResults, setTlsResults] = useState(makeResults(props.data));
   const [loadState, setLoadState] = useState<undefined | 'loading' | 'success' | 'error'>(undefined);
+
+  useEffect(() => {
+    setTlsRowWata(makeExpandableData(props.data));
+    setTlsResults(makeResults(props.data));
+  }, [props.data]);
 
   const updateData = (id: number) => {
     setTlsRowWata([]);

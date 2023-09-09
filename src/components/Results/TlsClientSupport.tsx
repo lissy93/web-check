@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from 'components/Form/Card';
 import Button from 'components/Form/Button';
 import { ExpandableRow } from 'components/Form/Row';
@@ -37,6 +37,10 @@ const TlsCard = (props: {data: any, title: string, actionButtons: any }): JSX.El
 
   const [clientSupport, setClientSupport] = useState(makeClientSupport(props.data));
   const [loadState, setLoadState] = useState<undefined | 'loading' | 'success' | 'error'>(undefined);
+
+  useEffect(() => {
+    setClientSupport(makeClientSupport(props.data));
+  }, [props.data]);
 
   const updateData = (id: number) => {
     setClientSupport([]);
