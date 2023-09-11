@@ -19,10 +19,11 @@
   - [Mirror](#mirror)
   - [Features](#features)
 - **[Usage](#usage)**
-  - [Deploying, Option#1: Netlify](#deploying---option-1-netlify)
-  - [Deploying, Option#2: Vercel](#deploying---option-2-vercel)
-  - [Deploying, Option#3: Docker](#deploying---option-3-docker)
-  - [Deploying, Option#4: Source](#deploying---option-4-from-source)
+  - [Deployment](#deployment)
+    - [Option#1: Netlify](#deploying---option-1-netlify)
+    - [Option#2: Vercel](#deploying---option-2-vercel)
+    - [Option#3: Docker](#deploying---option-3-docker)
+    - [Option#4: Source](#deploying---option-4-from-source)
   - [Configuration Options](#configuring)
   - [Developer Setup](#developing)
 - **[Community](#community)**
@@ -744,6 +745,8 @@ Read more here: **[web-check.xyz/about](https://web-check.xyz/about)**
 
 ## Usage
 
+### Deployment
+
 ### Deploying - Option #1: Netlify
 
 Click the button below, to deploy to Netlify 👇
@@ -782,6 +785,8 @@ yarn build # Build the app for production
 yarn serve # Start the app (API and GUI)
 ```
 
+---
+
 ### Configuring
 
 By default, no configuration is needed.
@@ -789,6 +794,16 @@ By default, no configuration is needed.
 But there are some optional environmental variables that you can set to give you access to some additional checks, or to increase rate-limits for some checks that use external APIs.
 
 **API Keys & Credentials**:
+
+Key | Value
+---|---
+`GOOGLE_CLOUD_API_KEY` | A Google API key ([get here](https://cloud.google.com/api-gateway/docs/authenticate-api-keys)). This can be used to return quality metrics for a site
+`REACT_APP_SHODAN_API_KEY` | A Shodan API key ([get here](https://account.shodan.io/)). This will show associated host names for a given domain
+`REACT_APP_WHO_API_KEY` | A WhoAPI key ([get here](https://whoapi.com/)). This will show more comprehensive WhoIs records than the default job
+
+<details>
+  <summary><small>Full / Upcoming Vals</small></summary>
+  
 - `GOOGLE_CLOUD_API_KEY` - A Google API key ([get here](https://cloud.google.com/api-gateway/docs/authenticate-api-keys)). This can be used to return quality metrics for a site
 - `REACT_APP_SHODAN_API_KEY` - A Shodan API key ([get here](https://account.shodan.io/)). This will show associated host names for a given domain
 - `REACT_APP_WHO_API_KEY` - A WhoAPI key ([get here](https://whoapi.com/)). This will show more comprehensive WhoIs records than the default job
@@ -799,19 +814,26 @@ But there are some optional environmental variables that you can set to give you
 - `URL_SCAN_API_KEY` - A URLScan API key ([get here](https://urlscan.io/)). This will fetch miscalanious info about a site
 - `BUILT_WITH_API_KEY` - A BuiltWith API key ([get here](https://api.builtwith.com/)). This will show the main features of a site
 - `TORRENT_IP_API_KEY` - A torrent API key ([get here](https://iknowwhatyoudownload.com/en/api/)). This will show torrents downloaded by an IP
+  
+</details>
 
 **Configuration Settings**:
-- `CHROME_PATH` (e.g. `/usr/bin/chromium`) - The path the the Chromium executable
-- `PORT` (e.g. `3000`) - Port to serve the API, when running server.js
-- `DISABLE_GUI` (e.g. `false`) - Disable the GUI, and only serve the API
-- `API_TIMEOUT_LIMIT` (e.g. `10000`) - The timeout limit for API requests, in milliseconds
-- `REACT_APP_API_ENDPOINT` (e.g. `/api`) - The endpoint for the API (can be local or remote)
 
-The above can be added into an `.env` file in the projects root, or via the Netlify UI, or by passing directly to the Docker container with the --env flag.
-All variables are optional.
+Key | Value
+---|---
+`CHROME_PATH` | The path the the Chromium executable (e.g. `/usr/bin/chromium`)
+`PORT` | Port to serve the API, when running server.js (e.g. `3000`)
+`DISABLE_GUI` | Disable the GUI, and only serve the API (e.g. `false`)
+`API_TIMEOUT_LIMIT` | The timeout limit for API requests, in milliseconds (e.g. `10000`)
+`REACT_APP_API_ENDPOINT` | The endpoint for the API, either local or remote (e.g. `/api`)
 
-Note that keys that are prefixed with `REACT_APP_` are used client-side, and as such they must be scoped correctly with minimum privileges.
+All values are optional.
 
+You can add these as environmental variables. Either put them directly into an `.env` file in the projects root, or via the Netlify / Vercel UI, or by passing to the Docker container with the --env flag, or using your own environmental variable management system
+
+Note that keys that are prefixed with `REACT_APP_` are used client-side, and as such they must be scoped correctly with minimum privileges, since may be made visible when intercepting browser <-> server network requests
+
+---
 
 ### Developing
 
