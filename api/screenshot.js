@@ -21,7 +21,7 @@ const handler = async (targetUrl) => {
   let browser = null;
   try {
       browser = await puppeteer.launch({
-      args: chromium.args,
+      args: [...chromium.args, '--no-sandbox'], // Add --no-sandbox flag
       defaultViewport: { width: 800, height: 600 },
       executablePath: process.env.CHROME_PATH || await chromium.executablePath,
       headless: chromium.headless,
