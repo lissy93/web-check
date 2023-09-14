@@ -8,7 +8,7 @@ const handler = async (url) => {
     const response = await axios.get(fullUrl);
     const headers = response.headers;
     return {
-      strictTransportPolicy: headers['strict-transport-policy'] ? true : false,
+      strictTransportPolicy: headers['strict-transport-security'] ? true : false,
       xFrameOptions: headers['x-frame-options'] ? true : false,
       xContentTypeOptions: headers['x-content-type-options'] ? true : false,
       xXSSProtection: headers['x-xss-protection'] ? true : false,
