@@ -898,17 +898,17 @@ Credit to the following users for contributing to Web-Check
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/JinnaBalu">
-            <img src="https://avatars.githubusercontent.com/u/11784253?v=4" width="80;" alt="JinnaBalu"/>
-            <br />
-            <sub><b>Jinna Balu</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/liss-bot">
             <img src="https://avatars.githubusercontent.com/u/87835202?v=4" width="80;" alt="liss-bot"/>
             <br />
             <sub><b>Alicia Bot</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/JinnaBalu">
+            <img src="https://avatars.githubusercontent.com/u/11784253?v=4" width="80;" alt="JinnaBalu"/>
+            <br />
+            <sub><b>Jinna Balu</b></sub>
         </a>
     </td>
     <td align="center">
@@ -919,13 +919,27 @@ Credit to the following users for contributing to Web-Check
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/t3chn0m4g3">
+            <img src="https://avatars.githubusercontent.com/u/4318452?v=4" width="80;" alt="t3chn0m4g3"/>
+            <br />
+            <sub><b>Marco Ochse</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/murrple-1">
+            <img src="https://avatars.githubusercontent.com/u/5559656?v=4" width="80;" alt="murrple-1"/>
+            <br />
+            <sub><b>Murray Christopherson</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/UlisesGascon">
             <img src="https://avatars.githubusercontent.com/u/5110813?v=4" width="80;" alt="UlisesGascon"/>
             <br />
             <sub><b>Ulises Gascón</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/abhishekMuge">
             <img src="https://avatars.githubusercontent.com/u/49590582?v=4" width="80;" alt="abhishekMuge"/>
