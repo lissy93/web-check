@@ -891,17 +891,17 @@ Credit to the following users for contributing to Web-Check
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/muni106">
-            <img src="https://avatars.githubusercontent.com/u/65845442?v=4" width="80;" alt="muni106"/>
-            <br />
-            <sub><b>Mounir Samite</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/liss-bot">
             <img src="https://avatars.githubusercontent.com/u/87835202?v=4" width="80;" alt="liss-bot"/>
             <br />
             <sub><b>Alicia Bot</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/muni106">
+            <img src="https://avatars.githubusercontent.com/u/65845442?v=4" width="80;" alt="muni106"/>
+            <br />
+            <sub><b>Mounir Samite</b></sub>
         </a>
     </td>
     <td align="center">
