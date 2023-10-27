@@ -72,10 +72,12 @@ Repo Managament & Miscellaneous: [![🪞 Mirror to Codeberg](https://github.com/
 
 ### Features
 
-<details>
-<summary><h4>Expand to see all features</h4></summary>
+<details open>
+<summary><b>Click to expand / collapse section</b></summary>
 
 <sup>**Note** _this list needs updating, many more jobs have been added since..._</sup>
+
+The following section outlines the core features, and briefly explains why this data might be useful for you to know, as well as linking to further resources for learning more.
 
 <details>
 <summary><b>IP Info</b></summary>
@@ -778,11 +780,11 @@ You can get the Docker image from:
 Install the prerequisites listed in the [Developing](#developing) section, then run: 
 
 ```bash
-git clone https://github.com/Lissy93/web-check.git # Grab the code
-cd web-check # Move into the project directory
-yarn install # Install dependencies
-yarn build # Build the app for production
-yarn serve # Start the app (API and GUI)
+git clone https://github.com/Lissy93/web-check.git  # Download the code from GitHub
+cd web-check                                        # Navigate into the project dir
+yarn install                                        # Install the NPM dependencies
+yarn build                                          # Build the app for production
+yarn serve                                          # Start the app (API and GUI)
 ```
 
 ---
@@ -870,8 +872,9 @@ For bugs, please outline the steps needed to reproduce, and include relevant inf
 ### Supporting
 
 The app will remain 100% free and open source.
-But due to the amount of traffic that the hosted instance gets, the lambda function usage is costing about $25/month. Any help with covering the costs via GitHub Sponsorship would be much appreciated. It's thanks to the support of the community that this project is able to be freely available for everyone :)
-
+But due to the amount of traffic that the hosted instance gets, the lambda function usage is costing about $25/month.
+Any help with covering the costs via GitHub Sponsorship would be much appreciated.
+It's thanks to the support of the community that this project is able to be freely available for everyone :)
 
 [![Sponsor Lissy93 on GitHub](https://img.shields.io/badge/Sponsor_on_GitHub-Lissy93-%23ff4dda?style=for-the-badge&logo=githubsponsors&logoColor=ff4dda)](https://github.com/sponsors/Lissy93)
 
@@ -1099,7 +1102,10 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
+[![View Dependency Licenses & SBOM on FOSSA](https://app.fossa.com/api/projects/git%2Bgithub.com%2FLissy93%2Fweb-check.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2FLissy93%2Fweb-check?ref=badge_large&issueType=license)
+
 </details>
+
 
 <!-- License + Copyright -->
 <p  align="center">
@@ -1109,7 +1115,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   <sup>Thanks for visiting :)</sup>
 </p>
 
-<!-- Dinosaur -->
+<!-- Dinosaurs are Awesome -->
 <!-- 
                         . - ~ ~ ~ - .
       ..     _      .-~               ~-.
