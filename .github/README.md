@@ -962,7 +962,7 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
 <tr>
     <td align="center">
         <a href="https://github.com/koconder">
-            <img src="https://avatars.githubusercontent.com/u/25068?v=4" width="80;" alt="koconder"/>
+            <img src="https://avatars.githubusercontent.com/u/25068?u=582657b23622aaa3dfe68bd028a780f272f456fa&v=4" width="80;" alt="koconder"/>
             <br />
             <sub><b>Vincent Koc</b></sub>
         </a>
@@ -1048,7 +1048,7 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
 <tr>
     <td align="center">
         <a href="https://github.com/Bastii717">
-            <img src="https://avatars.githubusercontent.com/u/53431819?u=dff9e241e6dbecbc283ee13486a2312cb3dd9784&v=4" width="80;" alt="Bastii717"/>
+            <img src="https://avatars.githubusercontent.com/u/53431819?u=604977bed6ad6875ada890d0d3765a4cacc2fa14&v=4" width="80;" alt="Bastii717"/>
             <br />
             <sub><b>Bastii717</b></sub>
         </a>
@@ -1058,6 +1058,13 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
             <img src="https://avatars.githubusercontent.com/u/92832598?u=137b65530cbd5f5af9c24cde51baa6cc77cc934b&v=4" width="80;" alt="ratty222"/>
             <br />
             <sub><b>Brent</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/CrossPatch9000">
+            <img src="https://avatars.githubusercontent.com/u/150388639?v=4" width="80;" alt="CrossPatch9000"/>
+            <br />
+            <sub><b>CrossPatch9000</b></sub>
         </a>
     </td></tr>
 </table>
