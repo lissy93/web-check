@@ -968,6 +968,13 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/peng1can">
+            <img src="https://avatars.githubusercontent.com/u/225854?v=4" width="80;" alt="peng1can"/>
+            <br />
+            <sub><b>peng1can</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/tbjers">
             <img src="https://avatars.githubusercontent.com/u/1117052?u=539d96d5e581b3139c75713ce35b89a36626404c&v=4" width="80;" alt="tbjers"/>
             <br />
@@ -983,7 +990,7 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
     </td>
     <td align="center">
         <a href="https://github.com/AnandChowdhary">
-            <img src="https://avatars.githubusercontent.com/u/2841780?u=2d606fd66dbb1e7a102d54b4c90f078760de6674&v=4" width="80;" alt="AnandChowdhary"/>
+            <img src="https://avatars.githubusercontent.com/u/2841780?u=747e554b3a7f12eb20b7910e1c87d817844f714f&v=4" width="80;" alt="AnandChowdhary"/>
             <br />
             <sub><b>Anand Chowdhary</b></sub>
         </a>
@@ -994,15 +1001,15 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
             <br />
             <sub><b>Shrippen</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/davidpaulyoung">
             <img src="https://avatars.githubusercontent.com/u/3418369?v=4" width="80;" alt="davidpaulyoung"/>
             <br />
             <sub><b>David Young</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/bile0026">
             <img src="https://avatars.githubusercontent.com/u/5022496?u=aec96ad173c0ea9baaba93807efa8a848af6595c&v=4" width="80;" alt="bile0026"/>
@@ -1037,6 +1044,14 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
             <br />
             <sub><b>Vlad Timofeev</b></sub>
         </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/helixzz">
+            <img src="https://avatars.githubusercontent.com/u/12218889?v=4" width="80;" alt="helixzz"/>
+            <br />
+            <sub><b>HeliXZz</b></sub>
+        </a>
     </td>
     <td align="center">
         <a href="https://github.com/Bastii717">
@@ -1044,8 +1059,7 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
             <br />
             <sub><b>Bastii717</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/ratty222">
             <img src="https://avatars.githubusercontent.com/u/92832598?u=137b65530cbd5f5af9c24cde51baa6cc77cc934b&v=4" width="80;" alt="ratty222"/>
