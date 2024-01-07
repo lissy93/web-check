@@ -971,7 +971,7 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
         <a href="https://github.com/peng1can">
             <img src="https://avatars.githubusercontent.com/u/225854?v=4" width="80;" alt="peng1can"/>
             <br />
-            <sub><b>peng1can</b></sub>
+            <sub><b>Peng1can</b></sub>
         </a>
     </td>
     <td align="center">
@@ -1048,9 +1048,16 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
 <tr>
     <td align="center">
         <a href="https://github.com/helixzz">
-            <img src="https://avatars.githubusercontent.com/u/12218889?v=4" width="80;" alt="helixzz"/>
+            <img src="https://avatars.githubusercontent.com/u/12218889?u=d06d0c103dfbdb99450623064f7da3c5a3675fb6&v=4" width="80;" alt="helixzz"/>
             <br />
             <sub><b>HeliXZz</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/forwardemail">
+            <img src="https://avatars.githubusercontent.com/u/32481436?v=4" width="80;" alt="forwardemail"/>
+            <br />
+            <sub><b>Forward Email - Open-source & Privacy-focused Email Service (2023)</b></sub>
         </a>
     </td>
     <td align="center">
@@ -1065,6 +1072,13 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
             <img src="https://avatars.githubusercontent.com/u/92832598?u=137b65530cbd5f5af9c24cde51baa6cc77cc934b&v=4" width="80;" alt="ratty222"/>
             <br />
             <sub><b>Brent</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/CrazyWolf13">
+            <img src="https://avatars.githubusercontent.com/u/96661824?v=4" width="80;" alt="CrazyWolf13"/>
+            <br />
+            <sub><b>Tobias</b></sub>
         </a>
     </td>
     <td align="center">
