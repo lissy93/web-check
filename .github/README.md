@@ -1083,7 +1083,7 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
     </td>
     <td align="center">
         <a href="https://github.com/Glydeon">
-            <img src="https://avatars.githubusercontent.com/u/121807526?v=4" width="80;" alt="Glydeon"/>
+            <img src="https://avatars.githubusercontent.com/u/121807526?u=c4177e73394d90ad76a9a0282143f3a204af0f60&v=4" width="80;" alt="Glydeon"/>
             <br />
             <sub><b>Byron</b></sub>
         </a>
@@ -1091,7 +1091,7 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
 <tr>
     <td align="center">
         <a href="https://github.com/NixyJuppie">
-            <img src="https://avatars.githubusercontent.com/u/138570196?v=4" width="80;" alt="NixyJuppie"/>
+            <img src="https://avatars.githubusercontent.com/u/138570196?u=b102c222487905728b858704962d32759df29ebe&v=4" width="80;" alt="NixyJuppie"/>
             <br />
             <sub><b>Nixy</b></sub>
         </a>
