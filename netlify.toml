@@ -5,7 +5,7 @@
   publish = "build"
   functions = "api"
 
-# Environmental variables and optioanl secrets
+# Environmental variables and optional secrets
 [build.environment]
   # Build configuration env vars (uncomment if you want to conigure these)
   # CI="false" # Set CI to false, to prevent warnings from exiting the build
