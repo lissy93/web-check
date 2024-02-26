@@ -529,7 +529,7 @@ and the web of connections within a site's architecture.
 The results can also help optimizing server responses, configuring redirects,
 managing cookies, or fine-tuning DNS records for your site.`,
 
-`So, weather you're a developer, system administrator, security researcher, penetration
+`So, whether you're a developer, system administrator, security researcher, penetration
 tester or are just interested in discovering the underlying technologies of a given site 
 - I'm sure you'll find this a useful addition to your toolbox.`,
 ];
