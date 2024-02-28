@@ -823,7 +823,7 @@ Key | Value
 
 Key | Value
 ---|---
-`CHROME_PATH` | The path the the Chromium executable (e.g. `/usr/bin/chromium`)
+`CHROME_PATH` | The path the Chromium executable (e.g. `/usr/bin/chromium`)
 `PORT` | Port to serve the API, when running server.js (e.g. `3000`)
 `DISABLE_GUI` | Disable the GUI, and only serve the API (e.g. `false`)
 `API_TIMEOUT_LIMIT` | The timeout limit for API requests, in milliseconds (e.g. `10000`)
