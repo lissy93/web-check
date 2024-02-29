@@ -16,7 +16,7 @@ RUN apt-get update -qq --fix-missing && \
     wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/google-archive.gpg && \
     echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list && \
     apt-get update -qq && \
-    apt-get -qqy --no-install-recommends install chromium traceroute && \
+    apt-get -qqy --no-install-recommends install chromium traceroute python make g++ && \
     rm -rf /var/lib/apt/lists/* 
 
 # Run the Chromium browser's version command and redirect its output to the /etc/chromium-version file
@@ -30,7 +30,7 @@ COPY package.json yarn.lock ./
 
 # Run yarn install to install dependencies and clear yarn cache
 RUN apt-get update && \
-    yarn install --production && \
+    yarn install --production --frozen-lockfile --network-timeout 100000 && \
     rm -rf /app/node_modules/.cache
 
 # Copy all files to working directory
