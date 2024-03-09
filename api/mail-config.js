@@ -54,6 +54,11 @@ const handler = async (url, event, context) => {
     if (yahooMx.length > 0) {
       mailServices.push({ provider: 'Yahoo', value: yahooMx[0].exchange });
     }
+    // Check MX records for Mimecast
+    const mimecastMx = mxRecords.filter(record => record.exchange.includes('mimecast.com'));
+    if (mimecastMx.length > 0) {
+      mailServices.push({ provider: 'Mimecast', value: mimecastMx[0].exchange });
+    }
 
     return {
         mxRecords,
