@@ -108,12 +108,6 @@ const SponsorshipContainer = styled.div`
   flex-wrap: wrap;
   align-items: center;
   line-height: 1.5rem;
-  span {
-    font-size: 1.2rem;
-    margin: 0.1rem 0;
-    // display: block;
-    font-weight: bold;
-  }
   img {
     border-radius: 4px;
   }
@@ -141,12 +135,10 @@ const About = (): JSX.Element => {
         <hr />
         <SponsorshipContainer>
           <p>
-            <span>
-              Web-Check is kindly sponsored
-              by <a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
-                Terminal Trove
-              </a>
-            </span>
+            Web-Check is kindly sponsored
+            by <a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+              Terminal Trove
+            </a>
             <br />
             The $HOME of all things in the terminal.
             <br />
