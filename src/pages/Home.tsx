@@ -20,7 +20,7 @@ const HomeContainer = styled.section`
   align-items: center;
   height: 100%;
   font-family: 'PTMono';
-  padding: 0 1rem;
+  padding: 1.5rem 1rem 4rem 1rem;
   footer {
     z-index: 1;
   }
@@ -34,8 +34,50 @@ const UserInputMain = styled.form`
   z-index: 5;
   margin: 1rem;
   width: calc(100% - 2rem);
-  max-width: 50rem;
+  max-width: 60rem;
   z-index: 2;
+`;
+
+const SponsorCard = styled.div`
+  background: ${colors.backgroundLighter};
+  box-shadow: 4px 4px 0px ${colors.bgShadowColor};
+  border-radius: 8px;
+  padding: 1rem;
+  z-index: 5;
+  margin: 1rem;
+  width: calc(100% - 2rem);
+  max-width: 60rem;
+  z-index: 2;
+  .inner {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    p {
+      margin: 0.25rem 0;
+    }
+  }
+  a {
+    color: ${colors.textColor};
+  }
+  img {
+    border-radius: 0.25rem;
+    box-shadow: 2px 2px 0px ${colors.fgShadowColor};
+    transition: box-shadow 0.2s;
+    margin: 0 auto;
+    display: block;
+    width: 200px;
+    &:hover {
+      box-shadow: 4px 4px 0px ${colors.fgShadowColor};
+    }
+    &:active {
+      box-shadow: -2px -2px 0px ${colors.fgShadowColor};
+    }
+  }
+  .cta {
+    font-size: 0.78rem;
+    a { color: ${colors.primary}; }
+  }
 `;
 
 // const FindIpButton = styled.a`
@@ -55,7 +97,7 @@ const ErrorMessage = styled.p`
 const SiteFeaturesWrapper = styled(StyledCard)`
   margin: 1rem;
   width: calc(100% - 2rem);
-  max-width: 50rem;
+  max-width: 60rem;
   z-index: 2;
   .links {
     display: flex;
@@ -173,6 +215,28 @@ const Home = (): JSX.Element => {
         { errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
         <Button styles="width: calc(100% - 1rem);" size="large" onClick={submit}>Analyze!</Button>
       </UserInputMain>
+      <SponsorCard>
+        <Heading as="h2" size="small" color={colors.primary}>Sponsored by</Heading>
+        <div className="inner">
+          <p>
+            <a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+              Terminal Trove
+            </a> - The $HOME of all things in the terminal.
+            <br />
+            <span className="cta">
+              Get updates on the latest CLI/TUI tools via
+              the <a className="cta" href="https://terminaltrove.com/newsletter?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+                Terminal Trove newsletter
+              </a>
+            </span>
+            
+          </p>
+          <a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+            <img width="120" alt="Terminal Trove" src="https://i.ibb.co/NKtYjJ1/terminal-trove-web-check.png" />
+          </a>
+        </div>
+
+      </SponsorCard>
       <SiteFeaturesWrapper>
         <div className="features">
           <Heading as="h2" size="small" color={colors.primary}>Supported Checks</Heading>
