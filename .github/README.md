@@ -10,6 +10,22 @@
 </p>
 
 ---
+<p align="center">
+  <sup>Kindly supported by:</sup><br>
+<a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+  <img src="https://i.ibb.co/fqL7Y6N/terminal-trove-normal.png" width="400" alt="Terminal Trove">
+  <br>
+  <strong>The $HOME of all things in the terminal.</strong>
+</a>
+<br>
+<a href="https://terminaltrove.com/newsletter?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+  <sub>Find your next CLI / TUI tool and more at Terminal Trove,</sub>
+  <br>
+  <sup>Get updates on new tools on our newsletter.</sup>
+</a>
+</p>
+
+---
 
 #### Contents
 
