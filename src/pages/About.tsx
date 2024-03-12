@@ -101,6 +101,24 @@ const Section = styled(StyledCard)`
   }
 `;
 
+const SponsorshipContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  line-height: 1.5rem;
+  span {
+    font-size: 1.2rem;
+    margin: 0.1rem 0;
+    // display: block;
+    font-weight: bold;
+  }
+  img {
+    border-radius: 4px;
+  }
+`;
+
 const makeAnchor = (title: string): string => {
   return title.toLowerCase().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "-");
 };
@@ -120,6 +138,28 @@ const About = (): JSX.Element => {
         {about.map((para, index: number) => (
           <p key={index}>{para}</p>
         ))}
+        <hr />
+        <SponsorshipContainer>
+          <p>
+            <span>
+              Web-Check is kindly sponsored
+              by <a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+                Terminal Trove
+              </a>
+            </span>
+            <br />
+            The $HOME of all things in the terminal.
+            <br />
+            <small>
+              <a href="https://terminaltrove.com/newsletter?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+                Find your next CLI / TUI tool, and get updates to your inbox
+              </a>
+            </small>
+          </p>
+          <a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+            <img width="300" alt="Terminal Trove" src="https://i.ibb.co/T1KzVmR/terminal-trove-green.png" />
+          </a>
+        </SponsorshipContainer>
         <hr />
         <p>
           Web-Check is developed and maintained by <a href="https://aliciasykes.com">Alicia Sykes</a>.
