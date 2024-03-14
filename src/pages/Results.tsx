@@ -288,7 +288,7 @@ const Results = (): JSX.Element => {
     addressInfo: { address, addressType, expectedAddressTypes: urlTypeOnly },
     fetchRequest: () => fetch(`${api}/quality?url=${address}`)
       .then(res => parseJson(res))
-      .then(res => res?.lighthouseResult || { error: 'No Data'}),
+      .then(res => res?.lighthouseResult || { error: res.error || 'No Data' }),
   });
 
   // Get the technologies used to build site, using Wappalyzer

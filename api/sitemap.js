@@ -39,10 +39,8 @@ const handler = async (url) => {
 
     return sitemap;
   } catch (error) {
-    // If error occurs
-    console.log(error.message);
     if (error.code === 'ECONNABORTED') {
-      return { error: 'Request timed out' };
+      return { error: 'Request timed out after 5000ms' };
     } else {
       return { error: error.message };
     }
