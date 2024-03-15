@@ -839,10 +839,12 @@ Key | Value
 
 Key | Value
 ---|---
-`CHROME_PATH` | The path the Chromium executable (e.g. `/usr/bin/chromium`)
 `PORT` | Port to serve the API, when running server.js (e.g. `3000`)
-`DISABLE_GUI` | Disable the GUI, and only serve the API (e.g. `false`)
+`API_ENABLE_RATE_LIMIT` | Enable rate-limiting for the /api endpoints (e.g. `true`)
 `API_TIMEOUT_LIMIT` | The timeout limit for API requests, in milliseconds (e.g. `10000`)
+`API_CORS_ORIGIN` | Enable CORS, by setting your allowed hostname(s) here (e.g. `example.com`)
+`CHROME_PATH` | The path the Chromium executable (e.g. `/usr/bin/chromium`)
+`DISABLE_GUI` | Disable the GUI, and only serve the API (e.g. `false`)
 `REACT_APP_API_ENDPOINT` | The endpoint for the API, either local or remote (e.g. `/api`)
 
 All values are optional.

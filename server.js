@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 const historyApiFallback = require('connect-history-api-fallback');
 require('dotenv').config();
 
@@ -19,6 +20,34 @@ process.env.WC_SERVER = 'true'; // Tells middleware to return in non-lambda mode
 app.use(cors({
   origin: process.env.API_CORS_ORIGIN || '*',
 }));
+
+// Define max requests within each time frame
+const limits = [
+  { timeFrame: 10 * 60, max: 100, messageTime: '10 minutes' },
+  { timeFrame: 60 * 60, max: 250, messageTime: '1 hour' },
+  { timeFrame: 12 * 60 * 60, max: 500, messageTime: '12 hours' },
+];
+
+// Construct a message to be returned if the user has been rate-limited
+const makeLimiterResponseMsg = (retryAfter) => {
+  const why = 'This keeps the service running smoothly for everyone. '
+  + 'You can get around these limits by running your own instance of Web Check.';
+  return `You've been rate-limited, please try again in ${retryAfter} seconds.\n${why}`;
+};
+
+// Create rate limiters for each time frame
+const limiters = limits.map(limit => rateLimit({
+  windowMs: limit.timeFrame * 1000,
+  max: limit.max,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: makeLimiterResponseMsg(limit.messageTime) }
+}));
+
+// If rate-limiting enabled, then apply the limiters to the /api endpoint
+if (process.env.API_ENABLE_RATE_LIMIT === 'true') {
+  app.use('/api', limiters);
+}
 
 // Read and register each API function as an Express routes
 fs.readdirSync(dirPath, { withFileTypes: true })
@@ -85,7 +114,6 @@ fs.readdirSync(dirPath, { withFileTypes: true })
     await Promise.all(handlerPromises);
     res.json(results);
   });
-  
 
 // Handle SPA routing
 app.use(historyApiFallback({
