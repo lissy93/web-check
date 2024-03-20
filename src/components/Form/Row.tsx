@@ -159,7 +159,7 @@ export const ExpandableRow = (props: RowProps) => {
           { rowList?.map((row: RowProps, index: number) => {
             return (
               <SubRow key={`${row.lbl}-${index}`}>
-                <span className="lbl" title={row.title}>{row.lbl}</span>
+                <span className="lbl" title={row.title?.toString()}>{row.lbl}</span>
                 <span className="val" title={row.val} onClick={() => copyToClipboard(row.val)}>
                   {formatValue(row.val)}
                 </span>
@@ -199,7 +199,7 @@ const Row = (props: RowProps) => {
   if (children) return <StyledRow key={`${lbl}-${val}`}>{children}</StyledRow>;
   return (
   <StyledRow key={`${lbl}-${val}`}>
-    { lbl && <span className="lbl" title={title}>{lbl}</span> }
+    { lbl && <span className="lbl" title={title?.toString()}>{lbl}</span> }
     <span className="val" title={val} onClick={() => copyToClipboard(val)}>
       {formatValue(val)}
     </span>
