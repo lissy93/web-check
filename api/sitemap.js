@@ -6,15 +6,17 @@ const xml2js = require('xml2js');
 const handler = async (url) => {
   let sitemapUrl = `${url}/sitemap.xml`;
 
+  const hardTimeOut = 5000;
+
   try {
     // Try to fetch sitemap directly
     let sitemapRes;
     try {
-      sitemapRes = await axios.get(sitemapUrl, { timeout: 5000 });
+      sitemapRes = await axios.get(sitemapUrl, { timeout: hardTimeOut });
     } catch (error) {
       if (error.response && error.response.status === 404) {
         // If sitemap not found, try to fetch it from robots.txt
-        const robotsRes = await axios.get(`${url}/robots.txt`, { timeout: 5000 });
+        const robotsRes = await axios.get(`${url}/robots.txt`, { timeout: hardTimeOut });
         const robotsTxt = robotsRes.data.split('\n');
 
         for (let line of robotsTxt) {
@@ -28,7 +30,7 @@ const handler = async (url) => {
           return { skipped: 'No sitemap found' };
         }
 
-        sitemapRes = await axios.get(sitemapUrl, { timeout: 5000 });
+        sitemapRes = await axios.get(sitemapUrl, { timeout: hardTimeOut });
       } else {
         throw error; // If other error, throw it
       }
@@ -40,7 +42,7 @@ const handler = async (url) => {
     return sitemap;
   } catch (error) {
     if (error.code === 'ECONNABORTED') {
-      return { error: 'Request timed out after 5000ms' };
+      return { error: `Request timed-out after ${hardTimeOut}ms` };
     } else {
       return { error: error.message };
     }
