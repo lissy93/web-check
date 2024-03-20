@@ -224,6 +224,52 @@ const jobNames = [
   'carbon',
 ] as const;
 
+interface JobListItemProps {
+  job: LoadingJob;
+  showJobDocs: (name: string) => void;
+  showErrorModal: (name: string, state: LoadingState, timeTaken: number | undefined, error: string, isInfo?: boolean) => void;
+  barColors: Record<LoadingState, [string, string]>;
+}
+
+const getStatusEmoji = (state: LoadingState): string => {
+  switch (state) {
+    case 'success':
+      return '✅';
+    case 'loading':
+      return '🔄';
+    case 'error':
+      return '❌';
+    case 'timed-out':
+      return '⏸️';
+    case 'skipped':
+      return '⏭️';
+    default:
+      return '❓';
+  }
+};
+
+const JobListItem: React.FC<JobListItemProps> = ({ job, showJobDocs, showErrorModal, barColors }) => {
+  const { name, state, timeTaken, retry, error } = job;
+  const actionButton = retry && state !== 'success' && state !== 'loading' ? 
+    <FailedJobActionButton onClick={retry}>↻ Retry</FailedJobActionButton> : null;
+    
+  const showModalButton = error && ['error', 'timed-out', 'skipped'].includes(state) &&
+    <FailedJobActionButton onClick={() => showErrorModal(name, state, timeTaken, error, state === 'skipped')}> 
+      {state === 'timed-out' ? '■ Show Timeout Reason' : '■ Show Error'} 
+    </FailedJobActionButton>;
+
+  return (
+    <li key={name}>
+      <b onClick={() => showJobDocs(name)}>{getStatusEmoji(state)} {name}</b>
+      <span style={{color: barColors[state][0]}}> ({state})</span>.
+      <i>{timeTaken && state !== 'loading' ? ` Took ${timeTaken} ms` : ''}</i>
+      {actionButton}
+      {showModalButton}
+    </li>
+  );
+};
+
+
 export const initialJobs = jobNames.map((job: string) => {
   return {
     name: job,
@@ -239,9 +285,9 @@ export const calculateLoadingStatePercentages = (loadingJobs: LoadingJob[]): Rec
   const stateCount: Record<LoadingState, number> = {
     'success': 0,
     'loading': 0,
-    'skipped': 0,
-    'error': 0,
     'timed-out': 0,
+    'error': 0,
+    'skipped': 0,
   };
 
   // Count the number of each state
@@ -253,9 +299,9 @@ export const calculateLoadingStatePercentages = (loadingJobs: LoadingJob[]): Rec
   const statePercentage: Record<LoadingState, number> = {
     'success': (stateCount['success'] / totalJobs) * 100,
     'loading': (stateCount['loading'] / totalJobs) * 100,
-    'skipped': (stateCount['skipped'] / totalJobs) * 100,
-    'error': (stateCount['error'] / totalJobs) * 100,
     'timed-out': (stateCount['timed-out'] / totalJobs) * 100,
+    'error': (stateCount['error'] / totalJobs) * 100,
+    'skipped': (stateCount['skipped'] / totalJobs) * 100,
   };
 
   return statePercentage;
@@ -353,26 +399,9 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[], showModal: (err: Reac
   const barColors: Record<LoadingState | string, [string, string]> = {
     'success': isDone ? makeBarColor(colors.primary) : makeBarColor(colors.success),
     'loading': makeBarColor(colors.info),
-    'skipped': makeBarColor(colors.warning),
     'error': makeBarColor(colors.danger),
-    'timed-out': makeBarColor(colors.neutral),
-  };
-
-  const getStatusEmoji = (state: LoadingState): string => {
-    switch (state) {
-      case 'success':
-        return '✅';
-      case 'loading':
-        return '🔄';
-      case 'skipped':
-        return '⏭️';
-      case 'error':
-        return '❌';
-      case 'timed-out':
-        return '⏸️';
-      default:
-        return '❓';
-    }
+    'timed-out': makeBarColor(colors.warning),
+    'skipped': makeBarColor(colors.neutral),
   };
 
   const showErrorModal = (name: string, state: LoadingState, timeTaken: number | undefined, error: string, isInfo?: boolean) => {
@@ -416,20 +445,9 @@ const ProgressLoader = (props: { loadStatus: LoadingJob[], showModal: (err: Reac
     <Details>
       <summary>Show Details</summary>
       <ul>
-        {
-          loadStatus.map(({ name, state, timeTaken, retry, error }: LoadingJob) => {
-            return (
-              <li key={name}>
-                <b onClick={() => props.showJobDocs(name)}>{getStatusEmoji(state)} {name}</b>
-                <span style={{color : barColors[state][0]}}> ({state})</span>.
-                <i>{(timeTaken && state !== 'loading') ? ` Took ${timeTaken} ms` : '' }</i>
-                { (retry && state !== 'success' && state !== 'loading') && <FailedJobActionButton onClick={retry}>↻ Retry</FailedJobActionButton> }
-                { (error && state === 'error') && <FailedJobActionButton onClick={() => showErrorModal(name, state, timeTaken, error)}>■ Show Error</FailedJobActionButton> }
-                { (error && state === 'skipped') && <FailedJobActionButton onClick={() => showErrorModal(name, state, timeTaken, error, true)}>■ Show Reason</FailedJobActionButton> }
-              </li>
-            );
-          })
-        }
+        {loadStatus.map((job: LoadingJob) => (
+          <JobListItem key={job.name} job={job} showJobDocs={props.showJobDocs} showErrorModal={showErrorModal} barColors={barColors} />
+        ))}
       </ul>
       { loadStatus.filter((val: LoadingJob) => val.state === 'error').length > 0 &&
         <p className="error">

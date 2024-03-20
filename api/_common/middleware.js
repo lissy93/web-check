@@ -2,13 +2,46 @@ const normalizeUrl = (url) => {
   return url.startsWith('http') ? url : `https://${url}`;
 };
 
+
+// If present, set a shorter timeout for API requests
+const TIMEOUT = parseInt(process.env.API_TIMEOUT_LIMIT, 10) || 60000;
+
+// If present, set CORS allowed origins for responses
+const ALLOWED_ORIGINS = process.env.API_CORS_ORIGIN || '*';
+
+// Set the platform currently being used
+let PLATFORM = 'NETLIFY';
+if (process.env.PLATFORM) { PLATFORM = process.env.PLATFORM.toUpperCase(); }
+else if (process.env.VERCEL) { PLATFORM = 'VERCEL'; }
+else if (process.env.WC_SERVER) { PLATFORM = 'NODE'; }
+
+// Define the headers to be returned with each response
 const headers = {
-  'Access-Control-Allow-Origin': process.env.API_CORS_ORIGIN || '*',
+  'Access-Control-Allow-Origin': ALLOWED_ORIGINS,
   'Access-Control-Allow-Credentials': true,
   'Content-Type': 'application/json;charset=UTF-8',
 };
 
+
+// A middleware function used by all API routes on all platforms
 const commonMiddleware = (handler) => {
+
+  // Create a timeout promise, to throw an error if a request takes too long
+  const createTimeoutPromise = (timeoutMs) => {
+    return new Promise((_, reject) => {
+      setTimeout(() => {
+        const howToResolve = 'You can re-trigger this request, by clicking "Retry"\n'
+        + 'If you\'re running your own instance of Web Check, then you can '
+        + 'resolve this issue, by increasing the timeout limit in the '
+        + '`API_TIMEOUT_LIMIT` environmental variable to a higher value (in milliseconds). \n\n'
+        + `The public instance currently has a lower timeout of ${timeoutMs}ms `
+        + 'in order to keep running costs affordable, so that Web Check can '
+        + 'remain freely available for everyone.';
+        reject(new Error(`Request timed-out after ${timeoutMs} ms.\n\n${howToResolve}`));
+      }, timeoutMs);
+    });
+  };
+
   // Vercel
   const vercelHandler = async (request, response) => {
     const queryParams = request.query || {};
@@ -21,7 +54,12 @@ const commonMiddleware = (handler) => {
     const url = normalizeUrl(rawUrl);
 
     try {
-      const handlerResponse = await handler(url, request);
+      // Race the handler against the timeout
+      const handlerResponse = await Promise.race([
+        handler(url, request),
+        createTimeoutPromise(TIMEOUT)
+      ]);
+
       if (handlerResponse.body && handlerResponse.statusCode) {
         response.status(handlerResponse.statusCode).json(handlerResponse.body);
       } else {
@@ -30,7 +68,11 @@ const commonMiddleware = (handler) => {
         );
       }
     } catch (error) {
-      response.status(500).json({ error: error.message });
+      let errorCode = 500;
+      if (error.message.includes('timed-out')) {
+        errorCode = 408;
+      }
+      response.status(errorCode).json({ error: error.message });
     }
   };
 
@@ -51,7 +93,12 @@ const commonMiddleware = (handler) => {
     const url = normalizeUrl(rawUrl);
 
     try {
-      const handlerResponse = await handler(url, event, context);
+      // Race the handler against the timeout
+      const handlerResponse = await Promise.race([
+        handler(url, event, context),
+        createTimeoutPromise(TIMEOUT)
+      ]);
+
       if (handlerResponse.body && handlerResponse.statusCode) {
         callback(null, handlerResponse);
       } else {
@@ -71,11 +118,7 @@ const commonMiddleware = (handler) => {
   };
 
   // The format of the handlers varies between platforms
-  // E.g. Netlify + AWS expect Lambda functions, but Vercel or Node needs standard handler
-  const platformEnv = (process.env.PLATFORM || '').toUpperCase(); // Has user set platform manually?
-
-  const nativeMode = (['VERCEL', 'NODE'].includes(platformEnv) || process.env.VERCEL || process.env.WC_SERVER);
-
+  const nativeMode = (['VERCEL', 'NODE'].includes(PLATFORM));
   return nativeMode ? vercelHandler : netlifyHandler;
 };
 

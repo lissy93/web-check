@@ -59,8 +59,15 @@ const TlsCard = (props: {data: any, title: string, actionButtons: any }): JSX.El
   const scanId = props.data?.id;
   return (
     <Card heading={props.title} actionButtons={props.actionButtons}>
-      {clientSupport.map((support: any) => {
-        return (<ExpandableRow lbl={support.title} val={support.value || '?'} rowList={support.fields} />)
+      {clientSupport.map((support: any, index: number) => {
+        return (
+        <ExpandableRow
+          key={`tls-client-${index}`}
+          lbl={support.title}
+          val={support.value || '?'}
+          rowList={support.fields}
+        />
+      )
       })}
       { !clientSupport.length && (
         <div>

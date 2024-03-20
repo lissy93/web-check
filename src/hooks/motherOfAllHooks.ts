@@ -35,16 +35,21 @@ const useMotherOfAllHooks = <ResultType = any>(params: UseIpAddressProps<ResultT
   const [result, setResult] = useState<ResultType>();
 
   // Fire off the HTTP fetch request, then set results and update loading / error state
+
   const doTheFetch = () => {
     return fetchRequest()
     .then((res: any) => {
       if (!res) { // No response :(
-        updateLoadingJobs(jobId, 'error', res.error || 'No response', reset);
+        updateLoadingJobs(jobId, 'error', 'No response', reset);
       } else if (res.error) { // Response returned an error message
-        updateLoadingJobs(jobId, 'error', res.error, reset);
+        if (res.error.includes("timed-out")) { // Specific handling for timeout errors
+          updateLoadingJobs(jobId, 'timed-out', res.error, reset);
+        } else {
+          updateLoadingJobs(jobId, 'error', res.error, reset);
+        }
       } else if (res.skipped) { // Response returned a skipped message
         updateLoadingJobs(jobId, 'skipped', res.skipped, reset);
-      }  else { // Yay, everything went to plan :)
+      } else { // Yay, everything went to plan :)
         setResult(res);
         updateLoadingJobs(jobId, 'success', '', undefined, res);
       }

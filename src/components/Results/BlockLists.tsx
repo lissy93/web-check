@@ -6,11 +6,13 @@ const BlockListsCard = (props: {data: any, title: string, actionButtons: any }):
   const blockLists = props.data.blocklists;
   return (
     <Card heading={props.title} actionButtons={props.actionButtons}>
-      { blockLists.map((blocklist: any) => (
+      { blockLists.map((blocklist: any, blockIndex: number) => (
         <Row
           title={blocklist.serverIp}
           lbl={blocklist.server}
-          val={blocklist.isBlocked ? '❌ Blocked' : '✅ Not Blocked'} />
+          val={blocklist.isBlocked ? '❌ Blocked' : '✅ Not Blocked'}
+          key={`blocklist-${blockIndex}-${blocklist.serverIp}`}
+        />
       ))}
     </Card>
   );

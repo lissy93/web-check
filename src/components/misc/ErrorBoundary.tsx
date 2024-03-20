@@ -7,6 +7,7 @@ import colors from 'styles/colors';
 interface Props {
   children: ReactNode;
   title?: string;
+  key?: string;
 }
 
 interface State {

@@ -99,7 +99,13 @@ const TlsCard = (props: {data: any, title: string, actionButtons: any }): JSX.El
     <Card heading={props.title} actionButtons={props.actionButtons}>
       { tlsResults.length > 0 && tlsResults.map((row: any, index: number) => {
         return (
-          <Row lbl={row.lbl} val={row.val} plaintext={row.plaintext} listResults={row.list} />
+          <Row
+            lbl={row.lbl}
+            val={row.val}
+            plaintext={row.plaintext}
+            listResults={row.list}
+            key={`tls-issues-${index}`}
+          />
         );
       })}
       <Expandable>

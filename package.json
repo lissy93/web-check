@@ -1,6 +1,6 @@
 {
   "name": "web-check",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "private": false,
   "description": "All-in-one OSINT tool for analyzing any website",
   "repository": "github:lissy93/web-check",

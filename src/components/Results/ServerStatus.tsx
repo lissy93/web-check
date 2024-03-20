@@ -13,7 +13,7 @@ span.val {
 const ServerStatusCard = (props: { data: any, title: string, actionButtons: any }): JSX.Element => {
   const serverStatus = props.data;
   return (
-    <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
+    <Card heading={props.title.toString()} actionButtons={props.actionButtons} styles={cardStyles}>
       <Row lbl="" val="">
         <span className="lbl">Is Up?</span>
         { serverStatus.isUp ? <span className="val up">✅ Online</span> : <span className="val down">❌ Offline</span>}
