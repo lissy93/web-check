@@ -2,9 +2,8 @@ const normalizeUrl = (url) => {
   return url.startsWith('http') ? url : `https://${url}`;
 };
 
-
 // If present, set a shorter timeout for API requests
-const TIMEOUT = parseInt(process.env.API_TIMEOUT_LIMIT, 10) || 60000;
+const TIMEOUT = process.env.API_TIMEOUT_LIMIT ? parseInt(process.env.API_TIMEOUT_LIMIT, 10) : 60000;
 
 // If present, set CORS allowed origins for responses
 const ALLOWED_ORIGINS = process.env.API_CORS_ORIGIN || '*';
@@ -23,6 +22,15 @@ const headers = {
 };
 
 
+const timeoutErrorMsg = 'You can re-trigger this request, by clicking "Retry"\n'
++ 'If you\'re running your own instance of Web Check, then you can '
++ 'resolve this issue, by increasing the timeout limit in the '
++ '`API_TIMEOUT_LIMIT` environmental variable to a higher value (in milliseconds), '
++ 'or if you\'re hosting on Vercel increase the maxDuration in vercel.json.\n\n'
++ `The public instance currently has a lower timeout of ${TIMEOUT}ms `
++ 'in order to keep running costs affordable, so that Web Check can '
++ 'remain freely available for everyone.';
+
 // A middleware function used by all API routes on all platforms
 const commonMiddleware = (handler) => {
 
@@ -30,14 +38,7 @@ const commonMiddleware = (handler) => {
   const createTimeoutPromise = (timeoutMs) => {
     return new Promise((_, reject) => {
       setTimeout(() => {
-        const howToResolve = 'You can re-trigger this request, by clicking "Retry"\n'
-        + 'If you\'re running your own instance of Web Check, then you can '
-        + 'resolve this issue, by increasing the timeout limit in the '
-        + '`API_TIMEOUT_LIMIT` environmental variable to a higher value (in milliseconds). \n\n'
-        + `The public instance currently has a lower timeout of ${timeoutMs}ms `
-        + 'in order to keep running costs affordable, so that Web Check can '
-        + 'remain freely available for everyone.';
-        reject(new Error(`Request timed-out after ${timeoutMs} ms.\n\n${howToResolve}`));
+        reject(new Error(`Request timed-out after ${timeoutMs} ms`));
       }, timeoutMs);
     });
   };
@@ -69,8 +70,9 @@ const commonMiddleware = (handler) => {
       }
     } catch (error) {
       let errorCode = 500;
-      if (error.message.includes('timed-out')) {
+      if (error.message.includes('timed-out') || response.statusCode === 504) {
         errorCode = 408;
+        error.message = `${error.message}\n\n${timeoutErrorMsg}`;
       }
       response.status(errorCode).json({ error: error.message });
     }
