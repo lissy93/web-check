@@ -25,7 +25,11 @@ const handler = async (domain) => {
           });
 
           res.on('end', () => {
-            resolve(JSON.parse(data));
+            try {
+              resolve(JSON.parse(data));
+            } catch (error) {
+              reject(new Error('Invalid JSON response'));
+            }
           });
 
           res.on('error', error => {
@@ -51,4 +55,3 @@ const handler = async (domain) => {
 
 module.exports = middleware(handler);
 module.exports.handler = middleware(handler);
-
