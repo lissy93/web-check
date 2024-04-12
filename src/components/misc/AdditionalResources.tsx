@@ -204,6 +204,13 @@ const resources = [
     description: 'View traffic source locations for a domain through Cloudflare',
     searchLink: 'https://radar.cloudflare.com/domains/domain/{URL}',
   },
+  {
+    title: 'Mozilla Observatory',
+    link: 'https://observatory.mozilla.org/',
+    icon: 'https://i.ibb.co/hBWh9cj/logo-mozm-5e95c457fdd1.png',
+    description: 'Assesses website security posture by analyzing various security headers and practices',
+    searchLink: 'https://observatory.mozilla.org/analyze/{URL}',
+  },
 ];
 
 const makeLink = (resource: any, scanUrl: string | undefined): string => {
