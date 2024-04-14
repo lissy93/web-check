@@ -976,20 +976,27 @@ Credit to the following users for contributing to Web-Check
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/Myzel394">
+            <img src="https://avatars.githubusercontent.com/u/50424412?v=4" width="80;" alt="Myzel394"/>
+            <br />
+            <sub><b>Myzel394</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/murrple-1">
             <img src="https://avatars.githubusercontent.com/u/5559656?v=4" width="80;" alt="murrple-1"/>
             <br />
             <sub><b>Murray Christopherson</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/t3chn0m4g3">
             <img src="https://avatars.githubusercontent.com/u/4318452?v=4" width="80;" alt="t3chn0m4g3"/>
             <br />
             <sub><b>Marco Ochse</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/treatmesubj">
             <img src="https://avatars.githubusercontent.com/u/39680353?v=4" width="80;" alt="treatmesubj"/>
@@ -1005,6 +1012,13 @@ Credit to the following users for contributing to Web-Check
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/GreyXor">
+            <img src="https://avatars.githubusercontent.com/u/79602273?v=4" width="80;" alt="GreyXor"/>
+            <br />
+            <sub><b>GreyXor</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/Gertje823">
             <img src="https://avatars.githubusercontent.com/u/36937387?v=4" width="80;" alt="Gertje823"/>
             <br />
@@ -1017,7 +1031,8 @@ Credit to the following users for contributing to Web-Check
             <br />
             <sub><b>Ed Preston</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/0xflotus">
             <img src="https://avatars.githubusercontent.com/u/26602940?v=4" width="80;" alt="0xflotus"/>
@@ -1114,13 +1129,20 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/araguaci">
+            <img src="https://avatars.githubusercontent.com/u/7318668?v=4" width="80;" alt="araguaci"/>
+            <br />
+            <sub><b>araguaci</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
         <a href="https://github.com/bmcgonag">
             <img src="https://avatars.githubusercontent.com/u/7346620?u=2a0f9284f3e12ac1cc15288c254d1ec68a5081e8&v=4" width="80;" alt="bmcgonag"/>
             <br />
             <sub><b>Brian McGonagill</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/vlad-timofeev">
             <img src="https://avatars.githubusercontent.com/u/11474041?u=eee43705b54d2ec9f51fc4fcce5ad18dd17c87e4&v=4" width="80;" alt="vlad-timofeev"/>
@@ -1136,6 +1158,13 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/patvdv">
+            <img src="https://avatars.githubusercontent.com/u/12430107?v=4" width="80;" alt="patvdv"/>
+            <br />
+            <sub><b>Patrick Van Der Veken</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/mryesiller">
             <img src="https://avatars.githubusercontent.com/u/24632172?u=0d20f2d615158f87cd60a3398d3efb026c32f291&v=4" width="80;" alt="mryesiller"/>
             <br />
@@ -1148,7 +1177,8 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
             <br />
             <sub><b>Forward Email - Open-source & Privacy-focused Email Service (2023)</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/Bastii717">
             <img src="https://avatars.githubusercontent.com/u/53431819?u=604977bed6ad6875ada890d0d3765a4cacc2fa14&v=4" width="80;" alt="Bastii717"/>
@@ -1157,13 +1187,19 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/M2TD">
+            <img src="https://avatars.githubusercontent.com/u/85460457?v=4" width="80;" alt="M2TD"/>
+            <br />
+            <sub><b>M2TD</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/frankdez93">
             <img src="https://avatars.githubusercontent.com/u/87549420?v=4" width="80;" alt="frankdez93"/>
             <br />
             <sub><b>Frankdez93</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/terminaltrove">
             <img src="https://avatars.githubusercontent.com/u/121595180?v=4" width="80;" alt="terminaltrove"/>
