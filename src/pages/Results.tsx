@@ -870,7 +870,7 @@ const Results = (): JSX.Element => {
       <Nav>
       { address && 
         <Heading color={colors.textColor} size="medium">
-          { addressType === 'url' && <a href={address}><img width="32px" src={`https://icon.horse/icon/${makeSiteName(address)}`} alt="" /></a> }
+          { addressType === 'url' && <a target="_blank" rel="noreferrer" href={address}><img width="32px" src={`https://icon.horse/icon/${makeSiteName(address)}`} alt="" /></a> }
           {makeSiteName(address)}
         </Heading>
         }
@@ -907,7 +907,7 @@ const Results = (): JSX.Element => {
             <a href="#view-download-raw-data"><span className="toggle-filters">Export Data</span></a>
             <a href="/about"><span className="toggle-filters">Learn about the Results</span></a>
             <a href="/about#additional-resources"><span className="toggle-filters">More tools</span></a>
-            <a href="https://github.com/lissy93/web-check"><span className="toggle-filters">View GitHub</span></a>
+            <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check"><span className="toggle-filters">View GitHub</span></a>
           </div>
       ) }
       </FilterButtons>

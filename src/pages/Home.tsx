@@ -219,19 +219,19 @@ const Home = (): JSX.Element => {
         <Heading as="h2" size="small" color={colors.primary}>Sponsored by</Heading>
         <div className="inner">
           <p>
-            <a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+            <a target="_blank" rel="noreferrer" href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
               Terminal Trove
             </a> - The $HOME of all things in the terminal.
             <br />
             <span className="cta">
               Get updates on the latest CLI/TUI tools via
-              the <a className="cta" href="https://terminaltrove.com/newsletter?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+              the <a target="_blank" rel="noreferrer" className="cta" href="https://terminaltrove.com/newsletter?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
                 Terminal Trove newsletter
               </a>
             </span>
             
           </p>
-          <a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+          <a target="_blank" rel="noreferrer" href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
             <img width="120" alt="Terminal Trove" src="https://i.ibb.co/NKtYjJ1/terminal-trove-web-check.png" />
           </a>
         </div>
@@ -246,10 +246,10 @@ const Home = (): JSX.Element => {
           </ul>
         </div>
         <div className="links">
-          <a href="https://github.com/lissy93/web-check" title="Check out the source code and documentation on GitHub, and get support or contribute">
+          <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check" title="Check out the source code and documentation on GitHub, and get support or contribute">
             <Button>View on GitHub</Button>
           </a>
-          <a href="https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check" title="Deploy your own private or public instance of Web-Check to Netlify">
+          <a target="_blank" rel="noreferrer" href="https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check" title="Deploy your own private or public instance of Web-Check to Netlify">
             <Button>Deploy your own</Button>
           </a>
           <a href="/about#api-documentation" title="View the API documentation, to use Web-Check programmatically">
