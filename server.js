@@ -11,7 +11,7 @@ const app = express();
 const port = process.env.PORT || 3000; // The port to run the server on
 const API_DIR = '/api'; // Name of the dir containing the lambda functions
 const dirPath = path.join(__dirname, API_DIR); // Path to the lambda functions dir
-const guiPath = path.join(__dirname, 'build');
+const guiPath = path.join(__dirname, 'dist', 'client');
 const placeholderFilePath = path.join(__dirname, 'public', 'placeholder.html');
 const handlers = {}; // Will store list of API endpoints
 process.env.WC_SERVER = 'true'; // Tells middleware to return in non-lambda mode
@@ -145,7 +145,8 @@ if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
     res.status(500).send(htmlContent);
 });
 } else { // GUI enabled, and build files present, let's go!!
-  app.use(express.static(guiPath));
+  app.use('/', express.static('dist/client/'));
+  // app.use(express.static(guiPath));
 }
 
 app.use((req, res, next) => {
