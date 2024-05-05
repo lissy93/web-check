@@ -1,7 +1,29 @@
 {
+  "version": 2,
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1.js"
+    }
+  ],
   "functions": {
     "api/*.js": {
       "maxDuration": 10
+    }
+  },
+  "env": {
+    "PLATFORM": "vercel",
+    "CI": "false",
+    "CHROME_PATH": "/usr/bin/chromium",
+    "NODE_VERSION": "21.x",
+    "GOOGLE_CLOUD_API_KEY": "",
+    "BUILT_WITH_API_KEY": "",
+    "REACT_APP_SHODAN_API_KEY": "",
+    "REACT_APP_WHO_API_KEY": ""
+  },
+  "build": {
+    "env": {
+      "PLATFORM": "vercel"
     }
   }
 }
