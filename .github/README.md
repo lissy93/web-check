@@ -940,13 +940,20 @@ Credit to the following users for contributing to Web-Check
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/GreyXor">
+            <img src="https://avatars.githubusercontent.com/u/79602273?v=4" width="80;" alt="GreyXor"/>
+            <br />
+            <sub><b>GreyXor</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
         <a href="https://github.com/jinnabaalu">
             <img src="https://avatars.githubusercontent.com/u/11784253?v=4" width="80;" alt="jinnabaalu"/>
             <br />
             <sub><b>Jinna Baalu</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/bolens">
             <img src="https://avatars.githubusercontent.com/u/1218380?v=4" width="80;" alt="bolens"/>
@@ -981,15 +988,15 @@ Credit to the following users for contributing to Web-Check
             <br />
             <sub><b>PhiRequiem</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/Myzel394">
             <img src="https://avatars.githubusercontent.com/u/50424412?v=4" width="80;" alt="Myzel394"/>
             <br />
             <sub><b>Myzel394</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/murrple-1">
             <img src="https://avatars.githubusercontent.com/u/5559656?v=4" width="80;" alt="murrple-1"/>
@@ -1002,13 +1009,6 @@ Credit to the following users for contributing to Web-Check
             <img src="https://avatars.githubusercontent.com/u/4318452?v=4" width="80;" alt="t3chn0m4g3"/>
             <br />
             <sub><b>Marco Ochse</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/KostLinux">
-            <img src="https://avatars.githubusercontent.com/u/46846027?v=4" width="80;" alt="KostLinux"/>
-            <br />
-            <sub><b>KostLinux</b></sub>
         </a>
     </td>
     <td align="center">
@@ -1026,20 +1026,13 @@ Credit to the following users for contributing to Web-Check
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/GreyXor">
-            <img src="https://avatars.githubusercontent.com/u/79602273?v=4" width="80;" alt="GreyXor"/>
-            <br />
-            <sub><b>GreyXor</b></sub>
-        </a>
-    </td></tr>
-<tr>
-    <td align="center">
         <a href="https://github.com/Gertje823">
             <img src="https://avatars.githubusercontent.com/u/36937387?v=4" width="80;" alt="Gertje823"/>
             <br />
             <sub><b>Gertje823</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/epreston">
             <img src="https://avatars.githubusercontent.com/u/347224?v=4" width="80;" alt="epreston"/>
@@ -1180,7 +1173,7 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
     </td>
     <td align="center">
         <a href="https://github.com/plgonzalezrx8">
-            <img src="https://avatars.githubusercontent.com/u/19900049?v=4" width="80;" alt="plgonzalezrx8"/>
+            <img src="https://avatars.githubusercontent.com/u/19900049?u=48a58d2da520a9d712184c6e6e99927ff3cbf179&v=4" width="80;" alt="plgonzalezrx8"/>
             <br />
             <sub><b>Pedro Gonzalez</b></sub>
         </a>
