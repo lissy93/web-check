@@ -1,0 +1,19 @@
+---
+import Main from "../../v1-check/views/main.tsx"
+import '../../v1-check/styles/index.css';
+
+export const prerender = false;
+
+const { pathname } = new URL(Astro.request.url)
+
+---
+
+<html>
+  <head>
+    <title>Results</title>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <Main {pathname} client:load />
+  </body>
+</html>
