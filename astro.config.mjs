@@ -31,6 +31,9 @@ const site = unwrapEnvVar('SITE_URL', 'https://web-check.xyz');
 // The base URL of the site (if serving from a subdirectory)
 const base = unwrapEnvVar('BASE_URL', '/');
 
+// Should run the app in boss-mode (requires extra configuration)
+const isBossServer = unwrapEnvVar('BOSS_SERVER', false);
+
 // Initialize Astro integrations
 const integrations = [react(), partytown(), sitemap()];
 
@@ -62,17 +65,13 @@ console.log(
   `to help fund maintenance & development.\x1b[0m\n`,
 );
 
-const buildOptions = {
-  output: 'dist',
-  format: 'esm',
-};
+const redirects = {};
 
-
-const redirects = {
-  '/': '/test',
-  // '/results/[...target]': '/check/[...target]', // The old path was /results (redirect to maintain compatibility)
+// Skip the marketing homepage for self-hosted users
+if (isBossServer && isBossServer === 'true') {
+  redirects['/'] = '/check';
 }
 
 // Export Astro configuration
-export default defineConfig({ output, base, integrations, site, adapter, redirects, buildOptions });
+export default defineConfig({ output, base, integrations, site, adapter, redirects });
 

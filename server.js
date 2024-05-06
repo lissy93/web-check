@@ -79,53 +79,61 @@ fs.readdirSync(dirPath, { withFileTypes: true })
     });
   });
 
-  // Create a single API endpoint to execute all lambda functions
-  app.get('/api', async (req, res) => {
-    const results = {};
-    const { url } = req.query;
-    const maxExecutionTime = process.env.API_TIMEOUT_LIMIT || 20000;
-  
-    const executeHandler = async (handler, req, res) => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const mockRes = {
-            status: (statusCode) => mockRes,
-            json: (body) => resolve({ body }),
-          };
-          await handler({ ...req, query: { url } }, mockRes);
-        } catch (err) {
-          reject(err);
-        }
-      });
-    };
-  
-    const timeout = (ms, jobName = null) => {
-      return new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(new Error(
-            `Timed out after ${ms/1000} seconds${jobName ? `, when executing ${jobName}` : ''}`
-          ));
-        }, ms);
-      });
-    };
-  
-    const handlerPromises = Object.entries(handlers).map(async ([route, handler]) => {
-      const routeName = route.replace(`${API_DIR}/`, '');
-  
+// Create a single API endpoint to execute all lambda functions
+app.get('/api', async (req, res) => {
+  const results = {};
+  const { url } = req.query;
+  const maxExecutionTime = process.env.API_TIMEOUT_LIMIT || 20000;
+
+  const executeHandler = async (handler, req, res) => {
+    return new Promise(async (resolve, reject) => {
       try {
-        const result = await Promise.race([
-          executeHandler(handler, req, res),
-          timeout(maxExecutionTime, routeName)
-        ]);
-        results[routeName] = result.body;
+        const mockRes = {
+          status: (statusCode) => mockRes,
+          json: (body) => resolve({ body }),
+        };
+        await handler({ ...req, query: { url } }, mockRes);
       } catch (err) {
-        results[routeName] = { error: err.message };
+        reject(err);
       }
     });
-  
-    await Promise.all(handlerPromises);
-    res.json(results);
+  };
+
+  const timeout = (ms, jobName = null) => {
+    return new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error(
+          `Timed out after ${ms/1000} seconds${jobName ? `, when executing ${jobName}` : ''}`
+        ));
+      }, ms);
+    });
+  };
+
+  const handlerPromises = Object.entries(handlers).map(async ([route, handler]) => {
+    const routeName = route.replace(`${API_DIR}/`, '');
+
+    try {
+      const result = await Promise.race([
+        executeHandler(handler, req, res),
+        timeout(maxExecutionTime, routeName)
+      ]);
+      results[routeName] = result.body;
+    } catch (err) {
+      results[routeName] = { error: err.message };
+    }
   });
+
+  await Promise.all(handlerPromises);
+  res.json(results);
+});
+
+// Skip the marketing homepage, for self-hosted users
+app.use((req, res, next) => {
+  if (req.path === '/' && process.env.BOSS_SERVER !== 'true') {
+    req.url = '/check';
+  }
+  next();
+});
 
 // Serve up the GUI - if build dir exists, and GUI feature enabled
 if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
