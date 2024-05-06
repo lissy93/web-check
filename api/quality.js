@@ -1,7 +1,7 @@
-const axios = require('axios');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import middleware from './_common/middleware.js';
 
-const handler = async (url, event, context) => {
+const qualityHandler = async (url, event, context) => {
   const apiKey = process.env.GOOGLE_CLOUD_API_KEY;
 
   if (!apiKey) {
@@ -18,5 +18,5 @@ const handler = async (url, event, context) => {
   return (await axios.get(endpoint)).data;
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(qualityHandler);
+export default handler;

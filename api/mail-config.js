@@ -1,9 +1,8 @@
-const middleware = require('./_common/middleware');
+import dns from 'dns';
+import URL from 'url-parse';
+import middleware from './_common/middleware.js';
 
-const dns = require('dns').promises;
-const URL = require('url-parse');
-
-const handler = async (url, event, context) => {
+const mailConfigHandler = async (url, event, context) => {
   try {
     const domain = new URL(url).hostname || new URL(url).pathname;
 
@@ -77,5 +76,5 @@ const handler = async (url, event, context) => {
   }
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(mailConfigHandler);
+export default handler;

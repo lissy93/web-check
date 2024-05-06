@@ -1,6 +1,6 @@
-const axios = require('axios');
-const puppeteer = require('puppeteer');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import puppeteer from 'puppeteer';
+import middleware from './_common/middleware.js';
 
 const getPuppeteerCookies = async (url) => {
   const browser = await puppeteer.launch({
@@ -21,7 +21,7 @@ const getPuppeteerCookies = async (url) => {
   }
 };
 
-const handler = async (url) => {
+const cookieHandler = async (url) => {
   let headerCookies = null;
   let clientCookies = null;
 
@@ -54,5 +54,5 @@ const handler = async (url) => {
   return { headerCookies, clientCookies };
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(cookieHandler);
+export default handler;

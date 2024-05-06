@@ -1,6 +1,6 @@
-const axios = require('axios');
-const xml2js = require('xml2js');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import xml2js from 'xml2js';
+import middleware from './_common/middleware.js';
 
 const getGoogleSafeBrowsingResult = async (url) => {
   try {
@@ -84,7 +84,7 @@ const getCloudmersiveResult = async (url) => {
   }
 };
 
-const handler = async (url) => {
+const threatsHandler = async (url) => {
   try {
     const urlHaus = await getUrlHausResult(url);
     const phishTank = await getPhishTankResult(url);
@@ -99,5 +99,5 @@ const handler = async (url) => {
   }
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(threatsHandler);
+export default handler;

@@ -1,9 +1,9 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
-const urlLib = require('url');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import cheerio from 'cheerio';
+import urlLib from 'url';
+import middleware from './_common/middleware.js';
 
-const handler = async (url) => {
+const linkedPagesHandler = async (url) => {
   const response = await axios.get(url);
   const html = response.data;
   const $ = cheerio.load(html);
@@ -45,5 +45,5 @@ const handler = async (url) => {
   return { internal: internalLinks, external: externalLinks };
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(linkedPagesHandler);
+export default handler;

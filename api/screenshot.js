@@ -1,8 +1,8 @@
-const puppeteer = require('puppeteer-core');
-const chromium = require('chrome-aws-lambda');
-const middleware = require('./_common/middleware');
+import puppeteer from 'puppeteer-core';
+import chromium from 'chrome-aws-lambda';
+import middleware from './_common/middleware.js';
 
-const handler = async (targetUrl) => {
+const screenshotHandler = async (targetUrl) => {
 
   if (!targetUrl) {
     throw new Error('URL is missing from queryStringParameters');
@@ -58,5 +58,5 @@ const handler = async (targetUrl) => {
   }
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(screenshotHandler);
+export default handler;

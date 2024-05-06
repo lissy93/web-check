@@ -1,5 +1,5 @@
-const dns = require('dns');
-const middleware = require('./_common/middleware');
+import dns from 'dns';
+import middleware from './_common/middleware.js';
 
 const lookupAsync = (address) => {
   return new Promise((resolve, reject) => {
@@ -13,11 +13,11 @@ const lookupAsync = (address) => {
   });
 };
 
-const handler = async (url) => {
+const ipHandler = async (url) => {
   const address = url.replaceAll('https://', '').replaceAll('http://', '');
   return await lookupAsync(address);
 };
 
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(ipHandler);
+export default handler;
