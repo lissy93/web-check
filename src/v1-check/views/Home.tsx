@@ -214,7 +214,7 @@ const Home = (): JSX.Element => {
         />
         {/* <FindIpButton onClick={findIpAddress}>Or, find my IP</FindIpButton> */}
         { errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
-        <Button styles="width: calc(100% - 1rem);" size="large" onClick={submit}>Analyze!</Button>
+        <Button type="submit" styles="width: calc(100% - 1rem);" size="large" onClick={submit}>Analyze!</Button>
       </UserInputMain>
       <SponsorCard>
         <Heading as="h2" size="small" color={colors.primary}>Sponsored by</Heading>
@@ -243,7 +243,7 @@ const Home = (): JSX.Element => {
           <Heading as="h2" size="small" color={colors.primary}>Supported Checks</Heading>
           <ul>
             {docs.map((doc, index) => (<li key={index}>{doc.title}</li>))}
-            <li><a href="/about">+ more!</a></li>
+            <li><a href="/check/about">+ more!</a></li>
           </ul>
         </div>
         <div className="links">
