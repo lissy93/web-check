@@ -1,12 +1,21 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const cors = require('cors');
-const rateLimit = require('express-rate-limit');
-const historyApiFallback = require('connect-history-api-fallback');
-require('dotenv').config();
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+import historyApiFallback from 'connect-history-api-fallback';
+import dotenv from 'dotenv';
 
+import { handler as ssrHandler } from './dist/server/entry.mjs';
+
+// Load environment variables from .env file
+dotenv.config();
+
+// Create the Express app
 const app = express();
+
+const __filename = new URL(import.meta.url).pathname;
+const __dirname = path.dirname(__filename);
 
 const port = process.env.PORT || 3000; // The port to run the server on
 const API_DIR = '/api'; // Name of the dir containing the lambda functions
@@ -52,10 +61,13 @@ if (process.env.API_ENABLE_RATE_LIMIT === 'true') {
 // Read and register each API function as an Express routes
 fs.readdirSync(dirPath, { withFileTypes: true })
   .filter(dirent => dirent.isFile() && dirent.name.endsWith('.js'))
-  .forEach(dirent => {
+  .forEach(async dirent => {
     const routeName = dirent.name.split('.')[0];
     const route = `${API_DIR}/${routeName}`;
-    const handler = require(path.join(dirPath, dirent.name));
+    // const handler = require(path.join(dirPath, dirent.name));
+
+    const handlerModule = await import(path.join(dirPath, dirent.name));
+    const handler = handlerModule.default || handlerModule;
     handlers[route] = handler;
 
     app.get(route, async (req, res) => {
@@ -115,13 +127,6 @@ fs.readdirSync(dirPath, { withFileTypes: true })
     res.json(results);
   });
 
-// Handle SPA routing
-app.use(historyApiFallback({
-  rewrites: [
-    { from: /^\/api\/.*$/, to: (context) => context.parsedUrl.path },
-  ]
-}));
-
 // Serve up the GUI - if build dir exists, and GUI feature enabled
 if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
   app.get('*', async (req, res) => {
@@ -131,7 +136,6 @@ if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
       'Web-Check API is up and running!<br />Access the endpoints at '
       +'<a href="/api"><code>/api</code></a>'
     );
-
     res.status(500).send(htmlContent);
   });
 } else if (!fs.existsSync(guiPath)) {
@@ -143,14 +147,32 @@ if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
       'Run <code>yarn build</code> to continue, then restart the server.'
     );
     res.status(500).send(htmlContent);
-});
+  });
 } else { // GUI enabled, and build files present, let's go!!
-  app.use('/', express.static('dist/client/'));
-  // app.use(express.static(guiPath));
+  app.use(express.static('dist/client/'));
+  app.use((req, res, next) => {
+    const locals = {
+      title: 'New title',
+    };
+    ssrHandler(req, res, next, locals);
+  });  
 }
 
+// Handle SPA routing
+app.use(historyApiFallback({
+  rewrites: [
+      { from: /^\/api\/.*$/, to: (context) => context.parsedUrl.path },
+      { from: /^.*$/, to: '/index.html' }
+  ]
+}));
+
+// Anything left unhandled (which isn't an API endpoint), return a 404
 app.use((req, res, next) => {
-  res.status(404).sendFile(path.join(__dirname, 'public', 'error.html'));
+  if (!req.path.startsWith('/api/')) {
+    res.status(404).sendFile(path.join(__dirname, 'public', 'error.html'));
+  } else {
+    next();
+  }
 });
 
 // Print nice welcome message to user
