@@ -20,7 +20,7 @@ const unwrapEnvVar = (varName, fallbackValue) => {
 }
 
 // Determine the deploy target (vercel, netlify, cloudflare, node)
-const deployTarget = unwrapEnvVar('DEPLOY_TARGET', 'node');
+const deployTarget = unwrapEnvVar('PLATFORM', 'node');
 
 // Determine the output mode (server, hybrid or static)
 const output = unwrapEnvVar('OUTPUT', 'hybrid');
@@ -68,7 +68,7 @@ console.log(
 const redirects = {};
 
 // Skip the marketing homepage for self-hosted users
-if (isBossServer && isBossServer === 'true') {
+if (!isBossServer || isBossServer !== true) {
   redirects['/'] = '/check';
 }
 
