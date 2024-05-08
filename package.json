@@ -5,7 +5,8 @@
   "homepage": ".",
   "scripts": {
     "dev": "astro dev",
-    "start": "astro dev",
+    "start": "node server",
+    "start-pm": "pm2 start server.js -i max",
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -30,6 +31,7 @@
     "express": "^4.19.2",
     "express-rate-limit": "^7.2.0",
     "got": "^14.2.1",
+    "pm2": "^5.3.1",
     "psl": "^1.9.0",
     "puppeteer": "^22.8.0",
     "puppeteer-core": "^22.8.0",
