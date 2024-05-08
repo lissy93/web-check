@@ -154,7 +154,7 @@ const FilterButtons = styled.div`
 const Results = (props: { address?: string } ): JSX.Element => {
   const startTime = new Date().getTime();
 
-  const address = props.address || useParams().address || '';
+  const address = props.address || useParams().urlToScan || '';
 
   const [ addressType, setAddressType ] = useState<AddressType>('empt');
 

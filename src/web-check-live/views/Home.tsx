@@ -184,7 +184,6 @@ const Home = (): JSX.Element => {
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log(event.key);
     if (event.key === 'Enter') {
       event.preventDefault();
       submit();
