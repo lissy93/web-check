@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { type ChangeEvent, type FormEvent, useState } from 'react';
-import { useNavigate, type NavigateOptions } from 'react-router-dom';
+import { type ChangeEvent, type FormEvent, useState, useEffect } from 'react';
+import { useNavigate, useLocation, type NavigateOptions } from 'react-router-dom';
 
 import Heading from 'v1-check/components/Form/Heading';
 import Input from 'v1-check/components/Form/Input'
@@ -145,6 +145,17 @@ const Home = (): JSX.Element => {
   const [inputDisabled] = useState(false);
   const navigate = useNavigate();
 
+  const location = useLocation();
+
+  /* Redirect strait to results, if somehow we land on /check?url=[] */
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const urlFromQuery = query.get('url');
+    if (urlFromQuery) {
+      navigate(`/check/${encodeURIComponent(urlFromQuery)}`, { replace: true });
+    }
+  }, [navigate, location.search]);
+
   /* Check is valid address, either show err or redirect to results page */
   const submit = () => {
     let address = userInput.endsWith("/") ? userInput.slice(0, -1) : userInput;
@@ -172,6 +183,19 @@ const Home = (): JSX.Element => {
     if (!isError) setErrMsg('');
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    console.log(event.key);
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      submit();
+    }
+  };
+
+  const formSubmitEvent = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    submit();
+  }
+
   // const findIpAddress = () => {
   //   setUserInput('');
   //   setPlaceholder('Looking up your IP...');
@@ -189,10 +213,6 @@ const Home = (): JSX.Element => {
   //     });
   // };
 
-  const formSubmitEvent = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    submit();
-  }
 
   return (
     <HomeContainer>
@@ -208,9 +228,11 @@ const Home = (): JSX.Element => {
           label="Enter a URL"
           size="large"
           orientation="vertical"
+          name="url"
           placeholder={placeholder}
           disabled={inputDisabled}
           handleChange={inputChange}
+          handleKeyDown={handleKeyPress}
         />
         {/* <FindIpButton onClick={findIpAddress}>Or, find my IP</FindIpButton> */}
         { errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
@@ -220,19 +242,31 @@ const Home = (): JSX.Element => {
         <Heading as="h2" size="small" color={colors.primary}>Sponsored by</Heading>
         <div className="inner">
           <p>
-            <a target="_blank" rel="noreferrer" href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh"
+            >
               Terminal Trove
             </a> - The $HOME of all things in the terminal.
             <br />
             <span className="cta">
               Get updates on the latest CLI/TUI tools via
-              the <a target="_blank" rel="noreferrer" className="cta" href="https://terminaltrove.com/newsletter?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+              the <a
+                target="_blank"
+                rel="noreferrer"
+                className="cta"
+                href="https://terminaltrove.com/newsletter?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh"
+                >
                 Terminal Trove newsletter
               </a>
             </span>
             
           </p>
-          <a target="_blank" rel="noreferrer" href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
             <img width="120" alt="Terminal Trove" src="https://i.ibb.co/NKtYjJ1/terminal-trove-web-check.png" />
           </a>
         </div>

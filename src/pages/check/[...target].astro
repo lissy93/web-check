@@ -14,6 +14,6 @@ const { pathname } = new URL(Astro.request.url)
     <meta charset="UTF-8">
   </head>
   <body>
-    <Main {pathname} client:load />
+    <Main {pathname} client:visible />
   </body>
 </html>

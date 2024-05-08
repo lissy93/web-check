@@ -8,12 +8,14 @@ type Orientation = 'horizontal' | 'vertical';
 interface Props {
   id: string,
   value: string,
+  name?: string,
   label?: string,
   placeholder?: string,
   disabled?: boolean,
   size?: InputSize,
   orientation?: Orientation;
   handleChange: (nweVal: React.ChangeEvent<HTMLInputElement>) => void,
+  handleKeyDown?: (keyEvent: React.KeyboardEvent<HTMLInputElement>) => void,
 };
 
 type SupportedElements = HTMLInputElement | HTMLLabelElement | HTMLDivElement;
@@ -50,7 +52,7 @@ const StyledLabel = styled.label<StyledInputTypes>`
 
 const Input = (inputProps: Props): JSX.Element => {
 
-  const { id, value, label, placeholder, disabled, size, orientation, handleChange } = inputProps;
+  const { id, value, label, placeholder, name, disabled, size, orientation, handleChange, handleKeyDown } = inputProps;
 
   return (
   <InputContainer orientation={orientation}>
@@ -59,9 +61,11 @@ const Input = (inputProps: Props): JSX.Element => {
       id={id}
       value={value}
       placeholder={placeholder}
+      name={name}
       disabled={disabled}
       onChange={handleChange}
       inputSize={size}
+      onKeyDown={handleKeyDown || (() => {})}
     />
   </InputContainer>
   );

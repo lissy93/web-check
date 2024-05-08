@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, type ReactNode } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { ToastContainer } from 'react-toastify';
 import Masonry from 'react-masonry-css'
@@ -154,11 +154,9 @@ const FilterButtons = styled.div`
 const Results = (props: { address?: string } ): JSX.Element => {
   const startTime = new Date().getTime();
 
-  const { urlToScan } = useParams();
-  const address = props.address || urlToScan || '';
+  const address = props.address || useParams().address || '';
 
   const [ addressType, setAddressType ] = useState<AddressType>('empt');
-
 
   const [loadingJobs, setLoadingJobs] = useState<LoadingJob[]>(initialJobs);
   const [modalOpen, setModalOpen] = useState(false);
