@@ -286,7 +286,7 @@ const Home = (): JSX.Element => {
           <a target="_blank" rel="noreferrer" href="https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check" title="Deploy your own private or public instance of Web-Check to Netlify">
             <Button>Deploy your own</Button>
           </a>
-          <a href="about#api-documentation" title="View the API documentation, to use Web-Check programmatically">
+          <a href="check/about#api-documentation" title="View the API documentation, to use Web-Check programmatically">
             <Button>API Docs</Button>
           </a>
         </div>
