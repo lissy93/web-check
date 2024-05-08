@@ -1,5 +1,5 @@
 # Specify the Node.js version to use
-ARG NODE_VERSION=16
+ARG NODE_VERSION=21
 
 # Specify the Debian version to use, the default is "bullseye"
 ARG DEBIAN_VERSION=bullseye
@@ -30,7 +30,7 @@ COPY package.json yarn.lock ./
 
 # Run yarn install to install dependencies and clear yarn cache
 RUN apt-get update && \
-    yarn install --production --frozen-lockfile --network-timeout 100000 && \
+    yarn install --frozen-lockfile --network-timeout 100000 && \
     rm -rf /app/node_modules/.cache
 
 # Copy all files to working directory
@@ -59,4 +59,4 @@ EXPOSE ${PORT:-3000}
 ENV CHROME_PATH='/usr/bin/chromium'
 
 # Define the command executed when the container starts and start the server.js of the Node.js application
-CMD ["yarn", "serve"]
+CMD ["yarn", "start"]
