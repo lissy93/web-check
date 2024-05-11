@@ -1,0 +1,55 @@
+---
+import { ViewTransitions } from 'astro:transitions'
+import MetaTags from '@layouts/MetaTags.astro';
+// import NavBar from '@components/scafold/NavBar.astro';
+// import Footer from '@components/scafold/Footer.astro';
+// import config from '../site-config';
+
+interface Props {
+	title?: string;
+	description?: string;
+  keywords?: string;
+	customSchemaJson?: any;
+	breadcrumbs?: Array<{
+		name: string;
+		item: string;
+	}>
+}
+
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+	<head>
+		<ViewTransitions />
+		<MetaTags {...Astro.props } />
+    <slot name="head" />
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style is:global>
+	/* @import '../styles/values.css';
+	@import '../styles/typography.css'; */
+</style>
+	
+
+<style is:global>
+
+	html {
+		::selection {
+			background: var(--accent);
+			color: var(--accent-fg);
+		}
+		scroll-behavior: smooth;
+	}
+	body {
+		margin: 0;
+		min-height: 100vh;
+		color: var(--foreground);
+		background: var(--background);
+	}
+	
+</style>
