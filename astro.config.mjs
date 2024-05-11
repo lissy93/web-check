@@ -68,7 +68,7 @@ console.log(
 const redirects = {};
 
 // Skip the marketing homepage for self-hosted users
-if (!isBossServer || isBossServer !== true) {
+if (!isBossServer && isBossServer !== true) {
   redirects['/'] = '/check';
 }
 
