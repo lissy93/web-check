@@ -4,7 +4,13 @@ import '../../web-check-live/styles/index.css';
 
 export const prerender = false;
 
-const { pathname } = new URL(Astro.request.url)
+const { pathname, search } = new URL(Astro.request.url);
+
+const searchUrl = new URLSearchParams(search).get('url');
+
+if (searchUrl) {
+  Astro.redirect(`/check/${encodeURIComponent(searchUrl)}`);
+}
 
 ---
 
@@ -14,6 +20,15 @@ const { pathname } = new URL(Astro.request.url)
     <meta charset="UTF-8">
   </head>
   <body>
-    <Main {pathname} client:visible />
+    <Main {pathname} client:load />
   </body>
 </html>
+
+<script>
+  // Fallback, if Astro hasn't initialized the RC comp yet, use JS to redirect
+  const searchParams = new URL(window.location.href).searchParams;
+  if (searchParams.has('url')) {
+    window.location.href = `/check/${searchParams.get('url')}`;
+  }
+</script>
+  
