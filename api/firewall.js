@@ -91,6 +91,10 @@ const handler = async (url) => {
       return hasWaf('IBM WebSphere DataPower');
     }
 
+    if (headers['server'] && headers['server'].includes('QRATOR')) {
+      return hasWaf('QRATOR WAF');
+    }
+
     return {
       hasWaf: false,
     }
