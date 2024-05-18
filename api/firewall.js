@@ -95,6 +95,10 @@ const handler = async (url) => {
       return hasWaf('QRATOR WAF');
     }
 
+    if (headers['server'] && headers['server'].includes('ddos-guard')) {
+      return hasWaf('DDoS-Guard WAF');
+    }
+
     return {
       hasWaf: false,
     }
