@@ -12,13 +12,13 @@ const tlsHandler = async (url) => {
     if (typeof scanId !== 'number') {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: 'Failed to get scan_id from TLS Observatory' }),
+        body: { error: 'Failed to get scan_id from TLS Observatory' },
       };
     }
     const resultResponse = await axios.get(`${MOZILLA_TLS_OBSERVATORY_API}/results?id=${scanId}`);
     return {
       statusCode: 200,
-      body: JSON.stringify(resultResponse.data),
+      body: resultResponse.data,
     };
   } catch (error) {
     return { error: error.message };

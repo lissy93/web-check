@@ -2,6 +2,8 @@ import dns from 'dns';
 import URL from 'url-parse';
 import middleware from './_common/middleware.js';
 
+// TODO: Fix.
+
 const mailConfigHandler = async (url, event, context) => {
   try {
     const domain = new URL(url).hostname || new URL(url).pathname;
@@ -70,7 +72,7 @@ const mailConfigHandler = async (url, event, context) => {
     } else {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: error.message }),
+        body: { error: error.message },
       };
     }
   }

@@ -33,12 +33,12 @@ const linkedPagesHandler = async (url) => {
   if (internalLinks.length === 0 && externalLinks.length === 0) {
     return {
       statusCode: 400,
-      body: JSON.stringify({
+      body: {
         skipped: 'No internal or external links found. '
           + 'This may be due to the website being dynamically rendered, using a client-side framework (like React), and without SSR enabled. '
           + 'That would mean that the static HTML returned from the HTTP request doesn\'t contain any meaningful content for Web-Check to analyze. '
           + 'You can rectify this by using a headless browser to render the page instead.',
-        }),
+        },
     };
   }
 
