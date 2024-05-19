@@ -940,13 +940,20 @@ Credit to the following users for contributing to Web-Check
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/n0a">
+            <img src="https://avatars.githubusercontent.com/u/14150948?v=4" width="80;" alt="n0a"/>
+            <br />
+            <sub><b>Denis Simonov</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
         <a href="https://github.com/GreyXor">
             <img src="https://avatars.githubusercontent.com/u/79602273?v=4" width="80;" alt="GreyXor"/>
             <br />
             <sub><b>GreyXor</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/bolens">
             <img src="https://avatars.githubusercontent.com/u/1218380?v=4" width="80;" alt="bolens"/>
@@ -981,15 +988,15 @@ Credit to the following users for contributing to Web-Check
             <br />
             <sub><b>PhiRequiem</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/Myzel394">
             <img src="https://avatars.githubusercontent.com/u/50424412?v=4" width="80;" alt="Myzel394"/>
             <br />
             <sub><b>Myzel394</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/murrple-1">
             <img src="https://avatars.githubusercontent.com/u/5559656?v=4" width="80;" alt="murrple-1"/>
@@ -1024,15 +1031,15 @@ Credit to the following users for contributing to Web-Check
             <br />
             <sub><b>Gertje823</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/epreston">
             <img src="https://avatars.githubusercontent.com/u/347224?v=4" width="80;" alt="epreston"/>
             <br />
             <sub><b>Ed Preston</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/0xflotus">
             <img src="https://avatars.githubusercontent.com/u/26602940?v=4" width="80;" alt="0xflotus"/>
@@ -1187,13 +1194,6 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/lamtrinhdev">
-            <img src="https://avatars.githubusercontent.com/u/49742151?u=c5eaca5aa6841a80605cf4f7d0e861a9e6339ef3&v=4" width="80;" alt="lamtrinhdev"/>
-            <br />
-            <sub><b>LamTrinh.Dev</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/Bastii717">
             <img src="https://avatars.githubusercontent.com/u/53431819?u=604977bed6ad6875ada890d0d3765a4cacc2fa14&v=4" width="80;" alt="Bastii717"/>
             <br />
@@ -1220,15 +1220,15 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
             <br />
             <sub><b>Frankdez93</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/terminaltrove">
             <img src="https://avatars.githubusercontent.com/u/121595180?v=4" width="80;" alt="terminaltrove"/>
             <br />
             <sub><b>Terminal Trove</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/NixyJuppie">
             <img src="https://avatars.githubusercontent.com/u/138570196?u=b102c222487905728b858704962d32759df29ebe&v=4" width="80;" alt="NixyJuppie"/>
