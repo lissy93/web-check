@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "dev:vercel": "PLATFORM='vercel' npx vercel dev",
-    "dev:netlify": "PLATFORM='netlify' npx netlify dev"
+    "dev:netlify": "PLATFORM='netlify' npx netlify dev",
+    "dev:api": "node server"
   },
   "dependencies": {
     "@astrojs/check": "^0.5.10",
@@ -57,6 +58,7 @@
     "@astrojs/sitemap": "^3.1.4",
     "@astrojs/svelte": "^5.4.0",
     "@astrojs/ts-plugin": "^1.6.1",
-    "@astrojs/vercel": "^7.5.4"
+    "@astrojs/vercel": "^7.5.4",
+    "sass": "^1.77.1"
   }
 }
