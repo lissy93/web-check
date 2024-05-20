@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { Link } from 'react-router-dom';
 import colors from 'web-check-live/styles/colors';
 
 const StyledFooter = styled.footer`
@@ -27,7 +28,7 @@ const StyledFooter = styled.footer`
 `;
 
 
-const Link = styled.a`
+const ALink = styled.a`
   color: ${colors.primary};
   font-weight: bold;
   border-radius: 4px;
@@ -47,12 +48,12 @@ const Footer = (props: { isFixed?: boolean }): JSX.Element => {
   return (
   <StyledFooter style={props.isFixed ? {position: 'fixed'} : {}}>
     <span>
-      View source at <Link href={githubUrl}>github.com/lissy93/web-check</Link>
+      View source at <ALink href={githubUrl}>github.com/lissy93/web-check</ALink>
     </span>
     <span>
-      <Link href="/check/about">Web-Check</Link> is
-      licensed under <Link href={licenseUrl}>MIT</Link> -
-      © <Link href={authorUrl}>Alicia Sykes</Link> 2023
+      <Link to="/check/about">Web-Check</Link> is
+      licensed under <ALink href={licenseUrl}>MIT</ALink> -
+      © <ALink href={authorUrl}>Alicia Sykes</ALink> 2023
     </span>
   </StyledFooter>
   );

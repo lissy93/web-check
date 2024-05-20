@@ -44,8 +44,8 @@ const StyledSvg = styled.svg`
   margin: 0 auto;
   path {
     fill: ${colors.primary};
-    &:nth-child(2) { opacity: 0.8; }
-    &:nth-child(3) { opacity: 0.5; }
+    &:nth-of-type(2) { opacity: 0.8; }
+    &:nth-of-type(3) { opacity: 0.5; }
   }
 `;
 
