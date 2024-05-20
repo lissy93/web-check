@@ -2,17 +2,16 @@
   "name": "web-check",
   "type": "module",
   "version": "0.0.1",
-  "homepage": ".",
+  "homepage": "https://web-check.xyz",
   "scripts": {
-    "dev": "astro dev",
     "start": "node server",
     "start-pm": "pm2 start server.js -i max",
     "build": "astro check && astro build",
-    "preview": "astro preview",
-    "astro": "astro",
     "dev:vercel": "PLATFORM='vercel' npx vercel dev",
     "dev:netlify": "PLATFORM='netlify' npx netlify dev",
-    "dev:api": "node server"
+    "dev:api": "DISABLE_GUI='true' PORT='3001' nodemon server",
+    "dev:astro": "PUBLIC_API_ENDPOINT=http://localhost:3001/api astro dev",
+    "dev": "concurrently -c magenta,cyan -n backend,frontend 'yarn dev:api' 'yarn dev:astro'"
   },
   "dependencies": {
     "@astrojs/check": "^0.5.10",
@@ -59,6 +58,8 @@
     "@astrojs/svelte": "^5.4.0",
     "@astrojs/ts-plugin": "^1.6.1",
     "@astrojs/vercel": "^7.5.4",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.0",
     "sass": "^1.77.1"
   }
 }
