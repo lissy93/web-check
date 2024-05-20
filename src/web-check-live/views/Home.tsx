@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { type ChangeEvent, type FormEvent, useState, useEffect } from 'react';
-import { useNavigate, useLocation, type NavigateOptions } from 'react-router-dom';
+import { Link, useNavigate, useLocation, type NavigateOptions } from 'react-router-dom';
 
 import Heading from 'web-check-live/components/Form/Heading';
 import Input from 'web-check-live/components/Form/Input'
@@ -217,10 +217,12 @@ const Home = (): JSX.Element => {
     <HomeContainer>
       <FancyBackground />
       <UserInputMain onSubmit={formSubmitEvent}>
-        <Heading as="h1" size="xLarge" align="center" color={colors.primary}>
-          <img width="64" src="/web-check.png" alt="Web Check Icon" />
-          Web Check
-        </Heading>
+        <a href="/">
+          <Heading as="h1" size="xLarge" align="center" color={colors.primary}>
+            <img width="64" src="/web-check.png" alt="Web Check Icon" />
+            Web Check
+          </Heading>
+        </a>
         <Input
           id="user-input"
           value={userInput}
@@ -276,7 +278,7 @@ const Home = (): JSX.Element => {
           <Heading as="h2" size="small" color={colors.primary}>Supported Checks</Heading>
           <ul>
             {docs.map((doc, index) => (<li key={index}>{doc.title}</li>))}
-            <li><a href="/check/about">+ more!</a></li>
+            <li><Link to="/check/about">+ more!</Link></li>
           </ul>
         </div>
         <div className="links">
@@ -286,9 +288,9 @@ const Home = (): JSX.Element => {
           <a target="_blank" rel="noreferrer" href="https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check" title="Deploy your own private or public instance of Web-Check to Netlify">
             <Button>Deploy your own</Button>
           </a>
-          <a href="check/about#api-documentation" title="View the API documentation, to use Web-Check programmatically">
+          <Link to="/check/about#api-documentation" title="View the API documentation, to use Web-Check programmatically">
             <Button>API Docs</Button>
-          </a>
+          </Link>
         </div>
       </SiteFeaturesWrapper>
       <Footer isFixed={true} />

@@ -170,7 +170,7 @@ const About = (): JSX.Element => {
         <Heading as="h3" size="small" id="#feature-contents" color={colors.primary}>Contents</Heading>
           <ul>
             {docs.map((section, index: number) => (
-              <li>
+              <li key={index}>
                 <b>{index + 1}</b>
                 <a href={`#${makeAnchor(section.title)}`}>{section.title}</a></li>
             ))}
@@ -200,9 +200,9 @@ const About = (): JSX.Element => {
               <ul>
                 {section.resources.map((link: string | { title: string, link: string }, linkIndx: number) => (
                   typeof link === 'string' ? (
-                    <li id={`link-${linkIndx}`}><a target="_blank" rel="noreferrer" href={link}>{link}</a></li>
+                    <li key={`link-${linkIndx}`} id={`link-${linkIndx}`}><a target="_blank" rel="noreferrer" href={link}>{link}</a></li>
                   ) : (
-                    <li id={`link-${linkIndx}`}><a target="_blank" rel="noreferrer" href={link.link}>{link.title}</a></li>
+                    <li key={`link-${linkIndx}`} id={`link-${linkIndx}`}><a target="_blank" rel="noreferrer" href={link.link}>{link.title}</a></li>
                   )
                 ))}
               </ul>
@@ -272,15 +272,6 @@ const About = (): JSX.Element => {
             <i> Allows for more comprehensive WhoIs records</i>
           </li>
         </ul>
-
-
-{/*     
-**Configuration Settings**:
-- `CHROME_PATH` (e.g. `/usr/bin/chromium`) - The path the the Chromium executable
-- `PORT` (e.g. `3000`) - Port to serve the API, when running server.js
-- `DISABLE_GUI` (e.g. `false`) - Disable the GUI, and only serve the API
-- `API_TIMEOUT_LIMIT` (e.g. `10000`) - The timeout limit for API requests, in milliseconds
-- `REACT_APP_API_ENDPOINT` (e.g. `/api`) - The endpoint for the API (can be local or remote)</p> */}
 
       </Section>
 

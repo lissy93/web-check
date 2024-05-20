@@ -248,9 +248,8 @@ const Results = (props: { address?: string } ): JSX.Element => {
 
   const urlTypeOnly = ['url'] as AddressType[]; // Many jobs only run with these address types
 
-  // const api = process.env.REACT_APP_API_ENDPOINT || '/api'; // Where is the API hosted?
-  const api = '/api'; // Where is the API hosted?
-
+  const api = import.meta.env.PUBLIC_API_ENDPOINT || '/api'; // Where is the API hosted?
+  
   // Fetch and parse IP address for given URL
   const [ipAddress, setIpAddress] = useMotherHook({
     jobId: 'get-ip',
