@@ -1,0 +1,33 @@
+:root {
+  --primary: #9fef00;
+  --primary-lighter: #cff97a;
+  --text-color: #ffffff;
+  --text-color-secondary: #a4b1cd;
+  --background: #141d2b;
+  --background-darker: #111927;
+  --background-lighter: #1a2332;
+  --bg-shadow-color: #0f1620;
+  --fg-shadow-color: #456602;
+  --primary-transparent: #9fef0030;
+
+  // Action Colors
+  --info: #04e4f4;
+  --success: #20e253;
+  --warning: #f6f000;
+  --error: #fca016;
+  --danger: #f80363;
+  --neutral: #272f4d;
+}
+
+html[data-theme="light"] {
+  --primary: #4a7700;
+  --primary-lighter: #a4cf50;
+  --text-color: #333333;
+  --text-color-secondary: #57667e;
+  --background: #ffffff;
+  --background-darker: #f0f0f0;
+  --background-lighter: #fafafa;
+  --bg-shadow-color: #e0e0e0;
+  --fg-shadow-color: #678800;
+  --primary-transparent: #4a770033;
+}

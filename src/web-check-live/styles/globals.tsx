@@ -9,7 +9,10 @@ const GlobalStyles = () => (
       font-weight: 400;
       src: url('/fonts/PTMono.ttf') format('ttf');
     }
-    body { font-family: PTMono; }
+    body, div, a, p, span, ul, li, small, h1, h2, h3, h4, button, section {
+      font-family: PTMono;
+      color: #fff;
+    }
     `}
   />
 );

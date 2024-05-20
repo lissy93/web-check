@@ -2,7 +2,10 @@
 import BaseLayout from '@layouts/Base.astro';
 ---
 
-<BaseLayout title="API Docs | Web Check">
+<BaseLayout
+  title="API Docs | Web Check"
+  description="API documentation for the Web Check backend REST endpoints"
+>
   <Fragment slot="head">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.3/swagger-ui.css">
     <link rel="stylesheet" href="https://rawcdn.githack.com/Amoenus/SwaggerDark/2064ccd45b571865a64c731fa6bfddfbf2a01fe1/SwaggerDark.css">
@@ -23,20 +26,21 @@ import BaseLayout from '@layouts/Base.astro';
         SwaggerUIBundle.presets.apis,
         SwaggerUIBundle.SwaggerUIStandalonePreset
       ],
-      plugins: [
-        SwaggerUIBundle.plugins.DownloadUrl
-      ]
     });
   }
 </script>
 
 <style lang="scss">
+  @import '@styles/global.scss';
   main {
     padding: 0 2rem;
     margin: 0 auto;
     height: 100vh;
     width: 100vw;
     max-width: 1600px;
+    @include mobile-down {
+      padding: 0;
+    }
   }
 
 </style>

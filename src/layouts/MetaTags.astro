@@ -14,7 +14,8 @@ interface Props {
 // Default meta tag values
 const siteInfo = {
   title: 'Web Check',
-  description: '',
+	titleLong: 'Web Check - X-Ray Vision for any Website',
+  description: 'Web Check is the all-in-one OSINT and security tool, for revealing the inner workings of any website',
   keywords: '',
   author: 'Alicia Sykes',
   twitter: '@Lissy_Sykes',
@@ -36,7 +37,7 @@ const {
 } = Astro.props;
 
 // Set non-customizable values for meta tags, from the siteInfo
-const { site, author, twitter, analytics } = siteInfo;
+const { site, author, twitter, analytics, titleLong } = siteInfo;
 
 // Given a map of breadcrumbs, return the JSON-LD for the BreadcrumbList schema
 const makeBreadcrumbs = () => {
@@ -68,20 +69,21 @@ const makeBreadcrumbs = () => {
 <meta name="robots" content="index, follow">
 
 <!-- Icons and colors -->
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+<!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
+<link rel="icon" type="image/png" sizes="512x512" href="/web-check.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
 <!-- Social media meta tags (Open Graphh + Twitter) -->
 <meta property="og:site_name" content={title}>
 <meta property="og:type" content="website">
 <meta property="og:url" content={site}>
-<meta property="og:title" content={title}>
+<meta property="og:title" content={titleLong}>
 <meta property="og:description" content={description}>
 <meta property="og:image" content={`${site}/banner.png`}>
 <meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content={site}>
-<meta name="twitter:title" content={title}>
+<meta name="twitter:title" content={titleLong}>
 <meta name="twitter:description" content={description}>
 <meta name="twitter:image" content=`${site}/banner.png`}>
 <link rel="twitter:image" sizes="180x180" href={`${site}/apple-touch-icon.png`}>

@@ -5,6 +5,11 @@ import MetaTags from '@layouts/MetaTags.astro';
 // import Footer from '@components/scafold/Footer.astro';
 // import config from '../site-config';
 
+import '@styles/typography.scss';
+import '@styles/global.scss';
+import '@styles/colors.scss';
+import '@styles/media-queries.scss';
+
 interface Props {
 	title?: string;
 	description?: string;
@@ -37,7 +42,7 @@ interface Props {
 	
 
 <style is:global>
-
+	@import '@styles/global.scss';
 	html {
 		::selection {
 			background: var(--accent);
