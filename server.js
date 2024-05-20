@@ -1,10 +1,11 @@
-import express from 'express';
+
 import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
 import rateLimit from 'express-rate-limit';
 import historyApiFallback from 'connect-history-api-fallback';
-import dotenv from 'dotenv';
 
 import { handler as ssrHandler } from './dist/server/entry.mjs';
 
@@ -55,7 +56,7 @@ const limiters = limits.map(limit => rateLimit({
 
 // If rate-limiting enabled, then apply the limiters to the /api endpoint
 if (process.env.API_ENABLE_RATE_LIMIT === 'true') {
-  app.use('/api', limiters);
+  app.use(API_DIR, limiters);
 }
 
 // Read and register each API function as an Express routes
@@ -80,7 +81,7 @@ fs.readdirSync(dirPath, { withFileTypes: true })
   });
 
 // Create a single API endpoint to execute all lambda functions
-app.get('/api', async (req, res) => {
+app.get(API_DIR, async (req, res) => {
   const results = {};
   const { url } = req.query;
   const maxExecutionTime = process.env.API_TIMEOUT_LIMIT || 20000;
@@ -129,7 +130,7 @@ app.get('/api', async (req, res) => {
 
 // Skip the marketing homepage, for self-hosted users
 app.use((req, res, next) => {
-  if (req.path === '/' && process.env.BOSS_SERVER !== 'true') {
+  if (req.path === '/' && process.env.BOSS_SERVER !== 'true' && !process.env.DISABLE_GUI) {
     req.url = '/check';
   }
   next();
@@ -137,17 +138,17 @@ app.use((req, res, next) => {
 
 // Serve up the GUI - if build dir exists, and GUI feature enabled
 if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
-  app.get('*', async (req, res) => {
+  app.get('/', async (req, res) => {
     const placeholderContent = await fs.promises.readFile(placeholderFilePath, 'utf-8');
     const htmlContent = placeholderContent.replace(
       '<!-- CONTENT -->', 
       'Web-Check API is up and running!<br />Access the endpoints at '
-      +'<a href="/api"><code>/api</code></a>'
+      +`<a href="${API_DIR}"><code>${API_DIR}</code></a>`
     );
     res.status(500).send(htmlContent);
   });
 } else if (!fs.existsSync(guiPath)) {
-  app.get('*', async (req, res) => {
+  app.get('/', async (req, res) => {
     const placeholderContent = await fs.promises.readFile(placeholderFilePath, 'utf-8');
     const htmlContent = placeholderContent.replace(
       '<!-- CONTENT -->', 
@@ -159,24 +160,21 @@ if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
 } else { // GUI enabled, and build files present, let's go!!
   app.use(express.static('dist/client/'));
   app.use((req, res, next) => {
-    const locals = {
-      title: 'New title',
-    };
-    ssrHandler(req, res, next, locals);
+    ssrHandler(req, res, next);
   });  
 }
 
 // Handle SPA routing
 app.use(historyApiFallback({
   rewrites: [
-      { from: /^\/api\/.*$/, to: (context) => context.parsedUrl.path },
-      { from: /^.*$/, to: '/index.html' }
+    { from: new RegExp(`^${API_DIR}/.*$`), to: (context) => context.parsedUrl.path },
+    { from: /^.*$/, to: '/index.html' }
   ]
 }));
 
 // Anything left unhandled (which isn't an API endpoint), return a 404
 app.use((req, res, next) => {
-  if (!req.path.startsWith('/api/')) {
+  if (!req.path.startsWith(`${API_DIR}/`)) {
     res.status(404).sendFile(path.join(__dirname, 'public', 'error.html'));
   } else {
     next();
