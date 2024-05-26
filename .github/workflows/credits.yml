@@ -12,9 +12,9 @@ jobs:
     name: Inserts Sponsors 💓
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Updates readme with sponsors
-        uses: JamesIves/github-sponsors-readme-action@1.0.5
+        uses: JamesIves/github-sponsors-readme-action@v1
         with:
           token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
           file: .github/README.md
@@ -25,7 +25,7 @@ jobs:
     name: Inserts Contributors 💓
     steps:
       - name: Updates readme with contributors
-        uses: akhilmhdh/contributors-readme-action@v2.3.4
+        uses: akhilmhdh/contributors-readme-action@v2.3.10
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
         with:
