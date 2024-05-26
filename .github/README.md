@@ -1179,20 +1179,13 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/allesauseinerhand">
-            <img src="https://avatars.githubusercontent.com/u/32039836?v=4" width="80;" alt="allesauseinerhand"/>
-            <br />
-            <sub><b>Allesauseinerhand</b></sub>
-        </a>
-    </td></tr>
-<tr>
-    <td align="center">
         <a href="https://github.com/forwardemail">
             <img src="https://avatars.githubusercontent.com/u/32481436?v=4" width="80;" alt="forwardemail"/>
             <br />
             <sub><b>Forward Email - Open-source & Privacy-focused Email Service (2023)</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/Bastii717">
             <img src="https://avatars.githubusercontent.com/u/53431819?u=604977bed6ad6875ada890d0d3765a4cacc2fa14&v=4" width="80;" alt="Bastii717"/>
@@ -1227,15 +1220,15 @@ Huge thanks to these wonderful people, who sponsor me on GitHub, their support h
             <br />
             <sub><b>Terminal Trove</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/NixyJuppie">
             <img src="https://avatars.githubusercontent.com/u/138570196?u=b102c222487905728b858704962d32759df29ebe&v=4" width="80;" alt="NixyJuppie"/>
             <br />
             <sub><b>Nixy</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/nrvo">
             <img src="https://avatars.githubusercontent.com/u/151435968?u=e1dcb307fd0efdc45cddbe9490a7b956e4da6835&v=4" width="80;" alt="nrvo"/>
