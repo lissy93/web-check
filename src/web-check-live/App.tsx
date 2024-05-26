@@ -8,6 +8,15 @@ import NotFound from 'web-check-live/views/NotFound.tsx';
 import ErrorBoundary from 'web-check-live/components/boundaries/PageError.tsx';
 import GlobalStyles from './styles/globals.tsx';
 
+const Layout = () => {
+  return (
+  <>
+    <GlobalStyles />
+    <Outlet />
+  </>
+  );
+}
+
 export default function App() {
   return (
     <ErrorBoundary>
@@ -21,14 +30,5 @@ export default function App() {
         </Route>
       </Routes>
     </ErrorBoundary>
-  );
-}
-
-function Layout() {
-  return (
-  <>
-    <GlobalStyles />
-    <Outlet />
-  </>
   );
 }

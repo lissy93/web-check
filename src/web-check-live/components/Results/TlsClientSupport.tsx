@@ -5,7 +5,7 @@ import Button from 'web-check-live/components/Form/Button';
 import { ExpandableRow } from 'web-check-live/components/Form/Row';
 
 const makeClientSupport = (results: any) => {
-  if (!results?.analysis) return [];
+  if (!results?.analysis || results.analysis.length <1) return [];
   const target = results.target;
   const sslLabsClientSupport = (
       results.analysis.find((a: any) => a.analyzer === 'sslLabsClientSupport')

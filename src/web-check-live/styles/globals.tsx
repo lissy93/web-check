@@ -13,6 +13,9 @@ const GlobalStyles = () => (
       font-family: PTMono;
       color: #fff;
     }
+    #fancy-background p span {
+      color: transparent;
+    }
     `}
   />
 );

@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 // Integrations
-// import svelte from '@astrojs/svelte';
+import svelte from '@astrojs/svelte';
 import react from "@astrojs/react";
 import partytown from '@astrojs/partytown';
 import sitemap from '@astrojs/sitemap';
@@ -35,7 +35,7 @@ const base = unwrapEnvVar('BASE_URL', '/');
 const isBossServer = unwrapEnvVar('BOSS_SERVER', false);
 
 // Initialize Astro integrations
-const integrations = [react(), partytown(), sitemap()];
+const integrations = [svelte(), react(), partytown(), sitemap()];
 
 // Set the appropriate adapter, based on the deploy target
 function getAdapter(target) {

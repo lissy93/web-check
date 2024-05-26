@@ -1,30 +1,12 @@
 ---
 import BaseLayout from '@layouts/Base.astro';
 import Nav from '@components/Nav.astro';
-import HomeBackground from '@/components/HomeBackground';
-
-const isBossServer = import.meta.env.BOSS_SERVER === true;
-
-const searchUrl = new URLSearchParams(new URL(Astro.request.url).search).get('url');
-
-if (!isBossServer && searchUrl) {
-  Astro.redirect(`/check/${encodeURIComponent(searchUrl)}`);
-}
 
 ---
 
 <BaseLayout>
-  <Fragment slot="head">
-    {!isBossServer && (<meta http-equiv="refresh" content="0; url=/check" />)}
-  </Fragment>
-  <main class="fancy-background">
-    <HomeBackground client:only="react" />
+  <main>
     <Nav />
-    <!-- <div class="left"></div>
-    <div class="right"></div>
-    <h1>Web Check</h1>
-    <h2>X-Ray vision for your website's security</h2>
-    <img width="600" class="screenshot" src="https://i.ibb.co/r0jXN6s/web-check.png" alt="Web Check Screenshot" /> -->
   </main>
 </BaseLayout>
 
