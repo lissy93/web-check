@@ -72,7 +72,11 @@ const handler = async (url, event, context) => {
   if(timeoutReached){
     return errorResponse('The function timed out before completing.');
   }
-
+  
+  // Sort openPorts and failedPorts before returning
+  openPorts.sort((a, b) => a - b);
+  failedPorts.sort((a, b) => a - b);
+  
   return { openPorts, failedPorts };
 };
 
