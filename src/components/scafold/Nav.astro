@@ -1,0 +1,95 @@
+---
+
+---
+
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="/" class="logo-link" aria-label="Home">
+      <img width="64" src="/favicon.svg" alt="Site Logo" />
+      <h2 class="site-title">
+        <span class="first">Web</span>
+        <span class="second">Check</span>
+      </h2>
+    </a>
+  </div>
+  <div class="nav-right">
+    <a href="/check" class="nav-link">Try Live</a>
+    <a href="/check/about" class="nav-link">About</a>
+    <a href="/account" class="nav-link">Join</a>
+  </div>
+</nav>
+
+
+<style lang="scss">
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    flex-wrap: wrap;
+    background-color: var(--background);
+    color: var(--text-color);
+    width: 80vw;
+    margin: 0 auto;
+    border-radius: 2rem;
+    border: 1px solid var(--primary-transparent);
+
+    
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    .nav-left {
+      display: flex;
+      align-items: center;
+
+      .logo-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: var(--text-color);
+
+        img {
+          width: 2rem;
+          max-width: 64px;
+          margin-right: 0.5rem;
+        }
+
+        .site-title {
+          margin: 0;
+          font-weight: bold;
+          color: var(--primary);
+          font-size: 1.8rem;
+          .first {
+            color: var(--primary);
+          }
+          .second {
+            color: var(--text-color);
+            font-style: italic;
+          }
+        }
+      }
+    }
+
+    .nav-right {
+      display: flex;
+
+      .nav-link {
+        text-decoration: none;
+        color: var(--text-color);
+        margin-left: 1rem;
+        padding: 0.5rem;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: var(--primary-light);
+        }
+
+        &:focus {
+          outline: none;
+          background-color: var(--primary-dark);
+          box-shadow: 0 0 0 3px var(--primary);
+        }
+      }
+    }
+  }
+</style>
