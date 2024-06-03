@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '@layouts/Base.astro';
+import NavBar from '@components/scafold/Nav.astro';
+// import Footer from '@components/scafold/Footer.astro';
+// import config from '../site-config';
+
 ---
 
 <BaseLayout
@@ -11,6 +15,7 @@ import BaseLayout from '@layouts/Base.astro';
     <link rel="stylesheet" href="https://rawcdn.githack.com/Amoenus/SwaggerDark/2064ccd45b571865a64c731fa6bfddfbf2a01fe1/SwaggerDark.css">
   </Fragment>
   <main>
+    <NavBar />
     <div id="swagger-ui"></div>
   </main>
 </BaseLayout>
@@ -33,7 +38,7 @@ import BaseLayout from '@layouts/Base.astro';
 <style lang="scss">
   @import '@styles/global.scss';
   main {
-    padding: 0 2rem;
+    padding: 2rem;
     margin: 0 auto;
     height: 100vh;
     width: 100vw;

@@ -24,7 +24,7 @@ if (searchUrl) {
   // And if form has been submitted with ?url=, redirect to the results page
   const searchParams = new URL(window.location.href).searchParams;
   if (searchParams.has('url')) {
-    window.location.href = `/check/${searchParams.get('url')}`;
+    window.location.href = `/check/${encodeURIComponent(searchParams.get('url') || '')}`;
   }
 
   // And add a manual no-react form submit handler

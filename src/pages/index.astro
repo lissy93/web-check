@@ -1,14 +1,15 @@
 ---
 import BaseLayout from '@layouts/Base.astro';
-import Nav from '@components/Nav.astro';
-import HomeBackground from '@/components/HomeBackground';
+import HeroForm from '@components/homepage/HeroForm.astro';
+import HomeBackground from '@/components/homepage/HomeBackground';
 
 const isBossServer = import.meta.env.BOSS_SERVER === true;
 
-const searchUrl = new URLSearchParams(new URL(Astro.request.url).search).get('url');
-
-if (!isBossServer && searchUrl) {
-  Astro.redirect(`/check/${encodeURIComponent(searchUrl)}`);
+// Redirect strait to /check or /check/:url if running as self-hosted instance
+if (!isBossServer) {
+  const searchUrl = new URLSearchParams(new URL(Astro.request.url).search).get('url');
+  const redirectUrl = searchUrl ? `/check/${encodeURIComponent(searchUrl)}` : '/check';
+  Astro.redirect(redirectUrl);
 }
 
 ---
@@ -17,26 +18,23 @@ if (!isBossServer && searchUrl) {
   <Fragment slot="head">
     {!isBossServer && (<meta http-equiv="refresh" content="0; url=/check" />)}
   </Fragment>
-  <main class="fancy-background">
-    <HomeBackground client:only="react" />
-    <Nav />
-    <!-- <div class="left"></div>
-    <div class="right"></div>
-    <h1>Web Check</h1>
-    <h2>X-Ray vision for your website's security</h2>
-    <img width="600" class="screenshot" src="https://i.ibb.co/r0jXN6s/web-check.png" alt="Web Check Screenshot" /> -->
+  <main>
+    <HeroForm />
   </main>
+  <HomeBackground client:only="react" />
 </BaseLayout>
 
 <style lang="scss">
+  @import '@styles/global.scss';
   main {
-    height: 100vh;
-    padding: 1rem 0;
-    background: rgb(20,29,43);
-    background: radial-gradient(circle,#141d2b 0%,#0d1521 75%,#141d2b 100%);
-
-    h2 {
-      font-weight: 300;
+    min-height: 100vh;
+    padding: 2rem;
+    width: 80vw;
+    margin: 0 auto;
+    z-index: 3;
+    background: var(--background);
+    @include tablet-landscape-down {
+      width: 96vw;
     }
 
     .screenshot {
