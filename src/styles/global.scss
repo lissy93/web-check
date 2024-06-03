@@ -1,6 +1,7 @@
 /* Global Stylesheet */
-
+@import './colors.scss';
 @import './media-queries.scss';
+@import './typography.scss';
 
 /* CSS Reset - Normalize dimensions and spacing across browsers */
 *,
@@ -9,21 +10,29 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: inherit;
+}
+
+::selection {
+  background: var(--primary);
+  color: var(--background);
 }
 
 /* HTML and body basic setup */
 html {
-  font-size: 16px; // Default text size; consider accessibility and user preferences
-  scroll-behavior: smooth; // Smooth scrolling on click to hash links
+  font-size: 16px;
+  scroll-behavior: smooth;
 }
 
 body {
-  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Hubot Sans', 'Inter', 'Helvetica Neue', Arial, sans-serif;
   line-height: 1;
   color: var(--text-color);
   background: var(--background);
   overflow-x: hidden;
   font-weight: 400;
+  margin: 0;
+  min-height: 100vh;
 }
 
 /* Links */
@@ -70,21 +79,18 @@ input, button, textarea, select {
 }
 
 /* Utility Classes */
-.text-center {
-  text-align: center;
-}
-.hidden {
-  display: none;
-}
+.text-center { text-align: center; }
+.hidden { display: none; }
+.bold { font-weight: 600; }
+.italic { font-style: italic; }
+.underline { text-decoration: underline; }
+.uppercase { text-transform: uppercase; }
 
-/* Responsive Design - Example of a simple breakpoint */
 @media (max-width: 768px) {
   html {
-    font-size: 14px; // Smaller font size on smaller screens
+    font-size: 14px;
   }
 }
-
-
 
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
@@ -100,6 +106,13 @@ h4 { font-size: 1.2rem; }
 h5 { font-size: 1rem; }
 h6 { font-size: 0.85rem; }
 
+// Responsive font sizes
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.6rem; }
+  h3 { font-size: 1.4rem; }
+}
+
 p {
   margin-top: 0;
   margin-bottom: 1em;
@@ -113,11 +126,4 @@ a {
   }
 }
 
-// Responsive font sizes
-@media (max-width: 768px) {
-  h1 { font-size: 2rem; }
-  h2 { font-size: 1.6rem; }
-  h3 { font-size: 1.4rem; }
-  // Adjust more as necessary
-}
 
