@@ -1,9 +1,6 @@
 ---
 import { ViewTransitions } from 'astro:transitions'
 import MetaTags from '@layouts/MetaTags.astro';
-// import NavBar from '@components/scafold/NavBar.astro';
-// import Footer from '@components/scafold/Footer.astro';
-// import config from '../site-config';
 
 import '@styles/typography.scss';
 import '@styles/global.scss';
@@ -29,32 +26,14 @@ interface Props {
 		<ViewTransitions />
 		<MetaTags {...Astro.props } />
     <slot name="head" />
+		<link href="/fonts/Hubot-Sans/Hubot-Sans.woff2"
+			as="font"
+			rel="preload"
+			type="font/woff2"
+			crossorigin="anonymous"
+			>
 	</head>
 	<body>
 		<slot />
 	</body>
 </html>
-
-<style is:global>
-	/* @import '../styles/values.css';
-	@import '../styles/typography.css'; */
-</style>
-	
-
-<style is:global>
-	@import '@styles/global.scss';
-	html {
-		::selection {
-			background: var(--accent);
-			color: var(--accent-fg);
-		}
-		scroll-behavior: smooth;
-	}
-	body {
-		margin: 0;
-		min-height: 100vh;
-		color: var(--foreground);
-		background: var(--background);
-	}
-	
-</style>
