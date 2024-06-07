@@ -135,21 +135,21 @@ const resources = [
     link: 'https://whois.domaintools.com/',
     icon: 'https://i.ibb.co/zJfCKjM/Domain-tools.png',
     description: 'Run a WhoIs lookup on a domain',
-    searchLink: 'https://whois.domaintools.com/{URL}',
+    searchLink: 'https://whois.domaintools.com/{DOMAIN}',
   },
   {
     title: 'NS Lookup',
     link: 'https://nslookup.io/',
     icon: 'https://i.ibb.co/BLSWvBv/Ns-lookup.png',
     description: 'View DNS records for a domain',
-    searchLink: 'https://www.nslookup.io/domains/{URL}/dns-records/',
+    searchLink: 'https://www.nslookup.io/domains/{DOMAIN}/dns-records/',
   },
   {
     title: 'DNS Checker',
     link: 'https://dnschecker.org/',
     icon: 'https://i.ibb.co/gyKtgZ1/Dns-checker.webp',
     description: 'Check global DNS propagation across multiple servers',
-    searchLink: 'https://dnschecker.org/#A/{URL}',
+    searchLink: 'https://dnschecker.org/#A/{DOMAIN}',
   },
   {
     title: 'Censys',
@@ -215,7 +215,7 @@ const resources = [
   },
   {
     title: 'AbuseIPDB',
-    link: 'https://www.abuseipdb.com/',
+    link: 'https://abuseipdb.com/',
     icon: 'https://i.ibb.co/KLZncxw/abuseipdb.png',
     description: 'Checks a website against Zscaler\'s dynamic risk scoring engine',
     searchLink: 'https://www.abuseipdb.com/check?query={DOMAIN}',
@@ -225,7 +225,7 @@ const resources = [
     link: 'https://exchange.xforce.ibmcloud.com/',
     icon: 'https://i.ibb.co/tsTsCV5/x-force.png',
     description: 'View shared human and machine generated threat intelligence',
-    searchLink: 'https://exchange.xforce.ibmcloud.com/url/{URL}',
+    searchLink: 'https://exchange.xforce.ibmcloud.com/url/{URL_ENCODED}',
   },
   {
     title: 'Cisco Talos',
@@ -246,21 +246,21 @@ const resources = [
     link: 'https://urlvoid.com/',
     icon: 'https://i.ibb.co/0ZDjCDz/urlvoid-icon.png',
     description: 'Checks a website across 30+ blocklist engines and website reputation services',
-    searchLink: 'https://urlvoid.com/scan/{URL}',
+    searchLink: 'https://urlvoid.com/scan/{DOMAIN}',
   },
   {
     title: 'URLhaus',
     link: 'https://urlhaus.abuse.ch/',
     icon: 'https://i.ibb.co/j3QwrT8/urlhaus-logo.png',
     description: 'Checks if the site is in URLhaus\'s malware URL exchange',
-    searchLink: 'https://urlhaus.abuse.ch/browse.php?search={URL}',
+    searchLink: 'https://urlhaus.abuse.ch/browse.php?search={URL_ENCODED}',
   },
   {
     title: 'FortiGuard Labs',
     link: 'https://fortiguard.com',
     icon: 'https://i.ibb.co/XZw3KTR/fortiguard-icon.png',
     description: 'Looks up a website on Fortinet\'s ForgiGuard Labs',
-    searchLink: 'https://fortiguard.com/search?q={URL}&engine=7',
+    searchLink: 'https://fortiguard.com/search?q={URL_ENCODED}&engine=7',
   },
   {
     title: 'HackerTarget',
@@ -289,7 +289,7 @@ const resources = [
 ];
 
 const makeLink = (resource: any, scanUrl: string | undefined): string => {
-  return (scanUrl && resource.searchLink) ? resource.searchLink.replaceAll('{URL}', scanUrl.replace(/(https?:\/\/)?/i, '')).replaceAll('{URL_ENCODED}', encodeURIComponent(encodeURIComponent(scanUrl.replace(/(https?:\/\/)?/i, '')))).replaceAll('{DOMAIN}', scanUrl.replace(/(https?:\/\/)?(www.)?/i, '').replace(/(\/.*)/i, '')) : resource.link;
+  return (scanUrl && resource.searchLink) ? resource.searchLink.replaceAll('{URL}', scanUrl.replace(/(https?:\/\/)?/i, '')).replaceAll('{URL_ENCODED}', encodeURIComponent(scanUrl.replace(/(https?:\/\/)?/i, '')).replace(/['\.*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)).replaceAll('{DOMAIN}', scanUrl.replace(/(https?:\/\/)?(www.)?/i, '').replace(/(\/.*)/i, '')) : resource.link;
 };
 
 const AdditionalResources = (props: { url?: string }): JSX.Element => {
