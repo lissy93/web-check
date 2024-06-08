@@ -52,7 +52,7 @@ const TlsCard = (props: {data: any, title: string, actionButtons: any }): JSX.El
     <Card heading={props.title} actionButtons={props.actionButtons}>
       { cipherSuites.length && cipherSuites.map((cipherSuite: any, index: number) => {
         return (
-          <ExpandableRow key={`tls-${index}`} lbl={cipherSuite.title} val="" rowList={cipherSuite.fields} />
+          <ExpandableRow key={`tls-cipher-${index}`} lbl={cipherSuite.title} val="" rowList={cipherSuite.fields} />
         );
       })}
       { !cipherSuites.length && (

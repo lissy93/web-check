@@ -85,7 +85,7 @@ const TechStackCard = (props: {data: any, title: string, actionButtons: any }): 
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       {technologies.map((tech: any, index: number) => {
         return (
-        <TechStackRow>
+        <TechStackRow key={`tech-stack-row-${index}`}>
           <div className="r1">
             <Heading as="h4" size="small">
               {tech.name}

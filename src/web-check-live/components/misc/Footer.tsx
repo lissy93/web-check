@@ -51,7 +51,7 @@ const Footer = (props: { isFixed?: boolean }): JSX.Element => {
       View source at <ALink href={githubUrl}>github.com/lissy93/web-check</ALink>
     </span>
     <span>
-      <Link to="/check/about">Web-Check</Link> is
+      <Link to="/about">Web-Check</Link> is
       licensed under <ALink href={licenseUrl}>MIT</ALink> -
       © <ALink href={authorUrl}>Alicia Sykes</ALink> 2023
     </span>
