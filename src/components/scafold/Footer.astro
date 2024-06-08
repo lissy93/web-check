@@ -1,0 +1,53 @@
+---
+const repo = 'github.com/lissy93/web-check';
+const github = `https://github.com/${repo}`;
+
+const licenseText = 'MIT';
+const licenseLink = `${github}/blob/master/LICENSE`;
+
+const aboutLink = '/about';
+const projectName = 'Web Check';
+
+const authorName = 'Alicia Sykes';
+const authorLink = 'https://aliciasykes.com';
+const currentYear = new Date().getFullYear();
+---
+
+<footer>
+  <p>
+    View source at <a href={github}>{repo}</a>
+  </p>
+  <p>
+    <a href={aboutLink}>{projectName}</a>
+    is licensed under
+    <a href={licenseLink}>{licenseText}</a>
+    - © <a href={authorLink}>{authorName}</a>
+    {currentYear}
+  </p>
+</footer>
+
+<style lang="scss">
+  @import '@styles/global.scss';
+  footer {
+    margin-top: 1rem;
+    background: var(--primary);
+    color: var(--background);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    p, a {
+      margin: 0;
+      color: var(--background);
+      font-size: 1rem;
+    }
+    a {
+      text-decoration: underline;
+    }
+    @include tablet-portrait-down {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>

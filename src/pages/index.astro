@@ -2,6 +2,8 @@
 import BaseLayout from '@layouts/Base.astro';
 import HeroForm from '@components/homepage/HeroForm.astro';
 import HomeBackground from '@/components/homepage/HomeBackground';
+import AboutSection from '@/components/homepage/AboutSection.astro';
+import Footer from '@components/scafold/Footer.astro';
 
 const isBossServer = import.meta.env.BOSS_SERVER === true;
 
@@ -20,7 +22,9 @@ if (!isBossServer) {
   </Fragment>
   <main>
     <HeroForm />
+    <AboutSection />
   </main>
+  <Footer />
   <HomeBackground client:only="react" />
 </BaseLayout>
 
