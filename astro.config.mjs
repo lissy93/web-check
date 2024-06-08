@@ -65,7 +65,9 @@ console.log(
   `to help fund maintenance & development.\x1b[0m\n`,
 );
 
-const redirects = {};
+const redirects = {
+  '/about': '/check/about',
+};
 
 // Skip the marketing homepage for self-hosted users
 if (!isBossServer && isBossServer !== true) {
