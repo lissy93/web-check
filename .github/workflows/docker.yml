@@ -1,10 +1,10 @@
-name: 🐳 Build + Publish Docker Image
+name: 🐳 Publish Docker Image
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - main
     tags:
       - '*'
     paths:
@@ -23,45 +23,45 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout 🛎️
         uses: actions/checkout@v4
 
-      - name: Extract tag name
+      - name: Extract tag name 🏷️
         shell: bash
         run: echo "GIT_TAG=$(echo ${GITHUB_REF#refs/tags/} | sed 's/\//_/g')" >> $GITHUB_ENV
 
-      - name: Compute tags
+      - name: Compute tags 🔖
         id: compute-tags
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             echo "GHCR_TAG=${GHCR_REGISTRY}/${DOCKER_USER}/${IMAGE_NAME}:latest" >> $GITHUB_ENV
             echo "DOCKERHUB_TAG=${DOCKERHUB_REGISTRY}/${DOCKER_USER}/${IMAGE_NAME}:latest" >> $GITHUB_ENV
-          else
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
             echo "GHCR_TAG=${GHCR_REGISTRY}/${DOCKER_USER}/${IMAGE_NAME}:${GIT_TAG}" >> $GITHUB_ENV
             echo "DOCKERHUB_TAG=${DOCKERHUB_REGISTRY}/${DOCKER_USER}/${IMAGE_NAME}:${GIT_TAG}" >> $GITHUB_ENV
           fi
 
-      - name: Set up QEMU
+      - name: Set up QEMU 🐧
         uses: docker/setup-qemu-action@v3
         
-      - name: Set up Docker Buildx
+      - name: Set up Docker Buildx 🐳
         uses: docker/setup-buildx-action@v3
         
-      - name: Login to GitHub Container Registry
+      - name: Login to GitHub Container Registry 🔑
         uses: docker/login-action@v3
         with:
           registry: ${{ env.GHCR_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Login to DockerHub
+      - name: Login to DockerHub 🔑
         uses: docker/login-action@v3
         with:
           registry: ${{ env.DOCKERHUB_REGISTRY }}
           username: ${{ env.DOCKER_USER }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build and push Docker images
+      - name: Build and push Docker images 🛠️
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -71,3 +71,25 @@ jobs:
           tags: |
             ${{ env.GHCR_TAG }}
             ${{ env.DOCKERHUB_TAG }}
+
+      - name: 🗂️ Make Docker Meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKER_USER }}/${{ env.IMAGE_NAME }}
+            ${{ env.GHCR_REGISTRY }}/${{ env.DOCKER_USER }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=tag
+            type=semver,pattern={{version}},enable=true
+            type=semver,pattern={{major}}.x
+            type=raw,value=latest
+          flavor: |
+            latest=false
+          labels: |
+            maintainer=Lissy93
+            org.opencontainers.image.title=Web Check
+            org.opencontainers.image.description=Xray Vision for any Website
+            org.opencontainers.image.documentation=https://web-check.xyz
+            org.opencontainers.image.authors=Alicia Sykes
+            org.opencontainers.image.licenses=MIT
