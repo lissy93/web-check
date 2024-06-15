@@ -13,9 +13,9 @@
     </a>
   </div>
   <div class="nav-right">
-    <a href="/check" class="nav-link">Try Live</a>
-    <a href="/check/about" class="nav-link">About</a>
-    <a href="/account" class="nav-link">Join</a>
+    <a href="/check" class="nav-link">Check</a>
+    <a href="/about" class="nav-link">API</a>
+    <a href="/account" class="nav-link">Login</a>
   </div>
 </nav>
 
@@ -33,8 +33,6 @@
     margin: 0 auto;
     border-radius: 2rem;
     border: 1px solid var(--primary-transparent);
-
-    
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
@@ -79,15 +77,30 @@
         margin-left: 1rem;
         padding: 0.5rem;
         transition: background-color 0.3s;
-
+        position: relative;
         &:hover {
           background-color: var(--primary-light);
         }
-
         &:focus {
           outline: none;
           background-color: var(--primary-dark);
           box-shadow: 0 0 0 3px var(--primary);
+        }
+        &:after {    
+          background: none repeat scroll 0 0 transparent;
+          bottom: 0;
+          content: "";
+          display: block;
+          height: 2px;
+          left: 50%;
+          position: absolute;
+          background: var(--primary);
+          transition: width 0.3s ease 0s, left 0.3s ease 0s;
+          width: 0;
+        }
+        &:hover:after { 
+          width: 100%; 
+          left: 0; 
         }
       }
     }

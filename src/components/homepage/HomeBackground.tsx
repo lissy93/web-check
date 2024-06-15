@@ -77,7 +77,7 @@ const generateMeteor = (id: number, gridSizeX: number, gridSizeY: number) => {
     duration,
     tailVisible: true,
     animationStage: 'traveling',
-    opacity: 1, // Initial opacity
+    opacity: 1,
   };
 };
 

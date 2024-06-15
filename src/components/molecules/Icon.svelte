@@ -11,6 +11,7 @@
     github: brands.faGithubAlt,
     code: solidIcons.faCode,
     rocket: solidIcons.faRocket,
+    copy: solidIcons.faCopy,
   };
 
   export let name: string;
