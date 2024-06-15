@@ -19,7 +19,7 @@ externalDocs:
   description: 'Source: GitHub'
   url: https://github.com/Lissy93/web-check
 servers:
-  - url: http://localhost:4321/api
+  - url: http://localhost:3001/api
     description: Local (Development)
   - url: http://localhost:3000/api
     description: Local (Production)
