@@ -66,7 +66,7 @@ h4 {
   margin: 0.5rem 0;
 }
 &:not(:last-child) {
-  border-bottom: 1px solid ${colors.primary};
+  border-bottom: 1px solid ${colors.primaryTransparent};
 }
 &:hover {
   .tech-confidence {

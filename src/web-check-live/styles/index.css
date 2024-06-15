@@ -16,7 +16,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #141d2b;
+  background: #141517;
   color: #fff;
 }
 
@@ -24,17 +24,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-#fancy-background { color: var(--background, #141d2b); }
+#fancy-background { color: var(--background, #141517); }
 
 
 ::selection {
-  background: var(--primary, #9fef00);
-  color: var(--background, #141d2b);
+  background: var(--primary, #d6fb41);
+  color: var(--background, #141517);
 }
 
 
 svg.rsm-svg {
-  background: #2a3240;
+  background: #141517;
   border-radius: 6px;
 }
 

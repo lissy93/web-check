@@ -21,7 +21,7 @@ export const StyledRow = styled.div`
   flex-wrap: wrap;
   padding: 0.25rem;
   &li { border-bottom: 1px dashed ${colors.primaryTransparent} !important; }
-  &:not(:last-child) { border-bottom: 1px solid ${colors.primary}; }
+  &:not(:last-child) { border-bottom: 1px solid ${colors.primaryTransparent}; }
   span.lbl { font-weight: bold; }
   span.val {
     max-width: 16rem;
