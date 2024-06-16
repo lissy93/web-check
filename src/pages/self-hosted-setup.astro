@@ -32,7 +32,7 @@ const cardData = [
     ]
   },
   {
-    title: 'Deploy from Source',
+    title: 'Build from Source',
     description: 'Want to customize Web Check? Clone the repository and deploy it on your server.',
     buttons: [
       {
@@ -97,7 +97,6 @@ const cardData = [
     margin: 0 auto;
     min-height: 100vh;
     width: 100vw;
-    max-width: 1600px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -111,6 +110,7 @@ const cardData = [
       min-height: 100%;
       flex-grow: 1;
       padding: 5rem 0 2rem 0;
+      max-width: 1200px;
       @include mobile-down {
       padding: 1rem 0;
     }
