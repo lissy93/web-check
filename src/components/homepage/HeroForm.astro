@@ -1,8 +1,10 @@
 ---
 import AnimatedButton from "./AnimatedButton.astro"
 import AnimatedInput from "./AnimatedInput.astro"
+import Screenshots from "./Screenshots.astro"
 ---
 
+<div class="hero">
 <div class="left">
   <h1>
     <img src="/favicon.svg" alt="Check Web" width="64" />
@@ -21,6 +23,8 @@ import AnimatedInput from "./AnimatedInput.astro"
       <AnimatedButton />
     </form>
   </div>
+</div>
+<Screenshots />
 </div>
 
 <script>
@@ -60,6 +64,16 @@ import AnimatedInput from "./AnimatedInput.astro"
 
 <style lang="scss">
 @import '@styles/global.scss';
+.hero {
+  display: flex;
+  justify-content: space-around;
+  width: 100vw;
+  @include desktop-down {
+    display: block;
+    width: 80vw;
+    margin: 0 auto;
+  }
+}
 .left {
     min-height: 100vh;
     display: flex;

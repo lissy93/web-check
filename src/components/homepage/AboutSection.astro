@@ -54,7 +54,7 @@ const links = [
   },
   {
     title: 'Use the API',
-    url: '#',
+    url: '/web-check-api',
     icon: 'code',
     isCta: false,
   },
@@ -62,20 +62,26 @@ const links = [
 
 ---
 
-<div class="features-wrap">
-  <h4>Ready to get started?</h4>
-  <p class="what">
-    With over <span>30 supported checks</span>
-    you can view and analyse key website information in an instant
-  </p>
+<div class="about-section">
+  <div class="features-wrap">
+    <h4>Ready to get started?</h4>
+    <p class="what">
+      With over <span>30 supported checks</span>
+      you can view and analyse key website information in an instant
+    </p>
+  </div>
+  <hr />
+  <Features supportedChecks={supportedChecks} />
+  <ButtonGroup links={links} />
+  <hr />
+  <SponsorSegment />
 </div>
-<hr />
-<Features supportedChecks={supportedChecks} />
-<ButtonGroup links={links} />
-<hr />
-<SponsorSegment />
 
 <style lang="scss">
+  .about-section {
+    width: 80vw;
+    margin: 0 auto;
+  }
   .features-wrap {
     width: 80vw;
     max-width: 650px;
