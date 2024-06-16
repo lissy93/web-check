@@ -91,6 +91,14 @@ const firewallHandler = async (url) => {
       return hasWaf('IBM WebSphere DataPower');
     }
 
+    if (headers['server'] && headers['server'].includes('QRATOR')) {
+      return hasWaf('QRATOR WAF');
+    }
+
+    if (headers['server'] && headers['server'].includes('ddos-guard')) {
+      return hasWaf('DDoS-Guard WAF');
+    }
+
     return {
       hasWaf: false,
     }
