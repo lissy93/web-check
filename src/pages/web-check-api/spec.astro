@@ -1,0 +1,51 @@
+---
+import BaseLayout from '@layouts/Base.astro';
+import NavBar from '@components/scafold/Nav.astro';
+// import Footer from '@components/scafold/Footer.astro';
+// import config from '../site-config';
+
+---
+
+<BaseLayout
+  title="API Docs | Web Check"
+  description="API documentation for the Web Check backend REST endpoints"
+>
+  <Fragment slot="head">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.3/swagger-ui.css">
+    <link rel="stylesheet" href="https://rawcdn.githack.com/Amoenus/SwaggerDark/2064ccd45b571865a64c731fa6bfddfbf2a01fe1/SwaggerDark.css">
+  </Fragment>
+  <main>
+    <NavBar />
+    <div id="swagger-ui"></div>
+  </main>
+</BaseLayout>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.3/swagger-ui-bundle.js"></script>
+<script type="module" is:inline>
+  window.onload = () => {
+    SwaggerUIBundle({
+      url: '/resources/openapi-spec.yml',
+      dom_id: '#swagger-ui',
+      deepLinking: true,
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIBundle.SwaggerUIStandalonePreset
+      ],
+    });
+  }
+</script>
+
+<style lang="scss">
+  @import '@styles/global.scss';
+  main {
+    padding: 2rem;
+    margin: 0 auto;
+    height: 100vh;
+    width: 100vw;
+    max-width: 1600px;
+    @include mobile-down {
+      padding: 0;
+    }
+  }
+
+</style>
