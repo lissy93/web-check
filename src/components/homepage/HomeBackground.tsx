@@ -41,9 +41,7 @@ const StyledSvg = styled.svg`
   height: 100%;
   width: 100%;
   fill: rgba(100, 100, 100, 0.5);
-  defs pattern circle {
-    z-index: 1;
-  }
+  height: 100vh;
 `;
 
 const StyledRect = styled.rect`
