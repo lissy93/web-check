@@ -228,20 +228,6 @@ const resources = [
     searchLink: 'https://exchange.xforce.ibmcloud.com/url/{URL_ENCODED}',
   },
   {
-    title: 'Cisco Talos',
-    link: 'https://talosintelligence.com/',
-    icon: 'https://i.ibb.co/Y7TMdbk/cisco-talos.png',
-    description: 'Checks the reputation of a website with data from Cisco Talos\' threat intelligence team',
-    searchLink: 'https://talosintelligence.com/reputation_center/lookup?search={URL_ENCODED}',
-  },
-  {
-    title: 'Symantec Sitereview (BlueCoat)',
-    link: 'https://sitereview.bluecoat.com/',
-    icon: 'https://i.ibb.co/rGSb0xf/symantec-logo-icon-169699.png',
-    description: 'Check and dispute the current WebPulse categorization for any URL',
-    searchLink: 'https://sitereview.bluecoat.com/#/lookup-result/{URL_ENCODED}',
-  },
-  {
     title: 'URLVoid',
     link: 'https://urlvoid.com/',
     icon: 'https://i.ibb.co/0ZDjCDz/urlvoid-icon.png',
@@ -254,31 +240,6 @@ const resources = [
     icon: 'https://i.ibb.co/j3QwrT8/urlhaus-logo.png',
     description: 'Checks if the site is in URLhaus\'s malware URL exchange',
     searchLink: 'https://urlhaus.abuse.ch/browse.php?search={URL_ENCODED}',
-  },
-  {
-    title: 'FortiGuard Labs',
-    link: 'https://fortiguard.com',
-    icon: 'https://i.ibb.co/XZw3KTR/fortiguard-icon.png',
-    description: 'Looks up a website on Fortinet\'s ForgiGuard Labs',
-    searchLink: 'https://fortiguard.com/search?q={URL_ENCODED}&engine=7',
-  },
-  {
-    title: 'HackerTarget',
-    link: 'https://hackertarget.com/extract-links/',
-    icon: 'https://i.ibb.co/L9CN3v4/hacker-target-icon.png',
-    description: 'Extracts all links from a page',
-  },
-  {
-    title: 'Trend Micro',
-    link: 'https://global.sitesafety.trendmicro.com/',
-    icon: 'https://i.ibb.co/JkCcsVT/trendmicro-icon.png',
-    description: 'Checks a website\'s score on Trend Micro\'s Site Safety Center',
-  },
-  {
-    title: 'Zscaler Zulu',
-    link: 'https://zulu.zscaler.com/',
-    icon: 'https://i.ibb.co/Sfwx4RR/Zscaler-logo.png',
-    description: 'Checks a website against Zscaler\'s dynamic risk scoring engine',
   },
   {
     title: 'ANY.RUN',
