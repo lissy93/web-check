@@ -124,4 +124,8 @@ const commonMiddleware = (handler) => {
   return nativeMode ? vercelHandler : netlifyHandler;
 };
 
+if (PLATFORM === 'NETLIFY') {
+  module.exports = commonMiddleware;
+}
+
 export default commonMiddleware;
