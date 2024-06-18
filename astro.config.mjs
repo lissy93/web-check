@@ -20,7 +20,7 @@ const unwrapEnvVar = (varName, fallbackValue) => {
 }
 
 // Determine the deploy target (vercel, netlify, cloudflare, node)
-const deployTarget = unwrapEnvVar('PLATFORM', 'node');
+const deployTarget = unwrapEnvVar('PLATFORM', 'node').toLowerCase();
 
 // Determine the output mode (server, hybrid or static)
 const output = unwrapEnvVar('OUTPUT', 'hybrid');
