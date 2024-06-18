@@ -7,8 +7,6 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import historyApiFallback from 'connect-history-api-fallback';
 
-import { handler as ssrHandler } from './dist/server/entry.mjs';
-
 // Load environment variables from .env file
 dotenv.config();
 
@@ -80,17 +78,33 @@ fs.readdirSync(dirPath, { withFileTypes: true })
     });
   });
 
+const renderPlaceholderPage = async (res, msgId, logs) => {
+  const errorMessages = {
+    notCompiled: 'Looks like the GUI app has not yet been compiled.<br />'
+    + 'Run <code>yarn build</code> to continue, then restart the server.',
+    notCompiledSsrHandler: 'Server-side rendering failed to initiate, as SSR handler not found.<br />'
+    + 'This can be fixed by running <code>yarn build</code>, then restarting the server.<br />',
+    disabledGui:  'Web-Check API is up and running!<br />Access the endpoints at '
+    + `<a href="${API_DIR}"><code>${API_DIR}</code></a>`,
+  };
+  const logOutput = logs ? `<div class="logs"><code>${logs}</code></div>` : '';
+  const errorMessage = (errorMessages[msgId] || 'An mystery error occurred.') + logOutput;
+  const placeholderContent = await fs.promises.readFile(placeholderFilePath, 'utf-8');
+  const htmlContent = placeholderContent.replace('<!-- CONTENT -->', errorMessage );
+  res.status(500).send(htmlContent);
+};
+
 // Create a single API endpoint to execute all lambda functions
 app.get(API_DIR, async (req, res) => {
   const results = {};
   const { url } = req.query;
   const maxExecutionTime = process.env.API_TIMEOUT_LIMIT || 20000;
 
-  const executeHandler = async (handler, req, res) => {
+  const executeHandler = async (handler, req) => {
     return new Promise(async (resolve, reject) => {
       try {
         const mockRes = {
-          status: (statusCode) => mockRes,
+          status: () => mockRes,
           json: (body) => resolve({ body }),
         };
         await handler({ ...req, query: { url } }, mockRes);
@@ -139,28 +153,21 @@ app.use((req, res, next) => {
 // Serve up the GUI - if build dir exists, and GUI feature enabled
 if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
   app.get('/', async (req, res) => {
-    const placeholderContent = await fs.promises.readFile(placeholderFilePath, 'utf-8');
-    const htmlContent = placeholderContent.replace(
-      '<!-- CONTENT -->', 
-      'Web-Check API is up and running!<br />Access the endpoints at '
-      +`<a href="${API_DIR}"><code>${API_DIR}</code></a>`
-    );
-    res.status(500).send(htmlContent);
+    renderPlaceholderPage(res, 'disabledGui');
   });
 } else if (!fs.existsSync(guiPath)) {
   app.get('/', async (req, res) => {
-    const placeholderContent = await fs.promises.readFile(placeholderFilePath, 'utf-8');
-    const htmlContent = placeholderContent.replace(
-      '<!-- CONTENT -->', 
-      'Looks like the GUI app has not yet been compiled.<br /> ' +
-      'Run <code>yarn build</code> to continue, then restart the server.'
-    );
-    res.status(500).send(htmlContent);
+    renderPlaceholderPage(res, 'notCompiled');
   });
 } else { // GUI enabled, and build files present, let's go!!
   app.use(express.static('dist/client/'));
-  app.use((req, res, next) => {
-    ssrHandler(req, res, next);
+  app.use(async (req, res, next) => {
+    const ssrHandlerPath = path.join(__dirname, 'dist', 'server', 'entry.mjs');
+    import(ssrHandlerPath).then(({ handler: ssrHandler }) => {
+      ssrHandler(req, res, next);
+    }).catch(async err => {
+      renderPlaceholderPage(res, 'notCompiledSsrHandler', err.message);
+    });
   });  
 }
 
