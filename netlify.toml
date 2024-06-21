@@ -21,6 +21,7 @@
   # REACT_APP_WHO_API_KEY=''    # WhoAPI key, for iniiating client-side whois lookup
 
 [functions]
+  node_bundler = "esbuild"
   external_node_modules = ["axios"]
 
 # Redirect the /api/* path to the lambda functions
