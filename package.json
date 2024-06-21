@@ -29,6 +29,7 @@
     "axios": "^1.6.8",
     "cheerio": "^1.0.0-rc.12",
     "chrome-aws-lambda": "^10.1.0",
+    "chromium": "^3.0.3",
     "connect-history-api-fallback": "^2.0.0",
     "cors": "^2.8.5",
     "csv-parser": "^3.0.0",
