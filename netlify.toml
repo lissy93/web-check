@@ -8,6 +8,7 @@
 # Environmental variables and optional secrets
 [build.environment]
   PLATFORM = "netlify"
+  PUBLIC_API_ENDPOINT = "/.netlify/functions"
   # Build configuration env vars (uncomment if you want to conigure these)
   # CI="false" # Set CI to false, to prevent warnings from exiting the build
   # CHROME_PATH='/usr/bin/chromium' # Path to Chromium binary
