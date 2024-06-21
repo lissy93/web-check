@@ -20,6 +20,9 @@
   # REACT_APP_SHODAN_API_KEY='' # Shodan API key, for using Shodan scan API
   # REACT_APP_WHO_API_KEY=''    # WhoAPI key, for iniiating client-side whois lookup
 
+[functions]
+  included_files = ["node_modules/**"]
+
 # Redirect the /api/* path to the lambda functions
 [[redirects]]
   from = "/api/*"
