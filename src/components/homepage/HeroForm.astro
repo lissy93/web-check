@@ -1,0 +1,141 @@
+---
+import AnimatedButton from "./AnimatedButton.astro"
+import AnimatedInput from "./AnimatedInput.astro"
+import Screenshots from "./Screenshots.astro"
+---
+
+<div class="hero">
+<div class="left">
+  <h1>
+    <img src="/favicon.svg" alt="Check Web" width="64" />
+    <span class="web">Web</span>
+    <span class="check">Check</span>
+  </h1>
+  <div class="homepage-action-content">
+    <h2>We give you X-Ray<br />Vision for your Website</h2>
+    <h3>
+      In just 20 seconds, you can see
+      <span>what attackers already know</span>
+    </h3>
+    <form name="live-start" autocomplete="off" action="/check" class="live-start" id="live-start">
+      <label for="url">Enter a URL to start 👇</label>
+      <AnimatedInput />
+      <AnimatedButton />
+    </form>
+  </div>
+</div>
+<Screenshots />
+</div>
+
+<script>
+  /**
+   * Form management actions (validation, submission, etc.)
+   * We just use normal, old school JavaScript for this
+   */
+
+  // Select the form and input elements from the DOM
+  const form = document.getElementById('live-start');
+  const urlInput = document.getElementById('url-input') as HTMLInputElement;
+    
+  // Submit Event - called when user submits form with a valid URL
+  // Gets and checks the URL, then redirects user to /check/:url
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const url = urlInput.value.trim();
+    if (url) {
+      const encodedUrl = encodeURIComponent(url);
+      window.location.href = `/check/${encodedUrl}`;
+    }
+  });
+  
+  // User presses enter, forgets to add protocol
+  // Will add https:// to the URL, and retry form submit
+  urlInput?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      const url = urlInput.value.trim();
+      const urlWithoutProtocolRegex = /^[a-zA-Z0-9]+[a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$/;
+      if (url && !/^https?:\/\//i.test(url) && urlWithoutProtocolRegex.test(url)) {
+        urlInput.value = 'https://' + url;
+        form?.dispatchEvent(new Event('submit'));
+      }
+    }
+  });
+  </script>
+
+<style lang="scss">
+@import '@styles/global.scss';
+.hero {
+  display: flex;
+  justify-content: space-around;
+  width: 100vw;
+  @include desktop-down {
+    display: block;
+    width: 80vw;
+    margin: 0 auto;
+  }
+}
+.left {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 20vh;
+    @include tablet-landscape-down {
+      gap: 6rem;
+    }
+    @include mobile-down {
+      gap: 4rem;
+    }
+    h1 {
+      margin: 0;
+      fontis-size: 3em;
+      z-index: 5;
+      display: flex;
+      gap: 0.1rem;
+      align-items: center;
+      img {
+        vertical-align: middle;
+        width: 3rem;
+        margin-right: 0.5rem;
+      }
+      .web {
+        color: var(--text-color);
+      }
+      .check {
+        color: var(--primary);
+        font-style: italic;
+      }
+    }
+    .homepage-action-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 700px;
+      z-index: 1;
+      @include tablet-landscape-down {
+        gap: 0.25rem;
+      }
+      h2 {
+        font-size: 3rem;
+        font-weight: bold;
+      }
+      h3 {
+        font-weight: normal;
+        font-size: 1.3rem;
+        span {
+          color: var(--primary);
+          font-style: italic;
+        }
+      }
+      form {
+        margin-top: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        label {
+          font-size: 1.3rem;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+</style>

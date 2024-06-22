@@ -1,9 +1,8 @@
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import cheerio from 'cheerio';
+import middleware from './_common/middleware.js';
 
-const axios = require('axios');
-const cheerio = require('cheerio');
-
-const handler = async (url) => {
+const socialTagsHandler = async (url) => {
   
   // Check if url includes protocol
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -61,5 +60,5 @@ const handler = async (url) => {
   }
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(socialTagsHandler);
+export default handler;

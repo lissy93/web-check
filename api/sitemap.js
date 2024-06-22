@@ -1,9 +1,8 @@
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import xml2js from 'xml2js';
+import middleware from './_common/middleware.js';
 
-const axios = require('axios');
-const xml2js = require('xml2js');
-
-const handler = async (url) => {
+const sitemapHandler = async (url) => {
   let sitemapUrl = `${url}/sitemap.xml`;
 
   const hardTimeOut = 5000;
@@ -49,6 +48,6 @@ const handler = async (url) => {
   }
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(sitemapHandler);
+export default handler;
 

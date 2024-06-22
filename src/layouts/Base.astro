@@ -1,0 +1,39 @@
+---
+import { ViewTransitions } from 'astro:transitions'
+import MetaTags from '@layouts/MetaTags.astro';
+
+import '@styles/typography.scss';
+import '@styles/global.scss';
+import '@styles/colors.scss';
+import '@styles/media-queries.scss';
+
+interface Props {
+	title?: string;
+	description?: string;
+  keywords?: string;
+	customSchemaJson?: any;
+	breadcrumbs?: Array<{
+		name: string;
+		item: string;
+	}>
+}
+
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+	<head>
+		<ViewTransitions />
+		<MetaTags {...Astro.props } />
+    <slot name="head" />
+		<link href="/fonts/Hubot-Sans/Hubot-Sans.woff2"
+			as="font"
+			rel="preload"
+			type="font/woff2"
+			crossorigin="anonymous"
+			>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>

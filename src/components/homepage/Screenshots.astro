@@ -1,0 +1,107 @@
+---
+const screenshots = [
+  "https://i.ibb.co/kB7LsV1/wc-ssl.png",
+  "https://i.ibb.co/7Q1kMwM/wc-dns.png",
+  "https://i.ibb.co/TTQ6DtP/wc-cookies.png",
+  "https://i.ibb.co/KwQCjPf/wc-robots.png",
+  "https://i.ibb.co/t3xcwP1/wc-headers.png",
+  "https://i.ibb.co/Kqg8rx7/wc-quality.png",
+  "https://i.ibb.co/cXH2hfR/wc-location.png",
+  "https://i.ibb.co/25j1sT7/wc-hosts.png",
+  "https://i.ibb.co/hVVrmwh/wc-redirects.png",
+  "https://i.ibb.co/wyt21QN/wc-txt-records.png",
+  "https://i.ibb.co/V9CNLBK/wc-status.png",
+  "https://i.ibb.co/F8D1hmf/wc-ports.png",
+  "https://i.ibb.co/M59qgxP/wc-trace-route.png",
+  "https://i.ibb.co/5v6fSyw/Screenshot-from-2023-07-29-19-07-50.png",
+  "https://i.ibb.co/Mk1jx32/wc-server.png",
+  "https://i.ibb.co/89WLp14/wc-domain.png",
+  "https://i.ibb.co/89WLp14/wc-domain.png",
+  "https://i.ibb.co/J54zVmQ/wc-dnssec.png",
+  "https://i.ibb.co/gP4P6kp/wc-features.png",
+  "https://i.ibb.co/k253fq4/Screenshot-from-2023-07-17-20-10-52.png",
+  "https://i.ibb.co/tKpL8F9/Screenshot-from-2023-08-12-15-43-12.png",
+  "https://i.ibb.co/bBQSQNz/Screenshot-from-2023-08-12-15-43-46.png",
+  "https://i.ibb.co/GtrCQYq/Screenshot-from-2023-07-21-12-28-38.png",
+  "https://i.ibb.co/tq1FT5r/Screenshot-from-2023-07-24-20-31-21.png",
+  "https://i.ibb.co/LtK14XR/Screenshot-from-2023-07-29-11-16-44.png",
+  "https://i.ibb.co/4srTT1w/Screenshot-from-2023-07-29-11-15-27.png",
+  "https://i.ibb.co/yqhwx5G/Screenshot-from-2023-07-29-18-22-20.png",
+  "https://i.ibb.co/MfcxQt2/Screenshot-from-2023-08-12-15-40-52.png",
+  "https://i.ibb.co/LP05HMV/Screenshot-from-2023-08-12-15-40-28.png",
+  "https://i.ibb.co/nB9szT1/Screenshot-from-2023-08-14-22-31-16.png",
+  "https://i.ibb.co/nkbczgb/Screenshot-from-2023-08-14-22-02-40.png",
+  "https://i.ibb.co/M5JSXbW/Screenshot-from-2023-08-26-12-12-43.png",
+  "https://i.ibb.co/hYgy621/Screenshot-from-2023-08-26-12-07-47.png",
+  "https://i.ibb.co/6ydtH5R/Screenshot-from-2023-08-26-12-09-58.png",
+  "https://i.ibb.co/FmksZJt/Screenshot-from-2023-08-26-12-12-09.png",
+  "https://i.ibb.co/F7qRZkh/Screenshot-from-2023-08-26-12-11-28.png",
+  "https://i.ibb.co/2F0x8kP/Screenshot-from-2023-07-29-18-34-48.png"
+];
+---
+
+<div class="container">
+  <div class="column">
+    {screenshots.slice(0, 20).map((src, idx) => (
+      <img src={src} class="screenshot" alt={`Screenshot ${idx}`} />
+    ))}
+  </div>
+  <div class="column">
+    {screenshots.slice(20).map((src, idx) => (
+      <img src={src} class="screenshot" alt={`Screenshot ${idx + 20}`} />
+    ))}
+  </div>
+</div>
+
+<style lang="scss">
+  @import '@styles/global.scss';
+
+  .container {
+    display: flex;
+    height: 95vh;
+    overflow: hidden;
+    width: 33vw;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    z-index: 2;
+    @include desktop-down {
+      display: none;
+    }
+  }
+
+  .column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    animation: scroll 24s linear infinite;
+    &:nth-child(2) {
+      animation: scroll 16s linear infinite;
+    }
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
+
+  .screenshot {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+    filter: contrast(120%) grayscale(50%) hue-rotate(-20deg);
+    clip-path: inset(0.5rem);
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-100%);
+    }
+  }
+</style>
+
+

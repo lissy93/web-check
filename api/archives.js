@@ -1,5 +1,5 @@
-const axios = require('axios');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import middleware from './_common/middleware.js';
 
 const convertTimestampToDate = (timestamp) => {
   const [year, month, day, hour, minute, second] = [
@@ -46,7 +46,7 @@ const getScanFrequency = (firstScan, lastScan, totalScans, changeCount) => {
   };
 };
 
-const getWaybackData = async (url) => {
+const wayBackHandler = async (url) => {
   const cdxUrl = `https://web.archive.org/cdx/search/cdx?url=${url}&output=json&fl=timestamp,statuscode,digest,length,offset`;
 
   try {
@@ -80,5 +80,5 @@ const getWaybackData = async (url) => {
   }
 };
 
-module.exports = middleware(getWaybackData);
-module.exports.handler = middleware(getWaybackData);
+export const handler = middleware(wayBackHandler);
+export default handler;

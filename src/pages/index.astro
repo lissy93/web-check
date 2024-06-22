@@ -1,0 +1,63 @@
+---
+import BaseLayout from '@layouts/Base.astro';
+import HeroForm from '@components/homepage/HeroForm.astro';
+import HomeBackground from '@/components/homepage/HomeBackground';
+import AboutSection from '@/components/homepage/AboutSection.astro';
+import Footer from '@components/scafold/Footer.astro';
+
+const isBossServer = import.meta.env.BOSS_SERVER === true;
+
+// Redirect strait to /check or /check/:url if running as self-hosted instance
+if (!isBossServer) {
+  const searchUrl = new URLSearchParams(new URL(Astro.request.url).search).get('url');
+  const redirectUrl = searchUrl ? `/check/${encodeURIComponent(searchUrl)}` : '/check';
+  Astro.redirect(redirectUrl);
+}
+
+---
+
+<BaseLayout>
+  <Fragment slot="head">
+    {!isBossServer && (<meta http-equiv="refresh" content="0; url=/check" />)}
+  </Fragment>
+  <main>
+    <HeroForm />
+    <AboutSection />
+  </main>
+  <Footer />
+  <HomeBackground client:only="react" />
+</BaseLayout>
+
+<style lang="scss">
+  @import '@styles/global.scss';
+  main {
+    min-height: 100vh;
+    padding: 2rem;
+    margin: 0 auto;
+    z-index: 3;
+    background: var(--background);
+    @include tablet-landscape-down {
+      width: 96vw;
+    }
+
+    .screenshot {
+      transform:
+        rotate3d(.5,-.866,0,15deg)
+        rotate(1deg);
+      box-shadow:
+        2em 4em 6em -2em rgba(0,0,0,.5),
+        1em 2em 3.5em -2.5em rgba(0,0,0,.5);
+      transition:
+        transform .4s ease,
+        box-shadow .4s ease;
+      border-radius: .5em;
+
+      &:hover {
+        transform:
+          rotate3d(0,0,0,0deg)
+          rotate(0deg);
+      }
+    }
+  }
+
+</style>

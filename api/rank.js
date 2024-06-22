@@ -1,7 +1,7 @@
-const axios = require('axios');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import middleware from './_common/middleware.js';
 
-const handler = async (url) => { 
+const rankHandler = async (url) => { 
   const domain = url ? new URL(url).hostname : null;
   if (!domain) throw new Error('Invalid URL');
 
@@ -21,6 +21,6 @@ const handler = async (url) => {
   }
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(rankHandler);
+export default handler;
 

@@ -1,0 +1,40 @@
+---
+
+import Icon from '@components/molecules/Icon.svelte';
+
+interface Props {
+  supportedChecks: string[];
+}
+
+const { supportedChecks } = Astro.props;
+
+---
+
+<ul class="features">
+  {supportedChecks.map((check) => (
+    <li>
+      <Icon name="check" />
+      {check}
+    </li>
+  ))}
+  <li><Icon name="plus" /><a href="/about#features">More</a></li>
+</ul>
+
+<style lang="scss">
+.features {
+  columns: 5;
+  column-width: 150px;
+  list-style: none;
+  padding: 0;
+  li {
+    font-size: 1.2rem;
+    line-height: 1.25;
+    margin: 0.5rem 0;
+    display: flex;
+    gap: 0.5rem;
+    :global(svg) {
+      color: var(--primary);
+    }
+  }
+}
+</style>

@@ -1,7 +1,7 @@
-const axios = require('axios');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import middleware from './_common/middleware.js';
 
-const handler = async (url) => {
+const httpsSecHandler = async (url) => {
   const fullUrl = url.startsWith('http') ? url : `http://${url}`;
   
   try {
@@ -22,5 +22,5 @@ const handler = async (url) => {
   }
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(httpsSecHandler);
+export default handler;

@@ -1,7 +1,7 @@
-const axios = require('axios');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import middleware from './_common/middleware.js';
 
-const handler = async (url, event, context) => {
+const headersHandler = async (url, event, context) => {
   try {
     const response = await axios.get(url, {
       validateStatus: function (status) {
@@ -15,5 +15,5 @@ const handler = async (url, event, context) => {
   }
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(headersHandler);
+export default handler;

@@ -1,0 +1,79 @@
+// Breakpoints
+$breakpoint-xs: 599px;  // Max width for mobile only
+$breakpoint-sm: 600px;  // Min width for tablet portrait
+$breakpoint-md: 768px;  // Min width for tablet landscape
+$breakpoint-lg: 1024px; // Min width for desktop
+$breakpoint-xl: 1440px; // Min width for large desktop
+
+// Mixins for specific breakpoints
+@mixin for-mobile-only {
+  @media (max-width: $breakpoint-xs) {
+    @content;
+  }
+}
+
+@mixin mobile-up {
+  @media (min-width: calc($breakpoint-xs + 1px)) {
+    @content;
+  }
+}
+
+@mixin for-tablet-portrait {
+  @media (min-width: $breakpoint-sm) and (max-width: calc($breakpoint-md - 1px)) {
+    @content;
+  }
+}
+
+@mixin tablet-portrait-down {
+  @media (max-width: calc($breakpoint-md - 1px)) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin for-tablet-landscape {
+  @media (min-width: $breakpoint-md) and (max-width: calc($breakpoint-lg - 1px)) {
+    @content;
+  }
+}
+
+@mixin tablet-landscape-down {
+  @media (max-width: calc($breakpoint-lg - 1px)) {
+    @content;
+  }
+}
+
+@mixin for-desktop {
+  @media (min-width: $breakpoint-lg) and (max-width: calc($breakpoint-xl - 1px)) {
+    @content;
+  }
+}
+
+@mixin desktop-down {
+  @media (max-width: calc($breakpoint-xl - 1px)) {
+    @content;
+  }
+}
+
+@mixin for-large-desktop {
+  @media (min-width: $breakpoint-xl) {
+    @content;
+  }
+}
+
+@mixin large-desktop-up {
+  @media (min-width: $breakpoint-xl) {
+    @content;
+  }
+}
+
+@mixin mobile-down {
+  @media (max-width: $breakpoint-xs) {
+    @content;
+  }
+}

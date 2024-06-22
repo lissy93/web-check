@@ -1,7 +1,7 @@
-const net = require('net');
-const psl = require('psl');
-const axios = require('axios');
-const middleware = require('./_common/middleware');
+import net from 'net';
+import psl from 'psl';
+import axios from 'axios';
+import middleware from './_common/middleware.js';
 
 const getBaseDomain = (url) => {
   let protocol = '';
@@ -83,7 +83,7 @@ const fetchFromMyAPI = async (hostname) => {
   }
 };
 
-const handler = async (url) => {
+const whoisHandler = async (url) => {
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
     url = 'http://' + url;
   }
@@ -106,6 +106,6 @@ const handler = async (url) => {
   };
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(whoisHandler);
+export default handler;
 

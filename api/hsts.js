@@ -1,7 +1,7 @@
-const https = require('https');
-const middleware = require('./_common/middleware');
+import https from 'https';
+import middleware from './_common/middleware.js';
 
-const handler = async (url, event, context) => {
+const hstsHandler = async (url, event, context) => {
   const errorResponse = (message, statusCode = 500) => {
     return {
       statusCode: statusCode,
@@ -45,6 +45,5 @@ const handler = async (url, event, context) => {
   });
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
-
+export const handler = middleware(hstsHandler);
+export default handler;

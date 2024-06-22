@@ -1,8 +1,8 @@
-const axios = require('axios');
-const unzipper = require('unzipper');
-const csv = require('csv-parser');
-const fs = require('fs');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import unzipper from 'unzipper';
+import csv from 'csv-parser';
+import fs from 'fs';
+import middleware from './_common/middleware.js';
 
 // Should also work with the following sources:
 // https://www.domcop.com/files/top/top10milliondomains.csv.zip
@@ -14,7 +14,7 @@ const middleware = require('./_common/middleware');
 const FILE_URL = 'https://s3-us-west-1.amazonaws.com/umbrella-static/top-1m.csv.zip';
 const TEMP_FILE_PATH = '/tmp/top-1m.csv';
 
-const handler = async (url) => {
+const rankHandler = async (url) => {
   let domain = null;
 
   try {
@@ -66,6 +66,5 @@ return new Promise((resolve, reject) => {
 });
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
-
+export const handler = middleware(rankHandler);
+export default handler;

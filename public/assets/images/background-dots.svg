@@ -1,0 +1,9 @@
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="a" patternUnits="userSpaceOnUse" width="30" height="30">
+      <rect width="100%" height="100%" fill="var(--background, #111211)" />
+      <circle cx="5" cy="5" r="1.75" fill="var(--background-lighter, #3A3B3A)" opacity="0.3" />
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#a)" />
+</svg>

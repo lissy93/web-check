@@ -1,0 +1,186 @@
+---
+const placeholders = [
+  'duck.com',
+  'github.com',
+  'google.com',
+  'x.com',
+  'bbc.co.uk',
+  'wikipedia.org',
+  'openai.com',
+];
+---
+
+
+<div class="input-container">
+  <input
+    required
+    id="url-input"
+    type="url"
+    name="url"
+    placeholder="E.g. duck.com"
+  />
+  <div class="placeholder-container">
+    <span class="starter" aria-hidden="true">E.g.</span>
+    {placeholders.map((placeholder, index) => (
+      <span class={`placeholder ${index === 0 ? 'active' : ''}`} aria-hidden="true">{placeholder}</span>
+    ))}
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Grab the DOM elements we need
+  const placeholders = document.querySelectorAll('.placeholder');
+  const starter = document.querySelector('.starter') as HTMLElement;
+  const inputField = document.getElementById('url-input') as HTMLInputElement;
+
+  // Variables for the configuring + tracking the placeholder animation
+  let currentIndex = 0;
+  const timeBetweenPlaceholders = 3000;
+  let interval: ReturnType<typeof setInterval>;
+  
+  // Function to change which placeholder is currently visible
+  const changePlaceholder = () => {
+    placeholders.forEach((el, index) => {
+      starter.classList.remove('hide');
+      if (index === currentIndex) {
+        el.classList.add('active');
+        el.classList.remove('inactive');
+        el.classList.remove('still-inactive');
+      } else {
+        el.classList.add('inactive');
+        el.classList.remove('active');
+        setTimeout(() => {
+          el.classList.add('still-inactive');
+        }, timeBetweenPlaceholders / 5);
+      }
+    });
+    currentIndex = (currentIndex + 1) % placeholders.length;
+  };
+
+  // Begin the placeholder animation
+  const startPlaceholderAnimation = () => {
+    interval = setInterval(changePlaceholder, timeBetweenPlaceholders);
+  };
+
+  // Stop the placeholder animation
+  const stopPlaceholderAnimation = () => {
+    clearInterval(interval);
+    starter.classList.add('hide');
+    placeholders.forEach((el) => {
+      el.classList.remove('active');
+      el.classList.add('inactive');
+    });
+  };
+
+  // When user focuses on the input field, stop the animation
+  inputField.addEventListener('focus', () => {
+    stopPlaceholderAnimation();
+  });
+
+  // And, when user un-focuses on input, resume the placeholder animation
+  inputField.addEventListener('blur', () => {
+    if (!inputField.value) {
+      startPlaceholderAnimation();
+    }
+  });
+
+  // If user types something, stop the animation
+  inputField.addEventListener('input', () => {
+    if (inputField.value) {
+      stopPlaceholderAnimation();
+    } else if (document.activeElement !== inputField) {
+      startPlaceholderAnimation();
+    }
+  });
+
+  // Disable the input's placeholder attribute
+  inputField.setAttribute('placeholder', '');
+
+  // Make visible the placeholder container
+  (document.querySelector('.placeholder-container') as HTMLElement).style.display = 'flex';
+
+  // And finally, start the animation!
+  startPlaceholderAnimation();
+});
+</script>
+
+
+<style lang="scss">
+@import '@styles/typography.scss';
+@import '@styles/global.scss';
+
+.input-container {
+  position: relative;
+  overflow: hidden;
+  input {
+    width: 100%;
+    padding: 1rem;
+    background: var(--background-50);
+    font-size: 2rem;
+    color: var(--text-color-secondary);
+    border: 2px solid var(--text-color);
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
+    &:focus {
+      border-color: var(--primary);
+    }
+  }
+}
+
+.input-container .placeholder-container {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  padding-left: 16px;
+  pointer-events: none;
+}
+
+.starter, .placeholder {
+  position: absolute;
+  width: 100%;
+  font-size: 2rem;
+  color: var(--text-color-thirdly);
+  padding: 0.1rem 0;
+  user-select: none;
+}
+
+.starter {
+  transition: opacity 0.6s, transform 0.5s;
+  &.hide {
+    opacity: 0;
+    transform: translateX(-50%);
+  }
+}
+
+.placeholder {
+  padding-left: 4rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: transform 0.5s ease-in-out, opacity 0.6s;
+  opacity: 0;
+  transform: translateY(-150%);
+}
+
+.placeholder.active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.placeholder.inactive {
+  transform: translateY(150%);
+  opacity: 0;
+}
+
+.placeholder.still-inactive {
+  transform: translateY(-150%);
+  opacity: 0;
+}
+
+
+</style>

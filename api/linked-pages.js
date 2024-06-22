@@ -1,9 +1,9 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
-const urlLib = require('url');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import cheerio from 'cheerio';
+import urlLib from 'url';
+import middleware from './_common/middleware.js';
 
-const handler = async (url) => {
+const linkedPagesHandler = async (url) => {
   const response = await axios.get(url);
   const html = response.data;
   const $ = cheerio.load(html);
@@ -33,17 +33,17 @@ const handler = async (url) => {
   if (internalLinks.length === 0 && externalLinks.length === 0) {
     return {
       statusCode: 400,
-      body: JSON.stringify({
+      body: {
         skipped: 'No internal or external links found. '
           + 'This may be due to the website being dynamically rendered, using a client-side framework (like React), and without SSR enabled. '
           + 'That would mean that the static HTML returned from the HTTP request doesn\'t contain any meaningful content for Web-Check to analyze. '
           + 'You can rectify this by using a headless browser to render the page instead.',
-        }),
+        },
     };
   }
 
   return { internal: internalLinks, external: externalLinks };
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(linkedPagesHandler);
+export default handler;

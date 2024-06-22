@@ -1,5 +1,5 @@
-const axios = require('axios');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import middleware from './_common/middleware.js';
 
 const hasWaf = (waf) => {
   return {
@@ -7,7 +7,7 @@ const hasWaf = (waf) => {
   }
 };
 
-const handler = async (url) => {
+const firewallHandler = async (url) => {
   const fullUrl = url.startsWith('http') ? url : `http://${url}`;
   
   try {
@@ -110,5 +110,5 @@ const handler = async (url) => {
   }
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(firewallHandler);
+export default handler;

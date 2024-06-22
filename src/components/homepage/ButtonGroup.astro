@@ -1,0 +1,66 @@
+---
+import Icon from '@components/molecules/Icon.svelte';
+
+interface Props {
+  links: {
+    title: string;
+    url: string;
+    icon: string;
+    isCta: boolean;
+  }[];
+}
+
+const { links } = Astro.props;
+
+---
+
+<div class="button-wrap">
+  {links.map(link => (
+    <a href={link.url} class={link.isCta ? 'cta' : ''}><Icon name={link.icon} size={2} />{link.title}</a>
+  ))}
+</div>
+
+<style lang="scss">
+@import '@styles/global.scss';
+.button-wrap {
+  margin: 3rem auto;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  a {
+    width: 20rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: bold;
+    box-sizing: border-box;
+    padding: 0.75rem;
+    background: var(--background-50);
+    font-size: 1.2rem;
+    color: var(--text-color);
+    border: 2px solid var(--text-color);
+    border-radius: 3px;
+    transition: all 0.25s ease-in-out;
+    &:hover {
+      cursor: pointer;
+      text-decoration: none;
+      background: var(--text-color);
+      color: var(--background);
+    }
+    &.cta {
+      color: var(--primary);
+      border-color: var(--primary);
+      &:hover {
+        background: var(--primary);
+        color: var(--background);
+      }
+    }
+  }
+  @include for-mobile-only {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+</style>

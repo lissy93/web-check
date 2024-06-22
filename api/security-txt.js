@@ -1,6 +1,8 @@
-const { https } = require('follow-redirects');
-const { URL } = require('url');
-const middleware = require('./_common/middleware');
+import { URL } from 'url';
+import followRedirects from 'follow-redirects';
+import middleware from './_common/middleware.js';
+
+const { https } = followRedirects;
 
 const SECURITY_TXT_PATHS = [
   '/security.txt',
@@ -38,7 +40,7 @@ const isPgpSigned = (result) => {
   return false;
 };
 
-const handler = async (urlParam) => {
+const securityTxtHandler = async (urlParam) => {
 
   let url;
   try {
@@ -90,5 +92,5 @@ async function fetchSecurityTxt(baseURL, path) {
   });
 }
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(securityTxtHandler);
+export default handler;

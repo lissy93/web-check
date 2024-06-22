@@ -1,0 +1,113 @@
+---
+
+import ButtonGroup from '@components/homepage/ButtonGroup.astro';
+import Features from '@components/homepage/Features.astro';
+import SponsorSegment from '@components/homepage/SponsorSegment.astro';
+
+const supportedChecks = [
+  'Archive History',
+  'Block List Check',
+  'Carbon Footprint',
+  'Cookies',
+  'DNS Server',
+  'DNS Records',
+  'DNSSEC',
+  'Site Features',
+  'Firewall Types',
+  'Get IP Address',
+  'Headers',
+  'HSTS',
+  'HTTP Security',
+  'Linked Pages',
+  'Mail Config',
+  'Open Ports',
+  'Quality Check',
+  'Global Rank',
+  'Redirects',
+  'Robots.txt',
+  'Screenshot',
+  'Security.txt',
+  'Sitemap',
+  'Social Tags',
+  'SSL Certificate',
+  'Uptime Status',
+  'Tech Stack',
+  'Known Threats',
+  'TLS Version',
+  'Trace Route',
+  'TXT Records',
+  'Whois Lookup'
+];
+
+const links = [
+  {
+    title: 'View on GitHub',
+    url: 'https://github.com/lissy93/web-check',
+    icon: 'github',
+    isCta: true,
+  },
+  {
+    title: 'Deploy your Own',
+    url: '/self-hosted-setup',
+    icon: 'rocket',
+    isCta: false,
+  },
+  {
+    title: 'Use the API',
+    url: '/web-check-api',
+    icon: 'code',
+    isCta: false,
+  },
+];
+
+---
+
+<div class="about-section">
+  <div class="features-wrap">
+    <h4>Ready to get started?</h4>
+    <p class="what">
+      With over <span>30 supported checks</span>
+      you can view and analyse key website information in an instant
+    </p>
+  </div>
+  <hr />
+  <Features supportedChecks={supportedChecks} />
+  <ButtonGroup links={links} />
+  <hr />
+  <SponsorSegment />
+</div>
+
+<style lang="scss">
+  .about-section {
+    width: 80vw;
+    margin: 0 auto;
+  }
+  .features-wrap {
+    width: 80vw;
+    max-width: 650px;
+    margin: 0 auto;
+  }
+  h4 {
+    text-transform: capitalize;
+    font-size: 1.8rem;
+    text-align: center;
+    background: linear-gradient(90deg, var(--text-color), var(--primary));
+    background-clip: text;
+    text-fill-color: transparent;
+    color: transparent;
+  }
+  .what {
+    text-align: center;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    span {
+      color: var(--primary);
+      font-style: italic;
+    }
+  }
+  hr {
+    width: 3rem;
+    margin: 3rem auto;
+    color: var(--primary);
+  }
+</style>

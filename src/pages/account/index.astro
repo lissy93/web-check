@@ -1,0 +1,79 @@
+---
+import BaseLayout from '@layouts/Base.astro';
+import NavBar from '@components/scafold/Nav.astro';
+import Footer from '@components/scafold/Footer.astro';
+import Icon from '@components/molecules/Icon.svelte';
+
+---
+
+<BaseLayout
+  title="Account | Web Check"
+  description="Login or sign up for a free account on Web Check, to manage API access, save reports, enable website change notificiations and more!"
+>
+  <div class="web-check-page">
+    <NavBar />
+    <main>
+      <!-- <h1>Login</h1>
+      <p>
+        Your Web Check account is your gateway to managing API access, as well as additional functionality
+      </p> -->
+
+      <div class="under-development">
+        <h4>Account management is currently under development.</h4>
+        <p>
+          Once complete, you will be able to login to your account to manage API
+          access, save reports, enable website change notificiations and more!
+        </p>
+      </div>
+
+    </main>
+    <Footer />
+  </div>
+</BaseLayout>
+
+
+<style lang="scss">
+  @import '@styles/global.scss';
+  .web-check-page {
+    padding-top: 2rem;
+    margin: 0 auto;
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-image: url('/assets/images/background-dots.svg');
+    @include mobile-down {
+      padding: 0.5rem;
+    }
+    .under-development {
+      border: 2px solid var(--warning);
+      background: #ffff0012;
+      padding: 1rem;
+      margin: 2rem auto;
+      border-radius: 4px;
+      h4 {
+        margin-bottom: 1rem;
+      }
+      p {
+        font-size: 1.1rem;
+        line-height: 1.5;
+      }
+    }
+    main {
+      width: 80vw;
+      margin: 0 auto;
+      min-height: 100%;
+      flex-grow: 1;
+      padding: 5rem 0 2rem 0;
+      max-width: 1200px;
+      @include mobile-down {
+      padding: 1rem 0;
+    }
+    }
+
+  }
+  
+
+
+</style>

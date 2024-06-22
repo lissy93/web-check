@@ -1,7 +1,7 @@
-const https = require('https');
-const middleware = require('./_common/middleware');
+import https from 'https';
+import middleware from './_common/middleware.js';
 
-const handler = async (url) => {
+const featuresHandler = async (url) => {
   const apiKey = process.env.BUILT_WITH_API_KEY;
 
   if (!url) {
@@ -45,5 +45,5 @@ const handler = async (url) => {
   }
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(featuresHandler);
+export default handler;

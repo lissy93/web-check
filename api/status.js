@@ -1,8 +1,8 @@
-const https = require('https');
-const { performance, PerformanceObserver } = require('perf_hooks');
-const middleware = require('./_common/middleware');
+import https from 'https';
+import { performance, PerformanceObserver } from 'perf_hooks';
+import middleware from './_common/middleware.js';
 
-const handler = async (url) => {
+const statusHandler = async (url) => {
   if (!url) {
     throw new Error('You must provide a URL query parameter!');
   }
@@ -55,5 +55,5 @@ const handler = async (url) => {
   }
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(statusHandler);
+export default handler;

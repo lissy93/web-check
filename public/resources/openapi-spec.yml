@@ -1,0 +1,2856 @@
+openapi: 3.0.0
+info:
+  title: Web Check 🕵
+  description: >
+    **API documentation for the [Web Check](https://github.com/lissy93/web-check) backend endpoints.**<br>
+    _Web Check gives you x-ray vision, revealing the configration and inner workings of any website._
+    <br><br>
+    [![Website - Web-Check.xyz](https://img.shields.io/badge/Website-webcheck.zyz-9fef00?style=flat&logo=googlecloudstorage&logoColor=white&labelColor=1c1d28)](https://web-check.xyz/)
+    [![DockerHub - Lissy93/Web-Check](https://img.shields.io/badge/DockerHub-Lissy93/Web_Check-1fb1f4?style=flat&logo=docker&logoColor=white&labelColor=1c1d28)](https://hub.docker.com/r/lissy93/web-check)
+    [![GitHub - Lissy93/Web-Check](https://img.shields.io/badge/GitHub-Lissy93/Web_Check-a832fc?style=flat&logo=github&logoColor=white&labelColor=1c1d28)](https://github.com/lissy93/web-check)
+    [![Sponsor - Alicia Sykes](https://img.shields.io/badge/Sponsor-Alicia_Sykes-f2159a?style=flat&logo=githubsponsors&logoColor=white&labelColor=1c1d28)](https://github.com/sponsors/Lissy93)
+  
+  version: 1.0.0
+  license:
+    name: 'License: MIT'
+    url: https://github.com/Lissy93/web-check/blob/master/LICENSE
+  termsOfService: https://web-check.xyz/about#terms-info
+externalDocs:
+  description: 'Source: GitHub'
+  url: https://github.com/Lissy93/web-check
+servers:
+  - url: http://localhost:3001/api
+    description: Local (Development)
+  - url: http://localhost:3000/api
+    description: Local (Production)
+  - url: https://web-check.xyz/api
+    description: Public Demo (Vercel)
+  - url: https://web-check.as93.net/api
+    description: Public Demo (Netlify)
+tags:
+  - name: Quality & Info
+    description: Endpoints providing quality metrics, and general website information.
+  - name: Security
+    description: Endpoints related to website and server security configurations.
+  - name: Server Info
+    description: Endpoints providing information about the server hosting the website.
+  - name: Client-Side Information
+    description: Endpoints providing metrics about the website's client-side content.
+components:
+  responses:
+    Error:
+      description: Internal Server Error - An error occurred while processing the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Skipped:
+      description: No Content - The request was successful, but no content is returned.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SkippedResponse'
+    MissingParam:
+      description: Bad Request - Missing or incorrect input parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Unauthorized - Authentication credentials were missing or incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Forbidden - The credentials provided do not grant the necessary permissions.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    TooManyRequests:
+      description: Too Many Requests - Rate limit exceeded.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: A description of the error
+    SkippedResponse:
+      type: object
+      properties:
+        skipped:
+          type: string
+          description: A description of why the check was skipped
+paths:
+  /archives:
+    get:
+      summary: Retrieve archive data
+      tags:
+        - Quality & Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  firstScan:
+                    type: string
+                    format: date-time
+                    description: The timestamp of the first scan
+                    example: "1996-12-21T17:11:14.000Z"
+                  lastScan:
+                    type: string
+                    format: date-time
+                    description: The timestamp of the last scan
+                    example: "2024-05-14T13:45:47.000Z"
+                  totalScans:
+                    type: integer
+                    description: The total number of scans
+                    example: 3393
+                  changeCount:
+                    type: integer
+                    description: The total number of changes
+                    example: 1946
+                  averagePageSize:
+                    type: integer
+                    description: The average page size in KB
+                    example: 527
+                  scanFrequency:
+                    type: object
+                    properties:
+                      daysBetweenScans:
+                        type: number
+                        format: float
+                        description: Average days between scans
+                        example: 2.95
+                      daysBetweenChanges:
+                        type: number
+                        format: float
+                        description: Average days between changes
+                        example: 5.14
+                      scansPerDay:
+                        type: number
+                        format: float
+                        description: Number of scans per day
+                        example: 0.34
+                      changesPerDay:
+                        type: number
+                        format: float
+                        description: Number of changes per day
+                        example: 0.19
+                  scans:
+                    type: array
+                    items:
+                      type: array
+                      items:
+                        type: string
+                      description: List of scan details
+                    example: 
+                      - ["19961221171114", "200", "RX44GNWXPO4HX6ERA2LHBORWD4BJ2HUJ", "971", null]
+                      - ["19970209085620", "200", "6PUZMQAGXXV3RCEQ65WWUCMIJVSG4OQI", "1025", null]
+                      - ["19970209085620", "200", "RX44GNWXPO4HX6ERA2LHBORWD4BJ2HUJ", "975", null]
+                      - ["19970412142046", "200", "RX44GNWXPO4HX6ERA2LHBORWD4BJ2HUJ", "1022", null]
+                      - ["19980206180754", "200", "B6ACYSFKSPWKXRPASZYOK3IBIBY7HB3I", "1102", null]
+                  scanUrl:
+                    type: string
+                    format: uri
+                    description: The URL to the scan
+                    example: "https://duck.com"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /block-lists:
+    get:
+      summary: Retrieve block lists data
+      tags:
+        - Security
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  blocklists:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        server:
+                          type: string
+                          description: The name of the blocklist server
+                          example: "AdGuard"
+                        serverIp:
+                          type: string
+                          description: The IP address of the blocklist server
+                          example: "176.103.130.130"
+                        isBlocked:
+                          type: boolean
+                          description: Whether the URL is blocked by the server
+                          example: false
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /carbon:
+    get:
+      summary: Retrieve carbon data
+      tags:
+        - Quality & Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statistics:
+                    type: object
+                    properties:
+                      adjustedBytes:
+                        type: number
+                        format: float
+                        description: Adjusted bytes transferred
+                        example: 104.19
+                      energy:
+                        type: number
+                        format: float
+                        description: Energy consumption in kWh
+                        example: 7.859794422984123e-8
+                      co2:
+                        type: object
+                        properties:
+                          grid:
+                            type: object
+                            properties:
+                              grams:
+                                type: number
+                                format: float
+                                description: CO2 emissions in grams from grid energy
+                                example: 0.00003474029134958983
+                              litres:
+                                type: number
+                                format: float
+                                description: CO2 emissions in litres from grid energy
+                                example: 0.00001932255004864186
+                          renewable:
+                            type: object
+                            properties:
+                              grams:
+                                type: number
+                                format: float
+                                description: CO2 emissions in grams from renewable energy
+                                example: 0.000030118732228875164
+                              litres:
+                                type: number
+                                format: float
+                                description: CO2 emissions in litres from renewable energy
+                                example: 0.000016752038865700363
+                  cleanerThan:
+                    type: integer
+                    description: Percentage of websites that are less clean than the queried site
+                    example: 1
+                  rating:
+                    type: string
+                    description: Environmental rating
+                    example: "A+"
+                  green:
+                    type: boolean
+                    description: Whether the site is green
+                    example: false
+                  scanUrl:
+                    type: string
+                    format: uri
+                    description: The URL to the scan
+                    example: "https://duck.com"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /cookies:
+    get:
+      summary: Retrieve cookies data
+      tags:
+        - Server Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  headerCookies:
+                    type: array
+                    items:
+                      type: string
+                      description: List of cookies from the HTTP headers
+                    example:
+                      - "SOCS=CAAaBgiAmZWyBg; expires=Sun, 15-Jun-2025 12:33:07 GMT; path=/; domain=.google.com; Secure; SameSite=lax"
+                      - "AEC=AQTF6HyLiMgX13QRJxvRyBXFos8vw-et4igVlyhgeZaeLlfDgvkgkhQmSg; expires=Tue, 12-Nov-2024 12:33:07 GMT; path=/; domain=.google.com; Secure; HttpOnly; SameSite=lax"
+                      - "__Secure-ENID=19.SE=YMEDMLYol9GgV7AzLehnn5lFsrHNqD3emYqfTaVxHQPMmAHiIqeKLyqdjfwED8gPGFN5Gb7OqkGiGTki34F94cir_SXxYvVJXTFuUU9hPAMaxoluY4JeeWKP3ma4RlsBZDKDUrBBVIA-PoPwMMBRyy8Fu0m_nOPTGjlz8WMhm_jMuHdWEF8; expires=Mon, 16-Jun-2025 04:51:25 GMT; path=/; domain=.google.com; Secure; HttpOnly; SameSite=lax"
+                  clientCookies:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: The name of the cookie
+                          example: "__Secure-ENID"
+                        value:
+                          type: string
+                          description: The value of the cookie
+                          example: "19.SE=LZ6Zj5jPrWer7Kk1PqTOWpwREJDJlMaxrCes3es4eXfLZ3-9e-HQ0tnRU-RNA_ezSw_CSyFbUWAd4A3FnTJGGYRsjK2FcqJfIum0UEcSy-oFXM49VreKYjxFyUNEshqsY_VQnZw1lFuRqRyH2JA2V90uHmaL_AVOlL_Myv1_PXwcPYgOCqsBQTkxYPeDVpS6QyHO9g"
+                        domain:
+                          type: string
+                          description: The domain of the cookie
+                          example: ".google.com"
+                        path:
+                          type: string
+                          description: The path of the cookie
+                          example: "/"
+                        expires:
+                          type: number
+                          format: float
+                          description: The expiration time of the cookie in Unix time
+                          example: 1750049486.285637
+                        size:
+                          type: integer
+                          description: The size of the cookie
+                          example: 217
+                        httpOnly:
+                          type: boolean
+                          description: Whether the cookie is HttpOnly
+                          example: true
+                        secure:
+                          type: boolean
+                          description: Whether the cookie is Secure
+                          example: true
+                        session:
+                          type: boolean
+                          description: Whether the cookie is a session cookie
+                          example: false
+                        sameSite:
+                          type: string
+                          description: The SameSite attribute of the cookie
+                          example: "Lax"
+                        priority:
+                          type: string
+                          description: The priority of the cookie
+                          example: "Medium"
+                        sameParty:
+                          type: boolean
+                          description: Whether the cookie is SameParty
+                          example: false
+                        sourceScheme:
+                          type: string
+                          description: The source scheme of the cookie
+                          example: "Secure"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /dns-server:
+    get:
+      summary: Retrieve DNS server data
+      tags:
+        - Server Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  domain:
+                    type: string
+                    description: The domain name queried
+                    example: "duck.com"
+                  dns:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                          description: The IP address of the DNS server
+                          example: "52.142.124.215"
+                        hostname:
+                          type: array
+                          items:
+                            type: string
+                            description: Hostnames associated with the DNS server
+                          nullable: true
+                          example: 
+                            - "lhr48s30-in-f14.1e100.net"
+                        dohDirectSupports:
+                          type: boolean
+                          description: Whether the server supports DoH (DNS over HTTPS) directly
+                          example: false
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /dns:
+    get:
+      summary: Retrieve DNS data
+      tags:
+        - Server Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  A:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                        description: IPv4 address
+                        example: "52.142.124.215"
+                      family:
+                        type: integer
+                        description: IP family
+                        example: 4
+                  AAAA:
+                    type: array
+                    items:
+                      type: string
+                    description: List of IPv6 addresses
+                    example: ["52.142.124.215"]
+                  MX:
+                    type: array
+                    items:
+                      type: string
+                    description: List of mail exchange servers
+                    example: []
+                  TXT:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        exchange:
+                          type: string
+                          description: Exchange server
+                          example: "smtp-inbound1.duck.com"
+                        priority:
+                          type: integer
+                          description: Priority of the exchange server
+                          example: 5
+                    description: List of TXT records
+                  NS:
+                    type: array
+                    items:
+                      type: array
+                      items:
+                        type: string
+                    description: List of name servers
+                    example:
+                      - ["v=spf1 ip4:20.13.235.192/26 ip4:20.67.221.0/24 ip4:20.67.222.0/24 ip4:20.67.223.0/24 -all"]
+                      - ["google-site-verification=xWLxaaNt2iGObwJ_jeX1E3Wn-xro--W75DBKWs5uufc"]
+                  CNAME:
+                    type: array
+                    items:
+                      type: string
+                    description: List of canonical names
+                    example:
+                      - "dns1.p03.nsone.net"
+                      - "dns2.p03.nsone.net"
+                      - "dns3.p03.nsone.net"
+                      - "dns4.p03.nsone.net"
+                      - "ns01.quack-dns.com"
+                      - "ns02.quack-dns.com"
+                      - "ns03.quack-dns.com"
+                      - "ns04.quack-dns.com"
+                  SOA:
+                    type: array
+                    items:
+                      type: string
+                    description: Start of Authority records
+                    example: []
+                  SRV:
+                    type: object
+                    properties:
+                      nsname:
+                        type: string
+                        description: Name server
+                        example: "dns1.p03.nsone.net"
+                      hostmaster:
+                        type: string
+                        description: Hostmaster email
+                        example: "hostmaster.nsone.net"
+                      serial:
+                        type: integer
+                        description: Serial number
+                        example: 1654974460
+                      refresh:
+                        type: integer
+                        description: Refresh interval
+                        example: 7200
+                      retry:
+                        type: integer
+                        description: Retry interval
+                        example: 7200
+                      expire:
+                        type: integer
+                        description: Expiration time
+                        example: 1209600
+                      minttl:
+                        type: integer
+                        description: Minimum TTL
+                        example: 14400
+                    description: Service records
+                  PTR:
+                    type: array
+                    items:
+                      type: string
+                    description: Pointer records
+                    example: []
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /dnssec:
+    get:
+      summary: Retrieve DNSSEC data
+      tags:
+        - Security
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  DNSKEY:
+                    type: object
+                    properties:
+                      isFound:
+                        type: boolean
+                        description: Whether the DNSKEY record is found
+                        example: false
+                      answer:
+                        type: string
+                        nullable: true
+                        description: The DNSKEY answer (if any)
+                        example: null
+                      response:
+                        type: object
+                        properties:
+                          Status:
+                            type: integer
+                            description: The status code of the response
+                            example: 3
+                          TC:
+                            type: boolean
+                            description: Truncated response flag
+                            example: false
+                          RD:
+                            type: boolean
+                            description: Recursion desired flag
+                            example: true
+                          RA:
+                            type: boolean
+                            description: Recursion available flag
+                            example: true
+                          AD:
+                            type: boolean
+                            description: Authentic data flag
+                            example: false
+                          CD:
+                            type: boolean
+                            description: Checking disabled flag
+                            example: false
+                          Question:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: Question name
+                                  example: "https://duck.com."
+                                type:
+                                  type: integer
+                                  description: Question type
+                                  example: 48
+                          Authority:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: Authority name
+                                  example: "com."
+                                type:
+                                  type: integer
+                                  description: Authority type
+                                  example: 6
+                                TTL:
+                                  type: integer
+                                  description: Time to live
+                                  example: 900
+                                data:
+                                  type: string
+                                  description: Authority data
+                                  example: "a.gtld-servers.net. nstld.verisign-grs.com. 1715938809 1800 900 604800 86400"
+                          Comment:
+                            type: string
+                            description: Additional comments
+                            example: "Response from 192.41.162.30."
+                  DS:
+                    type: object
+                    properties:
+                      isFound:
+                        type: boolean
+                        description: Whether the DS record is found
+                        example: false
+                      answer:
+                        type: string
+                        nullable: true
+                        description: The DS answer (if any)
+                        example: null
+                      response:
+                        type: object
+                        properties:
+                          Status:
+                            type: integer
+                            description: The status code of the response
+                            example: 3
+                          TC:
+                            type: boolean
+                            description: Truncated response flag
+                            example: false
+                          RD:
+                            type: boolean
+                            description: Recursion desired flag
+                            example: true
+                          RA:
+                            type: boolean
+                            description: Recursion available flag
+                            example: true
+                          AD:
+                            type: boolean
+                            description: Authentic data flag
+                            example: false
+                          CD:
+                            type: boolean
+                            description: Checking disabled flag
+                            example: false
+                          Question:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: Question name
+                                  example: "https://duck.com."
+                                type:
+                                  type: integer
+                                  description: Question type
+                                  example: 43
+                          Authority:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: Authority name
+                                  example: "com."
+                                type:
+                                  type: integer
+                                  description: Authority type
+                                  example: 6
+                                TTL:
+                                  type: integer
+                                  description: Time to live
+                                  example: 900
+                                data:
+                                  type: string
+                                  description: Authority data
+                                  example: "a.gtld-servers.net. nstld.verisign-grs.com. 1715938824 1800 900 604800 86400"
+                          Comment:
+                            type: string
+                            description: Additional comments
+                            example: "Response from 192.52.178.30."
+                  RRSIG:
+                    type: object
+                    properties:
+                      isFound:
+                        type: boolean
+                        description: Whether the RRSIG record is found
+                        example: false
+                      answer:
+                        type: string
+                        nullable: true
+                        description: The RRSIG answer (if any)
+                        example: null
+                      response:
+                        type: object
+                        properties:
+                          Status:
+                            type: integer
+                            description: The status code of the response
+                            example: 3
+                          TC:
+                            type: boolean
+                            description: Truncated response flag
+                            example: false
+                          RD:
+                            type: boolean
+                            description: Recursion desired flag
+                            example: true
+                          RA:
+                            type: boolean
+                            description: Recursion available flag
+                            example: true
+                          AD:
+                            type: boolean
+                            description: Authentic data flag
+                            example: false
+                          CD:
+                            type: boolean
+                            description: Checking disabled flag
+                            example: false
+                          Question:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: Question name
+                                  example: "https://duck.com."
+                                type:
+                                  type: integer
+                                  description: Question type
+                                  example: 46
+                          Authority:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: Authority name
+                                  example: "com."
+                                type:
+                                  type: integer
+                                  description: Authority type
+                                  example: 6
+                                TTL:
+                                  type: integer
+                                  description: Time to live
+                                  example: 900
+                                data:
+                                  type: string
+                                  description: Authority data
+                                  example: "a.gtld-servers.net. nstld.verisign-grs.com. 1715938809 1800 900 604800 86400"
+                          Comment:
+                            type: string
+                            description: Additional comments
+                            example: "Response from 2001:502:7094::30."
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /firewall:
+    get:
+      summary: Retrieve firewall data
+      tags:
+        - Security
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hasWaf:
+                    type: boolean
+                    description: Whether a Web Application Firewall (WAF) is present
+                    example: false
+                  waf:
+                    type: string
+                    nullable: true
+                    description: The name of the WAF, if present
+                    example: "Cloudflare"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /get-ip:
+    get:
+      summary: Retrieve IP data
+      tags:
+        - Server Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ip:
+                    type: string
+                    description: The IP address
+                    example: "52.142.124.215"
+                  family:
+                    type: integer
+                    description: The IP family (4 for IPv4, 6 for IPv6)
+                    example: 4
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /headers:
+    get:
+      summary: Retrieve headers data
+      tags:
+        - Server Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  oneOf:
+                    - type: string
+                    - type: array
+                      items:
+                        type: string
+                example:
+                  date: "Fri, 17 May 2024 11:51:38 GMT"
+                  content-type: "text/html; charset=utf-8"
+                  transfer-encoding: "chunked"
+                  connection: "keep-alive"
+                  cache-control: "public, max-age=0, must-revalidate"
+                  strict-transport-security: "max-age=31536000; includeSubDomains"
+                  permissions-policy: "geolocation=(), camera=(), microphone=()"
+                  referrer-policy: "strict-origin-when-cross-origin"
+                  x-content-type-options: "nosniff"
+                  x-frame-options: "SAMEORIGIN"
+                  x-gww-loc: "EN-US"
+                  x-pgs-loc: "EN-US"
+                  x-rm: "GW"
+                  x-xss-protection: "1; mode=block"
+                  vary: "Accept-Encoding"
+                  server: "cloudflare"
+                  cf-ray: "8853658f9da5940b-LHR"
+                  alt-svc: "h3=\":443\"; ma=86400"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /hsts:
+    get:
+      summary: Retrieve HSTS data
+      tags:
+        - Server Info
+        - Security
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message regarding the HSTS status
+                    example: "HSTS header does not include all subdomains."
+                  compatible:
+                    type: boolean
+                    description: Whether the site is compatible with HSTS
+                    example: false
+                  hstsHeader:
+                    type: string
+                    nullable: true
+                    description: The HSTS header if present
+                    example: null
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /http-security:
+    get:
+      summary: Retrieve HTTP security data
+      tags:
+        - Server Info
+        - Security
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  strictTransportPolicy:
+                    type: boolean
+                    description: Whether Strict Transport Security is enabled
+                    example: false
+                  xFrameOptions:
+                    type: boolean
+                    description: Whether X-Frame-Options header is set
+                    example: true
+                  xContentTypeOptions:
+                    type: boolean
+                    description: Whether X-Content-Type-Options header is set
+                    example: false
+                  xXSSProtection:
+                    type: boolean
+                    description: Whether X-XSS-Protection header is set
+                    example: true
+                  contentSecurityPolicy:
+                    type: boolean
+                    description: Whether Content Security Policy is enabled
+                    example: false
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /linked-pages:
+    get:
+      summary: Retrieve linked pages data
+      tags:
+        - Quality & Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  internal:
+                    type: array
+                    items:
+                      type: string
+                    description: List of internal links
+                    example:
+                      - "https://bbc.com/news/business"
+                      - "https://bbc.com/news/entertainment_and_arts"
+                      - "https://bbc.com/news/uk"
+                      - "https://bbc.com/news/world"
+                      - "https://bbc.com/#chameleon-global-navigation-more-menu"
+                      - "https://bbc.com/sport/golf"
+                      - "https://bbc.com/sport"
+                  external:
+                    type: array
+                    items:
+                      type: string
+                    description: List of external links
+                    example:
+                      - "https://www.bbc.co.uk/"
+                      - "https://www.bbc.co.uk/news"
+                      - "https://www.bbc.co.uk/sport"
+                      - "https://www.bbc.co.uk/weather"
+                      - "https://www.bbc.co.uk/iplayer"
+                      - "https://www.bbc.co.uk/sounds"
+                      - "https://www.bbc.co.uk/bitesize"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /mail-config:
+    get:
+      summary: Retrieve mail configuration data
+      tags:
+        - Server Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mxRecords:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        exchange:
+                          type: string
+                          description: The mail exchange server
+                          example: "smtp.google.com"
+                        priority:
+                          type: integer
+                          description: The priority of the mail exchange server
+                          example: 10
+                    description: List of MX (Mail Exchange) records
+                  txtRecords:
+                    type: array
+                    items:
+                      type: array
+                      items:
+                        type: string
+                    description: List of TXT records
+                    example:
+                      - ["v=spf1 include:_spf.google.com ~all"]
+                      - ["google-site-verification=wD8N7i1JTNTkezJ49swvWW48f8_9xveREV4oB-0Hf5o"]
+                  mailServices:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        provider:
+                          type: string
+                          description: The mail service provider
+                          example: "Google Workspace"
+                        value:
+                          type: string
+                          description: The verification value for the mail service
+                          example: "wD8N7i1JTNTkezJ49swvWW48f8_9xveREV4oB-0Hf5o"
+                    description: List of mail services and their verification values
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /ports:
+    get:
+      summary: Retrieve open and failed ports data
+      tags:
+        - Server Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  openPorts:
+                    type: array
+                    items:
+                      type: integer
+                    description: List of open ports
+                    example:
+                      - 80
+                      - 443
+                      - 8080
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /quality:
+    get:
+      summary: Retrieve website quality metrics
+      tags:
+        - Quality & Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL of the website to analyze
+          schema:
+            type: string
+        - name: apiKey
+          in: query
+          required: true
+          description: The API key for accessing Google PageSpeed Insights
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  performance:
+                    type: object
+                    description: Performance category data
+                    properties:
+                      score:
+                        type: number
+                        format: float
+                        description: Performance score
+                        example: 0.85
+                  accessibility:
+                    type: object
+                    description: Accessibility category data
+                    properties:
+                      score:
+                        type: number
+                        format: float
+                        description: Accessibility score
+                        example: 0.92
+                  best_practices:
+                    type: object
+                    description: Best Practices category data
+                    properties:
+                      score:
+                        type: number
+                        format: float
+                        description: Best Practices score
+                        example: 0.88
+                  seo:
+                    type: object
+                    description: SEO category data
+                    properties:
+                      score:
+                        type: number
+                        format: float
+                        description: SEO score
+                        example: 0.95
+                  pwa:
+                    type: object
+                    description: Progressive Web App category data
+                    properties:
+                      score:
+                        type: number
+                        format: float
+                        description: PWA score
+                        example: 0.75
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /rank:
+    get:
+      summary: Retrieve rank data
+      tags:
+        - Quality & Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch rank data about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ranks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          format: date
+                          description: The date of the rank
+                          example: "2024-05-16"
+                        rank:
+                          type: integer
+                          description: The rank value
+                          example: 145896
+                    description: List of rank entries
+                  domain:
+                    type: string
+                    description: The domain name for which rank data is provided
+                    example: "duck.com"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /redirects:
+    get:
+      summary: Retrieve redirects data
+      tags:
+        - Server Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch redirect data about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  redirects:
+                    type: array
+                    items:
+                      type: string
+                    description: List of URLs the given URL redirects to
+                    example:
+                      - "https://duck.com"
+                      - "https://duckduckgo.com/"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /robots-txt:
+    get:
+      summary: Retrieve robots.txt data
+      tags:
+        - Server Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch robots.txt data about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  robots:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        lbl:
+                          type: string
+                          description: The label of the robots.txt entry (e.g., User-agent, Disallow, Allow)
+                          example: "User-agent"
+                        val:
+                          type: string
+                          description: The value of the robots.txt entry
+                          example: "*"
+                    description: List of robots.txt entries
+                    example:
+                      - lbl: "User-agent"
+                        val: "*"
+                      - lbl: "Disallow"
+                        val: "/lite"
+                      - lbl: "Disallow"
+                        val: "/html"
+                      - lbl: "Disallow"
+                        val: "/*?"
+                      - lbl: "Disallow"
+                        val: "/chrome_newtab"
+                      - lbl: "Disallow"
+                        val: "/email/"
+                      - lbl: "Allow"
+                        val: "/email/$"
+                      - lbl: "Allow"
+                        val: "/email/privacy-guarantees"
+                      - lbl: "Allow"
+                        val: "/email/privacy-terms"
+                      - lbl: "Disallow"
+                        val: "/2012-privacy-policy"
+                      - lbl: "User-agent"
+                        val: "ia_archiver"
+                      - lbl: "Disallow"
+                        val: "/"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /screenshot:
+    get:
+      summary: Retrieve screenshot data
+      tags:
+        - Quality & Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /security-txt:
+    get:
+      summary: Retrieve security.txt data
+      tags:
+        - Security
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch security.txt data about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isPresent:
+                    type: boolean
+                    description: Whether the security.txt file is present
+                    example: true
+                  foundIn:
+                    type: string
+                    nullable: true
+                    description: The location where the security.txt file was found
+                    example: "/.well-known/security.txt"
+                  content:
+                    type: string
+                    nullable: true
+                    description: The content of the security.txt file
+                    example: "Contact: mailto:security@proton.me\nExpires: 2024-12-31T23:59:59.999Z\nEncryption: https://api.protonmail.ch/pks/lookup?op=get&search=security@proton.me\nPreferred-Languages: en\nCanonical: https://proton.me/.well-known/security.txt\nPolicy: https://proton.me/blog/protonmail-bug-bounty-program\nHiring: https://proton.me/careers\n"
+                  isPgpSigned:
+                    type: boolean
+                    description: Whether the security.txt file is PGP signed
+                    example: false
+                  fields:
+                    type: object
+                    nullable: true
+                    description: Key-value pairs of the security.txt fields
+                    properties:
+                      Contact:
+                        type: string
+                        description: Contact information
+                        example: "mailto:security@proton.me"
+                      Expires:
+                        type: string
+                        format: date-time
+                        description: Expiry date of the security.txt information
+                        example: "2024-12-31T23:59:59.999Z"
+                      Encryption:
+                        type: string
+                        description: Encryption key location
+                        example: "https://api.protonmail.ch/pks/lookup?op=get&search=security@proton.me"
+                      Preferred-Languages:
+                        type: string
+                        description: Preferred languages for contact
+                        example: "en"
+                      Canonical:
+                        type: string
+                        description: Canonical URL for the security.txt file
+                        example: "https://proton.me/.well-known/security.txt"
+                      Policy:
+                        type: string
+                        description: Policy URL
+                        example: "https://proton.me/blog/protonmail-bug-bounty-program"
+                      Hiring:
+                        type: string
+                        description: Hiring information URL
+                        example: "https://proton.me/careers"
+                      Acknowledgments:
+                        type: string
+                        nullable: true
+                        description: Acknowledgments information
+                        example: "https://hackerone.com/github/hacktivity"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /sitemap:
+    get:
+      summary: Retrieve sitemap data
+      tags:
+        - Quality & Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch sitemap data about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  urlset:
+                    type: object
+                    properties:
+                      $:
+                        type: object
+                        properties:
+                          xmlns:
+                            type: string
+                            description: XML namespace
+                            example: "http://www.sitemaps.org/schemas/sitemap/0.9"
+                          xmlns:xsi:
+                            type: string
+                            description: XML Schema instance namespace
+                            example: "http://www.w3.org/2001/XMLSchema-instance"
+                          xsi:schemaLocation:
+                            type: string
+                            description: Schema location
+                            example: "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
+                      url:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            loc:
+                              type: array
+                              items:
+                                type: string
+                              description: The URL of the page
+                              example: "https://duckduckgo.com/"
+                            lastmod:
+                              type: array
+                              items:
+                                type: string
+                                format: date
+                              description: The last modification date of the page
+                              example: "2023-08-22"
+                            changefreq:
+                              type: array
+                              items:
+                                type: string
+                              description: The frequency of changes to the page
+                              example: "monthly"
+                            priority:
+                              type: array
+                              items:
+                                type: number
+                                format: float
+                              description: The priority of the page
+                              example: 1.00
+    description: |
+      Note: The structure might need changing to show pages below each user-agent.
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /social-tags:
+    get:
+      summary: Retrieve social media tags data
+      tags:
+        - Quality & Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch social tags data about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    description: The title of the page
+                    example: "DuckDuckGo — Privacy, simplified."
+                  description:
+                    type: string
+                    description: The description of the page
+                    example: "The Internet privacy company that empowers you to seamlessly take control of your personal information online, without any tradeoffs."
+                  canonicalUrl:
+                    type: string
+                    description: The canonical URL of the page
+                    example: "https://duckduckgo.com"
+                  ogTitle:
+                    type: string
+                    description: The Open Graph title of the page
+                    example: "DuckDuckGo — Privacy, simplified."
+                  ogType:
+                    type: string
+                    description: The Open Graph type of the page
+                    example: "website"
+                  ogImage:
+                    type: string
+                    description: The Open Graph image URL of the page
+                    example: "https://duckduckgo.com/assets/logo_social-media.png"
+                  ogUrl:
+                    type: string
+                    description: The Open Graph URL of the page
+                    example: "https://duckduckgo.com"
+                  ogDescription:
+                    type: string
+                    description: The Open Graph description of the page
+                    example: "The Internet privacy company that empowers you to seamlessly take control of your personal information online, without any tradeoffs."
+                  ogSiteName:
+                    type: string
+                    description: The Open Graph site name of the page
+                    example: "DuckDuckGo"
+                  twitterCard:
+                    type: string
+                    description: The Twitter card type of the page
+                    example: "summary_large_image"
+                  twitterSite:
+                    type: string
+                    description: The Twitter handle of the site
+                    example: "@duckduckgo"
+                  twitterTitle:
+                    type: string
+                    description: The Twitter title of the page
+                    example: "DuckDuckGo — Privacy, simplified."
+                  twitterDescription:
+                    type: string
+                    description: The Twitter description of the page
+                    example: "The Internet privacy company that empowers you to seamlessly take control of your personal information online, without any tradeoffs."
+                  twitterImage:
+                    type: string
+                    description: The Twitter image URL of the page
+                    example: "https://duckduckgo.com/assets/logo_social-media.png"
+                  viewport:
+                    type: string
+                    description: The viewport settings of the page
+                    example: "width=device-width, initial-scale=1, user-scalable=1 , viewport-fit=auto"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /ssl:
+    get:
+      summary: Retrieve SSL certificate data
+      tags:
+        - Security
+        - Server Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch SSL certificate data about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subject:
+                    type: object
+                    description: The subject of the SSL certificate
+                    properties:
+                      C:
+                        type: string
+                        description: Country
+                        example: "US"
+                      ST:
+                        type: string
+                        description: State or province
+                        example: "Pennsylvania"
+                      L:
+                        type: string
+                        description: Locality or city
+                        example: "Paoli"
+                      O:
+                        type: string
+                        description: Organization
+                        example: "Duck Duck Go, Inc."
+                      CN:
+                        type: string
+                        description: Common Name
+                        example: "*.duck.com"
+                  issuer:
+                    type: object
+                    description: The issuer of the SSL certificate
+                    properties:
+                      C:
+                        type: string
+                        description: Country
+                        example: "US"
+                      O:
+                        type: string
+                        description: Organization
+                        example: "DigiCert Inc"
+                      CN:
+                        type: string
+                        description: Common Name
+                        example: "DigiCert Global G2 TLS RSA SHA256 2020 CA1"
+                  subjectaltname:
+                    type: string
+                    description: Subject alternative name
+                    example: "DNS:*.duck.com, DNS:duck.com"
+                  infoAccess:
+                    type: object
+                    description: Information Access details
+                    properties:
+                      "OCSP - URI":
+                        type: array
+                        items:
+                          type: string
+                        description: OCSP URI
+                        example:
+                          - "http://ocsp.digicert.com"
+                      "CA Issuers - URI":
+                        type: array
+                        items:
+                          type: string
+                        description: CA Issuers URI
+                        example:
+                          - "http://cacerts.digicert.com/DigiCertGlobalG2TLSRSASHA2562020CA1-1.crt"
+                  ca:
+                    type: boolean
+                    description: Whether it is a CA certificate
+                    example: false
+                  modulus:
+                    type: string
+                    description: The modulus of the public key
+                    example: "A4B4F5B418A538F2570010FEDA319C3F73400EF8C20BB36668B34AE776233C5F06BE0572E36180FD8064D8AC41BD54AD2C6BAAEDEB31308F37B11EED1CD5D2F046C8B6B16381C4E80E817352C16B6F2A8687589BB564BF4B3C87A45284DB9A8240805002846A067C8CCEB50290D2A799907DFBF6EB0432528F413C5CC913F0230374250062C027664240E5A3A8574B8914F26216CEF076CECE04427A489137EA5AACFCD446827432C18CFF5E31AF0F3999B60A303925082FDDB1535513D6B131497F003397FD1EA4D58C24640261E1C205F33A83FDEE9D8C48A638F98927CEFE42C7DD3852C62AD62ECA74A417DE79290755689B3A6D19E44152695A5872491F"
+                  bits:
+                    type: integer
+                    description: The number of bits in the key
+                    example: 2048
+                  exponent:
+                    type: string
+                    description: The public exponent
+                    example: "0x10001"
+                  pubkey:
+                    type: object
+                    description: The public key
+                    properties:
+                      type:
+                        type: string
+                        description: Type of the public key data
+                        example: "Buffer"
+                      data:
+                        type: array
+                        items:
+                          type: integer
+                        description: The public key data
+                        example: [48, 130, 1, 34, 48, 13, 6, 9, 42, 134, 72, 134, 247, 13, 1, 1, 1, 5, 0, 3, 130, 1, 15, 0, 48, 130, 1, 10, 2, 130, 1, 1, 0, 164, 180, 245, 180, 24, 165, 56, 242, 87, 0, 16, 254, 218, 49, 156, 63, 115, 64, 14, 248, 194, 11, 179, 102, 104, 179, 74, 231, 118, 35, 60, 95, 6, 190, 5, 114, 227, 97, 128, 253, 128, 100, 216, 172, 65, 189, 84, 173, 44, 107, 170, 237, 235, 49, 48, 143, 55, 177, 30, 237, 28, 213, 210, 240, 70, 200, 182, 177, 99, 129, 196, 232, 14, 129, 115, 82, 193, 107, 111, 42, 134, 135, 88, 155, 181, 100, 191, 75, 60, 135, 164, 82, 132, 219, 154, 130, 64, 128, 80, 2, 132, 106, 6, 124, 140, 206, 181, 2, 144, 210, 167, 153, 144, 125, 251, 246, 235, 4, 50, 82, 143, 65, 60, 92, 201, 19, 240, 35, 3, 116, 37, 0, 98, 192, 39, 102, 66, 64, 229, 163, 168, 87, 75, 137, 20, 242, 98, 22, 206, 240, 118, 206, 206, 4, 66, 122, 72, 145, 55, 234, 90, 172, 252, 212, 70, 130, 116, 50, 193, 140, 255, 94, 49, 175, 15, 57, 153, 182, 10, 48, 57, 37, 8, 47, 221, 177, 83, 85, 19, 214, 177, 49, 73, 127, 0, 51, 151, 253, 30, 164, 213, 140, 36, 100, 2, 97, 225, 194, 5, 243, 58, 131, 253, 238, 157, 140, 72, 166, 56, 249, 137, 39, 206, 254, 66, 199, 221, 56, 82, 198, 42, 214, 46, 202, 116, 164, 23, 222, 121, 41, 7, 85, 104, 155, 58, 109, 25, 228, 65, 82, 105, 90, 88, 114, 73, 31, 2, 3, 1, 0, 1]
+                  valid_from:
+                    type: string
+                    description: The start date of the certificate's validity period
+                    example: "Oct  3 00:00:00 2023 GMT"
+                  valid_to:
+                    type: string
+                    description: The end date of the certificate's validity period
+                    example: "Nov  2 23:59:59 2024 GMT"
+                  fingerprint:
+                    type: string
+                    description: The SHA-1 fingerprint of the certificate
+                    example: "54:3C:CB:82:A2:33:D0:CB:81:4D:7D:2C:AA:E6:84:CE:37:9A:0B:7A"
+                  fingerprint256:
+                    type: string
+                    description: The SHA-256 fingerprint of the certificate
+                    example: "F3:64:C5:26:C1:BD:31:DE:67:BB:98:57:96:7B:B6:9B:C7:1A:CD:44:21:29:62:4C:CE:E2:C9:DF:49:73:DE:05"
+                  fingerprint512:
+                    type: string
+                    description: The SHA-512 fingerprint of the certificate
+                    example: "FC:5A:8F:4D:27:DC:A1:4B:2B:31:8A:DD:37:DF:7E:7B:64:18:49:C9:B8:AB:29:9E:B2:5E:F6:43:36:D0:8B:9D:D0:3E:10:83:4D:B2:78:DF:E2:44:B3:7F:70:22:C7:1F:29:81:72:9E:D5:F2:7C:25:2A:02:FE:90:75:D6:35:CB"
+                  ext_key_usage:
+                    type: array
+                    items:
+                      type: string
+                    description: Extended key usage
+                    example:
+                      - "1.3.6.1.5.5.7.3.1"
+                      - "1.3.6.1.5.5.7.3.2"
+                  serialNumber:
+                    type: string
+                    description: The serial number of the certificate
+                    example: "0ABA674EF6840EFD177509B0BF82C4A5"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /status:
+    get:
+      summary: Retrieve website status
+      tags:
+        - Server Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to check the status of
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isUp:
+                    type: boolean
+                    description: Whether the website is up
+                    example: true
+                  responseTime:
+                    type: number
+                    format: float
+                    description: The response time in milliseconds
+                    example: 105.34512500000005
+                  responseCode:
+                    type: integer
+                    description: The HTTP response code
+                    example: 302
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /tech-stack:
+    get:
+      summary: Retrieve technology stack data
+      tags:
+        - Quality & Info
+        - Client-Side Information
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch technology stack data about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  urls:
+                    type: object
+                    description: Status of different URLs
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                          example: 302
+                    example:
+                      "https://duck.com/":
+                        status: 302
+                      "https://duckduckgo.com/":
+                        status: 200
+                  technologies:
+                    type: array
+                    description: List of detected technologies
+                    items:
+                      type: object
+                      properties:
+                        slug:
+                          type: string
+                          description: Slug identifier for the technology
+                          example: "node-js"
+                        name:
+                          type: string
+                          description: Name of the technology
+                          example: "Node.js"
+                        description:
+                          type: string
+                          nullable: true
+                          description: Description of the technology
+                          example: "Node.js is an open-source, cross-platform, JavaScript runtime environment that executes JavaScript code outside a web browser."
+                        confidence:
+                          type: integer
+                          description: Confidence level of the detection
+                          example: 100
+                        version:
+                          type: string
+                          nullable: true
+                          description: Detected version of the technology
+                          example: "12.3.4"
+                        icon:
+                          type: string
+                          description: Icon file name for the technology
+                          example: "Node.js.svg"
+                        website:
+                          type: string
+                          description: Official website for the technology
+                          example: "https://nodejs.org"
+                        cpe:
+                          type: string
+                          nullable: true
+                          description: Common Platform Enumeration (CPE) identifier
+                          example: "cpe:2.3:a:nodejs:node.js:*:*:*:*:*:*:*:*"
+                        categories:
+                          type: array
+                          description: List of categories the technology belongs to
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                description: Category ID
+                                example: 27
+                              slug:
+                                type: string
+                                description: Category slug
+                                example: "programming-languages"
+                              name:
+                                type: string
+                                description: Category name
+                                example: "Programming languages"
+                        rootPath:
+                          type: boolean
+                          description: Whether the technology is detected at the root path
+                          example: true
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /threats:
+    get:
+      summary: Retrieve threats data
+      tags:
+        - Security
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch results about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /tls:
+    get:
+      summary: Retrieve TLS information for a target
+      tags:
+        - Security
+        - Server Info
+      parameters:
+        - name: target
+          in: query
+          required: true
+          description: The target domain to fetch TLS information about
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: The ID of the TLS scan
+                    example: 57369181
+                  timestamp:
+                    type: string
+                    format: date-time
+                    description: Timestamp of the scan
+                    example: "2024-05-18T13:52:49.230114Z"
+                  target:
+                    type: string
+                    description: Target domain of the TLS scan
+                    example: "duck.com"
+                  replay:
+                    type: integer
+                    description: Replay value
+                    example: -1
+                  has_tls:
+                    type: boolean
+                    description: Indicates if TLS is present
+                    example: true
+                  cert_id:
+                    type: integer
+                    description: Certificate ID
+                    example: 189148642
+                  trust_id:
+                    type: integer
+                    description: Trust ID
+                    example: 343378161
+                  is_valid:
+                    type: boolean
+                    description: Indicates if the TLS certificate is valid
+                    example: true
+                  completion_perc:
+                    type: integer
+                    description: Completion percentage of the scan
+                    example: 100
+                  connection_info:
+                    type: object
+                    description: Connection information of the TLS scan
+                    properties:
+                      scanIP:
+                        type: string
+                        description: Scan IP address
+                        example: "52.250.42.157"
+                      serverside:
+                        type: boolean
+                        description: Indicates if the scan is server-side
+                        example: true
+                      ciphersuite:
+                        type: array
+                        description: List of cipher suites used
+                        items:
+                          type: object
+                          properties:
+                            cipher:
+                              type: string
+                              description: Name of the cipher suite
+                              example: "ECDHE-RSA-AES128-GCM-SHA256"
+                            code:
+                              type: integer
+                              description: Cipher code
+                              example: 49199
+                            protocols:
+                              type: array
+                              description: Supported protocols
+                              items:
+                                type: string
+                                example: "TLSv1.2"
+                            pubkey:
+                              type: integer
+                              description: Public key length
+                              example: 2048
+                            sigalg:
+                              type: string
+                              description: Signature algorithm
+                              example: "sha256WithRSAEncryption"
+                            ticket_hint:
+                              type: string
+                              description: Ticket hint
+                              example: "1200"
+                            ocsp_stapling:
+                              type: boolean
+                              description: Indicates if OCSP stapling is enabled
+                              example: false
+                            pfs:
+                              type: string
+                              description: Perfect forward secrecy information
+                              example: "ECDH,P-256,256bits"
+                            curves:
+                              type: array
+                              description: Supported curves
+                              items:
+                                type: string
+                                example: "prime256v1"
+                            curvesFallback:
+                              type: boolean
+                              description: Indicates if curve fallback is used
+                              example: false
+                  analysis:
+                    type: array
+                    description: Analysis results
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Analyzer ID
+                          example: 157573176
+                        analyzer:
+                          type: string
+                          description: Analyzer name
+                          example: "awsCertlint"
+                        result:
+                          type: object
+                          description: Analyzer result
+                          properties:
+                            bugs:
+                              type: array
+                              nullable: true
+                              description: List of bugs found
+                              items:
+                                type: string
+                            errors:
+                              type: array
+                              nullable: true
+                              description: List of errors found
+                              items:
+                                type: string
+                            notices:
+                              type: array
+                              nullable: true
+                              description: List of notices found
+                              items:
+                                type: string
+                            warnings:
+                              type: array
+                              nullable: true
+                              description: List of warnings found
+                              items:
+                                type: string
+                            fatalErrors:
+                              type: array
+                              nullable: true
+                              description: List of fatal errors found
+                              items:
+                                type: string
+                            informational:
+                              type: array
+                              nullable: true
+                              description: List of informational messages
+                              items:
+                                type: string
+                            host:
+                              type: string
+                              description: Host information
+                              example: ""
+                            issue:
+                              type: array
+                              nullable: true
+                              description: List of issues found
+                              items:
+                                type: string
+                            has_caa:
+                              type: boolean
+                              description: Indicates if CAA is present
+                              example: false
+                            issuewild:
+                              type: array
+                              nullable: true
+                              description: List of wildcard issues found
+                              items:
+                                type: string
+                            revoked:
+                              type: boolean
+                              description: Indicates if the certificate is revoked
+                              example: false
+                            RevocationTime:
+                              type: string
+                              format: date-time
+                              description: Time of revocation
+                              example: "0001-01-01T00:00:00Z"
+                            level:
+                              type: string
+                              description: Mozilla evaluation level
+                              example: "intermediate"
+                            failures:
+                              type: object
+                              description: List of failures
+                              properties:
+                                bad:
+                                  type: array
+                                  nullable: true
+                                  description: List of bad failures
+                                  items:
+                                    type: string
+                                old:
+                                  type: array
+                                  nullable: true
+                                  description: List of old failures
+                                  items:
+                                    type: string
+                                  example: [
+                                    "sha256WithRSAEncryption is not an old certificate signature, use sha1WithRSAEncryption",
+                                    "consider adding ciphers ECDHE-ECDSA-CHACHA20-POLY1305, ECDHE-RSA-CHACHA20-POLY1305, ECDHE-ECDSA-AES128-GCM-SHA256, ECDHE-ECDSA-AES256-GCM-SHA384, DHE-RSA-AES128-GCM-SHA256, DHE-DSS-AES128-GCM-SHA256, DHE-DSS-AES256-GCM-SHA384, DHE-RSA-AES256-GCM-SHA384, ECDHE-ECDSA-AES128-SHA256, ECDHE-ECDSA-AES128-SHA, ECDHE-ECDSA-AES256-SHA384, ECDHE-ECDSA-AES256-SHA, DHE-RSA-AES128-SHA256, DHE-RSA-AES128-SHA, DHE-DSS-AES128-SHA256, DHE-RSA-AES256-SHA256, DHE-DSS-AES256-SHA, DHE-RSA-AES256-SHA, ECDHE-RSA-DES-CBC3-SHA, ECDHE-ECDSA-DES-CBC3-SHA, EDH-RSA-DES-CBC3-SHA, DHE-DSS-AES256-SHA256, DHE-DSS-AES128-SHA, DES-CBC3-SHA, DHE-RSA-CHACHA20-POLY1305, ECDHE-RSA-CAMELLIA256-SHA384, ECDHE-ECDSA-CAMELLIA256-SHA384, DHE-RSA-CAMELLIA256-SHA256, DHE-DSS-CAMELLIA256-SHA256, DHE-RSA-CAMELLIA256-SHA, DHE-DSS-CAMELLIA256-SHA, CAMELLIA256-SHA256, CAMELLIA256-SHA, ECDHE-RSA-CAMELLIA128-SHA256, ECDHE-ECDSA-CAMELLIA128-SHA256, DHE-RSA-CAMELLIA128-SHA256, DHE-DSS-CAMELLIA128-SHA256, DHE-RSA-CAMELLIA128-SHA, DHE-DSS-CAMELLIA128-SHA, CAMELLIA128-SHA256, CAMELLIA128-SHA, DHE-RSA-SEED-SHA, DHE-DSS-SEED-SHA, SEED-SHA",
+                                    "add protocols TLSv1.1, TLSv1, SSLv3",
+                                    "consider enabling OCSP stapling",
+                                    "add cipher DES-CBC3-SHA for backward compatibility"
+                                  ]
+                                modern:
+                                  type: array
+                                  nullable: true
+                                  description: List of modern failures
+                                  items:
+                                    type: string
+                                  example: [
+                                    "remove ciphersuites ECDHE-RSA-AES128-SHA, AES128-GCM-SHA256, AES128-SHA256, AES128-SHA, ECDHE-RSA-AES256-SHA, AES256-GCM-SHA384, AES256-SHA256, AES256-SHA",
+                                    "consider adding ciphers ECDHE-ECDSA-AES256-GCM-SHA384, ECDHE-ECDSA-CHACHA20-POLY1305, ECDHE-RSA-CHACHA20-POLY1305, ECDHE-ECDSA-AES128-GCM-SHA256, ECDHE-ECDSA-AES256-SHA384, ECDHE-ECDSA-AES128-SHA256",
+                                    "consider enabling OCSP stapling",
+                                    "use a certificate of type ecdsa, not RSA"
+                                  ]
+                                intermediate:
+                                  type: array
+                                  nullable: true
+                                  description: List of intermediate failures
+                                  items:
+                                    type: string
+                                  example: [
+                                    "consider adding ciphers ECDHE-ECDSA-CHACHA20-POLY1305, ECDHE-RSA-CHACHA20-POLY1305, ECDHE-ECDSA-AES128-GCM-SHA256, ECDHE-ECDSA-AES256-GCM-SHA384, DHE-RSA-AES128-GCM-SHA256, DHE-RSA-AES256-GCM-SHA384, ECDHE-ECDSA-AES128-SHA256, ECDHE-ECDSA-AES128-SHA, ECDHE-ECDSA-AES256-SHA384, ECDHE-ECDSA-AES256-SHA, DHE-RSA-AES128-SHA256, DHE-RSA-AES128-SHA, DHE-RSA-AES256-SHA256, DHE-RSA-AES256-SHA, ECDHE-ECDSA-DES-CBC3-SHA, ECDHE-RSA-DES-CBC3-SHA, EDH-RSA-DES-CBC3-SHA, DES-CBC3-SHA",
+                                    "add protocols TLSv1.1, TLSv1",
+                                    "consider enabling OCSP stapling",
+                                    "increase priority of ECDHE-RSA-AES256-GCM-SHA384 over AES128-SHA",
+                                    "fix ciphersuite ordering, use recommended intermediate ciphersuite"
+                                  ]
+                        grade:
+                          type: integer
+                          description: Mozilla grading worker grade
+                          example: 93
+                        lettergrade:
+                          type: string
+                          description: Mozilla grading worker letter grade
+                          example: "A"
+                        rank:
+                          type: integer
+                          description: Rank of the target domain
+                          example: 2147483647
+                        domain:
+                          type: string
+                          description: Domain name
+                          example: "duck.com"
+                        alexa_rank:
+                          type: integer
+                          description: Alexa rank of the domain
+                          example: 2147483647
+                        cisco_rank:
+                          type: integer
+                          description: Cisco rank of the domain
+                          example: 2147483647
+                        alexa_domain:
+                          type: string
+                          description: Alexa domain name
+                          example: "duck.com"
+                        cisco_domain:
+                          type: string
+                          description: Cisco domain name
+                          example: "duck.com"
+                        reasons:
+                          type: array
+                          description: List of reasons for distrust
+                          items:
+                            type: string
+                          example: [
+                            "path uses a blacklisted cert: C=US, O=VeriSign, Inc., OU=VeriSign Trust Network, OU=(c) 2006 VeriSign, Inc. - For authorized use only, CN=VeriSign Class 3 Public Primary Certification Authority - G5 (id=123)",
+                            "whitelisted intermediate C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert Global Root G2 (id=187368699) override blacklisting of 123",
+                            "path uses a blacklisted cert: C=US, O=VeriSign, Inc., OU=VeriSign Trust Network, OU=(c) 2006 VeriSign, Inc. - For authorized use only, CN=VeriSign Class 3 Public Primary Certification Authority - G5 (id=188669208)",
+                            "whitelisted intermediate C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert Global Root G2 (id=187368699) override blacklisting of 188669208",
+                            "path uses a root not trusted by Mozilla: C=IE, O=Baltimore, OU=CyberTrust, CN=Baltimore CyberTrust Root (id=16)",
+                            "whitelisted intermediate C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert Global Root G2 (id=189284449) override blacklisting of 34174538",
+                            "whitelisted intermediate C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert Global Root G2 (id=189094508) override blacklisting of 34174538",
+                            "path uses a blacklisted cert: C=US, O=VeriSign, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority (id=124)",
+                            "whitelisted intermediate C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert Global Root G2 (id=188535492) override blacklisting of 124"
+                          ]
+                        isDistrusted:
+                          type: boolean
+                          description: Indicates if the certificate is distrusted
+                          example: false
+                  ack:
+                    type: boolean
+                    description: Acknowledgment flag
+                    example: true
+                  attempts:
+                    type: integer
+                    description: Number of attempts
+                    example: 1
+                  analysis_params:
+                    type: object
+                    description: Parameters used for the analysis
+                    example: {}
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /trace-route:
+    get:
+      summary: Perform a traceroute to the specified URL
+      tags:
+        - Server Info
+      parameters:
+        - name: urlString
+          in: query
+          required: true
+          description: The URL to trace the route to
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The status message of the traceroute
+                    example: "Traceroute completed!"
+                  result:
+                    type: array
+                    description: The result of the traceroute
+                    items:
+                      oneOf:
+                        - type: object
+                          additionalProperties:
+                            type: array
+                            items:
+                              type: number
+                              description: The response time in milliseconds
+                              example: 2.015
+                        - type: boolean
+                          description: Indicates if a hop was not found
+                          example: false
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /txt-records:
+    get:
+      summary: Retrieve the TXT records for a specified domain
+      tags:
+        - Server Info
+      parameters:
+        - name: domain
+          in: query
+          required: true
+          description: The domain to retrieve TXT records for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+                  description: The value of the TXT record
+                example:
+                  brave-ledger-verification: "b9067df1ce0bb02c06924b88b62143d0c3c0b9c03a8f5c4aba3c0d0ec99f0a98"
+                  google-site-verification: "qFBMUPljNGHE2S-NwmQmYvxpa58UfmmIidAbJG9BiuM"
+                  pinterest-site-verification: "c71cdf6ff37b315830c4af9d98cf2add"
+                  protonmail-verification: "2493afe89892e5b986b59415cdb104152c24f29e"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /whois:
+    get:
+      summary: Retrieve WHOIS information for a specified domain
+      tags:
+        - Server Info
+      parameters:
+        - name: domain
+          in: query
+          required: true
+          description: The domain to retrieve WHOIS information for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  internicData:
+                    type: object
+                    properties:
+                      Domain_Name:
+                        type: string
+                      Registry_Domain_ID:
+                        type: string
+                      Registrar_WHOIS_Server:
+                        type: string
+                      Registrar_URL:
+                        type: string
+                      Updated_Date:
+                        type: string
+                        format: date-time
+                      Creation_Date:
+                        type: string
+                        format: date-time
+                      Registry_Expiry_Date:
+                        type: string
+                        format: date-time
+                      Registrar:
+                        type: string
+                      Registrar_IANA_ID:
+                        type: string
+                      Domain_Status:
+                        type: string
+                      Name_Server:
+                        type: string
+                      DNSSEC:
+                        type: string
+                      URL_of_the_ICANN_Whois_Inaccuracy_Complaint_Form:
+                        type: string
+                      _Last_update_of_whois_database:
+                        type: string
+                        format: date-time
+                      For_more_information_on_Whois_status_codes_please_visit_https:
+                        type: string
+                      NOTICE:
+                        type: string
+                      TERMS_OF_USE:
+                        type: string
+                      by_the_following_terms_of_use:
+                        type: string
+                      to:
+                        type: string
+                  whoisData:
+                    type: object
+                    properties:
+                      domain:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          domain:
+                            type: string
+                          name:
+                            type: string
+                          extension:
+                            type: string
+                          whois_server:
+                            type: string
+                          status:
+                            type: array
+                            items:
+                              type: string
+                          name_servers:
+                            type: array
+                            items:
+                              type: string
+                          created_date:
+                            type: string
+                            format: date-time
+                          updated_date:
+                            type: string
+                            format: date-time
+                          expiration_date:
+                            type: string
+                            format: date-time
+                      registrar:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                          phone:
+                            type: string
+                          email:
+                            type: string
+                          referral_url:
+                            type: string
+                      registrant:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          organization:
+                            type: string
+                          street:
+                            type: string
+                          city:
+                            type: string
+                          province:
+                            type: string
+                          postal_code:
+                            type: string
+                          country:
+                            type: string
+                          phone:
+                            type: string
+                          phone_ext:
+                            type: string
+                          fax:
+                            type: string
+                          fax_ext:
+                            type: string
+                          email:
+                            type: string
+                      administrative:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          organization:
+                            type: string
+                          street:
+                            type: string
+                          city:
+                            type: string
+                          province:
+                            type: string
+                          postal_code:
+                            type: string
+                          country:
+                            type: string
+                          phone:
+                            type: string
+                          phone_ext:
+                            type: string
+                          fax:
+                            type: string
+                          fax_ext:
+                            type: string
+                          email:
+                            type: string
+                      technical:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          organization:
+                            type: string
+                          street:
+                            type: string
+                          city:
+                            type: string
+                          province:
+                            type: string
+                          postal_code:
+                            type: string
+                          country:
+                            type: string
+                          phone:
+                            type: string
+                          phone_ext:
+                            type: string
+                          fax:
+                            type: string
+                          fax_ext:
+                            type: string
+                          email:
+                            type: string
+                      billing:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          organization:
+                            type: string
+                          street:
+                            type: string
+                          city:
+                            type: string
+                          province:
+                            type: string
+                          postal_code:
+                            type: string
+                          country:
+                            type: string
+                          phone:
+                            type: string
+                          phone_ext:
+                            type: string
+                          fax:
+                            type: string
+                          fax_ext:
+                            type: string
+                          email:
+                            type: string
+                example:
+                  internicData: 
+                    Domain_Name: "AS93.NET"
+                    Registry_Domain_ID: "1722029712_DOMAIN_NET-VRSN"
+                    Registrar_WHOIS_Server: "whois.cloudflare.com"
+                    Registrar_URL: "http://www.cloudflare.com"
+                    Updated_Date: "2019-05-07T04:20:11Z"
+                    Creation_Date: "2012-05-22T16:36:05Z"
+                    Registry_Expiry_Date: "2025-05-22T16:36:05Z"
+                    Registrar: "CloudFlare, Inc."
+                    Registrar_IANA_ID: "1910"
+                    Domain_Status: "clientTransferProhibited https://icann.org/epp#clientTransferProhibited"
+                    Name_Server: "ALEX.NS.CLOUDFLARE.COM"
+                    DNSSEC: "unsigned"
+                    URL_of_the_ICANN_Whois_Inaccuracy_Complaint_Form: "https://www.icann.org/wicf/"
+                    _Last_update_of_whois_database: "2024-05-18T13:59:10Z <<< "
+                    For_more_information_on_Whois_status_codes_please_visit_https: "//icann.org/epp "
+                    NOTICE: "The expiration date displayed in this record is the date the registrar's sponsorship of the domain name registration in the registry is currently set to expire. This date does not necessarily reflect the expiration date of the domain name registrant's agreement with the sponsoring registrar.  Users may consult the sponsoring registrar's Whois database to view the registrar's reported date of expiration for this registration. "
+                    TERMS_OF_USE: "You are not authorized to access or query our Whois database through the use of electronic processes that are high-volume and automated except as reasonably necessary to register domain names or modify existing registrations; the Data in VeriSign Global Registry Services' (\"VeriSign\") Whois database is provided by VeriSign for information purposes only, and to assist persons in obtaining information about or related to a domain name registration record. VeriSign does not guarantee its accuracy. By submitting a Whois query, you agree to abide"
+                    by_the_following_terms_of_use: "You agree that you may use this Data only for lawful purposes and that under no circumstances will you use this Data"
+                    to: "(1) allow, enable, or otherwise support the transmission of mass unsolicited, commercial advertising or solicitations via e-mail, telephone, or facsimile; or (2) enable high volume, automated, electronic processes that apply to VeriSign (or its computer systems). The compilation, repackaging, dissemination or other use of this Data is expressly prohibited without the prior written consent of VeriSign. You agree not to use electronic processes that are automated and high-volume to access or query the Whois database except as reasonably necessary to register domain names or modify existing registrations. VeriSign reserves the right to restrict your access to the Whois database in its sole discretion to ensure operational stability.  VeriSign may restrict or terminate your access to the Whois database for failure to abide by these terms of use. VeriSign reserves the right to modify these terms at any time.  The Registry database contains ONLY .COM, .NET, .EDU domains and Registrars. "
+                  whoisData: 
+                    domain: 
+                      id: "1722029712_DOMAIN_NET-VRSN"
+                      domain: "as93.net"
+                      name: "as93"
+                      extension: "net"
+                      whois_server: "whois.cloudflare.com"
+                      status: 
+                        - "clienttransferprohibited"
+                      name_servers: 
+                        - "adrian.ns.cloudflare.com"
+                        - "alex.ns.cloudflare.com"
+                      created_date: "2012-05-22T16:36:05Z"
+                      updated_date: "2019-05-07T04:20:11Z"
+                      expiration_date: "2025-05-22T16:36:05Z"
+                    registrar: 
+                      id: "1910"
+                      name: "Cloudflare, Inc."
+                      phone: "+1.4153197517"
+                      email: "registrar-abuse@cloudflare.com"
+                      referral_url: "https://www.cloudflare.com"
+                    registrant: 
+                      name: "DATA REDACTED"
+                      organization: "DATA REDACTED"
+                      street: "DATA REDACTED"
+                      city: "DATA REDACTED"
+                      province: "London"
+                      postal_code: "DATA REDACTED"
+                      country: "GB"
+                      phone: "DATA REDACTED"
+                      phone_ext: "DATA REDACTED"
+                      fax: "DATA REDACTED"
+                      fax_ext: "DATA REDACTED"
+                      email: "https://domaincontact.cloudflareregistrar.com/as93.net"
+                    administrative: 
+                      name: "DATA REDACTED"
+                      organization: "DATA REDACTED"
+                      street: "DATA REDACTED"
+                      city: "DATA REDACTED"
+                      province: "DATA REDACTED"
+                      postal_code: "DATA REDACTED"
+                      country: "DATA REDACTED"
+                      phone: "DATA REDACTED"
+                      phone_ext: "DATA REDACTED"
+                      fax: "DATA REDACTED"
+                      fax_ext: "DATA REDACTED"
+                      email: "https://domaincontact.cloudflareregistrar.com/as93.net"
+                    technical: 
+                      name: "DATA REDACTED"
+                      organization: "DATA REDACTED"
+                      street: "DATA REDACTED"
+                      city: "DATA REDACTED"
+                      province: "DATA REDACTED"
+                      postal_code: "DATA REDACTED"
+                      country: "DATA REDACTED"
+                      phone: "DATA REDACTED"
+                      phone_ext: "DATA REDACTED"
+                      fax: "DATA REDACTED"
+                      fax_ext: "DATA REDACTED"
+                      email: "https://domaincontact.cloudflareregistrar.com/as93.net"
+                    billing: 
+                      name: "DATA REDACTED"
+                      organization: "DATA REDACTED"
+                      street: "DATA REDACTED"
+                      city: "DATA REDACTED"
+                      province: "DATA REDACTED"
+                      postal_code: "DATA REDACTED"
+                      country: "DATA REDACTED"
+                      phone: "DATA REDACTED"
+                      phone_ext: "DATA REDACTED"
+                      fax: "DATA REDACTED"
+                      fax_ext: "DATA REDACTED"
+                      email: "https://domaincontact.cloudflareregistrar.com/as93.net"
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'

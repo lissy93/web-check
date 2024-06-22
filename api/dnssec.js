@@ -1,7 +1,7 @@
-const https = require('https');
-const middleware = require('./_common/middleware'); // Make sure this path is correct
+import https from 'https';
+import middleware from './_common/middleware.js';
 
-const handler = async (domain) => {
+const dnsSecHandler = async (domain) => {
   const dnsTypes = ['DNSKEY', 'DS', 'RRSIG'];
   const records = {};
 
@@ -53,5 +53,5 @@ const handler = async (domain) => {
   return records;
 };
 
-module.exports = middleware(handler);
-module.exports.handler = middleware(handler);
+export const handler = middleware(dnsSecHandler);
+export default handler;

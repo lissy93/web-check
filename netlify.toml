@@ -2,11 +2,13 @@
 [build]
   base = "/"
   command = "yarn build"
-  publish = "build"
+  publish = "dist"
   functions = "api"
 
 # Environmental variables and optional secrets
 [build.environment]
+  PLATFORM = "netlify"
+  PUBLIC_API_ENDPOINT = "/.netlify/functions"
   # Build configuration env vars (uncomment if you want to conigure these)
   # CI="false" # Set CI to false, to prevent warnings from exiting the build
   # CHROME_PATH='/usr/bin/chromium' # Path to Chromium binary
@@ -24,12 +26,6 @@
   to = "/.netlify/functions/:splat"
   status = 301
   force = true
-
-# For router history mode, ensure pages land on index
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200  
 
 # Plugins
 [[plugins]]
