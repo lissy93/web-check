@@ -957,6 +957,13 @@ Credit to the following users for contributing to Web-Check
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/HeroGamers">
+                    <img src="https://avatars.githubusercontent.com/u/15278940?v=4" width="80;" alt="HeroGamers"/>
+                    <br />
+                    <sub><b>Marcus Sand</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/bolens">
                     <img src="https://avatars.githubusercontent.com/u/1218380?v=4" width="80;" alt="bolens"/>
                     <br />
@@ -984,6 +991,8 @@ Credit to the following users for contributing to Web-Check
                     <sub><b>Abhishek Muge</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/UlisesGascon">
                     <img src="https://avatars.githubusercontent.com/u/5110813?v=4" width="80;" alt="UlisesGascon"/>
@@ -991,8 +1000,6 @@ Credit to the following users for contributing to Web-Check
                     <sub><b>Ulises Gascón</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/PhiRequiem">
                     <img src="https://avatars.githubusercontent.com/u/1323576?v=4" width="80;" alt="PhiRequiem"/>
@@ -1028,6 +1035,8 @@ Credit to the following users for contributing to Web-Check
                     <sub><b>John Hupperts</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/eltociear">
                     <img src="https://avatars.githubusercontent.com/u/22633385?v=4" width="80;" alt="eltociear"/>
@@ -1035,8 +1044,6 @@ Credit to the following users for contributing to Web-Check
                     <sub><b>Ikko Eltociear Ashimine</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/Gertje823">
                     <img src="https://avatars.githubusercontent.com/u/36937387?v=4" width="80;" alt="Gertje823"/>
