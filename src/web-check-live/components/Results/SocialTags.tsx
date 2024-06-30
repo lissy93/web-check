@@ -17,6 +17,15 @@ const cardStyles = `
   }
 `;
 
+const OgBanner = ({ ogImage, ogUrl }: { ogImage: string; ogUrl?: string }): JSX.Element => {
+  const urlCover = ogImage.startsWith("/") && ogUrl ? `${ogUrl}${ogImage}` : ogImage;
+  return (
+      <div className="banner-image">
+          <img src={urlCover} alt="Banner" />
+      </div>
+  );
+};
+
 const SocialTagsCard = (props: {data: any, title: string, actionButtons: any }): JSX.Element => {
   const tags = props.data;
   return (
@@ -36,7 +45,7 @@ const SocialTagsCard = (props: {data: any, title: string, actionButtons: any }):
       { tags.author && <Row lbl="Author" val={tags.author} />}
       { tags.publisher && <Row lbl="Publisher" val={tags.publisher} />}
       { tags.generator && <Row lbl="Generator" val={tags.generator} />}
-      { tags.ogImage && <div className="banner-image"><img src={tags.ogImage} alt="Banner" /></div> }
+      {tags.ogImage && <OgBanner ogImage={tags.ogImage} ogUrl={tags.ogUrl} />}
     </Card>
   );
 }
