@@ -941,21 +941,14 @@ Credit to the following users for contributing to Web-Check
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/brianteeman">
-                    <img src="https://avatars.githubusercontent.com/u/1296369?v=4" width="80;" alt="brianteeman"/>
+                <a href="https://github.com/bolens">
+                    <img src="https://avatars.githubusercontent.com/u/1218380?v=4" width="80;" alt="bolens"/>
                     <br />
-                    <sub><b>Brian Teeman</b></sub>
+                    <sub><b>Michael Bolens</b></sub>
                 </a>
             </td>
 		</tr>
 		<tr>
-            <td align="center">
-                <a href="https://github.com/GreyXor">
-                    <img src="https://avatars.githubusercontent.com/u/79602273?v=4" width="80;" alt="GreyXor"/>
-                    <br />
-                    <sub><b>GreyXor</b></sub>
-                </a>
-            </td>
             <td align="center">
                 <a href="https://github.com/HeroGamers">
                     <img src="https://avatars.githubusercontent.com/u/15278940?v=4" width="80;" alt="HeroGamers"/>
@@ -964,10 +957,24 @@ Credit to the following users for contributing to Web-Check
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/bolens">
-                    <img src="https://avatars.githubusercontent.com/u/1218380?v=4" width="80;" alt="bolens"/>
+                <a href="https://github.com/jinnabaalu">
+                    <img src="https://avatars.githubusercontent.com/u/11784253?v=4" width="80;" alt="jinnabaalu"/>
                     <br />
-                    <sub><b>Michael Bolens</b></sub>
+                    <sub><b>Jinna Baalu</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/GreyXor">
+                    <img src="https://avatars.githubusercontent.com/u/79602273?v=4" width="80;" alt="GreyXor"/>
+                    <br />
+                    <sub><b>GreyXor</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/brianteeman">
+                    <img src="https://avatars.githubusercontent.com/u/1296369?v=4" width="80;" alt="brianteeman"/>
+                    <br />
+                    <sub><b>Brian Teeman</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -984,6 +991,8 @@ Credit to the following users for contributing to Web-Check
                     <sub><b>Lth</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/abhishekMuge">
                     <img src="https://avatars.githubusercontent.com/u/49590582?v=4" width="80;" alt="abhishekMuge"/>
@@ -991,8 +1000,6 @@ Credit to the following users for contributing to Web-Check
                     <sub><b>Abhishek Muge</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/UlisesGascon">
                     <img src="https://avatars.githubusercontent.com/u/5110813?v=4" width="80;" alt="UlisesGascon"/>
@@ -1028,6 +1035,8 @@ Credit to the following users for contributing to Web-Check
                     <sub><b>Marco Ochse</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/treatmesubj">
                     <img src="https://avatars.githubusercontent.com/u/39680353?v=4" width="80;" alt="treatmesubj"/>
@@ -1035,8 +1044,6 @@ Credit to the following users for contributing to Web-Check
                     <sub><b>John Hupperts</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/eltociear">
                     <img src="https://avatars.githubusercontent.com/u/22633385?v=4" width="80;" alt="eltociear"/>
