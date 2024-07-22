@@ -89,6 +89,12 @@ const CardStyles = `
 
 const resources = [
   {
+    title: 'Hudson Rock',
+    link: 'https://hudsonrock.com/free-tools',
+    icon: 'https://i.ibb.co/0rF3rZh/logo-1-967abb2c.png',
+    description: 'Identify Infostealer infection data related to domains and emails',
+  },
+  {
     title: 'SSL Labs Test',
     link: 'https://ssllabs.com/ssltest/analyze.html',
     icon: 'https://i.ibb.co/6bVL8JK/Qualys-ssl-labs.png',
