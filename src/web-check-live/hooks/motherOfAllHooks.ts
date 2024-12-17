@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import type { LoadingState } from 'web-check-live/components/misc/ProgressBar';
 import type { AddressType } from 'web-check-live/utils/address-type-checker';
+import keys from 'web-check-live/utils/get-keys';
 
 interface UseIpAddressProps<ResultType = any> {
   // Unique identifier for this job type
@@ -37,6 +38,10 @@ const useMotherOfAllHooks = <ResultType = any>(params: UseIpAddressProps<ResultT
   // Fire off the HTTP fetch request, then set results and update loading / error state
 
   const doTheFetch = () => {
+    if (keys.disableEverything) {
+      updateLoadingJobs(jobId, 'skipped', 'Web-Check is temporarily disabled. Please try again later.', reset);
+      return Promise.resolve();
+    }
     return fetchRequest()
     .then((res: any) => {
       if (!res) { // No response :(
