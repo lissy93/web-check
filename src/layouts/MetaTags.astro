@@ -22,7 +22,7 @@ const siteInfo = {
   site: import.meta.env.SITE_URL || 'https://web-check.xyz',
   analytics: {
     enable: import.meta.env.ENABLE_ANALYTICS,
-    domain: 'web-check.xyz',
+    domain: 'web-check.as93.net',
     script: 'https://no-track.as93.net/js/script.js',
   },
 };
@@ -92,8 +92,7 @@ const makeBreadcrumbs = () => {
 
 <!-- Non-tracking hit counter -->
 {analytics.enable && (
-  <script defer is:inline type="text/partytown"
-    data-domain={analytics.domain} src={analytics.script}></script>
+  <script defer data-domain={analytics.domain} src={analytics.script}></script>
 )}
 
 <!-- Schema.org markup for Google -->
