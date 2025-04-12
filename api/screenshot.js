@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer-core';
 import chromium from 'chrome-aws-lambda';
 import middleware from './_common/middleware.js';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promises as fs } from 'fs';
 import path from 'path';
 import pkg from 'uuid';
@@ -20,32 +20,37 @@ const directChromiumScreenshot = async (url) => {
   
   return new Promise((resolve, reject) => {
     const chromePath = process.env.CHROME_PATH || '/usr/bin/chromium';
-    const command = `${chromePath} --headless --disable-gpu --no-sandbox --screenshot=${screenshotPath} "${url}"`;
+    const args = [
+      '--headless',
+      '--disable-gpu',
+      '--no-sandbox',
+      `--screenshot=${screenshotPath}`,
+      url
+    ];
+
+    console.log(`[DIRECT-SCREENSHOT] Executing: ${chromePath} ${args.join(' ')}`);
     
-    console.log(`[DIRECT-SCREENSHOT] Executing command: ${command}`);
-    
-    exec(command, async (error, stdout, stderr) => {
+    execFile(chromePath, args, async (error, stdout, stderr) => {
       if (error) {
-        console.error(`[DIRECT-SCREENSHOT] Error executing Chromium: ${error.message}`);
+        console.error(`[DIRECT-SCREENSHOT] Chromium error: ${error.message}`);
         return reject(error);
       }
-      
+  
       try {
-        // Read screenshot
+        // Read the screenshot file
         const screenshotData = await fs.readFile(screenshotPath);
-        console.log(`[DIRECT-SCREENSHOT] Read ${screenshotData.length} bytes from screenshot file`);
+        console.log(`[DIRECT-SCREENSHOT] Screenshot read successfully`);
         
-        // Convert base64
+        // Convert to base64
         const base64Data = screenshotData.toString('base64');
-        
-        // Clean 
-        await fs.unlink(screenshotPath).catch(err => 
+  
+        await fs.unlink(screenshotPath).catch(err =>
           console.warn(`[DIRECT-SCREENSHOT] Failed to delete temp file: ${err.message}`)
         );
-        
+  
         resolve(base64Data);
       } catch (readError) {
-        console.error(`[DIRECT-SCREENSHOT] Error reading screenshot: ${readError.message}`);
+        console.error(`[DIRECT-SCREENSHOT] Failed reading screenshot: ${readError.message}`);
         reject(readError);
       }
     });
