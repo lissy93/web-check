@@ -278,7 +278,7 @@ const Home = (): JSX.Element => {
           <Heading as="h2" size="small" color={colors.primary}>Supported Checks</Heading>
           <ul>
             {docs.map((doc, index) => (<li key={index}>{doc.title}</li>))}
-            <li><Link to="/about">+ more!</Link></li>
+            <li><Link to="/check/about">+ more!</Link></li>
           </ul>
         </div>
         <div className="links">
@@ -288,7 +288,7 @@ const Home = (): JSX.Element => {
           <a target="_blank" rel="noreferrer" href="https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check" title="Deploy your own private or public instance of Web-Check to Netlify">
             <Button>Deploy your own</Button>
           </a>
-          <Link to="/about#api-documentation" title="View the API documentation, to use Web-Check programmatically">
+          <Link to="/check/about#api-documentation" title="View the API documentation, to use Web-Check programmatically">
             <Button>API Docs</Button>
           </Link>
         </div>

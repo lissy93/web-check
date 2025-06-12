@@ -1,4 +1,6 @@
 import styled from '@emotion/styled';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import colors from 'web-check-live/styles/colors';
 import Heading from 'web-check-live/components/Form/Heading';
@@ -118,6 +120,21 @@ const makeAnchor = (title: string): string => {
 };
 
 const About = (): JSX.Element => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Scroll to hash fragment if present
+    if (location.hash) {
+      // Add a small delay to ensure the page has fully rendered
+      setTimeout(() => {
+        const element = document.getElementById(location.hash.slice(1));
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [location]);
+
   return (
     <div>
     <AboutContainer>
