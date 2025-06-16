@@ -151,7 +151,7 @@ export const ExpandableRow = (props: RowProps) => {
             return (
               <StyledRow as="li" key={`${row.lbl}-${index}`}>
                 <span className="lbl" title={row.title?.toString()}>{row.lbl}</span>
-                <span className="val" title={row.val} onClick={() => copyToClipboard(row.val)}>
+                <span className="val" title={row.val?.toString()} onClick={() => copyToClipboard(row.val)}>
                   {formatValue(row.val)}
                 </span>
                 { row.plaintext && <PlainText>{row.plaintext}</PlainText> }
