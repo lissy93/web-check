@@ -11,15 +11,17 @@ const cardStyles = `
 `;
 
 const RobotsTxtCard = ( props: { data: { robots: RowProps[]}, title: string, actionButtons: any}): JSX.Element => {
-  const robots = props.data;
+  const { data } = props;
+  const robots = data?.robots || [];
+
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       <div className="content">
       {
-        robots.robots.length === 0 && <p>No crawl rules found.</p>
+        robots.length === 0 && <p>No crawl rules found.</p>
       }
       {
-        robots.robots.map((row: RowProps, index: number) => {
+        robots.map((row: RowProps, index: number) => {
           return (
             <Row key={`${row.lbl}-${index}`} lbl={row.lbl} val={row.val} />
           )
