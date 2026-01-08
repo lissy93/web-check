@@ -29,7 +29,17 @@ const carbonHandler = async (url) => {
           data += chunk;
         });
         res.on('end', () => {
-          resolve(JSON.parse(data));
+          // Check if response looks like HTML (e.g., Cloudflare challenge page)
+          const trimmedData = data.trim();
+          if (trimmedData.startsWith('<!DOCTYPE') || trimmedData.startsWith('<html') || trimmedData.startsWith('<')) {
+            reject(new Error('WebsiteCarbon API returned HTML instead of JSON. This may be due to Cloudflare protection when running from a datacenter IP.'));
+            return;
+          }
+          try {
+            resolve(JSON.parse(data));
+          } catch (parseError) {
+            reject(new Error(`Failed to parse WebsiteCarbon API response as JSON: ${parseError.message}`));
+          }
         });
       }).on('error', reject);
     });
