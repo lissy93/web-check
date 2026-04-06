@@ -33,7 +33,7 @@ const docs: Doc[] = [
       { title: 'RFC-8446 - TLS', link: 'https://tools.ietf.org/html/rfc8446'},
       { title: 'SSL Checker', link: 'https://www.sslshopper.com/ssl-checker.html'},
     ],
-    screenshot: 'https://i.ibb.co/kB7LsV1/wc-ssl.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-ssl',
   },
   {
     id: "dns",
@@ -47,7 +47,7 @@ const docs: Doc[] = [
       { title: 'RFC-1035 - DNS', link: 'https://tools.ietf.org/html/rfc1035'},
       { title: 'DNS Lookup (via MxToolbox)', link: 'https://mxtoolbox.com/DNSLookup.aspx'},
     ],
-    screenshot: 'https://i.ibb.co/7Q1kMwM/wc-dns.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-dns',
   },
   {
     id: "cookies",
@@ -61,7 +61,7 @@ const docs: Doc[] = [
       { title: 'Testing for Cookie Attributes (OWASP)', link: 'https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/06-Session_Management_Testing/02-Testing_for_Cookies_Attributes' },
       { title: 'RFC-6265 - Coolies', link: 'https://tools.ietf.org/html/rfc6265' },
     ],
-    screenshot: 'https://i.ibb.co/TTQ6DtP/wc-cookies.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-cookies',
   },
   {
     id: "robots-txt",
@@ -75,7 +75,7 @@ const docs: Doc[] = [
       { title: 'RFC-9309 -  Robots Exclusion Protocol', link: 'https://datatracker.ietf.org/doc/rfc9309/' },
       { title: 'Robots.txt - wiki', link: 'https://en.wikipedia.org/wiki/Robots_exclusion_standard' },
     ],
-    screenshot: 'https://i.ibb.co/KwQCjPf/wc-robots.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-robots',
   },
   {
     id: "headers",
@@ -89,7 +89,7 @@ const docs: Doc[] = [
       { title: 'List of header response fields', link: 'https://en.wikipedia.org/wiki/List_of_HTTP_header_fields' },
       { title: 'OWASP Secure Headers Project', link: 'https://owasp.org/www-project-secure-headers/' },
     ],
-    screenshot: 'https://i.ibb.co/t3xcwP1/wc-headers.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-headers',
   },
   {
     id: "quality",
@@ -105,7 +105,7 @@ const docs: Doc[] = [
       { title: 'SEO Checker', link: 'https://www.seobility.net/en/seocheck/' },
       { title: 'PWA Builder', link: 'https://www.pwabuilder.com/' },
     ],
-    screenshot: 'https://i.ibb.co/Kqg8rx7/wc-quality.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-quality',
   },
   {
     id: "location",
@@ -117,7 +117,7 @@ const docs: Doc[] = [
       { title: 'IP Locator', link: 'https://geobytes.com/iplocator/' },
       { title: 'Internet Geolocation - Wiki', link: 'https://en.wikipedia.org/wiki/Internet_geolocation' },
     ],
-    screenshot: 'https://i.ibb.co/cXH2hfR/wc-location.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-location',
   },
   {
     id: "hosts",
@@ -131,7 +131,7 @@ const docs: Doc[] = [
       { title: 'DNS Enumeration - DNS Dumpster', link: 'https://dnsdumpster.com/' },
       { title: 'Subdomain Finder', link: 'https://subdomainfinder.c99.nl/' },
     ],
-    screenshot: 'https://i.ibb.co/25j1sT7/wc-hosts.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-hosts',
   },
   {
     id: "redirects",
@@ -144,7 +144,7 @@ const docs: Doc[] = [
       { title: 'URL Redirection - Wiki', link: 'https://en.wikipedia.org/wiki/URL_redirection' },
       { title: '301 Redirects explained', link: 'https://ahrefs.com/blog/301-redirects/' },
     ],
-    screenshot: 'https://i.ibb.co/hVVrmwh/wc-redirects.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-redirects',
   },
   {
     id: "txt-records",
@@ -158,7 +158,7 @@ const docs: Doc[] = [
       { title: 'RFC-1464 - TXT Records', link: 'https://datatracker.ietf.org/doc/html/rfc1464' },
       { title: 'TXT Record Lookup (via MxToolbox)', link: 'https://mxtoolbox.com/TXTLookup.aspx' },
     ],
-    screenshot: 'https://i.ibb.co/wyt21QN/wc-txt-records.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-txt-records',
   },
   {
     id: "status",
@@ -167,7 +167,7 @@ const docs: Doc[] = [
     use: "",
     resources: [
     ],
-    screenshot: 'https://i.ibb.co/V9CNLBK/wc-status.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-status',
   },
   {
     id: "ports",
@@ -179,7 +179,7 @@ const docs: Doc[] = [
       { title: 'List of TCP & UDP Port Numbers', link: 'https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers' },
       { title: 'NMAP - Port Scanning Basics', link: 'https://nmap.org/book/man-port-scanning-basics.html' },
     ],
-    screenshot: 'https://i.ibb.co/F8D1hmf/wc-ports.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-ports',
   },
   {
     id: "trace-route",
@@ -193,7 +193,7 @@ const docs: Doc[] = [
       "https://en.wikipedia.org/wiki/Traceroute",
       "https://www.ripe.net/publications/docs/ripe-611",
     ],
-    screenshot: 'https://i.ibb.co/M59qgxP/wc-trace-route.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-trace-route',
   },
   {
     id: "carbon",
@@ -208,7 +208,7 @@ const docs: Doc[] = [
       { title: 'Reset.org', link: 'https://en.reset.org/' },
       { title: 'Your website is killing the planet - via Wired', link: 'https://www.wired.co.uk/article/internet-carbon-footprint' },
     ],
-    screenshot: 'https://i.ibb.co/5v6fSyw/Screenshot-from-2023-07-29-19-07-50.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-carbon',
   },
   {
     id: "server-info",
@@ -222,7 +222,7 @@ const docs: Doc[] = [
       "https://tools.ietf.org/html/rfc7231#section-7.4.2",
       "https://builtwith.com/",
     ],
-    screenshot: 'https://i.ibb.co/Mk1jx32/wc-server.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-server',
   },
   {
     id: "domain",
@@ -235,7 +235,7 @@ const docs: Doc[] = [
       "https://www.icann.org/resources/pages/whois-2018-01-17-en",
       "https://whois.domaintools.com/",
     ],
-    screenshot: 'https://i.ibb.co/89WLp14/wc-domain.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-domain',
   },
   {
     id: "whois",
@@ -248,7 +248,7 @@ const docs: Doc[] = [
       "https://www.icann.org/resources/pages/whois-2018-01-17-en",
       "https://whois.domaintools.com/",
     ],
-    screenshot: 'https://i.ibb.co/89WLp14/wc-domain.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-domain',
   },
   {
     id: "dnssec",
@@ -264,7 +264,7 @@ const docs: Doc[] = [
       "https://support.google.com/domains/answer/6147083",
       "https://www.internetsociety.org/resources/deploy360/2013/dnssec-test-sites/",
     ],
-    screenshot: 'https://i.ibb.co/J54zVmQ/wc-dnssec.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-dnssec',
   },
   {
     id: "features",
@@ -272,7 +272,7 @@ const docs: Doc[] = [
     description: 'Checks which core features are present on a site. If a feature as marked as dead, that means it\'s not being actively used at load time',
     use: "This is useful to understand what a site is capable of, and what technologies to look for",
     resources: [],
-    screenshot: 'https://i.ibb.co/gP4P6kp/wc-features.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-features',
   },
   {
     id: "hsts",
@@ -294,7 +294,7 @@ const docs: Doc[] = [
       'https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Strict_Transport_Security_Cheat_Sheet.html',
       'https://hstspreload.org/'
     ],
-    screenshot: 'https://i.ibb.co/k253fq4/Screenshot-from-2023-07-17-20-10-52.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-hsts',
   },
   {
     id: 'dns-server',
@@ -302,7 +302,7 @@ const docs: Doc[] = [
     description: 'This check determines the DNS server(s) that the requested URL / IP resolves to. Also fires off a rudimentary check to see if the DNS server supports DoH, and weather it\'s vulnerable to DNS cache poisoning.',
     use: '',
     resources: [],
-    screenshot: 'https://i.ibb.co/tKpL8F9/Screenshot-from-2023-08-12-15-43-12.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-dns-servers',
   },
   {
     id: 'tech-stack',
@@ -316,7 +316,7 @@ const docs: Doc[] = [
       { title: 'Wappalyzer fingerprints', link: 'https://github.com/wappalyzer/wappalyzer/tree/master/src/technologies'},
       { title: 'BuiltWith - Check what tech a site is using', link: 'https://builtwith.com/'},
     ],
-    screenshot: 'https://i.ibb.co/bBQSQNz/Screenshot-from-2023-08-12-15-43-46.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-tech',
   },
   {
     id: 'sitemap',
@@ -328,7 +328,7 @@ const docs: Doc[] = [
       { title: 'Sitemap XML spec', link: 'https://www.sitemaps.org/protocol.html'},
       { title: 'Sitemap tutorial', link: 'https://www.conductor.com/academy/xml-sitemap/'},
     ],
-    screenshot: 'https://i.ibb.co/GtrCQYq/Screenshot-from-2023-07-21-12-28-38.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-pages',
   },
   {
     id: 'security-txt',
@@ -348,7 +348,7 @@ const docs: Doc[] = [
       { title: 'Example security.txt (Cloudflare)', link: 'https://www.cloudflare.com/.well-known/security.txt'},
       { title: 'Tutorial for creating security.txt (Pieter Bakker)', link: 'https://pieterbakker.com/implementing-security-txt/'},
     ],
-    screenshot: 'https://i.ibb.co/tq1FT5r/Screenshot-from-2023-07-24-20-31-21.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-securitytxt',
   },
   {
     id: 'linked-pages',
@@ -360,7 +360,7 @@ const docs: Doc[] = [
     resources: [
       { title: 'W3C Link Checker', link: 'https://validator.w3.org/checklink'},
     ],
-    screenshot: 'https://i.ibb.co/LtK14XR/Screenshot-from-2023-07-29-11-16-44.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-links',
   },
   {
     id: 'social-tags',
@@ -375,7 +375,7 @@ const docs: Doc[] = [
       { title: 'Twitter Cards', link: 'https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards'},
       { title: 'Facebook Open Graph', link: 'https://developers.facebook.com/docs/sharing/webmasters'},
     ],
-    screenshot: 'https://i.ibb.co/4srTT1w/Screenshot-from-2023-07-29-11-15-27.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-social',
   },
   {
     id: 'mail-config',
@@ -394,7 +394,7 @@ const docs: Doc[] = [
       { title: 'RFC-7489 - DMARC', link: 'https://datatracker.ietf.org/doc/html/rfc7489' },
       { title: 'BIMI Group', link: 'https://bimigroup.org/' },
     ],
-    screenshot: 'https://i.ibb.co/yqhwx5G/Screenshot-from-2023-07-29-18-22-20.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-email',
   },
   {
     id: 'firewall',
@@ -407,7 +407,7 @@ const docs: Doc[] = [
       { title: 'Web Application Firewall Best Practices', link: 'https://owasp.org/www-pdf-archive/Best_Practices_Guide_WAF_v104.en.pdf' },
       { title: 'WAF - Wiki', link: 'https://en.wikipedia.org/wiki/Web_application_firewall' },
     ],
-    screenshot: 'https://i.ibb.co/MfcxQt2/Screenshot-from-2023-08-12-15-40-52.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-firewall',
   },
   {
     id: 'http-security',
@@ -431,7 +431,7 @@ const docs: Doc[] = [
       { title: 'X-Frame-Options Docs', link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options' },
       { title: 'X-XSS-Protection Docs', link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection' },
     ],
-    screenshot: 'https://i.ibb.co/LP05HMV/Screenshot-from-2023-08-12-15-40-28.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-http',
   },
   {
     id: 'archives',
@@ -441,7 +441,7 @@ const docs: Doc[] = [
     resources: [
       { title: 'Wayback Machine', link: 'https://archive.org/web/'},
     ],
-    screenshot: 'https://i.ibb.co/nB9szT1/Screenshot-from-2023-08-14-22-31-16.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-history',
   },
   {
     id: 'rank',
@@ -452,7 +452,7 @@ const docs: Doc[] = [
       { title: 'Tranco List', link: 'https://tranco-list.eu/' },
       { title: 'Tranco Research Paper', link: 'https://tranco-list.eu/assets/tranco-ndss19.pdf'},
     ],
-    screenshot: 'https://i.ibb.co/nkbczgb/Screenshot-from-2023-08-14-22-02-40.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-rank',
   },
   {
     id: 'block-lists',
@@ -462,7 +462,7 @@ const docs: Doc[] = [
     resources: [
       { title: 'ThreatJammer Lists', link: 'https://threatjammer.com/osint-lists'},
     ],
-    screenshot: 'https://i.ibb.co/M5JSXbW/Screenshot-from-2023-08-26-12-12-43.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-blocks',
   },
   {
     id: 'threats',
@@ -473,7 +473,7 @@ const docs: Doc[] = [
       { title: 'URLHaus', link: 'https://urlhaus-api.abuse.ch/'},
       { title: 'PhishTank', link: 'https://www.phishtank.com/'},
     ],
-    screenshot: 'https://i.ibb.co/hYgy621/Screenshot-from-2023-08-26-12-07-47.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-threats',
   },
   {
     id: 'tls-cipher-suites',
@@ -484,7 +484,7 @@ const docs: Doc[] = [
       { title: 'sslscan2 CLI', link: 'https://github.com/rbsec/sslscan' },
       { title: 'ssl-enum-ciphers (NPMAP script)', link: 'https://nmap.org/nsedoc/scripts/ssl-enum-ciphers.html' }
     ],
-    screenshot: 'https://i.ibb.co/6ydtH5R/Screenshot-from-2023-08-26-12-09-58.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-tls-cipher',
   },
   {
     id: 'tls-security-config',
@@ -492,7 +492,7 @@ const docs: Doc[] = [
     description: 'This uses guidelines from Mozilla\'s TLS Observatory to check the security of the TLS configuration. It checks for bad configurations, which may leave the site vulnerable to attack, as well as giving advice on how to fix. It will also give suggestions around outdated and modern TLS configs',
     use: 'Understanding issues with a site\'s TLS configuration will help you address potential vulnerabilities, and ensure the site is using the latest and most secure TLS configuration.',
     resources: [],
-    screenshot: 'https://i.ibb.co/FmksZJt/Screenshot-from-2023-08-26-12-12-09.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-tls-sec',
   },
   {
     id: 'tls-client-support',
@@ -503,7 +503,7 @@ const docs: Doc[] = [
       { title: 'TLS Handshakes (via Cloudflare Learning)', link: 'https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/' },
       { title: 'SSL Test (via SSL Labs)', link: 'https://www.ssllabs.com/ssltest/' },
     ],
-    screenshot: 'https://i.ibb.co/F7qRZkh/Screenshot-from-2023-08-26-12-11-28.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-tls-handshake',
   },
   {
     id: 'screenshot',
@@ -511,7 +511,7 @@ const docs: Doc[] = [
     description: 'This check takes a screenshot of webpage that the requested URL / IP resolves to, and displays it.',
     use: 'This may be useful to see what a given website looks like, free of the constraints of your browser, IP, or location.',
     resources: [],
-    screenshot: 'https://i.ibb.co/2F0x8kP/Screenshot-from-2023-07-29-18-34-48.png',
+    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-screenshot',
   },
 ];
 

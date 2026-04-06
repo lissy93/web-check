@@ -2,7 +2,7 @@
 
 
 <p align="center">
-<img src="https://i.ibb.co/q1gZN2p/web-check-logo.png" width="96" /><br />
+<img src="https://cdn.as93.net/logo/web-check/w256" width="96" /><br />
 <b><i>Comprehensive, on-demand open source intelligence for any website</i></b>
 <br />
 <b>🌐 <a href="https://web-check.xyz/">web-check.xyz</a></b><br />
@@ -13,7 +13,7 @@
 <p align="center">
   <sup>Kindly supported by:</sup><br>
 <a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
-  <img src="https://i.ibb.co/8jrrcZ0/IMG-7210.jpg" width="300" alt="Terminal Trove">
+  <img src="https://pixelflare.cc/alicia/sponsors/terminal-trove" width="300" alt="Terminal Trove">
   <br>
   <strong>The $HOME of all things in the terminal.</strong>
 </a>
@@ -120,7 +120,7 @@ Finding the IP of a given server is the first step to conducting further investi
 <details>
 <summary><b>SSL Chain</b></summary>
 
-<img width="300" src="https://i.ibb.co/kB7LsV1/wc-ssl.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-ssl" align="right" />
 
 ###### Description
 SSL certificates are digital certificates that authenticate the identity of a website or server, enable secure encrypted communication (HTTPS), and establish trust between clients and servers. A valid SSL certificate is required for a website to be able to use the HTTPS protocol, and encrypt user + site data in transit. SSL certificates are issued by Certificate Authorities (CAs), which are trusted third parties that verify the identity and legitimacy of the certificate holder.
@@ -138,7 +138,7 @@ SSL certificates not only provide the assurance that data transmission to and fr
 <details>
 <summary><b>DNS Records</b></summary>
 
-<img width="300" src="https://i.ibb.co/7Q1kMwM/wc-dns.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-dns" align="right" />
 
 ###### Description
 This task involves looking up the DNS records associated with a specific domain. DNS is a system that translates human-readable domain names into IP addresses that computers use to communicate. Various types of DNS records exist, including A (address), MX (mail exchange), NS (name server), CNAME (canonical name), and TXT (text), among others.
@@ -156,7 +156,7 @@ Extracting DNS records can provide a wealth of information in an OSINT investiga
 <details>
 <summary><b>Cookies</b></summary>
 
-<img width="300" src="https://i.ibb.co/TTQ6DtP/wc-cookies.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-cookies" align="right" />
 
 ###### Description
 The Cookies task involves examining the HTTP cookies set by the target website. Cookies are small pieces of data stored on the user's computer by the web browser while browsing a website. They hold a modest amount of data specific to a particular client and website, such as site preferences, the state of the user's session, or tracking information.
@@ -174,7 +174,7 @@ Cookies can disclose information about how the website tracks and interacts with
 <details>
 <summary><b>Crawl Rules</b></summary>
 
-<img width="300" src="https://i.ibb.co/KwQCjPf/wc-robots.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-robots" align="right" />
 
 ###### Description
 Robots.txt is a file found (usually) at the root of a domain, and is used to implement the Robots Exclusion Protocol (REP) to indicate which pages should be ignored by which crawlers and bots. It's good practice to avoid search engine crawlers from over-loading your site, but should not be used to keep pages out of search results (use the noindex meta tag or header instead).
@@ -192,7 +192,7 @@ It's often useful to check the robots.txt file during an investigation, as it ca
 <details>
 <summary><b>Headers</b></summary>
 
-<img width="300" src="https://i.ibb.co/t3xcwP1/wc-headers.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-headers" align="right" />
 
 ###### Description
 The Headers task involves extracting and interpreting the HTTP headers sent by the target website during the request-response cycle. HTTP headers are key-value pairs sent at the start of an HTTP response, or before the actual data. Headers contain important directives for how to handle the data being transferred, including cache policies, content types, encoding, server information, security policies, and more.
@@ -210,7 +210,7 @@ Analyzing HTTP headers can provide significant insights in an OSINT investigatio
 <details>
 <summary><b>Quality Metrics</b></summary>
 
-<img width="300" src="https://i.ibb.co/Kqg8rx7/wc-quality.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-quality" align="right" />
 
 ###### Description
 Using Lighthouse, the Quality Metrics task measures the performance, accessibility, best practices, and SEO of the target website. This returns a simple checklist of 100 core metrics, along with a score for each category, to gauge the overall quality of a given site.
@@ -230,7 +230,7 @@ Useful for assessing a site's technical health, SEO issues, identify vulnerabili
 <details>
 <summary><b>Server Location</b></summary>
 
-<img width="300" src="https://i.ibb.co/cXH2hfR/wc-location.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-location" align="right" />
 
 ###### Description
 The Server Location task determines the physical location of the server hosting a given website based on its IP address. This is done by looking up the IP in a location database, which maps the IP to a lat + long of known data centers and ISPs. From the latitude and longitude, it's then possible to show additional contextual info, like a pin on the map, along with address, flag, time zone, currency, etc.
@@ -246,7 +246,7 @@ Knowing the server location is a good first step in better understanding a websi
 <details>
 <summary><b>Associated Hosts</b></summary>
 
-<img width="300" src="https://i.ibb.co/25j1sT7/wc-hosts.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-hosts" align="right" />
 
 ###### Description
 This task involves identifying and listing all domains and subdomains (hostnames) that are associated with the website's primary domain. This process often involves DNS enumeration to discover any linked domains and hostnames, as well as looking at known DNS records.
@@ -264,7 +264,7 @@ During an investigation, understanding the full scope of a target's web presence
 <details>
 <summary><b>Redirect Chain</b></summary>
 
-<img width="300" src="https://i.ibb.co/hVVrmwh/wc-redirects.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-redirects" align="right" />
 
 ###### Description
 This task traces the sequence of HTTP redirects that occur from the original URL to the final destination URL. An HTTP redirect is a response with a status code that advises the client to go to another URL. Redirects can occur for several reasons, such as URL normalization (directing to the www version of the site), enforcing HTTPS, URL shorteners, or forwarding users to a new site location.
@@ -281,7 +281,7 @@ Understanding the redirect chain can be useful for several reasons. From a secur
 <details>
 <summary><b>TXT Records</b></summary>
 
-<img width="300" src="https://i.ibb.co/wyt21QN/wc-txt-records.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-txt-records" align="right" />
 
 ###### Description
 TXT records are a type of DNS record that provides text information to sources outside your domain. They can be used for a variety of purposes, such as verifying domain ownership, ensuring email security, and even preventing unauthorized changes to your website.
@@ -299,7 +299,7 @@ The TXT records often reveal which external services and technologies are being 
 <details>
 <summary><b>Server Status</b></summary>
 
-<img width="300" src="https://i.ibb.co/V9CNLBK/wc-status.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-status" align="right" />
 
 ###### Description
 Checks if a server is online and responding to requests.
@@ -313,7 +313,7 @@ Checks if a server is online and responding to requests.
 <details>
 <summary><b>Open Ports</b></summary>
 
-<img width="300" src="https://i.ibb.co/F8D1hmf/wc-ports.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-ports" align="right" />
 
 ###### Description
 Open ports on a server are endpoints of communication which are available for establishing connections with clients. Each port corresponds to a specific service or protocol, such as HTTP (port 80), HTTPS (port 443), FTP (port 21), etc. The open ports on a server can be determined using techniques such as port scanning.
@@ -329,7 +329,7 @@ Knowing which ports are open on a server can provide information about the servi
 <details>
 <summary><b>Traceroute</b></summary>
 
-<img width="300" src="https://i.ibb.co/M59qgxP/wc-trace-route.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-trace-route" align="right" />
 
 ###### Description
 Traceroute is a network diagnostic tool used to track in real-time the pathway taken by a packet of information from one system to another. It records each hop along the route, providing details about the IPs of routers and the delay at each point.
@@ -347,7 +347,7 @@ In OSINT investigations, traceroute can provide insights about the routing paths
 <details>
 <summary><b>Carbon Footprint</b></summary>
 
-<img width="300" src="https://i.ibb.co/5v6fSyw/Screenshot-from-2023-07-29-19-07-50.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-carbon" align="right" />
 
 ###### Description
 This task calculates the estimated carbon footprint of a website. It's based on the amount of data being transferred and processed, and the energy usage of the servers that host and deliver the website. The larger the website and the more complex its features, the higher its carbon footprint is likely to be.
@@ -366,7 +366,7 @@ From an OSINT perspective, understanding a website's carbon footprint doesn't di
 <details>
 <summary><b>Server Info</b></summary>
 
-<img width="300" src="https://i.ibb.co/Mk1jx32/wc-server.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-server" align="right" />
 
 ###### Description
 This task retrieves various pieces of information about the server hosting the target website. This can include the server type (e.g., Apache, Nginx), the hosting provider, the Autonomous System Number (ASN), and more. The information is usually obtained through a combination of IP address lookups and analysis of HTTP response headers.
@@ -384,7 +384,7 @@ In an OSINT context, server information can provide valuable clues about the org
 <details>
 <summary><b>Whois Lookup</b></summary>
 
-<img width="300" src="https://i.ibb.co/89WLp14/wc-domain.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-domain" align="right" />
 
 ###### Description
 This task retrieves Whois records for the target domain. Whois records are a rich source of information, including the name and contact information of the domain registrant, the domain's creation and expiration dates, the domain's nameservers, and more. The information is usually obtained through a query to a Whois database server.
@@ -401,7 +401,7 @@ In an OSINT context, Whois records can provide valuable clues about the entity b
 <details>
 <summary><b>Domain Info</b></summary>
 
-<img width="300" src="https://i.ibb.co/89WLp14/wc-domain.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-domain" align="right" />
 
 ###### Description
 This task retrieves Whois records for the target domain. Whois records are a rich source of information, including the name and contact information of the domain registrant, the domain's creation and expiration dates, the domain's nameservers, and more. The information is usually obtained through a query to a Whois database server.
@@ -418,7 +418,7 @@ In an OSINT context, Whois records can provide valuable clues about the entity b
 <details>
 <summary><b>DNS Security Extensions</b></summary>
 
-<img width="300" src="https://i.ibb.co/J54zVmQ/wc-dnssec.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-dnssec" align="right" />
 
 ###### Description
 Without DNSSEC, it's possible for MITM attackers to spoof records and lead users to phishing sites. This is because the DNS system includes no built-in methods to verify that the response to the request was not forged, or that any other part of the process wasn’t interrupted by an attacker. The DNS Security Extensions (DNSSEC) secures DNS lookups by signing your DNS records using public keys, so browsers can detect if the response has been tampered with. Another solution to this issue is DoH (DNS over HTTPS) and DoT (DNS over TLD).
@@ -438,7 +438,7 @@ DNSSEC information provides insight into an organization's level of cybersecurit
 <details>
 <summary><b>Site Features</b></summary>
 
-<img width="300" src="https://i.ibb.co/gP4P6kp/wc-features.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-features" align="right" />
 
 ###### Description
 Checks which core features are present on a site. If a feature as marked as dead, that means it's not being actively used at load time
@@ -452,7 +452,7 @@ This is useful to understand what a site is capable of, and what technologies to
 <details>
 <summary><b>HTTP Strict Transport Security</b></summary>
 
-<img width="300" src="https://i.ibb.co/k253fq4/Screenshot-from-2023-07-17-20-10-52.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-hsts" align="right" />
 
 ###### Description
 HTTP Strict Transport Security (HSTS) is a web security policy mechanism that helps protect websites against protocol downgrade attacks and cookie hijacking. A website can be included in the HSTS preload list by conforming to a set of requirements and then submitting itself to the list.
@@ -476,7 +476,7 @@ There are several reasons why it's important for a site to be HSTS enabled:
 <details>
 <summary><b>DNS Server</b></summary>
 
-<img width="300" src="https://i.ibb.co/tKpL8F9/Screenshot-from-2023-08-12-15-43-12.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-dns-servers" align="right" />
 
 ###### Description
 This check determines the DNS server(s) that the requested URL / IP resolves to. Also fires off a rudimentary check to see if the DNS server supports DoH, and weather it's vulnerable to DNS cache poisoning.
@@ -490,7 +490,7 @@ This check determines the DNS server(s) that the requested URL / IP resolves to.
 <details>
 <summary><b>Tech Stack</b></summary>
 
-<img width="300" src="https://i.ibb.co/bBQSQNz/Screenshot-from-2023-08-12-15-43-46.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-tech" align="right" />
 
 ###### Description
 Checks what technologies a site is built with. This is done by fetching and parsing the site, then comparing it against a bit list of RegEx maintained by Wappalyzer to identify the unique fingerprints that different technologies leave.
@@ -506,7 +506,7 @@ Identifying a website's tech stack aids in evaluating its security by exposing p
 <details>
 <summary><b>Listed Pages</b></summary>
 
-<img width="300" src="https://i.ibb.co/GtrCQYq/Screenshot-from-2023-07-21-12-28-38.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-pages" align="right" />
 
 ###### Description
 This job finds and parses a site's listed sitemap. This file lists public sub-pages on the site, which the author wishes to be crawled by search engines. Sitemaps help with SEO, but are also useful for seeing all a sites public content at a glance.
@@ -523,7 +523,7 @@ Understand the structure of a site's public-facing content, and for site-owners,
 <details>
 <summary><b>Security.txt</b></summary>
 
-<img width="300" src="https://i.ibb.co/tq1FT5r/Screenshot-from-2023-07-24-20-31-21.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-securitytxt" align="right" />
 
 ###### Description
 The security.txt file tells researchers how they can responsibly disclose any security issues found on your site. The standard was proposed in RFC 9116, and specifies that this file should include a point of contact (email address), as well as optionally other info, like a link to the security disclosure policy, PGP key, proffered language, policy expiry and more. The file should be located at the root of your domain, either at /security.txt or /.well-known/security.txt.
@@ -543,7 +543,7 @@ This is important, as without a defined point of contact a security researcher m
 <details>
 <summary><b>Linked Pages</b></summary>
 
-<img width="300" src="https://i.ibb.co/LtK14XR/Screenshot-from-2023-07-29-11-16-44.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-links" align="right" />
 
 ###### Description
 Displays all internal and external links found on a site, identified by the href attributes attached to anchor elements.
@@ -558,7 +558,7 @@ For site owners, this is useful for diagnosing SEO issues, improving the site st
 <details>
 <summary><b>Social Tags</b></summary>
 
-<img width="300" src="https://i.ibb.co/4srTT1w/Screenshot-from-2023-07-29-11-15-27.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-social" align="right" />
 
 ###### Description
 Websites can include certain meta tags, that tell search engines and social media platforms what info to display. This usually includes a title, description, thumbnail, keywords, author, social accounts, etc.
@@ -578,7 +578,7 @@ Adding this data to your site will boost SEO, and as an OSINT researcher it can 
 <details>
 <summary><b>Email Configuration</b></summary>
 
-<img width="300" src="https://i.ibb.co/yqhwx5G/Screenshot-from-2023-07-29-18-22-20.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-email" align="right" />
 
 ###### Description
 DMARC (Domain-based Message Authentication, Reporting & Conformance): DMARC is an email authentication protocol that works with SPF and DKIM to prevent email spoofing and phishing. It allows domain owners to specify how to handle unauthenticated mail via a published policy in DNS, and provides a way for receiving mail servers to send feedback about emails' compliance to the sender. BIMI (Brand Indicators for Message Identification): BIMI is an emerging email standard that enables organizations to display a logo in their customers' email clients automatically. BIMI ties the logo to the domain's DMARC record, providing another level of visual assurance to recipients that the email is legitimate. DKIM (DomainKeys Identified Mail): DKIM is an email security standard designed to make sure that messages were not altered in transit between the sending and recipient servers. It uses digital signatures linked to the domain of the sender to verify the sender and ensure message integrity. SPF (Sender Policy Framework): SPF is an email authentication method designed to prevent email spoofing. It specifies which mail servers are authorized to send email on behalf of a domain by creating a DNS record. This helps protect against spam by providing a way for receiving mail servers to check that incoming mail from a domain comes from a host authorized by that domain's administrators.
@@ -599,7 +599,7 @@ This information is helpful for researchers as it helps assess a domain's email 
 <details>
 <summary><b>Firewall Detection</b></summary>
 
-<img width="300" src="https://i.ibb.co/MfcxQt2/Screenshot-from-2023-08-12-15-40-52.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-firewall" align="right" />
 
 ###### Description
 A WAF or web application firewall helps protect web applications by filtering and monitoring HTTP traffic between a web application and the Internet. It typically protects web applications from attacks such as cross-site forgery, cross-site-scripting (XSS), file inclusion, and SQL injection, among others.
@@ -617,7 +617,7 @@ It's useful to understand if a site is using a WAF, and which firewall software 
 <details>
 <summary><b>HTTP Security Features</b></summary>
 
-<img width="300" src="https://i.ibb.co/LP05HMV/Screenshot-from-2023-08-12-15-40-28.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-http" align="right" />
 
 ###### Description
 Correctly configured security HTTP headers adds a layer of protection against common attacks to your site. The main headers to be aware of are: HTTP Strict Transport Security (HSTS): Enforces the use of HTTPS, mitigating man-in-the-middle attacks and protocol downgrade attempts. Content Security Policy (CSP): Constrains web page resources to prevent cross-site scripting and data injection attacks. X-Content-Type-Options: Prevents browsers from MIME-sniffing a response away from the declared content type, curbing MIME-type confusion attacks. X-Frame-Options: Protects users from clickjacking attacks by controlling whether a browser should render the page in a `<frame>`, `<iframe>`, `<embed>`, or `<object>`. 
@@ -642,7 +642,7 @@ Reviewing security headers is important, as it offers insights into a site's def
 <details>
 <summary><b>Archive History</b></summary>
 
-<img width="300" src="https://i.ibb.co/nB9szT1/Screenshot-from-2023-08-14-22-31-16.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-history" align="right" />
 
 ###### Description
 Fetches full history of archives from the Wayback machine
@@ -657,7 +657,7 @@ This is useful for understanding the history of a site, and how it has changed o
 <details>
 <summary><b>Global Ranking</b></summary>
 
-<img width="300" src="https://i.ibb.co/nkbczgb/Screenshot-from-2023-08-14-22-02-40.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-rank" align="right" />
 
 ###### Description
 This check shows the global rank of the requested site. This is only accurate for websites which are in the top 100 million list. We're using data from the Tranco project (see below), which collates the top sites on the web from Umbrella, Majestic, Quantcast, the Chrome User Experience Report and Cloudflare Radar.
@@ -673,7 +673,7 @@ Knowing a websites overall global rank can be useful for understanding the scale
 <details>
 <summary><b>Block Detection</b></summary>
 
-<img width="300" src="https://i.ibb.co/M5JSXbW/Screenshot-from-2023-08-26-12-12-43.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-blocks" align="right" />
 
 ###### Description
 Checks access to the URL using 10+ of the most popular privacy, malware and parental control blocking DNS servers.
@@ -688,7 +688,7 @@ Checks access to the URL using 10+ of the most popular privacy, malware and pare
 <details>
 <summary><b>Malware & Phishing Detection</b></summary>
 
-<img width="300" src="https://i.ibb.co/hYgy621/Screenshot-from-2023-08-26-12-07-47.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-threats" align="right" />
 
 ###### Description
 Checks if a site appears in several common malware and phishing lists, to determine it's threat level.
@@ -704,7 +704,7 @@ Knowing if a site is listed as a threat by any of these services can be useful f
 <details>
 <summary><b>TLS Cipher Suites</b></summary>
 
-<img width="300" src="https://i.ibb.co/6ydtH5R/Screenshot-from-2023-08-26-12-09-58.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-tls-cipher" align="right" />
 
 ###### Description
 These are combinations of cryptographic algorithms used by the server to establish a secure connection. It includes the key exchange algorithm, bulk encryption algorithm, MAC algorithm, and PRF (pseudorandom function).
@@ -720,7 +720,7 @@ This is important info to test for from a security perspective. Because a cipher
 <details>
 <summary><b>TLS Security Config</b></summary>
 
-<img width="300" src="https://i.ibb.co/FmksZJt/Screenshot-from-2023-08-26-12-12-09.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-tls-sec" align="right" />
 
 ###### Description
 This uses guidelines from Mozilla's TLS Observatory to check the security of the TLS configuration. It checks for bad configurations, which may leave the site vulnerable to attack, as well as giving advice on how to fix. It will also give suggestions around outdated and modern TLS configs
@@ -734,7 +734,7 @@ Understanding issues with a site's TLS configuration will help you address poten
 <details>
 <summary><b>TLS Handshake Simulation</b></summary>
 
-<img width="300" src="https://i.ibb.co/F7qRZkh/Screenshot-from-2023-08-26-12-11-28.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-tls-handshake" align="right" />
 
 ###### Description
 This simulates how different clients (browsers, operating systems) would perform a TLS handshake with the server. It helps identify compatibility issues and insecure configurations.
@@ -750,7 +750,7 @@ This simulates how different clients (browsers, operating systems) would perform
 <details>
 <summary><b>Screenshot</b></summary>
 
-<img width="300" src="https://i.ibb.co/2F0x8kP/Screenshot-from-2023-07-29-18-34-48.png" align="right" />
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-screenshot" align="right" />
 
 ###### Description
 This check takes a screenshot of webpage that the requested URL / IP resolves to, and displays it.
@@ -1313,7 +1313,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <p  align="center">
   <i>© <a href="https://aliciasykes.com">Alicia Sykes</a> 2023</i><br>
   <i>Licensed under <a href="https://gist.github.com/Lissy93/143d2ee01ccc5c052a17">MIT</a></i><br>
-  <a href="https://github.com/lissy93"><img src="https://i.ibb.co/4KtpYxb/octocat-clean-mini.png" /></a><br>
+  <a href="https://github.com/lissy93"><img src="https://pixelflare.cc/alicia/images/octoface.webp/w128" /></a><br>
   <sup>Thanks for visiting :)</sup>
 </p>
 
