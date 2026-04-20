@@ -53,7 +53,7 @@ const securityTxtHandler = async (urlParam) => {
   for (let path of SECURITY_TXT_PATHS) {
     try {
       const result = await fetchSecurityTxt(url, path);
-      if (result && result.includes('<html')) return { isPresent: false };
+      if (result && result.includes('<html')) continue;
       if (result) {
         return {
           isPresent: true,
@@ -74,7 +74,7 @@ const securityTxtHandler = async (urlParam) => {
 async function fetchSecurityTxt(baseURL, path) {
   return new Promise((resolve, reject) => {
     const url = new URL(path, baseURL);
-    https.get(url.toString(), (res) => {
+    https.get(url.toString(), { headers: { 'User-Agent': 'curl/8.0.0' } }, (res) => {
       if (res.statusCode === 200) {
         let data = '';
         res.on('data', (chunk) => {
