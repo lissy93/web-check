@@ -446,7 +446,7 @@ const docs: Doc[] = [
   {
     id: 'rank',
     title: 'Global Ranking',
-    description: 'This check shows the global rank of the requested site. This is only accurate for websites which are in the top 100 million list. We\'re using data from the Tranco project (see below), which collates the top sites on the web from Umbrella, Majestic, Quantcast, the Chrome User Experience Report and Cloudflare Radar.',
+    description: 'This check shows the global rank of the requested site. This is only accurate for websites which are in the top 1 million list. We\'re using data from the Tranco project (see below), which collates the top sites on the web from Umbrella, Majestic, Quantcast, the Chrome User Experience Report and Cloudflare Radar.',
     use: 'Knowing a websites overall global rank can be useful for understanding the scale of the site, and for comparing it to other sites. It can also be useful for understanding the relative popularity of a site, and for identifying potential trends.',
     resources: [
       { title: 'Tranco List', link: 'https://tranco-list.eu/' },

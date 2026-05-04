@@ -1,5 +1,6 @@
 import net from 'net';
 import middleware from './_common/middleware.js';
+import { parseTarget } from './_common/parse-target.js';
 
 // A list of commonly used ports.
 const DEFAULT_PORTS_TO_CHECK = [
@@ -40,7 +41,7 @@ async function checkPort(port, domain) {
 }
 
 const portsHandler = async (url, event, context) => {
-  const domain = url.replace(/(^\w+:|^)\/\//, '');
+  const { hostname: domain } = parseTarget(url);
   
   const delay = ms => new Promise(res => setTimeout(res, ms));
   const timeout = delay(9000);

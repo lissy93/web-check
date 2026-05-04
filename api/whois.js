@@ -2,6 +2,9 @@ import net from 'net';
 import psl from 'psl';
 import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { createLogger } from './_common/logger.js';
+
+const log = createLogger('whois');
 
 const getBaseDomain = (url) => {
   let protocol = '';
@@ -78,7 +81,7 @@ const fetchFromMyAPI = async (hostname) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching data from your API:', error.message);
+    log.error(`whois proxy fetch failed: ${error.message}`);
     return null;
   }
 };

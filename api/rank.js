@@ -13,7 +13,7 @@ const rankHandler = async (url) => {
       `https://tranco-list.eu/api/ranks/domain/${domain}`, { timeout: 5000 }, auth,
       );
     if (!response.data || !response.data.ranks || response.data.ranks.length === 0) {
-      return { skipped: `Skipping, as ${domain} isn't ranked in the top 100 million sites yet.`};
+      return { skipped: `Skipping, as ${domain} isn't ranked in the top 1 million sites yet.`};
     }
     return response.data;
   } catch (error) {

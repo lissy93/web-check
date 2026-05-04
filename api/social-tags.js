@@ -1,5 +1,5 @@
 import axios from 'axios';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import middleware from './_common/middleware.js';
 
 const socialTagsHandler = async (url) => {

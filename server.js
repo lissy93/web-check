@@ -13,6 +13,18 @@ dotenv.config();
 // Create the Express app
 const app = express();
 
+// Trust X-Forwarded-* headers when running behind a reverse proxy
+// (e.g. Traefik, nginx). Configurable via TRUST_PROXY env var.
+const trustProxy = process.env.TRUST_PROXY;
+if (trustProxy !== undefined && trustProxy !== '') {
+  const parsed = /^\d+$/.test(trustProxy)
+    ? parseInt(trustProxy, 10)
+    : trustProxy === 'true' ? true
+    : trustProxy === 'false' ? false
+    : trustProxy;
+  app.set('trust proxy', parsed);
+}
+
 const __filename = new URL(import.meta.url).pathname;
 const __dirname = path.dirname(__filename);
 

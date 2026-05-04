@@ -1,10 +1,11 @@
-import { promises as dnsPromises, lookup } from 'dns';
+import { promises as dnsPromises } from 'dns';
 import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { parseTarget } from './_common/parse-target.js';
 
 const dnsHandler = async (url) => {
   try {
-    const domain = url.replace(/^(?:https?:\/\/)?/i, "");
+    const { hostname: domain } = parseTarget(url);
     const addresses = await dnsPromises.resolve4(domain);
     const results = await Promise.all(addresses.map(async (address) => {
       const hostname = await dnsPromises.reverse(address).catch(() => null);
@@ -22,19 +23,7 @@ const dnsHandler = async (url) => {
       };
     }));
 
-    // let dohMozillaSupport = false;
-    // try {
-    //   const mozillaList = await axios.get('https://firefox.settings.services.mozilla.com/v1/buckets/security-state/collections/onecrl/records');
-    //   dohMozillaSupport = results.some(({ hostname }) => mozillaList.data.data.some(({ id }) => id.includes(hostname)));
-    // } catch (error) {
-    //   console.error(error);
-    // }
-
-    return {
-      domain,
-      dns: results,
-      // dohMozillaSupport,
-    };
+    return { domain, dns: results };
   } catch (error) {
     throw new Error(`An error occurred while resolving DNS. ${error.message}`); // This will be caught and handled by the commonMiddleware
   }

@@ -2,52 +2,72 @@ import axios from 'axios';
 import xml2js from 'xml2js';
 import middleware from './_common/middleware.js';
 
+const HARD_TIMEOUT = 5000;
+const MAX_DEPTH = 3;
+const MAX_CHILD_SITEMAPS = 25;
+
+// Fetch a single XML sitemap and parse it.
+const fetchSitemap = async (sitemapUrl) => {
+  const res = await axios.get(sitemapUrl, { timeout: HARD_TIMEOUT });
+  return new xml2js.Parser().parseStringPromise(res.data);
+};
+
+// Find a sitemap URL listed in robots.txt as a fallback when /sitemap.xml is missing.
+const findSitemapInRobots = async (baseUrl) => {
+  const robots = await axios.get(`${baseUrl}/robots.txt`, { timeout: HARD_TIMEOUT });
+  for (const line of robots.data.split('\n')) {
+    if (line.toLowerCase().startsWith('sitemap:')) {
+      return line.split(/\s+/)[1]?.trim() || null;
+    }
+  }
+  return null;
+};
+
+// Recursively expand a sitemap-index into its child url sets.
+const expandSitemap = async (parsed, depth) => {
+  if (!parsed?.sitemapindex?.sitemap || depth >= MAX_DEPTH) return parsed;
+  const children = parsed.sitemapindex.sitemap
+    .map(s => s?.loc?.[0])
+    .filter(Boolean)
+    .slice(0, MAX_CHILD_SITEMAPS);
+  const fetched = await Promise.all(
+    children.map(loc => fetchSitemap(loc).catch(err => ({ error: err.message, loc })))
+  );
+  const expanded = await Promise.all(
+    fetched.map(child => child?.error ? child : expandSitemap(child, depth + 1))
+  );
+  const urls = expanded.flatMap(child => child?.urlset?.url || []);
+  return {
+    sitemapindex: parsed.sitemapindex,
+    urlset: urls.length ? { url: urls } : undefined,
+    sources: children,
+  };
+};
+
 const sitemapHandler = async (url) => {
   let sitemapUrl = `${url}/sitemap.xml`;
-
-  const hardTimeOut = 5000;
-
   try {
-    // Try to fetch sitemap directly
-    let sitemapRes;
+    let parsed;
     try {
-      sitemapRes = await axios.get(sitemapUrl, { timeout: hardTimeOut });
+      parsed = await fetchSitemap(sitemapUrl);
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        // If sitemap not found, try to fetch it from robots.txt
-        const robotsRes = await axios.get(`${url}/robots.txt`, { timeout: hardTimeOut });
-        const robotsTxt = robotsRes.data.split('\n');
-
-        for (let line of robotsTxt) {
-          if (line.toLowerCase().startsWith('sitemap:')) {
-            sitemapUrl = line.split(' ')[1].trim();
-            break;
-          }
-        }
-
-        if (!sitemapUrl) {
-          return { skipped: 'No sitemap found' };
-        }
-
-        sitemapRes = await axios.get(sitemapUrl, { timeout: hardTimeOut });
+        const robotsSitemap = await findSitemapInRobots(url);
+        if (!robotsSitemap) return { skipped: 'No sitemap found' };
+        sitemapUrl = robotsSitemap;
+        parsed = await fetchSitemap(sitemapUrl);
       } else {
-        throw error; // If other error, throw it
+        throw error;
       }
     }
-
-    const parser = new xml2js.Parser();
-    const sitemap = await parser.parseStringPromise(sitemapRes.data);
-
-    return sitemap;
+    return await expandSitemap(parsed, 0);
   } catch (error) {
     if (error.code === 'ECONNABORTED') {
-      return { error: `Request timed-out after ${hardTimeOut}ms` };
-    } else {
-      return { error: error.message };
+      return { error: `Request timed-out after ${HARD_TIMEOUT}ms` };
     }
+    return { error: error.message };
   }
 };
 
 export const handler = middleware(sitemapHandler);
 export default handler;
-

@@ -1,14 +1,10 @@
 import dns from 'dns';
 import util from 'util';
 import middleware from './_common/middleware.js';
+import { parseTarget } from './_common/parse-target.js';
 
 const dnsHandler = async (url) => {
-  let hostname = url;
-
-  // Handle URLs by extracting hostname
-  if (hostname.startsWith('http://') || hostname.startsWith('https://')) {
-    hostname = new URL(hostname).hostname;
-  }
+  const { hostname } = parseTarget(url);
 
   try {
     const lookupPromise = util.promisify(dns.lookup);

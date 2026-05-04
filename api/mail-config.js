@@ -1,12 +1,10 @@
-import dns from 'dns';
-import URL from 'url-parse';
+import dns from 'dns/promises';
 import middleware from './_common/middleware.js';
-
-// TODO: Fix.
+import { parseTarget } from './_common/parse-target.js';
 
 const mailConfigHandler = async (url, event, context) => {
   try {
-    const domain = new URL(url).hostname || new URL(url).pathname;
+    const { hostname: domain } = parseTarget(url);
 
     // Get MX records
     const mxRecords = await dns.resolveMx(domain);
