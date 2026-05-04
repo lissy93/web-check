@@ -13,10 +13,8 @@ dotenv.config();
 // Create the Express app
 const app = express();
 
-// Trust X-Forwarded-* headers when running behind a reverse proxy
-// (e.g. Traefik, nginx). Configurable via TRUST_PROXY env var.
 const trustProxy = process.env.TRUST_PROXY;
-if (trustProxy !== undefined && trustProxy !== '') {
+if (trustProxy) {
   const parsed = /^\d+$/.test(trustProxy)
     ? parseInt(trustProxy, 10)
     : trustProxy === 'true' ? true
@@ -110,7 +108,7 @@ const renderPlaceholderPage = async (res, msgId, logs) => {
 app.get(API_DIR, async (req, res) => {
   const results = {};
   const { url } = req.query;
-  const maxExecutionTime = process.env.API_TIMEOUT_LIMIT || 20000;
+  const maxExecutionTime = process.env.PUBLIC_API_TIMEOUT_LIMIT || 20000;
 
   const executeHandler = async (handler, req) => {
     return new Promise(async (resolve, reject) => {

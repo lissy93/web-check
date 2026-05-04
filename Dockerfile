@@ -1,5 +1,5 @@
 # Specify the Node.js version to use
-ARG NODE_VERSION=21
+ARG NODE_VERSION=20
 
 # Specify the Debian version to use, the default is "bullseye"
 ARG DEBIAN_VERSION=bullseye

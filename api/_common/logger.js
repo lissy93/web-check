@@ -1,4 +1,3 @@
-// Lightweight structured logger. Honours LOG_LEVEL env (debug, info, warn, error, silent).
 const LEVELS = { debug: 10, info: 20, warn: 30, error: 40, silent: 99 };
 const THRESHOLD = LEVELS[(process.env.LOG_LEVEL || 'info').toLowerCase()] ?? LEVELS.info;
 
@@ -17,7 +16,7 @@ const write = (level, stream, scope, msg, extra) => {
   stream.write(fmt(level, scope, msg, extra) + '\n');
 };
 
-// Returns a logger pinned to a scope (e.g. an API route name).
+// Logger scoped to a route name; honours LOG_LEVEL env.
 export const createLogger = (scope) => ({
   debug: (msg, extra) => write('debug', process.stdout, scope, msg, extra),
   info:  (msg, extra) => write('info', process.stdout, scope, msg, extra),

@@ -9,7 +9,7 @@ import { createLogger } from './_common/logger.js';
 
 const log = createLogger('screenshot');
 
-// Capture a screenshot via the system Chromium binary; faster cold-start than puppeteer.
+// Screenshot via the system Chromium binary.
 const directChromiumScreenshot = async (url) => {
   const tmpDir = '/tmp';
   const screenshotPath = path.join(tmpDir, `screenshot-${randomUUID()}.png`);
@@ -39,7 +39,7 @@ const directChromiumScreenshot = async (url) => {
   });
 };
 
-// Fallback path that uses puppeteer with the bundled chrome-aws-lambda binary.
+// Fallback to puppeteer when the direct Chromium binary call fails.
 const puppeteerScreenshot = async (targetUrl) => {
   let browser = null;
   try {

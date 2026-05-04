@@ -1,7 +1,7 @@
 
 const keys = {
-  shodan: import.meta.env.REACT_APP_SHODAN_API_KEY || "default_value_if_not_set",
-  whoApi: import.meta.env.REACT_APP_WHO_API_KEY || "default_value_if_not_set",
+  shodan: import.meta.env.PUBLIC_SHODAN_API_KEY || "default_value_if_not_set",
+  whoApi: import.meta.env.PUBLIC_WHO_API_KEY || "default_value_if_not_set",
   disableEverything: import.meta.env.VITE_DISABLE_EVERYTHING === 'true',
 };
 // const keys = process && process.env ? {

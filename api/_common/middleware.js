@@ -2,8 +2,7 @@ const normalizeUrl = (url) => {
   return url.startsWith('http') ? url : `https://${url}`;
 };
 
-// If present, set a shorter timeout for API requests
-const TIMEOUT = process.env.API_TIMEOUT_LIMIT ? parseInt(process.env.API_TIMEOUT_LIMIT, 10) : 60000;
+const TIMEOUT = parseInt(process.env.PUBLIC_API_TIMEOUT_LIMIT || '60000', 10);
 
 // If present, set CORS allowed origins for responses
 const ALLOWED_ORIGINS = process.env.API_CORS_ORIGIN || '*';
@@ -27,7 +26,7 @@ const headers = {
 const timeoutErrorMsg = 'You can re-trigger this request, by clicking "Retry"\n'
 + 'If you\'re running your own instance of Web Check, then you can '
 + 'resolve this issue, by increasing the timeout limit in the '
-+ '`API_TIMEOUT_LIMIT` environmental variable to a higher value (in milliseconds), '
++ '`PUBLIC_API_TIMEOUT_LIMIT` environmental variable to a higher value (in milliseconds), '
 + 'or if you\'re hosting on Vercel increase the maxDuration in vercel.json.\n\n'
 + `The public instance currently has a lower timeout of ${TIMEOUT}ms `
 + 'in order to keep running costs affordable, so that Web Check can '

@@ -59,13 +59,15 @@ import TlsIssueAnalysisCard from 'web-check-live/components/Results/TlsIssueAnal
 import TlsClientSupportCard from 'web-check-live/components/Results/TlsClientSupport';
 
 import keys from 'web-check-live/utils/get-keys';
+import { logJobOutcome } from 'web-check-live/utils/logger';
 import { determineAddressType, type AddressType } from 'web-check-live/utils/address-type-checker';
 import useMotherHook from 'web-check-live/hooks/motherOfAllHooks';
 import {
   getLocation, type ServerLocation,
   type Cookie,
   applyWhoIsResults, type Whois,
-  parseShodanResults, type ShodanResults
+  parseShodanResults, type ShodanResults,
+  hasData,
 } from 'web-check-live/utils/result-processor';
 
 const ResultsOuter = styled.div`
@@ -171,65 +173,25 @@ const Results = (props: { address?: string } ): JSX.Element => {
   };
   const updateTags = (tag: string) => {
     // Remove current tag if it exists, otherwise add it
-    // setTags(tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]);
     setTags(tags.includes(tag) ? tags.filter(t => t !== tag) : [tag]);
   };
 
   const updateLoadingJobs = useCallback((jobs: string | string[], newState: LoadingState, error?: string, retry?: () => void, data?: any) => {
     (typeof jobs === 'string' ? [jobs] : jobs).forEach((job: string) => {
-    const now = new Date();
-    const timeTaken = now.getTime() - startTime;
-    setLoadingJobs((prevJobs) => {
-      const newJobs = prevJobs.map((loadingJob: LoadingJob) => {
-        if (job.includes(loadingJob.name)) {
-          return { ...loadingJob, error, state: newState, timeTaken, retry };
-        }
-        return loadingJob;
-      });
-
-      const timeString = `[${now.getHours().toString().padStart(2, '0')}:`
-        +`${now.getMinutes().toString().padStart(2, '0')}:`
-        + `${now.getSeconds().toString().padStart(2, '0')}]`;
-
-
+      const timeTaken = Date.now() - startTime;
+      setLoadingJobs((prevJobs) => prevJobs.map((loadingJob: LoadingJob) =>
+        job.includes(loadingJob.name)
+          ? { ...loadingJob, error, state: newState, timeTaken, retry }
+          : loadingJob
+      ));
       if (newState === 'success') {
-        console.log(
-          `%cFetch Success - ${job}%c\n\n${timeString}%c The ${job} job succeeded in ${timeTaken}ms`
-          + `\n%cRun %cwindow.webCheck['${job}']%c to inspect the raw the results`,
-          `background:${colors.success};color:${colors.background};padding: 4px 8px;font-size:16px;`,
-          `font-weight: bold; color: ${colors.success};`,
-          `color: ${colors.success};`,
-          `color: #1d8242;`,`color: #1d8242;text-decoration:underline;`,`color: #1d8242;`,
-        );
+        logJobOutcome('success', job, timeTaken);
         if (!(window as any).webCheck) (window as any).webCheck = {};
         if (data) (window as any).webCheck[job] = data;
+      } else if (newState === 'error' || newState === 'timed-out') {
+        logJobOutcome(newState, job, timeTaken, error);
       }
-  
-      if (newState === 'error') {
-        console.log(
-          `%cFetch Error - ${job}%c\n\n${timeString}%c The ${job} job failed `
-          +`after ${timeTaken}ms, with the following error:%c\n${error}`,
-          `background: ${colors.danger}; color:${colors.background}; padding: 4px 8px; font-size: 16px;`,
-          `font-weight: bold; color: ${colors.danger};`,
-          `color: ${colors.danger};`,
-          `color: ${colors.warning};`,
-        );
-      }
-
-      if (newState === 'timed-out') {
-        console.log(
-          `%cFetch Timeout - ${job}%c\n\n${timeString}%c The ${job} job timed out `
-          +`after ${timeTaken}ms, with the following error:%c\n${error}`,
-          `background: ${colors.info}; color:${colors.background}; padding: 4px 8px; font-size: 16px;`,
-          `font-weight: bold; color: ${colors.info};`,
-          `color: ${colors.info};`,
-          `color: ${colors.warning};`,
-        );
-      }
-
-      return newJobs;
     });
-  });
   }, [startTime]);
 
   const parseJson = (response: Response): Promise<any> => {
@@ -249,7 +211,7 @@ const Results = (props: { address?: string } ): JSX.Element => {
   const urlTypeOnly = ['url'] as AddressType[]; // Many jobs only run with these address types
 
   const api = import.meta.env.PUBLIC_API_ENDPOINT || '/api'; // Where is the API hosted?
-  
+
   // Fetch and parse IP address for given URL
   const [ipAddress, setIpAddress] = useMotherHook({
     jobId: 'get-ip',
@@ -267,7 +229,7 @@ const Results = (props: { address?: string } ): JSX.Element => {
     if (addressType === 'ipV4' && address) {
       setIpAddress(address);
     }
-  }, [address, addressType, setIpAddress]);  
+  }, [address, addressType, setIpAddress]);
 
   // Get IP address location info
   const [locationResults, updateLocationResults] = useMotherHook<ServerLocation>({
@@ -559,19 +521,27 @@ const Results = (props: { address?: string } ): JSX.Element => {
     }),
   });
 
-  /* Cancel remaining jobs after  10 second timeout */
+  // Promote screenshot job to success if the lighthouse fallback resolves with data
   useEffect(() => {
-    const checkJobs = () => {
+    const job = loadingJobs.find(j => j.name === 'screenshot');
+    if (job?.state === 'success') return;
+    const fallback = lighthouseResults?.fullPageScreenshot?.screenshot;
+    if (!hasData(screenshotResult) && hasData(fallback)) {
+      updateLoadingJobs('screenshot', 'success');
+    }
+  }, [screenshotResult, lighthouseResults, loadingJobs, updateLoadingJobs]);
+
+  // Cancel remaining jobs after timeout window has passed
+  useEffect(() => {
+    const budget = parseInt(import.meta.env.PUBLIC_API_TIMEOUT_LIMIT || '25000', 10);
+    const timeoutId = setTimeout(() => {
       loadingJobs.forEach(job => {
         if (job.state === 'loading') {
           updateLoadingJobs(job.name, 'timed-out');
         }
       });
-    };
-    const timeoutId = setTimeout(checkJobs, 10000);
-    return () => {
-      clearTimeout(timeoutId);
-    };
+    }, budget);
+    return () => clearTimeout(timeoutId);
   }, [loadingJobs, updateLoadingJobs]);
 
   const makeSiteName = (address: string): string => {
@@ -865,11 +835,11 @@ const Results = (props: { address?: string } ): JSX.Element => {
     setModalContent(content);
     setModalOpen(true);
   };
-  
+
   return (
     <ResultsOuter>
       <Nav>
-      { address && 
+      { address &&
         <Heading color={colors.textColor} size="medium">
           { addressType === 'url' && <a target="_blank" rel="noreferrer" href={address}><img width="32px" src={`https://icon.horse/icon/${makeSiteName(address)}`} alt="" /></a> }
           {makeSiteName(address)}
@@ -894,10 +864,10 @@ const Results = (props: { address?: string } ): JSX.Element => {
         </div>
         <div className="one-half">
         <span className="group-label">Search</span>
-        <input 
-          type="text" 
-          placeholder="Filter Results" 
-          value={searchTerm} 
+        <input
+          type="text"
+          placeholder="Filter Results"
+          value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <span className="toggle-filters" onClick={() => setShowFilters(false)}>Hide</span>
@@ -922,7 +892,7 @@ const Results = (props: { address?: string } ): JSX.Element => {
             .map(({ id, title, result, tags, refresh, Component }, index: number) => {
               const show = (tags.length === 0 || tags.some(tag => tags.includes(tag)))
               && title.toLowerCase().includes(searchTerm.toLowerCase())
-              && (result && !result.error);
+              && hasData(result) && !result.error;
               return show ? (
                 <ErrorBoundary title={title} key={`eb-${index}`}>
                   <Component

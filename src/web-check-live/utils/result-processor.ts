@@ -63,8 +63,18 @@ export interface ServerInfo {
   type?: string,
 };
 
-export const getServerInfo = (response: any): ServerInfo => {
-  return {
+// Whether a result has any meaningful value worth rendering a card for.
+export const hasData = (r: any): boolean => {
+  if (r === null || r === undefined) return false;
+  if (typeof r === 'boolean' || typeof r === 'number') return true;
+  if (typeof r === 'string') return r.trim().length > 0;
+  if (Array.isArray(r)) return r.some(hasData);
+  if (typeof r === 'object') return Object.values(r).some(hasData);
+  return true;
+};
+
+export const getServerInfo = (response: any): ServerInfo | null => {
+  const info: ServerInfo = {
     org: response.org,
     asn: response.asn,
     isp: response.isp,
@@ -74,6 +84,7 @@ export const getServerInfo = (response: any): ServerInfo => {
     loc: response.city ? `${response.city}, ${response.country_name}` : '',
     type: response.tags ? response.tags.toString() : '',
   };
+  return Object.values(info).some(Boolean) ? info : null;
 };
 
 export interface HostNames {
@@ -95,7 +106,7 @@ export const getHostNames = (response: any): HostNames | null => {
 
 export interface ShodanResults {
   hostnames: HostNames | null,
-  serverInfo: ServerInfo,
+  serverInfo: ServerInfo | null,
 }
 
 export const parseShodanResults = (response: any): ShodanResults => {

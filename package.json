@@ -4,7 +4,7 @@
   "version": "2.0.2",
   "homepage": "https://web-check.xyz",
   "engines": {
-    "node": ">=20"
+    "node": "20.x"
   },
   "scripts": {
     "start": "node server",
