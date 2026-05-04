@@ -148,13 +148,15 @@ const Results = (props: { address?: string }): JSX.Element => {
     };
   }), [jobsState, retry]);
 
-  // Expose successful job results on window.webCheck for debugging
+  // Expose successful job results on window.webCheck for debugging,
+  // resetting on new input so prior scans cannot accumulate
+  useEffect(() => { (window as any).webCheck = {}; }, [address]);
   useEffect(() => {
-    const w = (window as any);
-    w.webCheck = w.webCheck || {};
+    const w = (window as any).webCheck;
+    if (!w) return;
     Object.entries(jobsState).forEach(([id, entry]) => {
       if (entry?.state === 'success' && entry.raw !== undefined) {
-        w.webCheck[id] = entry.raw;
+        w[id] = entry.raw;
       }
     });
   }, [jobsState]);

@@ -37,9 +37,9 @@ import ArchivesCard from 'web-check-live/components/Results/Archives';
 import RankCard from 'web-check-live/components/Results/Rank';
 import BlockListsCard from 'web-check-live/components/Results/BlockLists';
 import ThreatsCard from 'web-check-live/components/Results/Threats';
-import TlsCipherSuitesCard from 'web-check-live/components/Results/TlsCipherSuites';
-import TlsIssueAnalysisCard from 'web-check-live/components/Results/TlsIssueAnalysis';
-import TlsClientSupportCard from 'web-check-live/components/Results/TlsClientSupport';
+import TlsConnectionCard from 'web-check-live/components/Results/TlsConnection';
+import TlsSecurityAuditCard from 'web-check-live/components/Results/TlsSecurityAudit';
+import TlsClientCompatCard from 'web-check-live/components/Results/TlsClientCompat';
 
 import type { JobSpec, JobContext, JobsState } from './types';
 
@@ -216,17 +216,22 @@ export const jobs: JobSpec[] = [
     fetcher: fetchAndProcess('screenshot?url=${url}'),
   },
   {
-    id: 'tls',
+    id: 'tls-connection',
+    expectedAddressTypes: [...URL_ONLY],
+    cards: [card('tls-connection', 'TLS Connection',
+      ['server', 'security'], TlsConnectionCard)],
+    fetcher: fetchAndProcess('tls-connection?url=${url}'),
+  },
+  {
+    id: 'tls-labs',
     expectedAddressTypes: [...URL_ONLY],
     cards: [
-      card('tls-cipher-suites', 'TLS Cipher Suites',
-        ['server', 'security'], TlsCipherSuitesCard),
-      card('tls-security-config', 'TLS Security Issues',
-        ['security'], TlsIssueAnalysisCard),
-      card('tls-client-support', 'TLS Handshake Simulation',
-        ['security'], TlsClientSupportCard),
+      card('tls-security-audit', 'TLS Security Audit',
+        ['security'], TlsSecurityAuditCard),
+      card('tls-client-compat', 'TLS Client Compatibility',
+        ['security'], TlsClientCompatCard),
     ],
-    fetcher: fetchAndProcess('tls?url=${url}'),
+    fetcher: fetchAndProcess('tls-labs?url=${url}'),
   },
   {
     id: 'redirects',
