@@ -9,7 +9,7 @@ import { createLogger } from './_common/logger.js';
 
 const log = createLogger('screenshot');
 
-// Screenshot via the system Chromium binary.
+// Screenshot via the system Chromium binary
 const directChromiumScreenshot = async (url) => {
   const tmpDir = '/tmp';
   const screenshotPath = path.join(tmpDir, `screenshot-${randomUUID()}.png`);
@@ -39,7 +39,7 @@ const directChromiumScreenshot = async (url) => {
   });
 };
 
-// Fallback to puppeteer when the direct Chromium binary call fails.
+// Fallback to puppeteer when the direct Chromium binary call fails
 const puppeteerScreenshot = async (targetUrl) => {
   let browser = null;
   try {

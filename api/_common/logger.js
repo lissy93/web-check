@@ -16,7 +16,7 @@ const write = (level, stream, scope, msg, extra) => {
   stream.write(fmt(level, scope, msg, extra) + '\n');
 };
 
-// Logger scoped to a route name; honours LOG_LEVEL env.
+// Logger scoped to a route name, honours LOG_LEVEL env
 export const createLogger = (scope) => ({
   debug: (msg, extra) => write('debug', process.stdout, scope, msg, extra),
   info:  (msg, extra) => write('info', process.stdout, scope, msg, extra),

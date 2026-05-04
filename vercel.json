@@ -17,8 +17,8 @@
     "CHROME_PATH": "/usr/bin/chromium",
     "GOOGLE_CLOUD_API_KEY": "",
     "BUILT_WITH_API_KEY": "",
-    "REACT_APP_SHODAN_API_KEY": "",
-    "REACT_APP_WHO_API_KEY": ""
+    "SHODAN_API_KEY": "",
+    "WHO_API_KEY": ""
   },
   "build": {
     "env": {

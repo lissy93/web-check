@@ -183,46 +183,9 @@ export interface LoadingJob {
   retry?: () => void,
 }
 
-const jobNames = [
-  'get-ip',
-  'location',
-  'ssl',
-  'domain',
-  'quality',
-  'tech-stack',
-  'server-info',
-  'cookies',
-  'headers',
-  'dns',
-  'hosts',
-  'http-security',
-  'social-tags',
-  'trace-route',
-  'security-txt',
-  'dns-server',
-  'firewall',
-  'dnssec',
-  'hsts',
-  'threats',
-  'mail-config',
-  'archives',
-  'rank',
-  'screenshot',
-  'tls-cipher-suites',
-  'tls-security-config',
-  'tls-client-support',
-  'redirects',
-  'linked-pages',
-  'robots-txt',
-  'status',
-  'ports',
-  // 'whois',
-  'txt-records',
-  'block-lists',
-  'features',
-  'sitemap',
-  'carbon',
-] as const;
+import { allCardIds } from 'web-check-live/jobs/registry';
+
+const jobNames = allCardIds;
 
 interface JobListItemProps {
   job: LoadingJob;

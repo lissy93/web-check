@@ -63,7 +63,7 @@ export interface ServerInfo {
   type?: string,
 };
 
-// Whether a result has any meaningful value worth rendering a card for.
+// Whether a result has any meaningful value worth rendering a card for
 export const hasData = (r: any): boolean => {
   if (r === null || r === undefined) return false;
   if (typeof r === 'boolean' || typeof r === 'number') return true;

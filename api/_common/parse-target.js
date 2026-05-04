@@ -1,4 +1,4 @@
-// Normalise a user-supplied target, stripping :port for DNS lookups.
+// Normalise a user-supplied target, stripping :port for DNS lookups
 export const parseTarget = (input) => {
   if (!input) throw new Error('No target provided');
   const normalised = /^https?:\/\//i.test(input) ? input : `https://${input}`;
