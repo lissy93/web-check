@@ -162,7 +162,7 @@ const useJobs = (
   useEffect(() => {
     if (!address) return;
     const budget = parseInt(
-      (import.meta.env.PUBLIC_API_TIMEOUT_LIMIT as string) || '25000',
+      (import.meta.env.PUBLIC_API_TIMEOUT_LIMIT as string) || '45000',
       10,
     );
     const timer = setTimeout(() => {

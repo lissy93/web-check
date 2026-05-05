@@ -14,11 +14,7 @@
   "env": {
     "PLATFORM": "vercel",
     "CI": "false",
-    "CHROME_PATH": "/usr/bin/chromium",
-    "GOOGLE_CLOUD_API_KEY": "",
-    "BUILT_WITH_API_KEY": "",
-    "SHODAN_API_KEY": "",
-    "WHO_API_KEY": ""
+    "CHROME_PATH": "/usr/bin/chromium"
   },
   "build": {
     "env": {

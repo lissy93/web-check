@@ -10,7 +10,6 @@ module.exports = {
         'dns-server': './api/dns-server.js',
         'dns': './api/dns.js',
         'dnssec': './api/dnssec.js',
-        'features': './api/features.js',
         'get-ip': './api/get-ip.js',
         'headers': './api/headers.js',
         'hsts': './api/hsts.js',

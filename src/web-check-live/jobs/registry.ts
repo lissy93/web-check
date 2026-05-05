@@ -20,7 +20,6 @@ import ServerStatusCard from 'web-check-live/components/Results/ServerStatus';
 import OpenPortsCard from 'web-check-live/components/Results/OpenPorts';
 import TraceRouteCard from 'web-check-live/components/Results/TraceRoute';
 import CarbonFootprintCard from 'web-check-live/components/Results/CarbonFootprint';
-import SiteFeaturesCard from 'web-check-live/components/Results/SiteFeatures';
 import DnsSecCard from 'web-check-live/components/Results/DnsSec';
 import HstsCard from 'web-check-live/components/Results/Hsts';
 import SitemapCard from 'web-check-live/components/Results/Sitemap';
@@ -280,15 +279,6 @@ export const jobs: JobSpec[] = [
     expectedAddressTypes: [...URL_ONLY],
     cards: [card('block-lists', 'Block Lists', ['security', 'meta'], BlockListsCard)],
     fetcher: fetchAndProcess('block-lists?url=${url}'),
-  },
-  {
-    id: 'features',
-    expectedAddressTypes: [...URL_ONLY],
-    cards: [card('features', 'Site Features', ['meta'], SiteFeaturesCard)],
-    fetcher: fetchAndProcess('features?url=${url}', (raw) =>
-      raw?.Errors?.length
-        ? { error: `No data returned, because ${raw.Errors[0].Message || 'API lookup failed'}` }
-        : raw),
   },
   {
     id: 'sitemap',

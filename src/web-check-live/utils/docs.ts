@@ -267,14 +267,6 @@ const docs: Doc[] = [
     screenshot: 'https://pixelflare.cc/alicia/web-check/wc-dnssec',
   },
   {
-    id: "features",
-    title: "Site Features",
-    description: 'Checks which core features are present on a site. If a feature as marked as dead, that means it\'s not being actively used at load time',
-    use: "This is useful to understand what a site is capable of, and what technologies to look for",
-    resources: [],
-    screenshot: 'https://pixelflare.cc/alicia/web-check/wc-features',
-  },
-  {
     id: "hsts",
     title: "HTTP Strict Transport Security",
     description: 'HTTP Strict Transport Security (HSTS) is a web security policy '

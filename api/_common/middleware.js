@@ -2,7 +2,7 @@ const normalizeUrl = (url) => {
   return url.startsWith('http') ? url : `https://${url}`;
 };
 
-const TIMEOUT = parseInt(process.env.PUBLIC_API_TIMEOUT_LIMIT || '60000', 10);
+const TIMEOUT = parseInt(process.env.PUBLIC_API_TIMEOUT_LIMIT || '40000', 10);
 
 // If present, set CORS allowed origins for responses
 const ALLOWED_ORIGINS = process.env.API_CORS_ORIGIN || '*';

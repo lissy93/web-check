@@ -108,7 +108,7 @@ const renderPlaceholderPage = async (res, msgId, logs) => {
 app.get(API_DIR, async (req, res) => {
   const results = {};
   const { url } = req.query;
-  const maxExecutionTime = process.env.PUBLIC_API_TIMEOUT_LIMIT || 20000;
+  const maxExecutionTime = process.env.PUBLIC_API_TIMEOUT_LIMIT || 60000;
 
   const executeHandler = async (handler, req) => {
     return new Promise(async (resolve, reject) => {
@@ -178,7 +178,7 @@ if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
     }).catch(async err => {
       renderPlaceholderPage(res, 'notCompiledSsrHandler', err.message);
     });
-  });  
+  });
 }
 
 // Handle SPA routing
