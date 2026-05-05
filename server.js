@@ -5,7 +5,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
-import historyApiFallback from 'connect-history-api-fallback';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -56,7 +55,7 @@ const makeLimiterResponseMsg = (retryAfter) => {
 // Create rate limiters for each time frame
 const limiters = limits.map(limit => rateLimit({
   windowMs: limit.timeFrame * 1000,
-  max: limit.max,
+  limit: limit.max,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: makeLimiterResponseMsg(limit.messageTime) }
@@ -180,14 +179,6 @@ if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
     });
   });
 }
-
-// Handle SPA routing
-app.use(historyApiFallback({
-  rewrites: [
-    { from: new RegExp(`^${API_DIR}/.*$`), to: (context) => context.parsedUrl.path },
-    { from: /^.*$/, to: '/index.html' }
-  ]
-}));
 
 // Anything left unhandled (which isn't an API endpoint), return a 404
 app.use((req, res, next) => {

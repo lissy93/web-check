@@ -2,7 +2,6 @@
 import BaseLayout from '@layouts/Base.astro';
 import NavBar from '@components/scafold/Nav.astro';
 import Footer from '@components/scafold/Footer.astro';
-import Icon from '@components/molecules/Icon.svelte';
 
 ---
 
@@ -33,7 +32,7 @@ import Icon from '@components/molecules/Icon.svelte';
 
 
 <style lang="scss">
-  @import '@styles/global.scss';
+  @use '@styles/global.scss' as *;
   .web-check-page {
     padding-top: 2rem;
     margin: 0 auto;

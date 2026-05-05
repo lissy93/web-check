@@ -10,18 +10,11 @@ const isBossServer = import.meta.env.BOSS_SERVER === true;
 
 const disableEverything = import.meta.env.VITE_DISABLE_EVERYTHING === true;
 
-// Redirect strait to /check or /check/:url if running as self-hosted instance
-if (!isBossServer) {
-  const searchUrl = new URLSearchParams(new URL(Astro.request.url).search).get('url');
-  const redirectUrl = searchUrl ? `/check/${encodeURIComponent(searchUrl)}` : '/check';
-  Astro.redirect(redirectUrl);
-}
-
 ---
 
 <BaseLayout>
   <Fragment slot="head">
-    {!isBossServer && (<meta http-equiv="refresh" content="0; url=/check" />)}
+    <!-- {!isBossServer && (<meta http-equiv="refresh" content="0; url=/check" />)} -->
   </Fragment>
   { disableEverything && <TempDisabled />}
   <main>
@@ -33,7 +26,7 @@ if (!isBossServer) {
 </BaseLayout>
 
 <style lang="scss">
-  @import '@styles/global.scss';
+  @use '@styles/global.scss' as *;
   main {
     min-height: 100vh;
     padding: 2rem;

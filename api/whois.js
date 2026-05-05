@@ -1,7 +1,7 @@
 import net from 'net';
 import psl from 'psl';
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpPost } from './_common/http.js';
 import { createLogger } from './_common/logger.js';
 
 const log = createLogger('whois');
@@ -71,8 +71,8 @@ const fetchFromInternic = async (hostname) => new Promise((resolve, reject) => {
 
 const fetchFromMyAPI = async (hostname) => {
   try {
-    const response = await axios.post('https://whois-api-zeta.vercel.app/', {
-      domain: hostname
+    const response = await httpPost('https://whois-api-zeta.vercel.app/', {
+      domain: hostname,
     });
     return response.data;
   } catch (error) {

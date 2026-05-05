@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import colors from 'web-check-live/styles/colors';
 import { Card } from 'web-check-live/components/Form/Card';

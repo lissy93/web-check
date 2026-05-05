@@ -1,5 +1,5 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 import { requireEnv, upstreamError } from './_common/upstream.js';
 
 const qualityHandler = async (url) => {
@@ -12,7 +12,7 @@ const qualityHandler = async (url) => {
 
   let data;
   try {
-    data = (await axios.get(endpoint)).data;
+    data = (await httpGet(endpoint)).data;
   } catch (error) {
     return upstreamError(error, 'Quality check');
   }

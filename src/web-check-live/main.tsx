@@ -1,5 +1,4 @@
-import { BrowserRouter } from "react-router-dom";
-import { StaticRouter } from "react-router-dom/server";
+import { BrowserRouter, StaticRouter } from "react-router-dom";
 import App from "./App.tsx";
 
 export default ({ pathname }: { pathname: string }) => (

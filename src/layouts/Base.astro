@@ -1,5 +1,5 @@
 ---
-import { ViewTransitions } from 'astro:transitions'
+import { ClientRouter } from 'astro:transitions'
 import MetaTags from '@layouts/MetaTags.astro';
 
 import '@styles/typography.scss';
@@ -23,7 +23,7 @@ interface Props {
 <!doctype html>
 <html lang="en" data-theme="dark">
 	<head>
-		<ViewTransitions />
+		<ClientRouter />
 		<MetaTags {...Astro.props } />
     <slot name="head" />
 		<link href="/fonts/Hubot-Sans/Hubot-Sans.woff2"

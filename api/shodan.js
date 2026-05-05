@@ -1,5 +1,5 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 import { parseTarget } from './_common/parse-target.js';
 import { requireEnv, upstreamError } from './_common/upstream.js';
 
@@ -9,7 +9,7 @@ const shodanHandler = async (url) => {
   if (auth.skipped) return auth;
   const { hostname } = parseTarget(url);
   try {
-    const res = await axios.get(
+    const res = await httpGet(
       `https://api.shodan.io/shodan/host/${hostname}?key=${auth.value}`,
       { timeout: 8000 },
     );

@@ -1,6 +1,6 @@
-import axios from 'axios';
 import xml2js from 'xml2js';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 import { upstreamError } from './_common/upstream.js';
 
 const HARD_TIMEOUT = 5000;
@@ -9,13 +9,13 @@ const MAX_CHILD_SITEMAPS = 25;
 
 // Fetch and parse a sitemap XML
 const fetchSitemap = async (sitemapUrl) => {
-  const res = await axios.get(sitemapUrl, { timeout: HARD_TIMEOUT });
+  const res = await httpGet(sitemapUrl, { timeout: HARD_TIMEOUT });
   return new xml2js.Parser().parseStringPromise(res.data);
 };
 
 // Pull a Sitemap: line out of robots.txt
 const findSitemapInRobots = async (baseUrl) => {
-  const robots = await axios.get(`${baseUrl}/robots.txt`, { timeout: HARD_TIMEOUT });
+  const robots = await httpGet(`${baseUrl}/robots.txt`, { timeout: HARD_TIMEOUT });
   for (const line of robots.data.split('\n')) {
     if (line.toLowerCase().startsWith('sitemap:')) {
       return line.split(/\s+/)[1]?.trim() || null;

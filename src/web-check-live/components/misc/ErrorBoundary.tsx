@@ -1,4 +1,4 @@
-import React, { Component, type ErrorInfo, type ReactNode } from "react";
+import { Component, type ErrorInfo, type ReactNode } from "react";
 import styled from '@emotion/styled';
 import Card from 'web-check-live/components/Form/Card';
 import Heading from 'web-check-live/components/Form/Heading';

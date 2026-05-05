@@ -1,5 +1,5 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 import { parseTarget } from './_common/parse-target.js';
 import { upstreamError } from './_common/upstream.js';
 
@@ -7,7 +7,7 @@ import { upstreamError } from './_common/upstream.js';
 const locationHandler = async (url) => {
   const { hostname } = parseTarget(url);
   try {
-    const res = await axios.get(`https://ipapi.co/${hostname}/json/`, { timeout: 5000 });
+    const res = await httpGet(`https://ipapi.co/${hostname}/json/`, { timeout: 5000 });
     if (res.data?.error) return { skipped: res.data.reason || 'Lookup unavailable' };
     return res.data;
   } catch (error) {

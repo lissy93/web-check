@@ -1,5 +1,5 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 import { parseTarget } from './_common/parse-target.js';
 import { requireEnv, upstreamError } from './_common/upstream.js';
 
@@ -9,7 +9,7 @@ const whoisProHandler = async (url) => {
   const { hostname } = parseTarget(url);
   let data;
   try {
-    const res = await axios.get(
+    const res = await httpGet(
       `https://api.whoapi.com/?domain=${hostname}&r=whois&apikey=${auth.value}`,
       { timeout: 8000 },
     );

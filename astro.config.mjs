@@ -7,7 +7,7 @@ import partytown from '@astrojs/partytown';
 import sitemap from '@astrojs/sitemap';
 
 // Adapters
-import vercelAdapter from '@astrojs/vercel/serverless';
+import vercelAdapter from '@astrojs/vercel';
 import netlifyAdapter from '@astrojs/netlify';
 import nodeAdapter from '@astrojs/node';
 import cloudflareAdapter from '@astrojs/cloudflare';
@@ -22,8 +22,8 @@ const unwrapEnvVar = (varName, fallbackValue) => {
 // Determine the deploy target (vercel, netlify, cloudflare, node)
 const deployTarget = unwrapEnvVar('PLATFORM', 'node').toLowerCase();
 
-// Determine the output mode (server, hybrid or static)
-const output = unwrapEnvVar('OUTPUT', 'hybrid');
+// Determine the output mode (static or server). Mixed prerender supported in static mode
+const output = unwrapEnvVar('OUTPUT', 'static');
 
 // The FQDN of where the site is hosted (used for sitemaps & canonical URLs)
 const site = unwrapEnvVar('SITE_URL', 'https://web-check.xyz');

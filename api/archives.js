@@ -1,5 +1,5 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 
 const convertTimestampToDate = (timestamp) => {
   const [year, month, day, hour, minute, second] = [
@@ -50,7 +50,7 @@ const wayBackHandler = async (url) => {
   const cdxUrl = `https://web.archive.org/cdx/search/cdx?url=${url}&output=json&fl=timestamp,statuscode,digest,length,offset`;
 
   try {
-    const { data } = await axios.get(cdxUrl);
+    const { data } = await httpGet(cdxUrl);
     
     // Check there's data
     if (!data || !Array.isArray(data) || data.length <= 1) {

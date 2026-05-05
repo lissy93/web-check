@@ -1,6 +1,6 @@
 import { promises as dnsPromises } from 'dns';
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 import { parseTarget } from './_common/parse-target.js';
 import { upstreamError } from './_common/upstream.js';
 
@@ -14,8 +14,7 @@ const dnsHandler = async (url) => {
   }
   const results = await Promise.all(addresses.map(async (address) => {
     const hostname = await dnsPromises.reverse(address).catch(() => null);
-    const dohDirectSupports = await axios
-      .get(`https://${address}/dns-query`)
+    const dohDirectSupports = await httpGet(`https://${address}/dns-query`)
       .then(() => true)
       .catch(() => false);
     return { address, hostname, dohDirectSupports };

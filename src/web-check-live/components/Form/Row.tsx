@@ -156,7 +156,7 @@ export const ExpandableRow = (props: RowProps) => {
                 </span>
                 { row.plaintext && <PlainText>{row.plaintext}</PlainText> }
                 { row.listResults && (<List>
-                  {row.listResults.map((listItem: string, listIndex: number) => (
+                  {row.listResults.map((listItem: string) => (
                     <li key={listItem}>{snip(listItem)}</li>
                   ))}
                 </List>)}

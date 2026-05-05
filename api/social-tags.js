@@ -1,12 +1,12 @@
-import axios from 'axios';
 import * as cheerio from 'cheerio';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 import { upstreamError } from './_common/upstream.js';
 
 const socialTagsHandler = async (url) => {
   let response;
   try {
-    response = await axios.get(url);
+    response = await httpGet(url);
   } catch (error) {
     return upstreamError(error, 'Social tags fetch');
   }

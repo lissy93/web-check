@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type ChangeEvent, type FormEvent, useState, useEffect } from 'react';
+import { type ChangeEvent, type SyntheticEvent, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation, type NavigateOptions } from 'react-router-dom';
 
 import Heading from 'web-check-live/components/Form/Heading';
@@ -190,7 +190,7 @@ const Home = (): JSX.Element => {
     }
   };
 
-  const formSubmitEvent = (event: FormEvent<HTMLFormElement>) => {
+  const formSubmitEvent = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     submit();
   }

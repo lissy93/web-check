@@ -1,5 +1,5 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 import { parseTarget } from './_common/parse-target.js';
 import { upstreamError } from './_common/upstream.js';
 
@@ -17,7 +17,7 @@ const parseRobotsTxt = (content) => {
 const robotsHandler = async (url) => {
   const { protocol, hostname } = parseTarget(url);
   try {
-    const res = await axios.get(`${protocol}//${hostname}/robots.txt`);
+    const res = await httpGet(`${protocol}//${hostname}/robots.txt`);
     const parsed = parseRobotsTxt(res.data || '');
     return parsed.robots.length
       ? parsed

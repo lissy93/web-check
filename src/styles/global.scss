@@ -1,7 +1,7 @@
 /* Global Stylesheet */
-@import './colors.scss';
-@import './media-queries.scss';
-@import './typography.scss';
+@forward './colors';
+@forward './media-queries';
+@forward './typography';
 
 /* CSS Reset - Normalize dimensions and spacing across browsers */
 *,

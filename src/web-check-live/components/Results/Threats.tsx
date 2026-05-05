@@ -64,7 +64,7 @@ const MalwareCard = (props: {data: any, title: string, actionButtons: any }): JS
       {urlHaus.urls && (
         <Expandable>
           <summary>Expand Results</summary>
-          { urlHaus.urls.map((urlResult: any, index: number) => {
+          { urlHaus.urls.map((urlResult: any) => {
           const rows = [
             { lbl: 'ID', val: urlResult.id },
             { lbl: 'Status', val: urlResult.url_status },

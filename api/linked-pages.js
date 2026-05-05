@@ -1,13 +1,13 @@
-import axios from 'axios';
 import * as cheerio from 'cheerio';
 import urlLib from 'url';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 import { upstreamError } from './_common/upstream.js';
 
 const linkedPagesHandler = async (url) => {
   let response;
   try {
-    response = await axios.get(url);
+    response = await httpGet(url);
   } catch (error) {
     return upstreamError(error, 'Linked pages fetch');
   }

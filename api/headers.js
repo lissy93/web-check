@@ -1,10 +1,10 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 import { upstreamError } from './_common/upstream.js';
 
 const headersHandler = async (url) => {
   try {
-    const response = await axios.get(url, {
+    const response = await httpGet(url, {
       validateStatus: (status) => status >= 200 && status < 600,
     });
     return response.headers;

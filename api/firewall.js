@@ -1,5 +1,5 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 import { parseTarget } from './_common/parse-target.js';
 import { upstreamError } from './_common/upstream.js';
 
@@ -8,7 +8,7 @@ const hasWaf = (waf) => ({ hasWaf: true, waf });
 const firewallHandler = async (url) => {
   const { href } = parseTarget(url);
   try {
-    const response = await axios.get(href);
+    const response = await httpGet(href);
     const headers = response.headers;
 
     if (headers['server'] && headers['server'].includes('cloudflare')) {

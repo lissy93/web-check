@@ -92,13 +92,13 @@ const makeBreadcrumbs = () => {
 
 <!-- Non-tracking hit counter -->
 {analytics.enable && (
-  <script defer data-domain={analytics.domain} src={analytics.script}></script>
+  <script is:inline defer data-domain={analytics.domain} src={analytics.script}></script>
 )}
 
 <!-- Schema.org markup for Google -->
 {breadcrumbs && (
-  <script type="application/ld+json" set:html={JSON.stringify(makeBreadcrumbs())} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(makeBreadcrumbs())} />
 )}
 {customSchemaJson && (
-  <script type="application/ld+json" set:html={JSON.stringify(customSchemaJson)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(customSchemaJson)} />
 )}

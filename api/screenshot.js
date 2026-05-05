@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer-core';
-import chromium from 'chrome-aws-lambda';
+import chromium from '@sparticuz/chromium';
 import { randomUUID } from 'crypto';
 import { execFile } from 'child_process';
 import { promises as fs } from 'fs';
@@ -46,9 +46,9 @@ const puppeteerScreenshot = async (targetUrl) => {
     browser = await puppeteer.launch({
       args: [...chromium.args, '--no-sandbox'],
       defaultViewport: { width: 800, height: 600 },
-      executablePath: process.env.CHROME_PATH || '/usr/bin/chromium',
+      executablePath: process.env.CHROME_PATH || await chromium.executablePath(),
       headless: true,
-      ignoreHTTPSErrors: true,
+      acceptInsecureCerts: true,
       ignoreDefaultArgs: ['--disable-extensions'],
     });
     const page = await browser.newPage();

@@ -1,10 +1,10 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 import { upstreamError } from './_common/upstream.js';
 
 const httpsSecHandler = async (url) => {
   try {
-    const { headers } = await axios.get(url);
+    const { headers } = await httpGet(url);
     return {
       strictTransportPolicy: !!headers['strict-transport-security'],
       xFrameOptions: !!headers['x-frame-options'],

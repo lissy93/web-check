@@ -1,6 +1,6 @@
-import axios from 'axios';
 import xml2js from 'xml2js';
 import middleware from './_common/middleware.js';
+import { httpPost } from './_common/http.js';
 import { parseTarget } from './_common/parse-target.js';
 import { requireEnv, upstreamError } from './_common/upstream.js';
 
@@ -8,7 +8,7 @@ const safeBrowsing = async (url) => {
   const auth = requireEnv('GOOGLE_CLOUD_API_KEY', 'Google Safe Browsing');
   if (auth.skipped) return auth;
   try {
-    const res = await axios.post(
+    const res = await httpPost(
       `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${auth.value}`,
       {
         threatInfo: {
@@ -33,7 +33,7 @@ const safeBrowsing = async (url) => {
 const urlHaus = async (url) => {
   const { hostname } = parseTarget(url);
   try {
-    const res = await axios.post(
+    const res = await httpPost(
       'https://urlhaus-api.abuse.ch/v1/host/',
       `host=${hostname}`,
       { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
@@ -47,7 +47,7 @@ const urlHaus = async (url) => {
 const phishTank = async (url) => {
   try {
     const encoded = Buffer.from(url).toString('base64');
-    const res = await axios.post(
+    const res = await httpPost(
       `https://checkurl.phishtank.com/checkurl/?url=${encoded}`,
       null,
       { headers: { 'User-Agent': 'phishtank/web-check' }, timeout: 3000 },
@@ -63,7 +63,7 @@ const cloudmersive = async (url) => {
   const auth = requireEnv('CLOUDMERSIVE_API_KEY', 'Cloudmersive');
   if (auth.skipped) return auth;
   try {
-    const res = await axios.post(
+    const res = await httpPost(
       'https://api.cloudmersive.com/virus/scan/website',
       `Url=${encodeURIComponent(url)}`,
       {

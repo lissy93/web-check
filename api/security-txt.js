@@ -1,8 +1,6 @@
 import { URL } from 'url';
-import followRedirects from 'follow-redirects';
 import middleware from './_common/middleware.js';
-
-const { https } = followRedirects;
+import { httpGet } from './_common/http.js';
 
 const SECURITY_TXT_PATHS = [
   '/security.txt',
@@ -71,26 +69,15 @@ const securityTxtHandler = async (urlParam) => {
   return { isPresent: false };
 };
 
-async function fetchSecurityTxt(baseURL, path) {
-  return new Promise((resolve, reject) => {
-    const url = new URL(path, baseURL);
-    https.get(url.toString(), { headers: { 'User-Agent': 'curl/8.0.0' } }, (res) => {
-      if (res.statusCode === 200) {
-        let data = '';
-        res.on('data', (chunk) => {
-          data += chunk;
-        });
-        res.on('end', () => {
-          resolve(data);
-        });
-      } else {
-        resolve(null);
-      }
-    }).on('error', (err) => {
-      reject(err);
-    });
+// Returns the file body when the path 200s, else null so the next path is tried
+const fetchSecurityTxt = async (baseURL, path) => {
+  const url = new URL(path, baseURL);
+  const res = await httpGet(url.toString(), {
+    headers: { 'User-Agent': 'curl/8.0.0' },
+    validateStatus: () => true,
   });
-}
+  return res.status === 200 ? res.data : null;
+};
 
 export const handler = middleware(securityTxtHandler);
 export default handler;
