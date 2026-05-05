@@ -32,13 +32,11 @@ const timeoutErrorMsg = 'You can re-trigger this request, by clicking "Retry"\n'
 + 'in order to keep running costs affordable, so that Web Check can '
 + 'remain freely available for everyone.';
 
-const disabledErrorMsg = 'Error - WebCheck Temporarily Disabled.\n\n'
-+ 'We\'re sorry, but due to the increased cost of running Web Check '
-+ 'we\'ve had to temporatily disable the public instand. '
-+ 'We\'re activley looking for affordable ways to keep Web Check running, '
-+ 'while free to use for everybody.\n'
-+ 'In the meantime, since we\'ve made our code free and open source, '
-+ 'you can get Web Check running on your own system, by following the instructions in our GitHub repo';
+const disabledMsg = 'WebCheck is temporarily disabled.\n\n'
++ 'Due to the increased cost of running Web Check, the public instance has been '
++ 'paused while we look for affordable ways to keep it free for everyone.\n'
++ 'Since the code is free and open source, you can run your own instance by '
++ 'following the instructions in the GitHub repo.';
 
 // A middleware function used by all API routes on all platforms
 const commonMiddleware = (handler) => {
@@ -56,7 +54,7 @@ const commonMiddleware = (handler) => {
   const vercelHandler = async (request, response) => {
 
     if (DISABLE_EVERYTHING) {
-      response.status(503).json({ error: disabledErrorMsg });
+      return response.status(200).json({ skipped: disabledMsg });
     }
 
     const queryParams = request.query || {};
@@ -69,26 +67,20 @@ const commonMiddleware = (handler) => {
     const url = normalizeUrl(rawUrl);
 
     try {
-      // Race the handler against the timeout
-      const handlerResponse = await Promise.race([
+      const result = await Promise.race([
         handler(url, request),
-        createTimeoutPromise(TIMEOUT)
+        createTimeoutPromise(TIMEOUT),
       ]);
-
-      if (handlerResponse.body && handlerResponse.statusCode) {
-        response.status(handlerResponse.statusCode).json(handlerResponse.body);
-      } else {
-        response.status(200).json(
-          typeof handlerResponse === 'object' ? handlerResponse : JSON.parse(handlerResponse)
-        );
-      }
+      response.status(200).json(
+        typeof result === 'object' ? result : JSON.parse(result),
+      );
     } catch (error) {
-      let errorCode = 500;
-      if (error.message.includes('timed-out') || response.statusCode === 504) {
-        errorCode = 408;
-        error.message = `${error.message}\n\n${timeoutErrorMsg}`;
-      }
-      response.status(errorCode).json({ error: error.message });
+      const isTimeout = error.message.includes('timed-out')
+        || response.statusCode === 504;
+      const message = isTimeout
+        ? `${error.message}\n\n${timeoutErrorMsg}`
+        : error.message;
+      response.status(isTimeout ? 408 : 500).json({ error: message });
     }
   };
 
@@ -99,8 +91,8 @@ const commonMiddleware = (handler) => {
 
     if (DISABLE_EVERYTHING) {
       callback(null, {
-        statusCode: 503,
-        body: JSON.stringify({ error: 'Web-Check is temporarily disabled. Please try again later.' }),
+        statusCode: 200,
+        body: JSON.stringify({ skipped: disabledMsg }),
         headers,
       });
       return;
@@ -118,21 +110,15 @@ const commonMiddleware = (handler) => {
     const url = normalizeUrl(rawUrl);
 
     try {
-      // Race the handler against the timeout
-      const handlerResponse = await Promise.race([
+      const result = await Promise.race([
         handler(url, event, context),
-        createTimeoutPromise(TIMEOUT)
+        createTimeoutPromise(TIMEOUT),
       ]);
-
-      if (handlerResponse.body && handlerResponse.statusCode) {
-        callback(null, handlerResponse);
-      } else {
-        callback(null, {
-          statusCode: 200,
-          body: typeof handlerResponse === 'object' ? JSON.stringify(handlerResponse) : handlerResponse,
-          headers,
-        });
-      }
+      callback(null, {
+        statusCode: 200,
+        body: typeof result === 'object' ? JSON.stringify(result) : result,
+        headers,
+      });
     } catch (error) {
       callback(null, {
         statusCode: 500,

@@ -1,61 +1,55 @@
 import https from 'https';
 import middleware from './_common/middleware.js';
 
-const carbonHandler = async (url) => {
+const FETCH_TIMEOUT = 8000;
 
-  // First, get the size of the website's HTML
-  const getHtmlSize = (url) => new Promise((resolve, reject) => {
-    https.get(url, res => {
-      let data = '';
-      res.on('data', chunk => {
-        data += chunk;
-      });
-      res.on('end', () => {
-        const sizeInBytes = Buffer.byteLength(data, 'utf8');
-        resolve(sizeInBytes);
-      });
-    }).on('error', reject);
+// Read a URL via https.get and return the full body string
+const fetchBody = (url) => new Promise((resolve, reject) => {
+  const req = https.get(url, (res) => {
+    let data = '';
+    res.on('data', (chunk) => { data += chunk; });
+    res.on('end', () => resolve(data));
+    res.on('error', reject);
   });
+  req.setTimeout(FETCH_TIMEOUT, () => {
+    req.destroy();
+    reject(new Error('Request timed out'));
+  });
+  req.on('error', reject);
+});
 
+const carbonHandler = async (url) => {
+  let html;
   try {
-    const sizeInBytes = await getHtmlSize(url);
-    const apiUrl = `https://api.websitecarbon.com/data?bytes=${sizeInBytes}&green=0`;
-
-    // Then use that size to get the carbon data
-    const carbonData = await new Promise((resolve, reject) => {
-      https.get(apiUrl, res => {
-        let data = '';
-        res.on('data', chunk => {
-          data += chunk;
-        });
-        res.on('end', () => {
-          // Check if response looks like HTML (e.g., Cloudflare challenge page)
-          const trimmedData = data.trim();
-          if (trimmedData.startsWith('<!DOCTYPE') || trimmedData.startsWith('<html') || trimmedData.startsWith('<')) {
-            reject(new Error('WebsiteCarbon API returned HTML instead of JSON. This may be due to Cloudflare protection when running from a datacenter IP.'));
-            return;
-          }
-          try {
-            resolve(JSON.parse(data));
-          } catch (parseError) {
-            reject(new Error(`Failed to parse WebsiteCarbon API response as JSON: ${parseError.message}`));
-          }
-        });
-      }).on('error', reject);
-    });
-
-    if (!carbonData.statistics || (carbonData.statistics.adjustedBytes === 0 && carbonData.statistics.energy === 0)) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ skipped: 'Not enough info to get carbon data' }),
-      };
-    }
-
-    carbonData.scanUrl = url;
-    return carbonData;
+    html = await fetchBody(url);
   } catch (error) {
-    throw new Error(`Error: ${error.message}`);
+    return { error: `Failed to fetch site: ${error.message}` };
   }
+  const sizeInBytes = Buffer.byteLength(html, 'utf8');
+  const carbonUrl = `https://api.websitecarbon.com/data?bytes=${sizeInBytes}&green=0`;
+  let raw;
+  try {
+    raw = await fetchBody(carbonUrl);
+  } catch (error) {
+    return { error: `WebsiteCarbon API request failed: ${error.message}` };
+  }
+  const trimmed = raw.trim();
+  if (trimmed.startsWith('<')) {
+    return { error: 'WebsiteCarbon API returned HTML instead of JSON. '
+      + 'This may be due to Cloudflare protection on datacenter IPs.' };
+  }
+  let data;
+  try {
+    data = JSON.parse(trimmed);
+  } catch (error) {
+    return { error: `Failed to parse WebsiteCarbon API response: ${error.message}` };
+  }
+  if (!data.statistics
+      || (data.statistics.adjustedBytes === 0 && data.statistics.energy === 0)) {
+    return { skipped: 'Not enough info to get carbon data' };
+  }
+  data.scanUrl = url;
+  return data;
 };
 
 export const handler = middleware(carbonHandler);

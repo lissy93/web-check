@@ -1,5 +1,6 @@
 import got from 'got';
 import middleware from './_common/middleware.js';
+import { upstreamError } from './_common/upstream.js';
 
 const redirectsHandler = async (url) => {
   const redirects = [url];
@@ -9,18 +10,13 @@ const redirectsHandler = async (url) => {
       maxRedirects: 12,
       hooks: {
         beforeRedirect: [
-          (options, response) => {
-            redirects.push(response.headers.location);
-          },
+          (_options, response) => { redirects.push(response.headers.location); },
         ],
       },
     });
-
-    return {
-      redirects: redirects,
-    };
+    return { redirects };
   } catch (error) {
-    throw new Error(`Error: ${error.message}`);
+    return upstreamError(error, 'Redirect lookup');
   }
 };
 

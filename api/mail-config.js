@@ -2,7 +2,7 @@ import dns from 'dns/promises';
 import middleware from './_common/middleware.js';
 import { parseTarget } from './_common/parse-target.js';
 
-const mailConfigHandler = async (url, event, context) => {
+const mailConfigHandler = async (url) => {
   try {
     const { hostname: domain } = parseTarget(url);
 
@@ -67,12 +67,8 @@ const mailConfigHandler = async (url, event, context) => {
   } catch (error) {
     if (error.code === 'ENOTFOUND' || error.code === 'ENODATA') {
       return { skipped: 'No mail server in use on this domain' };
-    } else {
-      return {
-        statusCode: 500,
-        body: { error: error.message },
-      };
     }
+    return { error: `Mail config lookup failed: ${error.message}` };
   }
 };
 

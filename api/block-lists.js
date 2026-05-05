@@ -1,6 +1,6 @@
 import dns from 'dns';
-import { URL } from 'url';
 import middleware from './_common/middleware.js';
+import { parseTarget } from './_common/parse-target.js';
 
 const DNS_SERVERS = [
   { name: 'AdGuard', ip: '176.103.130.130' },
@@ -95,7 +95,7 @@ const checkDomainAgainstDnsServers = async (domain) => {
 };
 
 export const blockListHandler = async (url) => {
-  const domain = new URL(url).hostname;
+  const { hostname: domain } = parseTarget(url);
   const results = await checkDomainAgainstDnsServers(domain);
   return { blocklists: results };
 };

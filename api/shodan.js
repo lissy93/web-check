@@ -1,21 +1,21 @@
 import axios from 'axios';
 import middleware from './_common/middleware.js';
 import { parseTarget } from './_common/parse-target.js';
+import { requireEnv, upstreamError } from './_common/upstream.js';
 
 // Server-side Shodan lookup so the API key never touches the client
 const shodanHandler = async (url) => {
-  const key = process.env.SHODAN_API_KEY;
-  if (!key) return { skipped: 'Shodan API key not configured on this instance' };
+  const auth = requireEnv('SHODAN_API_KEY', 'Shodan');
+  if (auth.skipped) return auth;
   const { hostname } = parseTarget(url);
   try {
     const res = await axios.get(
-      `https://api.shodan.io/shodan/host/${hostname}?key=${key}`,
+      `https://api.shodan.io/shodan/host/${hostname}?key=${auth.value}`,
       { timeout: 8000 },
     );
     return res.data;
   } catch (error) {
-    if (error.response?.status === 404) return { skipped: 'No Shodan data for this host' };
-    return { error: `Shodan lookup failed: ${error.message}` };
+    return upstreamError(error, 'Shodan lookup');
   }
 };
 

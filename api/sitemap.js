@@ -1,6 +1,7 @@
 import axios from 'axios';
 import xml2js from 'xml2js';
 import middleware from './_common/middleware.js';
+import { upstreamError } from './_common/upstream.js';
 
 const HARD_TIMEOUT = 5000;
 const MAX_DEPTH = 3;
@@ -62,10 +63,7 @@ const sitemapHandler = async (url) => {
     }
     return await expandSitemap(parsed, 0);
   } catch (error) {
-    if (error.code === 'ECONNABORTED') {
-      return { error: `Request timed-out after ${HARD_TIMEOUT}ms` };
-    }
-    return { error: error.message };
+    return upstreamError(error, 'Sitemap fetch');
   }
 };
 

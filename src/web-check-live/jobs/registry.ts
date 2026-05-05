@@ -1,6 +1,6 @@
 import { parseJson } from 'web-check-live/utils/parse-json';
 import {
-  getLocation, applyWhoIsResults, parseShodanResults,
+  getLocation, parseShodanResults,
 } from 'web-check-live/utils/result-processor';
 
 import ServerLocationCard from 'web-check-live/components/Results/ServerLocation';
@@ -267,7 +267,7 @@ export const jobs: JobSpec[] = [
     id: 'whois',
     expectedAddressTypes: [...URL_ONLY],
     cards: [card('whois', 'Domain Info', ['server'], WhoIsCard)],
-    fetcher: fetchAndProcess('whois-pro?url=${url}', applyWhoIsResults),
+    fetcher: fetchAndProcess('whois-pro?url=${url}'),
   },
   {
     id: 'txt-records',

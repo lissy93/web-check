@@ -2,9 +2,15 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import urlLib from 'url';
 import middleware from './_common/middleware.js';
+import { upstreamError } from './_common/upstream.js';
 
 const linkedPagesHandler = async (url) => {
-  const response = await axios.get(url);
+  let response;
+  try {
+    response = await axios.get(url);
+  } catch (error) {
+    return upstreamError(error, 'Linked pages fetch');
+  }
   const html = response.data;
   const $ = cheerio.load(html);
   const internalLinksMap = new Map();
@@ -29,19 +35,10 @@ const linkedPagesHandler = async (url) => {
   const internalLinks = [...internalLinksMap.entries()].sort((a, b) => b[1] - a[1]).map(entry => entry[0]);
   const externalLinks = [...externalLinksMap.entries()].sort((a, b) => b[1] - a[1]).map(entry => entry[0]);
 
-  // If there were no links, then mark as skipped and show reasons
-  if (internalLinks.length === 0 && externalLinks.length === 0) {
-    return {
-      statusCode: 400,
-      body: {
-        skipped: 'No internal or external links found. '
-          + 'This may be due to the website being dynamically rendered, using a client-side framework (like React), and without SSR enabled. '
-          + 'That would mean that the static HTML returned from the HTTP request doesn\'t contain any meaningful content for Web-Check to analyze. '
-          + 'You can rectify this by using a headless browser to render the page instead.',
-        },
-    };
+  if (!internalLinks.length && !externalLinks.length) {
+    return { skipped: 'No internal or external links found in the page HTML. '
+      + 'This often happens with single-page apps that render content client-side.' };
   }
-
   return { internal: internalLinks, external: externalLinks };
 };
 

@@ -4,13 +4,15 @@ import { parseTarget } from './_common/parse-target.js';
 
 const HANDSHAKE_TIMEOUT = 4000;
 
+const isIp = (h) => /^[\d.]+$/.test(h) || h.includes(':');
+
 // Open one TLS handshake to the host and capture what was negotiated
 const handshake = ({ hostname, port }) => new Promise((resolve, reject) => {
   let ocspStapled = false;
   const socket = tls.connect({
     host: hostname,
     port: port ? Number(port) : 443,
-    servername: hostname,
+    ...(isIp(hostname) ? {} : { servername: hostname }),
     ALPNProtocols: ['h2', 'http/1.1'],
     rejectUnauthorized: false,
     requestOCSP: true,

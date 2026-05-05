@@ -1,18 +1,14 @@
 import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { parseTarget } from './_common/parse-target.js';
+import { upstreamError } from './_common/upstream.js';
 
-const hasWaf = (waf) => {
-  return {
-    hasWaf: true, waf,
-  }
-};
+const hasWaf = (waf) => ({ hasWaf: true, waf });
 
 const firewallHandler = async (url) => {
-  const fullUrl = url.startsWith('http') ? url : `http://${url}`;
-  
+  const { href } = parseTarget(url);
   try {
-    const response = await axios.get(fullUrl);
-
+    const response = await axios.get(href);
     const headers = response.headers;
 
     if (headers['server'] && headers['server'].includes('cloudflare')) {
@@ -103,10 +99,7 @@ const firewallHandler = async (url) => {
       hasWaf: false,
     }
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
-    };
+    return upstreamError(error, 'Firewall check');
   }
 };
 

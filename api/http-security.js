@@ -1,24 +1,19 @@
 import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { upstreamError } from './_common/upstream.js';
 
 const httpsSecHandler = async (url) => {
-  const fullUrl = url.startsWith('http') ? url : `http://${url}`;
-  
   try {
-    const response = await axios.get(fullUrl);
-    const headers = response.headers;
+    const { headers } = await axios.get(url);
     return {
-      strictTransportPolicy: headers['strict-transport-security'] ? true : false,
-      xFrameOptions: headers['x-frame-options'] ? true : false,
-      xContentTypeOptions: headers['x-content-type-options'] ? true : false,
-      xXSSProtection: headers['x-xss-protection'] ? true : false,
-      contentSecurityPolicy: headers['content-security-policy'] ? true : false,
-    }
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
+      strictTransportPolicy: !!headers['strict-transport-security'],
+      xFrameOptions: !!headers['x-frame-options'],
+      xContentTypeOptions: !!headers['x-content-type-options'],
+      xXSSProtection: !!headers['x-xss-protection'],
+      contentSecurityPolicy: !!headers['content-security-policy'],
     };
+  } catch (error) {
+    return upstreamError(error, 'HTTP security check');
   }
 };
 

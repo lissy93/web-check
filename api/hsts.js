@@ -1,49 +1,36 @@
 import https from 'https';
 import middleware from './_common/middleware.js';
 
-const hstsHandler = async (url, event, context) => {
-  const errorResponse = (message, statusCode = 500) => {
-    return {
-      statusCode: statusCode,
-      body: JSON.stringify({ error: message }),
-    };
-  };
-  const hstsIncompatible = (message, compatible = false, hstsHeader = null ) => {
-    return { message, compatible, hstsHeader };
-  };
+const MIN_MAX_AGE = 10886400;
 
+const verdict = (message, compatible = false, hstsHeader = null) =>
+  ({ message, compatible, hstsHeader });
 
-  return new Promise((resolve, reject) => {
-    const req = https.request(url, res => {
-      const headers = res.headers;
-      const hstsHeader = headers['strict-transport-security'];
-
-      if (!hstsHeader) {
-        resolve(hstsIncompatible(`Site does not serve any HSTS headers.`));
-      } else {
-        const maxAgeMatch = hstsHeader.match(/max-age=(\d+)/);
-        const includesSubDomains = hstsHeader.includes('includeSubDomains');
-        const preload = hstsHeader.includes('preload');
-
-        if (!maxAgeMatch || parseInt(maxAgeMatch[1]) < 10886400) {
-          resolve(hstsIncompatible(`HSTS max-age is less than 10886400.`));
-        } else if (!includesSubDomains) {
-          resolve(hstsIncompatible(`HSTS header does not include all subdomains.`));
-        } else if (!preload) {
-          resolve(hstsIncompatible(`HSTS header does not contain the preload directive.`));
-        } else {
-          resolve(hstsIncompatible(`Site is compatible with the HSTS preload list!`, true, hstsHeader));
-        }
-      }
-    });
-
-    req.on('error', (error) => {
-      resolve(errorResponse(`Error making request: ${error.message}`));
-    });
-
-    req.end();
-  });
+const evaluate = (header) => {
+  if (!header) return verdict('Site does not serve any HSTS headers.');
+  const maxAge = parseInt(header.match(/max-age=(\d+)/)?.[1] || '0', 10);
+  if (maxAge < MIN_MAX_AGE) return verdict(`HSTS max-age is less than ${MIN_MAX_AGE}.`);
+  if (!header.includes('includeSubDomains'))
+    return verdict('HSTS header does not include all subdomains.');
+  if (!header.includes('preload'))
+    return verdict('HSTS header does not contain the preload directive.');
+  return verdict('Site is compatible with the HSTS preload list!', true, header);
 };
+
+const REQUEST_TIMEOUT = 5000;
+
+const hstsHandler = async (url) => new Promise((resolve) => {
+  const req = https.request(url, (res) => {
+    resolve(evaluate(res.headers['strict-transport-security']));
+    res.resume();
+  });
+  req.setTimeout(REQUEST_TIMEOUT, () => {
+    req.destroy();
+    resolve({ error: 'HSTS check timed out' });
+  });
+  req.on('error', (error) => resolve({ error: `HSTS check failed: ${error.message}` }));
+  req.end();
+});
 
 export const handler = middleware(hstsHandler);
 export default handler;

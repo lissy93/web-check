@@ -1,6 +1,7 @@
 import axios from 'axios';
 import middleware from './_common/middleware.js';
 import { parseTarget } from './_common/parse-target.js';
+import { upstreamError } from './_common/upstream.js';
 
 const SSL_LABS = 'https://api.ssllabs.com/api/v3/analyze';
 
@@ -22,10 +23,7 @@ const tlsLabsHandler = async (url) => {
     }
     return data;
   } catch (error) {
-    if (error.response?.status >= 400) {
-      return { skipped: 'No SSL Labs data available for this host' };
-    }
-    return { error: `SSL Labs lookup failed: ${error.message}` };
+    return upstreamError(error, 'SSL Labs lookup');
   }
 };
 

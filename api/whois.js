@@ -48,31 +48,26 @@ const parseWhoisData = (data) => {
   return parsedData;
 };
 
-const fetchFromInternic = async (hostname) => {
-  return new Promise((resolve, reject) => {
-    const client = net.createConnection({ port: 43, host: 'whois.internic.net' }, () => {
-      client.write(hostname + '\r\n');
-    });
+const INTERNIC_TIMEOUT = 5000;
 
-    let data = '';
-    client.on('data', (chunk) => {
-      data += chunk;
-    });
-
-    client.on('end', () => {
-      try {
-        const parsedData = parseWhoisData(data);
-        resolve(parsedData);
-      } catch (error) {
-        reject(error);
-      }
-    });
-
-    client.on('error', (err) => {
-      reject(err);
-    });
+const fetchFromInternic = async (hostname) => new Promise((resolve, reject) => {
+  const client = net.createConnection(
+    { port: 43, host: 'whois.internic.net' },
+    () => client.write(hostname + '\r\n'),
+  );
+  let data = '';
+  client.setTimeout(INTERNIC_TIMEOUT);
+  client.on('data', (chunk) => { data += chunk; });
+  client.on('end', () => {
+    try { resolve(parseWhoisData(data)); }
+    catch (error) { reject(error); }
   });
-};
+  client.on('timeout', () => {
+    client.destroy();
+    reject(new Error('Internic WHOIS lookup timed out'));
+  });
+  client.on('error', (err) => { client.destroy(); reject(err); });
+});
 
 const fetchFromMyAPI = async (hostname) => {
   try {
@@ -81,16 +76,12 @@ const fetchFromMyAPI = async (hostname) => {
     });
     return response.data;
   } catch (error) {
-    log.error(`whois proxy fetch failed: ${error.message}`);
+    log.debug(`whois proxy fetch failed: ${error.message}`);
     return null;
   }
 };
 
 const whoisHandler = async (url) => {
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    url = 'http://' + url;
-  }
-
   let hostname;
   try {
     hostname = getBaseDomain(new URL(url).hostname);
@@ -103,10 +94,14 @@ const whoisHandler = async (url) => {
     fetchFromMyAPI(hostname)
   ]);
 
-  return {
-    internicData,
-    whoisData
-  };
+  const internicHas = internicData
+    && Object.keys(internicData).filter(k => k !== 'error').length > 0;
+  const whoisHas = whoisData && Object.keys(whoisData).length > 0;
+  if (!internicHas && !whoisHas) {
+    return { skipped: 'No WHOIS data available for this domain' };
+  }
+
+  return { internicData, whoisData };
 };
 
 export const handler = middleware(whoisHandler);
