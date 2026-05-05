@@ -88,9 +88,12 @@ export const jobs: JobSpec[] = [
     fetcher: fetchAndProcess('ssl?url=${url}'),
   },
   {
-    id: 'domain',
+    id: 'whois',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [card('domain', 'Domain Whois', ['server'], DomainLookup)],
+    cards: [
+      card('domain', 'Domain Whois', ['server'], DomainLookup),
+      card('whois', 'Domain Info', ['server'], WhoIsCard),
+    ],
     fetcher: fetchAndProcess('whois?url=${url}'),
   },
   {
@@ -261,12 +264,6 @@ export const jobs: JobSpec[] = [
     needsIp: true,
     cards: [card('ports', 'Open Ports', ['server'], OpenPortsCard)],
     fetcher: fetchAndProcess('ports?url=${ip}'),
-  },
-  {
-    id: 'whois',
-    expectedAddressTypes: [...URL_ONLY],
-    cards: [card('whois', 'Domain Info', ['server'], WhoIsCard)],
-    fetcher: fetchAndProcess('whois-pro?url=${url}'),
   },
   {
     id: 'txt-records',

@@ -3,9 +3,9 @@ import colors from 'web-check-live/styles/colors';
 type Outcome = 'success' | 'error' | 'timed-out';
 
 const HEADING: Record<Outcome, string> = {
-  success: 'Fetch Success',
-  error: 'Fetch Error',
-  'timed-out': 'Fetch Timeout',
+  success: 'Success',
+  error: 'Error',
+  'timed-out': 'Timeout',
 };
 
 const VERB: Record<Outcome, string> = {

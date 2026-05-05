@@ -21,6 +21,7 @@ const Row = styled.div`
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return dateString;
   const formatter = new Intl.DateTimeFormat('en-GB', {
     day: 'numeric',
     month: 'long',

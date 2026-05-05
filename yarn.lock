@@ -7213,6 +7213,11 @@ pump@^3.0.0:
     end-of-stream "^1.1.0"
     once "^1.3.1"
 
+punycode-esm@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/punycode-esm/-/punycode-esm-1.0.15.tgz#609101f197af258bf20897d1eb0858f298079e6f"
+  integrity sha512-pR7pzaunGU4g3v3vMIXD9WnrGUiEBs2ezcVYr9piTC/HVem9F+MJ+JNdSeYD9pK7EumLMUMO9F3Gsa3RS+o7pA==
+
 punycode@^2.1.0, punycode@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.3.1.tgz#027422e2faec0b25e1549c3e1bd8309b9133b6e5"
@@ -9242,6 +9247,13 @@ which@^2.0.1:
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
   dependencies:
     isexe "^2.0.0"
+
+whoiser@^2.0.0-beta.10:
+  version "2.0.0-beta.10"
+  resolved "https://registry.yarnpkg.com/whoiser/-/whoiser-2.0.0-beta.10.tgz#a6e31240509259aa307b1997287629891749004a"
+  integrity sha512-Y1uyLNR6zQnKj/mZPYtofs6u/9ZAnBzAuiTgU1aEMKjlnknrQdLyOKv9ErmIeF2mySMjGFj0tCam+DpxotBXHw==
+  dependencies:
+    punycode-esm "^1.0.15"
 
 winston-transport@^4.9.0:
   version "4.9.0"

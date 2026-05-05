@@ -49,6 +49,7 @@
     "svelte": "^5.55.5",
     "typescript": "^6.0.3",
     "wappalyzer": "^6.10.66",
+    "whoiser": "^2.0.0-beta.10",
     "xml2js": "^0.6.2"
   },
   "resolutions": {
