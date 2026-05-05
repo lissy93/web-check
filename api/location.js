@@ -6,14 +6,14 @@ import { createLogger } from './_common/logger.js';
 const log = createLogger('location');
 const TIMEOUT = 4000;
 
-// Server-side fetch with no-cors mode so providers don't reject Sec-Fetch-Mode: cors
-const getJson = async (url) => {
-  const r = await fetch(url, { mode: 'no-cors', signal: AbortSignal.timeout(TIMEOUT) });
-  if (!r.ok) throw new Error(`status ${r.status}`);
-  return r.json();
-};
+// Server-side fetch, no-cors so providers don't reject Sec-Fetch-Mode: cors
+const getJson = async (url, signal) => {
+  const r = await fetch(url, { mode: 'no-cors', signal })
+  if (!r.ok) throw new Error(`status ${r.status}`)
+  return r.json()
+}
 
-// Geo providers tried in order, each parser normalises to ipapi.co-shaped fields
+// Geo providers, each parser normalises to a shared field shape
 const providers = [
   {
     name: 'ipwho.is',
@@ -33,6 +33,38 @@ const providers = [
     },
   },
   {
+    name: 'ip-api.com',
+    url: (ip) => `http://ip-api.com/json/${ip}`,
+    parse: (d) => d?.status === 'success' ? {
+      ip: d.query,
+      city: d.city,
+      region: d.regionName,
+      country_name: d.country,
+      country_code: d.countryCode,
+      region_code: d.region,
+      postal: d.zip,
+      latitude: d.lat,
+      longitude: d.lon,
+      org: d.isp || d.org,
+      timezone: d.timezone,
+    } : null,
+  },
+  {
+    name: 'geojs.io',
+    url: (ip) => `https://get.geojs.io/v1/ip/geo/${ip}.json`,
+    parse: (d) => d?.country_code ? {
+      ip: d.ip,
+      city: d.city,
+      region: d.region,
+      country_name: d.country,
+      country_code: d.country_code,
+      latitude: d.latitude !== 'nil' ? parseFloat(d.latitude) : undefined,
+      longitude: d.longitude !== 'nil' ? parseFloat(d.longitude) : undefined,
+      org: d.organization_name,
+      timezone: d.timezone,
+    } : null,
+  },
+  {
     name: 'reallyfreegeoip.org',
     url: (ip) => `https://reallyfreegeoip.org/json/${ip}`,
     parse: (d) => d?.country_code ? {
@@ -48,48 +80,30 @@ const providers = [
       timezone: d.time_zone,
     } : null,
   },
-  {
-    name: 'ipapi.co',
-    url: (ip) => `https://ipapi.co/${ip}/json/`,
-    parse: (d) => d?.error ? null : {
-      ip: d.ip,
-      city: d.city,
-      region: d.region,
-      country_name: d.country_name,
-      country_code: d.country_code,
-      region_code: d.region_code,
-      postal: d.postal,
-      latitude: d.latitude,
-      longitude: d.longitude,
-      org: d.org,
-      timezone: d.timezone,
-      currency: d.currency,
-      currency_name: d.currency_name,
-      country_tld: d.country_tld,
-      country_area: d.country_area,
-      country_population: d.country_population,
-      languages: d.languages,
-    },
-  },
-];
+]
 
-// Try each provider sequentially, return first that yields a usable result
+// Query a single provider, throw unless it yields a usable result
+const tryProvider = async (p, ip, signal) => {
+  const parsed = p.parse(await getJson(p.url(ip), signal))
+  if (!parsed?.country_code) throw new Error('no usable data')
+  log.debug(`${p.name} resolved ${ip} to ${parsed.country_code}`)
+  return parsed
+}
+
+// Race all providers, first successful result wins, abort the rest
 const lookupGeo = async (ip) => {
-  for (const p of providers) {
-    try {
-      const data = await getJson(p.url(ip));
-      const parsed = p.parse(data);
-      if (parsed?.country_code) {
-        log.debug(`${p.name} resolved ${ip} to ${parsed.country_code}`);
-        return parsed;
-      }
-      log.warn(`${p.name} returned no usable data for ${ip}`);
-    } catch (error) {
-      log.warn(`${p.name} failed for ${ip}`, error.message);
-    }
-  }
-  return null;
-};
+  const ac = new AbortController()
+  const signal = AbortSignal.any([ac.signal, AbortSignal.timeout(TIMEOUT)])
+  const tasks = providers.map((p) => tryProvider(p, ip, signal).catch((e) => {
+    if (e.name !== 'AbortError') log.warn(`${p.name} failed for ${ip}`, e.message)
+    throw e
+  }))
+  try {
+    const result = await Promise.any(tasks)
+    ac.abort()
+    return result
+  } catch { return null }
+}
 
 // Fetch country-level metadata to fill fields not provided by every geo source
 const enrichCountry = async (code) => {

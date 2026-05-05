@@ -1,56 +1,79 @@
-import https from 'https';
-import middleware from './_common/middleware.js';
+import middleware from './_common/middleware.js'
+import { createLogger } from './_common/logger.js'
 
-const FETCH_TIMEOUT = 8000;
+const log = createLogger('carbon')
 
-// Read a URL via https.get and return the full body string
-const fetchBody = (url) => new Promise((resolve, reject) => {
-  const req = https.get(url, (res) => {
-    let data = '';
-    res.on('data', (chunk) => { data += chunk; });
-    res.on('end', () => resolve(data));
-    res.on('error', reject);
-  });
-  req.setTimeout(FETCH_TIMEOUT, () => {
-    req.destroy();
-    reject(new Error('Request timed out'));
-  });
-  req.on('error', reject);
-});
+const TIMEOUT = 8000
+const MAX_BYTES = 10 * 1024 * 1024
+const USER_AGENT = 'Mozilla/5.0 (compatible; WebCheck/2.0; +https://web-check.xyz)'
 
+// Sustainable Web Design model v3 constants, matches websitecarbon.com formula
+const KWH_PER_GB = 0.81
+const FIRST_VISIT = 0.25
+const RETURN_VISIT = 0.75
+const RETURN_DATA_PCT = 0.02
+const GRID_INTENSITY = 442
+const RENEWABLE_INTENSITY = 50
+const LITRES_PER_GRAM = 0.5562
+
+// Stream the response, cap at MAX_BYTES so huge pages can't blow memory or time
+const fetchByteCount = async (url) => {
+  const r = await fetch(url, {
+    signal: AbortSignal.timeout(TIMEOUT),
+    redirect: 'follow',
+    headers: { 'user-agent': USER_AGENT, accept: 'text/html,*/*;q=0.1' },
+  })
+  if (!r.ok) throw new Error(`status ${r.status}`)
+  if (!r.body) return 0
+  const reader = r.body.getReader()
+  let total = 0
+  while (total < MAX_BYTES) {
+    const { value, done } = await reader.read()
+    if (done) break
+    total += value.length
+  }
+  reader.cancel().catch(() => {})
+  return total
+}
+
+// SWD-based stats matching websitecarbon /data response shape
+const computeCarbon = (bytes) => {
+  const adjustedBytes = bytes * (FIRST_VISIT + RETURN_VISIT * RETURN_DATA_PCT)
+  const energy = (adjustedBytes / 1073741824) * KWH_PER_GB
+  const gridGrams = energy * GRID_INTENSITY
+  const renewableGrams = energy * RENEWABLE_INTENSITY
+  return {
+    adjustedBytes,
+    energy,
+    co2: {
+      grid: { grams: gridGrams, litres: gridGrams * LITRES_PER_GRAM },
+      renewable: {
+        grams: renewableGrams,
+        litres: renewableGrams * LITRES_PER_GRAM,
+      },
+    },
+  }
+}
+
+// Fetch site, count bytes, compute SWD carbon stats locally, no third-party API
 const carbonHandler = async (url) => {
-  let html;
+  let bytes
   try {
-    html = await fetchBody(url);
+    bytes = await fetchByteCount(url)
   } catch (error) {
-    return { error: `Failed to fetch site: ${error.message}` };
+    log.warn(`fetch failed for ${url}`, error.message)
+    return { error: `Failed to fetch site: ${error.message}` }
   }
-  const sizeInBytes = Buffer.byteLength(html, 'utf8');
-  const carbonUrl = `https://api.websitecarbon.com/data?bytes=${sizeInBytes}&green=0`;
-  let raw;
-  try {
-    raw = await fetchBody(carbonUrl);
-  } catch (error) {
-    return { error: `WebsiteCarbon API request failed: ${error.message}` };
+  if (!bytes) return { skipped: 'Site returned no content, cannot calculate carbon' }
+  log.debug(`measured ${bytes} bytes for ${url}`)
+  return {
+    url,
+    bytes,
+    green: false,
+    statistics: computeCarbon(bytes),
+    scanUrl: url,
   }
-  const trimmed = raw.trim();
-  if (trimmed.startsWith('<')) {
-    return { error: 'WebsiteCarbon API returned HTML instead of JSON. '
-      + 'This may be due to Cloudflare protection on datacenter IPs.' };
-  }
-  let data;
-  try {
-    data = JSON.parse(trimmed);
-  } catch (error) {
-    return { error: `Failed to parse WebsiteCarbon API response: ${error.message}` };
-  }
-  if (!data.statistics
-      || (data.statistics.adjustedBytes === 0 && data.statistics.energy === 0)) {
-    return { skipped: 'Not enough info to get carbon data' };
-  }
-  data.scanUrl = url;
-  return data;
-};
+}
 
-export const handler = middleware(carbonHandler);
-export default handler;
+export const handler = middleware(carbonHandler)
+export default handler
