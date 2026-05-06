@@ -1,5 +1,8 @@
+import { bracketIPv6 } from './parse-target.js';
+
 const normalizeUrl = (url) => {
-  return url.startsWith('http') ? url : `https://${url}`;
+  const withScheme = url.startsWith('http') ? url : `https://${url}`;
+  return bracketIPv6(withScheme);
 };
 
 const TIMEOUT = parseInt(process.env.PUBLIC_API_TIMEOUT_LIMIT || '40000', 10);

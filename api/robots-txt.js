@@ -16,8 +16,9 @@ const parseRobotsTxt = (content) => {
 
 const robotsHandler = async (url) => {
   const { protocol, hostname } = parseTarget(url);
+  const host = hostname.includes(':') ? `[${hostname}]` : hostname;
   try {
-    const res = await httpGet(`${protocol}//${hostname}/robots.txt`);
+    const res = await httpGet(`${protocol}//${host}/robots.txt`);
     const parsed = parseRobotsTxt(res.data || '');
     return parsed.robots.length
       ? parsed
