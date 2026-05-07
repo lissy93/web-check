@@ -117,14 +117,20 @@ const SummaryContainer = styled.div`
 `;
 
 const ReShowContainer = styled.div`
-  position: relative;
+  margin: 0 auto 1rem auto;
+  width: 95vw;
+  display: flex;
+  justify-content: flex-end;
   &.hidden {
     height: 0;
     overflow: hidden;
     margin: 0;
     padding: 0;
   }
-  button { background: none;}
+  button {
+    background: none;
+    position: static;
+  }
 `;
 
 const DismissButton = styled.button`

@@ -13,7 +13,10 @@
     "dev:netlify": "PLATFORM='netlify' npx netlify dev",
     "dev:api": "DISABLE_GUI='true' PORT='3001' nodemon server",
     "dev:astro": "PUBLIC_API_ENDPOINT=http://localhost:3001/api astro dev",
-    "dev": "concurrently -c magenta,cyan -n backend,frontend 'yarn dev:api' 'yarn dev:astro'"
+    "dev": "concurrently -c magenta,cyan -n backend,frontend 'yarn dev:api' 'yarn dev:astro'",
+    "typecheck": "astro check",
+    "lint": "eslint --config .config/eslint.config.js .",
+    "format:check": "prettier --check --ignore-unknown '!yarn.lock' '!**/*.md' ."
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
@@ -73,9 +76,20 @@
     "@astrojs/svelte": "^8.1.0",
     "@astrojs/ts-plugin": "^1.10.7",
     "@astrojs/vercel": "^10.0.6",
+    "@typescript-eslint/parser": "^8.59.2",
     "concurrently": "^9.2.1",
+    "eslint": "^10.3.0",
+    "eslint-plugin-astro": "^1.7.0",
     "nodemon": "^3.1.14",
+    "prettier": "^3.8.3",
+    "prettier-plugin-astro": "^0.14.1",
     "sass": "^1.99.0"
+  },
+  "prettier": {
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "plugins": ["prettier-plugin-astro"]
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

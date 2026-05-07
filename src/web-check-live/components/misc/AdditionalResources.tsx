@@ -106,14 +106,14 @@ const resources = [
     link: 'https://virustotal.com',
     icon: 'https://pixelflare.cc/alicia/icons/virustotal.png/w128',
     description: 'Checks a URL against multiple antivirus engines',
-    searchLink: 'https://www.virustotal.com/gui/search/{URL_ENCODED}',
+    searchLink: 'https://www.virustotal.com/gui/domain/{DOMAIN}',
   },
   {
     title: 'Shodan',
     link: 'https://shodan.io/',
     icon: 'https://pixelflare.cc/alicia/icons/shodan.png/w128',
     description: 'Search engine for Internet-connected devices',
-    searchLink: 'https://www.shodan.io/search/report?query={URL}',
+    searchLink: 'https://www.shodan.io/search/report?query={DOMAIN}',
   },
   {
     title: 'Archive',
@@ -127,7 +127,7 @@ const resources = [
     link: 'https://urlscan.io/',
     icon: 'https://pixelflare.cc/alicia/icons/urlscan.png/w128',
     description: 'Scans a URL and provides information about the page',
-    searchLink: 'https://urlscan.io/search/#{URL}',
+    searchLink: 'https://urlscan.io/domain/{DOMAIN}',
   },
   {
     title: 'Sucuri SiteCheck',
@@ -162,7 +162,7 @@ const resources = [
     link: 'https://search.censys.io/',
     icon: 'https://pixelflare.cc/alicia/icons/censys.png/w128',
     description: 'Lookup hosts associated with a domain',
-    searchLink: 'https://search.censys.io/search?resource=hosts&q={URL}',
+    searchLink: 'https://search.censys.io/search?resource=hosts&q={DOMAIN}',
   },
   {
     title: 'Page Speed Insights',
@@ -196,7 +196,7 @@ const resources = [
     link: 'https://similarweb.com/',
     icon: 'https://pixelflare.cc/alicia/icons/similar-web.png/w128',
     description: 'View approx traffic and engagement stats for a website',
-    searchLink: 'https://similarweb.com/website/{DOMAIN}',
+    searchLink: 'https://similarweb.com/website/{DOMAIN}/',
   },
   {
     title: 'Blacklist Checker',
