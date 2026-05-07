@@ -154,7 +154,7 @@ app.get(API_DIR, async (req, res) => {
 // Skip the marketing homepage, for self-hosted users
 app.use((req, res, next) => {
   if (req.path === '/' && process.env.BOSS_SERVER !== 'true' && !process.env.DISABLE_GUI) {
-    req.url = '/check';
+    return res.redirect(302, '/check');
   }
   next();
 });
