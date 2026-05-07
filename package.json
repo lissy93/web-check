@@ -34,6 +34,7 @@
     "@types/react-dom": "^19.2.3",
     "astro": "^6.2.2",
     "cheerio": "^1.2.0",
+    "chromium": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
