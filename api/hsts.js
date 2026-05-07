@@ -8,12 +8,14 @@ const verdict = (message, compatible = false, hstsHeader = null) =>
 
 const evaluate = (header) => {
   if (!header) return verdict('Site does not serve any HSTS headers.');
-  const maxAge = parseInt(header.match(/max-age=(\d+)/)?.[1] || '0', 10);
-  if (maxAge < MIN_MAX_AGE) return verdict(`HSTS max-age is less than ${MIN_MAX_AGE}.`);
-  if (!header.includes('includeSubDomains'))
-    return verdict('HSTS header does not include all subdomains.');
-  if (!header.includes('preload'))
-    return verdict('HSTS header does not contain the preload directive.');
+  const lower = header.toLowerCase();
+  const maxAge = parseInt(lower.match(/max-age=(\d+)/)?.[1] || '0', 10);
+  if (maxAge < MIN_MAX_AGE)
+    return verdict(`HSTS max-age is ${maxAge}, below the ${MIN_MAX_AGE} minimum.`, false, header);
+  if (!lower.includes('includesubdomains'))
+    return verdict('HSTS header does not include all subdomains.', false, header);
+  if (!lower.includes('preload'))
+    return verdict('HSTS header does not contain the preload directive.', false, header);
   return verdict('Site is compatible with the HSTS preload list!', true, header);
 };
 
@@ -28,7 +30,7 @@ const hstsHandler = async (url) => new Promise((resolve) => {
     req.destroy();
     resolve({ error: 'HSTS check timed out' });
   });
-  req.on('error', (error) => resolve({ error: `HSTS check failed: ${error.message}` }));
+  req.on('error', (e) => resolve({ error: `HSTS check failed: ${e.message}` }));
   req.end();
 });
 

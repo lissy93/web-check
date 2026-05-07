@@ -84,6 +84,9 @@ const SslCertCard = (props: { data: any, title: string, actionButtons: any }): J
     <Card heading={props.title} actionButtons={props.actionButtons}>
       { subject && <DataRow lbl="Subject" val={subject?.CN} /> }
       { issuer?.O && <DataRow lbl="Issuer" val={issuer.O} /> }
+      { typeof sslCert.isValid === 'boolean' && (
+        <DataRow lbl="Trusted" val={sslCert.isValid ? '✅ Yes' : `❌ No (${sslCert.authError})`} />
+      )}
       { asn1Curve && <DataRow lbl="ASN1 Curve" val={asn1Curve} /> }
       { nistCurve && <DataRow lbl="NIST Curve" val={nistCurve} /> }
       { valid_to && <DataRow lbl="Expires" val={formatDate(valid_to)} /> }

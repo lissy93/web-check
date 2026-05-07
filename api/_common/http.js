@@ -58,9 +58,11 @@ const wrapNetworkError = (error) => {
   return error;
 };
 
+const UA = 'web-check/1.0 (https://web-check.xyz)';
+
 const send = async (method, url, body, opts = {}) => {
   const finalUrl = appendParams(url, opts.params);
-  const headers = { ...opts.headers };
+  const headers = { 'user-agent': UA, ...opts.headers };
   const authHeader = buildAuth(opts.auth);
   if (authHeader) headers.authorization = authHeader;
 

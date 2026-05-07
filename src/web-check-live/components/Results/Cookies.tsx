@@ -1,5 +1,5 @@
 import { Card } from 'web-check-live/components/Form/Card';
-import { ExpandableRow } from 'web-check-live/components/Form/Row';
+import Row, { ExpandableRow } from 'web-check-live/components/Form/Row';
 import type { Cookie } from 'web-check-live/utils/result-processor';
 
 export const parseHeaderCookies = (cookiesHeader: string[]): Cookie[] => {
@@ -22,8 +22,10 @@ export const parseHeaderCookies = (cookiesHeader: string[]): Cookie[] => {
 const CookiesCard = (props: { data: any, title: string, actionButtons: any}): JSX.Element => {
   const headerCookies = parseHeaderCookies(props.data.headerCookies) || [];
   const clientCookies = props.data.clientCookies || [];
+  const noCookies = !headerCookies.length && !clientCookies.length;
   return (
     <Card heading={props.title} actionButtons={props.actionButtons}>
+      { noCookies && <Row lbl="Cookies" val="None" /> }
       {
         headerCookies.map((cookie: any, index: number) => {
           const attributes = Object.keys(cookie.attributes).map((key: string) => {

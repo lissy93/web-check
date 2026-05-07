@@ -197,7 +197,7 @@ const DnsSecCard = (props: { data: any, title: string, actionButtons: any }): JS
               }
           </>)}
 
-            {(!record.isFound && record.response) && (
+            {(!(record.isFound && record.answer) && record.response) && (
               <ExpandableRow lbl={`${key} - Present?`} val={record.isFound ? '✅ Yes' : '❌ No'} rowList={makeResponseList(record.response)} />
             )}
           </div>)

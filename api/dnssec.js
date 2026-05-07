@@ -1,56 +1,37 @@
-import https from 'https';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
+import { parseTarget } from './_common/parse-target.js';
 
-const dnsSecHandler = async (domain) => {
-  const dnsTypes = ['DNSKEY', 'DS', 'RRSIG'];
-  const records = {};
+// Query Google's public DNS JSON API for a given record type
+const queryDns = async (domain, type) => {
+  const res = await httpGet('https://dns.google/resolve', {
+    params: { name: domain, type },
+    headers: { Accept: 'application/dns-json' },
+    timeout: 5000,
+  });
+  return res.data;
+};
 
-  for (const type of dnsTypes) {
-    const options = {
-      hostname: 'dns.google',
-      path: `/resolve?name=${encodeURIComponent(domain)}&type=${type}`,
-      method: 'GET',
-      headers: {
-        'Accept': 'application/dns-json'
-      }
-    };
-
-    try {
-      const dnsResponse = await new Promise((resolve, reject) => {
-        const req = https.request(options, res => {
-          let data = '';
-          
-          res.on('data', chunk => {
-            data += chunk;
-          });
-
-          res.on('end', () => {
-            try {
-              resolve(JSON.parse(data));
-            } catch (error) {
-              reject(new Error('Invalid JSON response'));
-            }
-          });
-
-          res.on('error', error => {
-            reject(error);
-          });
-        });
-
-        req.end();
-      });
-
-      if (dnsResponse.Answer) {
-        records[type] = { isFound: true, answer: dnsResponse.Answer, response: dnsResponse.Answer };
-      } else {
-        records[type] = { isFound: false, answer: null, response: dnsResponse };
-      }
-    } catch (error) {
-      throw new Error(`Error fetching ${type} record: ${error.message}`); // This will be caught and handled by the commonMiddleware
-    }
-  }
-
-  return records;
+const dnsSecHandler = async (url) => {
+  const { hostname } = parseTarget(url);
+  const [dnskey, ds, aRecord] = await Promise.all([
+    queryDns(hostname, 'DNSKEY'),
+    queryDns(hostname, 'DS'),
+    queryDns(hostname, 'A'),
+  ]);
+  return {
+    DNSKEY: dnskey.Answer
+      ? { isFound: true, answer: dnskey.Answer, response: dnskey.Answer }
+      : { isFound: false, answer: null, response: dnskey },
+    DS: ds.Answer
+      ? { isFound: true, answer: ds.Answer, response: ds.Answer }
+      : { isFound: false, answer: null, response: ds },
+    RRSIG: {
+      isFound: !!aRecord.AD,
+      answer: null,
+      response: aRecord,
+    },
+  };
 };
 
 export const handler = middleware(dnsSecHandler);

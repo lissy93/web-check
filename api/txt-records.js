@@ -1,32 +1,21 @@
 import dns from 'dns/promises';
 import middleware from './_common/middleware.js';
+import { parseTarget } from './_common/parse-target.js';
 
-const txtRecordHandler = async (url, event, context) => {
-  try {
-    const parsedUrl = new URL(url);
-    
-    const txtRecords = await dns.resolveTxt(parsedUrl.hostname);
-
-    // Parsing and formatting TXT records into a single object
-    const readableTxtRecords = txtRecords.reduce((acc, recordArray) => {
-      const recordObject = recordArray.reduce((recordAcc, recordString) => {
-        const splitRecord = recordString.split('=');
-        const key = splitRecord[0];
-        const value = splitRecord.slice(1).join('=');
-        return { ...recordAcc, [key]: value };
-      }, {});
-      return { ...acc, ...recordObject };
-    }, {});
-
-    return readableTxtRecords;
-
-  } catch (error) {
-    if (error.code === 'ERR_INVALID_URL') {
-      throw new Error(`Invalid URL ${error}`);
-    } else {
-      throw error;
-    }
+const txtRecordHandler = async (url) => {
+  const { hostname } = parseTarget(url);
+  const txtRecords = await dns.resolveTxt(hostname);
+  // Join chunks (DNS splits long records at 255 bytes), then key=value
+  const result = {};
+  for (const chunks of txtRecords) {
+    const full = chunks.join('');
+    const eq = full.indexOf('=');
+    let key = eq > 0 ? full.slice(0, eq) : full;
+    const val = eq > 0 ? full.slice(eq + 1) : '';
+    while (key in result) key += '_';
+    result[key] = val;
   }
+  return result;
 };
 
 export const handler = middleware(txtRecordHandler);

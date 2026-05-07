@@ -1,19 +1,30 @@
 import middleware from './_common/middleware.js';
 import { httpGet } from './_common/http.js';
-import { upstreamError } from './_common/upstream.js';
+
+// Security headers to check, mapped to response field names
+const HEADERS = {
+  'content-security-policy': 'contentSecurityPolicy',
+  'strict-transport-security': 'strictTransportPolicy',
+  'x-content-type-options': 'xContentTypeOptions',
+  'x-frame-options': 'xFrameOptions',
+  'x-xss-protection': 'xXSSProtection',
+  'referrer-policy': 'referrerPolicy',
+  'permissions-policy': 'permissionsPolicy',
+  'cross-origin-opener-policy': 'crossOriginOpenerPolicy',
+  'cross-origin-resource-policy': 'crossOriginResourcePolicy',
+  'cross-origin-embedder-policy': 'crossOriginEmbedderPolicy',
+};
 
 const httpsSecHandler = async (url) => {
   try {
-    const { headers } = await httpGet(url);
-    return {
-      strictTransportPolicy: !!headers['strict-transport-security'],
-      xFrameOptions: !!headers['x-frame-options'],
-      xContentTypeOptions: !!headers['x-content-type-options'],
-      xXSSProtection: !!headers['x-xss-protection'],
-      contentSecurityPolicy: !!headers['content-security-policy'],
-    };
+    const { headers } = await httpGet(url, {
+      validateStatus: () => true,
+    });
+    return Object.fromEntries(
+      Object.entries(HEADERS).map(([h, key]) => [key, !!headers[h]]),
+    );
   } catch (error) {
-    return upstreamError(error, 'HTTP security check');
+    return { error: `Unable to fetch headers: ${error.message}` };
   }
 };
 

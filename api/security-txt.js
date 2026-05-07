@@ -2,9 +2,10 @@ import { URL } from 'url';
 import middleware from './_common/middleware.js';
 import { httpGet } from './_common/http.js';
 
+// RFC 9116 recommends .well-known first, legacy /security.txt as fallback
 const SECURITY_TXT_PATHS = [
-  '/security.txt',
   '/.well-known/security.txt',
+  '/security.txt',
 ];
 
 const parseResult = (result) => {
@@ -51,7 +52,7 @@ const securityTxtHandler = async (urlParam) => {
   for (let path of SECURITY_TXT_PATHS) {
     try {
       const result = await fetchSecurityTxt(url, path);
-      if (result && result.includes('<html')) continue;
+      if (result && result.toLowerCase().includes('<html')) continue;
       if (result) {
         return {
           isPresent: true,

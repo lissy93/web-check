@@ -452,7 +452,7 @@ const docs: Doc[] = [
     description: 'Checks access to the URL using 10+ of the most popular privacy, malware and parental control blocking DNS servers.',
     use: '',
     resources: [
-      { title: 'ThreatJammer Lists', link: 'https://threatjammer.com/osint-lists'},
+      { title: 'DNS-based Blocklists (Wikipedia)', link: 'https://en.wikipedia.org/wiki/DNS_blocking'},
     ],
     screenshot: 'https://pixelflare.cc/alicia/web-check/wc-blocks',
   },

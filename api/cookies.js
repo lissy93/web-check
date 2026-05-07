@@ -41,11 +41,10 @@ const cookieHandler = async (url) => {
     clientCookies = null;
   }
 
-  if (!headerCookies && (!clientCookies || clientCookies.length === 0)) {
-    return { skipped: 'No cookies' };
-  }
-
-  return { headerCookies, clientCookies };
+  return {
+    headerCookies: headerCookies || [],
+    clientCookies: clientCookies || [],
+  };
 };
 
 export const handler = middleware(cookieHandler);
