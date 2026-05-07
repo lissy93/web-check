@@ -1,5 +1,4 @@
-const FRIENDLY =
-  'API request failed. This may be a server error, timeout, or platform limitation.';
+const FRIENDLY = 'API request failed. This may be a server error, timeout, or platform limitation.';
 
 // Decode a fetch Response as JSON, returning a structured error on failure
 export const parseJson = async (res: Response): Promise<any> => {

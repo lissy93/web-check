@@ -84,46 +84,30 @@ const commonMiddleware = (handler) => {
   };
 
   // Netlify
-  const netlifyHandler = async (event, context, callback) => {
+  const netlifyHandler = async (event, context) => {
     const queryParams = event.queryStringParameters || event.query || {};
     const rawUrl = queryParams.url;
 
     if (DISABLE_EVERYTHING) {
-      callback(null, {
-        statusCode: 200,
-        body: JSON.stringify({ skipped: disabledMsg }),
-        headers,
-      });
-      return;
+      return { statusCode: 200, body: JSON.stringify({ skipped: disabledMsg }), headers };
     }
-
     if (!rawUrl) {
-      callback(null, {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'No URL specified' }),
-        headers,
-      });
-      return;
+      return { statusCode: 500, body: JSON.stringify({ error: 'No URL specified' }), headers };
     }
 
     const url = normalizeUrl(rawUrl);
-
     try {
       const result = await Promise.race([
         handler(url, event, context),
         createTimeoutPromise(TIMEOUT),
       ]);
-      callback(null, {
+      return {
         statusCode: 200,
         body: typeof result === 'object' ? JSON.stringify(result) : result,
         headers,
-      });
+      };
     } catch (error) {
-      callback(null, {
-        statusCode: 500,
-        body: JSON.stringify({ error: error.message }),
-        headers,
-      });
+      return { statusCode: 500, body: JSON.stringify({ error: error.message }), headers };
     }
   };
 
