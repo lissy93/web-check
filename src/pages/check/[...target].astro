@@ -5,18 +5,17 @@ import '../../web-check-live/styles/index.css';
 
 export const prerender = false;
 
-const { pathname, search } = new URL(Astro.request.url);
+const { search } = new URL(Astro.request.url);
 
 const searchUrl = new URLSearchParams(search).get('url');
 
 if (searchUrl) {
   Astro.redirect(`/check/${encodeURIComponent(searchUrl)}`);
 }
-
 ---
 
 <BaseLayout>
-  <Main {pathname} client:load />
+  <Main client:only="react" />
 </BaseLayout>
 
 <script>
@@ -30,13 +29,12 @@ if (searchUrl) {
   // And add a manual no-react form submit handler
   const form = document.querySelector<HTMLFormElement>('form');
   if (form) {
-    form.addEventListener('submit', function(event: Event) {
+    form.addEventListener('submit', function (event: Event) {
       event.preventDefault();
-      const input = (this as HTMLFormElement).querySelector<HTMLInputElement>('input[name="url"]');  
+      const input = (this as HTMLFormElement).querySelector<HTMLInputElement>('input[name="url"]');
       if (input && input.value) {
         window.location.href = `/check/${encodeURIComponent(input.value)}`;
       }
     });
   }
-
 </script>

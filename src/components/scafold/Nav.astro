@@ -19,7 +19,6 @@
   </div>
 </nav>
 
-
 <style lang="scss">
   .navbar {
     display: flex;
@@ -86,21 +85,23 @@
           background-color: var(--primary-dark);
           box-shadow: 0 0 0 3px var(--primary);
         }
-        &:after {    
+        &:after {
           background: none repeat scroll 0 0 transparent;
           bottom: 0;
-          content: "";
+          content: '';
           display: block;
           height: 2px;
           left: 50%;
           position: absolute;
           background: var(--primary);
-          transition: width 0.3s ease 0s, left 0.3s ease 0s;
+          transition:
+            width 0.3s ease 0s,
+            left 0.3s ease 0s;
           width: 0;
         }
-        &:hover:after { 
-          width: 100%; 
-          left: 0; 
+        &:hover:after {
+          width: 100%;
+          left: 0;
         }
       }
     }

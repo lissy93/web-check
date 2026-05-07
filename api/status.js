@@ -23,10 +23,10 @@ const statusHandler = async (url) => {
   try {
     startTime = performance.now();
     const response = await new Promise((resolve, reject) => {
-      const req = https.get(url, res => {
+      const req = https.get(url, (res) => {
         let data = '';
         responseCode = res.statusCode;
-        res.on('data', chunk => {
+        res.on('data', (chunk) => {
           data += chunk;
         });
         res.on('end', () => {
@@ -48,7 +48,6 @@ const statusHandler = async (url) => {
     obs.disconnect();
 
     return { isUp: true, dnsLookupTime, responseTime, responseCode };
-
   } catch (error) {
     obs.disconnect();
     throw error;

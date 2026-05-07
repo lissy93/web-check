@@ -32,7 +32,7 @@ const buttonType = 'submit';
     border: 2px solid var(--text-color-thirdly);
     border-radius: 3px;
     font-weight: bold;
-    background: var(--background);   
+    background: var(--background);
     cursor: pointer;
     overflow: hidden;
     --angle: 90deg;
@@ -40,7 +40,14 @@ const buttonType = 'submit';
     --gradY: 50%;
     --c1: var(--primary);
     --c2: var(--text-color-thirdly);
-    border-image: conic-gradient(from var(--angle), var(--c2), var(--c1) 0.5turn, var(--c1) 0.15turn, var(--c2) 0.25turn) 1;
+    border-image: conic-gradient(
+        from var(--angle),
+        var(--c2),
+        var(--c1) 0.5turn,
+        var(--c1) 0.15turn,
+        var(--c2) 0.25turn
+      )
+      1;
     animation: borderRotate 3500ms linear infinite forwards;
     transition: border 0.3s ease-in-out;
     &:hover {
@@ -49,45 +56,55 @@ const buttonType = 'submit';
   }
 
   @keyframes borderRotate {
-    0% { --angle: 90deg; }
-    25% { --angle: 180deg; }
-    50% { --angle: 270deg; }
-    75% { --angle: 360deg; }
-    100% { --angle: 450deg; }
+    0% {
+      --angle: 90deg;
+    }
+    25% {
+      --angle: 180deg;
+    }
+    50% {
+      --angle: 270deg;
+    }
+    75% {
+      --angle: 360deg;
+    }
+    100% {
+      --angle: 450deg;
+    }
   }
 </style>
 
 <script>
-// Workaround to add fancy border animation for users who use a REAL browser
-// Since CSS @property attribute isn't supported in Firefox yet
-document.addEventListener('DOMContentLoaded', () => {
-  const isFirefox = typeof (window as any).InstallTrigger !== 'undefined';
-  if (isFirefox) {
-    const button = document.querySelector('.button') as HTMLElement | null;
-    if (button) {
-      const duration = 3500;
-      const startAngle = 90;
-      const endAngle = 420;
-      function animateAngle() {
-        let start: number | null = null;
-        function step(timestamp: number) {
-          if (!start) start = timestamp;
-          const progress = (timestamp - start) / duration;
-          const angle = startAngle + progress * (endAngle - startAngle);
+  // Workaround to add fancy border animation for users who use a REAL browser
+  // Since CSS @property attribute isn't supported in Firefox yet
+  document.addEventListener('DOMContentLoaded', () => {
+    const isFirefox = typeof (window as any).InstallTrigger !== 'undefined';
+    if (isFirefox) {
+      const button = document.querySelector('.button') as HTMLElement | null;
+      if (button) {
+        const duration = 3500;
+        const startAngle = 90;
+        const endAngle = 420;
+        function animateAngle() {
+          let start: number | null = null;
+          function step(timestamp: number) {
+            if (!start) start = timestamp;
+            const progress = (timestamp - start) / duration;
+            const angle = startAngle + progress * (endAngle - startAngle);
 
-          button && button.style.setProperty('--angle', `${angle}deg`);
+            button && button.style.setProperty('--angle', `${angle}deg`);
 
-          if (progress < 1) {
-            window.requestAnimationFrame(step);
-          } else {
-            start = null;
-            window.requestAnimationFrame(step);
+            if (progress < 1) {
+              window.requestAnimationFrame(step);
+            } else {
+              start = null;
+              window.requestAnimationFrame(step);
+            }
           }
+          window.requestAnimationFrame(step);
         }
-        window.requestAnimationFrame(step);
+        animateAngle();
       }
-      animateAngle();
     }
-  }
-});
+  });
 </script>

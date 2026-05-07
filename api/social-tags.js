@@ -1,19 +1,18 @@
-import axios from 'axios';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
+import { upstreamError } from './_common/upstream.js';
 
 const socialTagsHandler = async (url) => {
-  
-  // Check if url includes protocol
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    url = 'http://' + url;
-  }
-  
+  let response;
   try {
-    const response = await axios.get(url);
-    const html = response.data;
-    const $ = cheerio.load(html);
-    
+    response = await httpGet(url);
+  } catch (error) {
+    return upstreamError(error, 'Social tags fetch');
+  }
+  try {
+    const $ = cheerio.load(response.data);
+
     const metadata = {
       // Basic meta tags
       title: $('head title').text(),
@@ -28,7 +27,7 @@ const socialTagsHandler = async (url) => {
       ogUrl: $('meta[property="og:url"]').attr('content'),
       ogDescription: $('meta[property="og:description"]').attr('content'),
       ogSiteName: $('meta[property="og:site_name"]').attr('content'),
-      
+
       // Twitter Cards
       twitterCard: $('meta[name="twitter:card"]').attr('content'),
       twitterSite: $('meta[name="twitter:site"]').attr('content'),
@@ -45,18 +44,31 @@ const socialTagsHandler = async (url) => {
       viewport: $('meta[name="viewport"]').attr('content'),
       author: $('meta[name="author"]').attr('content'),
       publisher: $('link[rel="publisher"]').attr('href'),
-      favicon: $('link[rel="icon"]').attr('href')
+      favicon: $('link[rel="icon"]').attr('href'),
     };
 
-    if (Object.keys(metadata).length === 0) {
-      return { skipped: 'No metadata found' };
+    const SOCIAL_FIELDS = [
+      'title',
+      'description',
+      'keywords',
+      'canonicalUrl',
+      'ogTitle',
+      'ogImage',
+      'ogDescription',
+      'ogSiteName',
+      'twitterTitle',
+      'twitterDescription',
+      'twitterImage',
+      'author',
+      'publisher',
+      'themeColor',
+    ];
+    if (!SOCIAL_FIELDS.some((f) => metadata[f])) {
+      return { skipped: 'No social tags found on this page' };
     }
     return metadata;
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed fetching data' }),
-    };
+    return { error: `Failed parsing social tags: ${error.message}` };
   }
 };
 

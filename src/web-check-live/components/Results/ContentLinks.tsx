@@ -37,41 +37,55 @@ const getPathName = (link: string) => {
   try {
     const url = new URL(link);
     return url.pathname;
-  } catch(e) {
+  } catch (e) {
     return link;
   }
 };
 
-const ContentLinksCard = (props: { data: any, title: string, actionButtons: any }): JSX.Element => {
+const ContentLinksCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
   const internal = props.data.internal || [];
   const external = props.data.external || [];
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
-      <Heading as="h3" size="small" color={colors.primary}>Summary</Heading>
+      <Heading as="h3" size="small" color={colors.primary}>
+        Summary
+      </Heading>
       <Row lbl="Internal Link Count" val={internal.length} />
       <Row lbl="External Link Count" val={external.length} />
-      { internal && internal.length > 0 && (
+      {internal && internal.length > 0 && (
         <details>
-          <summary><Heading as="h3" size="small" color={colors.primary}>Internal Links</Heading></summary>
+          <summary>
+            <Heading as="h3" size="small" color={colors.primary}>
+              Internal Links
+            </Heading>
+          </summary>
           {internal.map((link: string) => (
-          <Row key={link} lbl="" val="">
-            <a href={link} target="_blank" rel="noreferrer">{getPathName(link)}</a>
-          </Row>
-        ))}
+            <Row key={link} lbl="" val="">
+              <a href={link} target="_blank" rel="noreferrer">
+                {getPathName(link)}
+              </a>
+            </Row>
+          ))}
         </details>
       )}
-      { external && external.length > 0 && (
+      {external && external.length > 0 && (
         <details>
-          <summary><Heading as="h3" size="small" color={colors.primary}>External Links</Heading></summary>
+          <summary>
+            <Heading as="h3" size="small" color={colors.primary}>
+              External Links
+            </Heading>
+          </summary>
           {external.map((link: string) => (
             <Row key={link} lbl="" val="">
-              <a href={link} target="_blank" rel="noreferrer">{link}</a>
+              <a href={link} target="_blank" rel="noreferrer">
+                {link}
+              </a>
             </Row>
           ))}
         </details>
       )}
     </Card>
   );
-}
+};
 
 export default ContentLinksCard;

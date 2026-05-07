@@ -1,7 +1,7 @@
 /* Global Stylesheet */
-@import './colors.scss';
-@import './media-queries.scss';
-@import './typography.scss';
+@forward './colors';
+@forward './media-queries';
+@forward './typography';
 
 /* CSS Reset - Normalize dimensions and spacing across browsers */
 *,
@@ -53,7 +53,12 @@ img {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: inherit;
   margin-top: 0;
   margin-bottom: 0.5em;
@@ -65,14 +70,18 @@ p {
   margin-bottom: 1em;
 }
 
-ul, ol {
+ul,
+ol {
   margin-top: 0;
   margin-bottom: 1em;
   padding-left: 20px;
 }
 
 /* Forms */
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
   &:focus {
     outline: 1px solid var(--primary);
@@ -80,12 +89,24 @@ input, button, textarea, select {
 }
 
 /* Utility Classes */
-.text-center { text-align: center; }
-.hidden { display: none; }
-.bold { font-weight: 600; }
-.italic { font-style: italic; }
-.underline { text-decoration: underline; }
-.uppercase { text-transform: uppercase; }
+.text-center {
+  text-align: center;
+}
+.hidden {
+  display: none;
+}
+.bold {
+  font-weight: 600;
+}
+.italic {
+  font-style: italic;
+}
+.underline {
+  text-decoration: underline;
+}
+.uppercase {
+  text-transform: uppercase;
+}
 
 @media (max-width: 768px) {
   html {
@@ -93,25 +114,48 @@ input, button, textarea, select {
   }
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin-top: 0;
   margin-bottom: 0.5em;
   font-weight: 600;
   color: var(--text-color);
 }
 
-h1 { font-size: 2.25rem; }
-h2 { font-size: 1.8rem; }
-h3 { font-size: 1.5rem; }
-h4 { font-size: 1.2rem; }
-h5 { font-size: 1rem; }
-h6 { font-size: 0.85rem; }
+h1 {
+  font-size: 2.25rem;
+}
+h2 {
+  font-size: 1.8rem;
+}
+h3 {
+  font-size: 1.5rem;
+}
+h4 {
+  font-size: 1.2rem;
+}
+h5 {
+  font-size: 1rem;
+}
+h6 {
+  font-size: 0.85rem;
+}
 
 // Responsive font sizes
 @media (max-width: 768px) {
-  h1 { font-size: 2rem; }
-  h2 { font-size: 1.6rem; }
-  h3 { font-size: 1.4rem; }
+  h1 {
+    font-size: 2rem;
+  }
+  h2 {
+    font-size: 1.6rem;
+  }
+  h3 {
+    font-size: 1.4rem;
+  }
 }
 
 p {
@@ -126,5 +170,3 @@ a {
     text-decoration: underline;
   }
 }
-
-

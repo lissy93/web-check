@@ -1,31 +1,31 @@
-import type { RowProps }  from 'web-check-live/components/Form/Row';
+import type { RowProps } from 'web-check-live/components/Form/Row';
 
 export interface ServerLocation {
-  city: string,
-  region: string,
-  country: string,
-  postCode: string,
-  regionCode: string,
-  countryCode: string,
+  city: string;
+  region: string;
+  country: string;
+  postCode: string;
+  regionCode: string;
+  countryCode: string;
   coords: {
-    latitude: number,
-    longitude: number,
-  },
-  isp: string,
-  timezone: string,
-  languages: string,
-  currency: string,
-  currencyCode: string,
-  countryDomain: string,
-  countryAreaSize: number,
-  countryPopulation: number,
-};
+    latitude: number;
+    longitude: number;
+  };
+  isp: string;
+  timezone: string;
+  languages: string;
+  currency: string;
+  currencyCode: string;
+  countryDomain: string;
+  countryAreaSize: number;
+  countryPopulation: number;
+}
 
 export interface Whois {
-  created: string,
-  expires: string,
-  updated: string,
-  nameservers: string[],
+  created: string;
+  expires: string;
+  updated: string;
+  nameservers: string[];
 }
 
 export const getLocation = (response: any): ServerLocation => {
@@ -51,20 +51,29 @@ export const getLocation = (response: any): ServerLocation => {
   };
 };
 
-
 export interface ServerInfo {
-  org: string,
-  asn: string,
-  isp: string,
-  os?: string,
-  ip?: string,
-  ports?: string,
-  loc?: string,
-  type?: string,
+  org: string;
+  asn: string;
+  isp: string;
+  os?: string;
+  ip?: string;
+  ports?: string;
+  loc?: string;
+  type?: string;
+}
+
+// Whether a result has any meaningful value worth rendering a card for
+export const hasData = (r: any): boolean => {
+  if (r === null || r === undefined) return false;
+  if (typeof r === 'boolean' || typeof r === 'number') return true;
+  if (typeof r === 'string') return r.trim().length > 0;
+  if (Array.isArray(r)) return r.some(hasData);
+  if (typeof r === 'object') return Object.values(r).some(hasData);
+  return true;
 };
 
-export const getServerInfo = (response: any): ServerInfo => {
-  return {
+export const getServerInfo = (response: any): ServerInfo | null => {
+  const info: ServerInfo = {
     org: response.org,
     asn: response.asn,
     isp: response.isp,
@@ -74,12 +83,13 @@ export const getServerInfo = (response: any): ServerInfo => {
     loc: response.city ? `${response.city}, ${response.country_name}` : '',
     type: response.tags ? response.tags.toString() : '',
   };
+  return Object.values(info).some(Boolean) ? info : null;
 };
 
 export interface HostNames {
-  domains: string[],
-  hostnames: string[],
-};
+  domains: string[];
+  hostnames: string[];
+}
 
 export const getHostNames = (response: any): HostNames | null => {
   const { hostnames, domains } = response;
@@ -94,8 +104,8 @@ export const getHostNames = (response: any): HostNames | null => {
 };
 
 export interface ShodanResults {
-  hostnames: HostNames | null,
-  serverInfo: ServerInfo,
+  hostnames: HostNames | null;
+  serverInfo: ServerInfo | null;
 }
 
 export const parseShodanResults = (response: any): ShodanResults => {
@@ -103,7 +113,7 @@ export const parseShodanResults = (response: any): ShodanResults => {
     hostnames: getHostNames(response),
     serverInfo: getServerInfo(response),
   };
-}
+};
 
 export interface Technology {
   Categories?: string[];
@@ -123,8 +133,10 @@ export interface TechnologyGroup {
 }
 
 export const makeTechnologies = (response: any): TechnologyGroup[] => {
-  let flatArray = response.Results[0].Result.Paths
-    .reduce((accumulator: any, obj: any) => accumulator.concat(obj.Technologies), []);
+  let flatArray = response.Results[0].Result.Paths.reduce(
+    (accumulator: any, obj: any) => accumulator.concat(obj.Technologies),
+    [],
+  );
   let technologies = flatArray.reduce((groups: any, item: any) => {
     let tag = item.Tag;
     if (!groups[tag]) groups[tag] = [];
@@ -144,8 +156,8 @@ export const parseRobotsTxt = (content: string): { robots: RowProps[] } => {
   const lines = content.split('\n');
   const rules: RowProps[] = [];
 
-  lines.forEach(line => {
-    line = line.trim();  // This removes trailing and leading whitespaces
+  lines.forEach((line) => {
+    line = line.trim(); // This removes trailing and leading whitespaces
 
     let match = line.match(/^(Allow|Disallow):\s*(\S*)$/i);
     if (match) {
@@ -153,7 +165,7 @@ export const parseRobotsTxt = (content: string): { robots: RowProps[] } => {
         lbl: match[1],
         val: match[2],
       };
-      
+
       rules.push(rule);
     } else {
       match = line.match(/^(User-agent):\s*(\S*)$/i);
@@ -162,27 +174,11 @@ export const parseRobotsTxt = (content: string): { robots: RowProps[] } => {
           lbl: match[1],
           val: match[2],
         };
-        
+
         rules.push(rule);
       }
     }
   });
 
   return { robots: rules };
-}
-
-export const applyWhoIsResults = (response: any) => {
-  if (response.status !== '0') {
-    return {
-      error: response.status_desc,
-    }
-  }
-  const whoIsResults: Whois = {
-    created: response.date_created,
-    expires: response.date_expires,
-    updated: response.date_updated,
-    nameservers: response.nameservers,
-  };
-  return whoIsResults;
-}
-
+};

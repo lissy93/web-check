@@ -1,30 +1,30 @@
 ---
-import AnimatedButton from "./AnimatedButton.astro"
-import AnimatedInput from "./AnimatedInput.astro"
-import Screenshots from "./Screenshots.astro"
+import AnimatedButton from './AnimatedButton.astro';
+import AnimatedInput from './AnimatedInput.astro';
+import Screenshots from './Screenshots.astro';
 ---
 
 <div class="hero">
-<div class="left">
-  <h1>
-    <img src="/favicon.svg" alt="Check Web" width="64" />
-    <span class="web">Web</span>
-    <span class="check">Check</span>
-  </h1>
-  <div class="homepage-action-content">
-    <h2>We give you X-Ray<br />Vision for your Website</h2>
-    <h3>
-      In just 20 seconds, you can see
-      <span>what attackers already know</span>
-    </h3>
-    <form name="live-start" autocomplete="off" action="/check" class="live-start" id="live-start">
-      <label for="url">Enter a URL to start 👇</label>
-      <AnimatedInput />
-      <AnimatedButton />
-    </form>
+  <div class="left">
+    <h1>
+      <img src="/favicon.svg" alt="Check Web" width="64" />
+      <span class="web">Web</span>
+      <span class="check">Check</span>
+    </h1>
+    <div class="homepage-action-content">
+      <h2>We give you X-Ray<br />Vision for your Website</h2>
+      <h3>
+        In just 20 seconds, you can see
+        <span>what attackers already know</span>
+      </h3>
+      <form name="live-start" autocomplete="off" action="/check" class="live-start" id="live-start">
+        <label for="url">Enter a URL to start 👇</label>
+        <AnimatedInput />
+        <AnimatedButton />
+      </form>
+    </div>
   </div>
-</div>
-<Screenshots />
+  <Screenshots />
 </div>
 
 <script>
@@ -36,7 +36,7 @@ import Screenshots from "./Screenshots.astro"
   // Select the form and input elements from the DOM
   const form = document.getElementById('live-start');
   const urlInput = document.getElementById('url-input') as HTMLInputElement;
-    
+
   // Submit Event - called when user submits form with a valid URL
   // Gets and checks the URL, then redirects user to /check/:url
   form?.addEventListener('submit', (event) => {
@@ -47,7 +47,7 @@ import Screenshots from "./Screenshots.astro"
       window.location.href = `/check/${encodedUrl}`;
     }
   });
-  
+
   // User presses enter, forgets to add protocol
   // Will add https:// to the URL, and retry form submit
   urlInput?.addEventListener('keydown', (event) => {
@@ -60,21 +60,21 @@ import Screenshots from "./Screenshots.astro"
       }
     }
   });
-  </script>
+</script>
 
 <style lang="scss">
-@import '@styles/global.scss';
-.hero {
-  display: flex;
-  justify-content: space-around;
-  width: 100vw;
-  @include desktop-down {
-    display: block;
-    width: 80vw;
-    margin: 0 auto;
+  @use '@styles/global.scss' as *;
+  .hero {
+    display: flex;
+    justify-content: space-around;
+    width: 100vw;
+    @include desktop-down {
+      display: block;
+      width: 80vw;
+      margin: 0 auto;
+    }
   }
-}
-.left {
+  .left {
     min-height: 100vh;
     display: flex;
     flex-direction: column;

@@ -1,0 +1,325 @@
+# Creates a new git tag when a PR is merged, or on manual dispatch
+#
+# PR trigger flow:
+# - Triggered whenever a PR is merged, if that PR made code changes
+# - If version wasn't bumped in PR, increment patch version and update package.json
+# - Otherwise (if the PR did bump version) we use the new version from package.json
+# - Creates and pushes a git tag for the new version
+# - That git tag then triggers Docker publishing and AWS deployment in other CI
+# - Add tags to issues from newly released features/fixes (if applicable)
+# - Finally, shows summary of actions taken and new tag published
+#
+# Manual dispatch flow:
+# - If a version is provided, sets package.json to that version
+# - If no version is provided, increments patch version automatically
+# - Creates and pushes a git tag for the new version
+name: 🔖 Auto Version & Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g. 2.1.0). Leave blank to auto-increment patch.'
+        required: false
+        type: string
+  pull_request_target:
+    types: [closed]
+    branches: [master]
+
+concurrency:
+  group: auto-version-and-tag
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: read
+  issues: write
+
+env:
+  IS_MANUAL: ${{ github.event_name == 'workflow_dispatch' }}
+
+jobs:
+  version-and-tag:
+    if: >-
+      github.event_name == 'workflow_dispatch'
+      || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate manual version input 🔢
+        if: env.IS_MANUAL == 'true' && inputs.version != ''
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          if ! echo "$INPUT_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Invalid version '${INPUT_VERSION}'. Must be semver (e.g. 2.1.0)."
+            exit 1
+          fi
+
+      - name: Check PR for code changes and version bump 📂
+        id: check_pr
+        if: env.IS_MANUAL != 'true'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pull_number = context.payload.pull_request.number;
+
+            const files = await github.paginate(
+              github.rest.pulls.listFiles, { owner, repo, pull_number }
+            );
+            const codePatterns = [
+              /^src\//, /^api\//, /^public\//, /^Dockerfile$/, /^[^/]+\.(js|mjs)$/,
+            ];
+            const codeChanged = files.some(f =>
+              codePatterns.some(p => p.test(f.filename))
+            );
+            const pkgChanged = files.some(f => f.filename === 'package.json');
+
+            if (!codeChanged && !pkgChanged) {
+              core.info('No code or package.json changes, skipping');
+              core.setOutput('needs_bump', 'false');
+              core.setOutput('needs_tag', 'false');
+              return;
+            }
+
+            let versionBumped = false;
+            if (pkgChanged) {
+              const mergeSha = context.payload.pull_request.merge_commit_sha;
+              const { data: mergeCommit } = await github.rest.git.getCommit({
+                owner, repo, commit_sha: mergeSha,
+              });
+              const parentSha = mergeCommit.parents[0].sha;
+              const getVersion = async (ref) => {
+                const { data } = await github.rest.repos.getContent({
+                  owner, repo, path: 'package.json', ref,
+                });
+                return JSON.parse(Buffer.from(data.content, 'base64').toString()).version;
+              };
+              const [prevVersion, mergeVersion] = await Promise.all([
+                getVersion(parentSha), getVersion(mergeSha),
+              ]);
+              versionBumped = prevVersion !== mergeVersion;
+              core.info(`Version: ${prevVersion} → ${mergeVersion}`);
+            }
+
+            const needsBump = codeChanged && !versionBumped;
+            const needsTag = codeChanged || versionBumped;
+            core.info(`Needs bump: ${needsBump}, Needs tag: ${needsTag}`);
+            core.setOutput('needs_bump', needsBump.toString());
+            core.setOutput('needs_tag', needsTag.toString());
+
+      - name: Checkout repository 🛎️
+        if: env.IS_MANUAL == 'true' || steps.check_pr.outputs.needs_tag == 'true'
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Configure git identity 👤
+        if: env.IS_MANUAL == 'true' || steps.check_pr.outputs.needs_tag == 'true'
+        run: |
+          git config user.name "Liss-Bot"
+          git config user.email "liss-bot@d0h.co"
+
+      - name: Extract referenced issues 🔍
+        id: issues
+        if: env.IS_MANUAL != 'true' && steps.check_pr.outputs.needs_tag == 'true'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const body = context.payload.pull_request.body || '';
+            const prNumber = String(context.payload.pull_request.number);
+            const matches = body.match(/#(\d+)(?![a-fA-F0-9])/g);
+            if (!matches) {
+              core.info('No issue references found in PR body');
+              core.setOutput('numbers', '');
+              return;
+            }
+            const unique = [...new Set(matches.map(m => m.replace('#', '')))]
+              .filter(n => n !== prNumber && parseInt(n, 10) > 0);
+            if (unique.length === 0) {
+              core.info('No issue references after filtering');
+              core.setOutput('numbers', '');
+              return;
+            }
+            core.info(`Found issue references: ${unique.join(', ')}`);
+            core.setOutput('numbers', unique.join(','));
+
+      - name: Bump version ⬆️
+        if: >-
+          env.IS_MANUAL == 'true'
+          || steps.check_pr.outputs.needs_bump == 'true'
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$IS_MANUAL" = "true" ] && [ -n "$INPUT_VERSION" ]; then
+            npm version "$INPUT_VERSION" --no-git-tag-version --allow-same-version
+          else
+            npm version patch --no-git-tag-version
+          fi
+          git add package.json
+          git commit -m "🔖 Bump version to $(node -p "require('./package.json').version")"
+          git push
+
+      - name: Create and push tag 🏷️
+        id: tag
+        if: env.IS_MANUAL == 'true' || steps.check_pr.outputs.needs_tag == 'true'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number || '' }}
+          PR_TITLE: ${{ github.event.pull_request.title || '' }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login || github.actor }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha || github.sha }}
+          ISSUES: ${{ steps.issues.outputs.numbers }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          git fetch --tags --force
+          if git rev-parse "refs/tags/$VERSION" >/dev/null 2>&1; then
+            echo "Tag $VERSION already exists, skipping"
+            exit 0
+          fi
+
+          {
+            printf 'Web-Check v%s 🚀\n\n' "$VERSION"
+            if [ -n "$PR_NUMBER" ]; then
+              printf 'PR: #%s - %s\n' "$PR_NUMBER" "$PR_TITLE"
+            else
+              printf 'Manual release by @%s\n' "$PR_AUTHOR"
+            fi
+            if [ -n "$ISSUES" ]; then
+              printf 'Resolves: %s\n' "$(echo "$ISSUES" | sed 's/,/, #/g; s/^/#/')"
+            fi
+            printf 'Author: @%s\n' "$PR_AUTHOR"
+            printf 'Commit: %s\n' "$MERGE_SHA"
+          } > tag-message.txt
+
+          git tag -a "$VERSION" -F tag-message.txt
+          git push origin "$VERSION"
+
+      - name: Label referenced issues 🛩️
+        id: label
+        if: >-
+          env.IS_MANUAL != 'true'
+          && steps.check_pr.outputs.needs_tag == 'true'
+          && steps.issues.outputs.numbers != ''
+        continue-on-error: true
+        uses: actions/github-script@v9
+        env:
+          ISSUES: ${{ steps.issues.outputs.numbers }}
+        with:
+          github-token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const { version } = JSON.parse(require('fs').readFileSync('package.json', 'utf8'));
+            const labelName = `🛩️ Released ${version}`;
+            const issues = process.env.ISSUES.split(',').filter(Boolean);
+
+            try {
+              await github.rest.issues.createLabel({
+                owner, repo,
+                name: labelName,
+                color: 'EDEDED',
+                description: `Included in release v${version}`,
+              });
+              core.info(`Created label: ${labelName}`);
+            } catch (e) {
+              if (e.status === 422) {
+                core.info(`Label already exists: ${labelName}`);
+              } else {
+                core.warning(`Failed to create label: ${e.message}`);
+              }
+            }
+
+            const prNumber = context.payload.pull_request.number;
+            const prAuthor = context.payload.pull_request.user?.login;
+            const creditAuthor = prAuthor && prAuthor.toLowerCase() !== 'lissy93';
+            const marker = `released-${version}`;
+            for (const num of issues) {
+              const issue_number = parseInt(num, 10);
+              try {
+                const [{ data: issue }, comments] = await Promise.all([
+                  github.rest.issues.get({ owner, repo, issue_number }),
+                  github.rest.issues.listComments({
+                    owner, repo, issue_number, per_page: 100,
+                  }),
+                ]);
+                const alreadyCommented = comments.data.some(
+                  c => c.body?.includes(marker)
+                );
+                if (!alreadyCommented) {
+                  const author = issue.user?.login;
+                  const greeting = author ? `Hey @${author},` : 'Hey,';
+                  const sixMonthsAgo = new Date();
+                  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+                  const isOld = new Date(issue.created_at) < sixMonthsAgo;
+                  const byLine = creditAuthor ? ` by @${prAuthor}` : '';
+                  const parts = [
+                    greeting,
+                    `this has now been implemented${byLine} in #${prNumber},`,
+                    `and will be released shortly in ${version} 😇`,
+                  ];
+                  if (isOld) parts.push(`\n\nWe're sorry this one took so long 😔`);
+                  parts.push(`<!-- ${marker} -->`);
+                  const body = parts.join(' ');
+                  await github.rest.issues.createComment({
+                    owner, repo, issue_number, body,
+                  });
+                }
+                await github.rest.issues.addLabels({
+                  owner, repo, issue_number, labels: [labelName, '✅ Fixed'],
+                });
+                core.info(alreadyCommented
+                  ? `Already commented on #${num}, labels applied`
+                  : `Commented and labeled #${num}`);
+              } catch (e) {
+                core.warning(`Failed to process #${num}: ${e.message}`);
+              }
+            }
+
+      - name: Job summary 📋
+        if: always()
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number || '' }}
+          PR_TITLE: ${{ github.event.pull_request.title || '' }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          NEEDS_BUMP: ${{ steps.check_pr.outputs.needs_bump }}
+          NEEDS_TAG: ${{ steps.check_pr.outputs.needs_tag }}
+          ISSUES: ${{ steps.issues.outputs.numbers }}
+          TAG_OUTCOME: ${{ steps.tag.outcome }}
+          LABEL_OUTCOME: ${{ steps.label.outcome }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version" 2>/dev/null || echo "unknown")
+
+          {
+            echo "## 🔖 Auto Version & Tag"
+            echo ""
+            echo "| Step | Result |"
+            echo "|------|--------|"
+
+            if [ "$IS_MANUAL" = "true" ]; then
+              echo "| Trigger | Manual dispatch |"
+            elif [ -n "$PR_NUMBER" ]; then
+              echo "| PR | [#${PR_NUMBER}](${REPO_URL}/pull/${PR_NUMBER}) — ${PR_TITLE} |"
+            fi
+
+            if [ "$IS_MANUAL" = "true" ] || [ "$NEEDS_BUMP" = "true" ]; then
+              echo "| Version bump | ✅ \`${VERSION}\` |"
+            else
+              echo "| Version bump | ⏭️ Skipped |"
+            fi
+
+            if [ "$TAG_OUTCOME" = "success" ]; then
+              echo "| Tag | ✅ [\`${VERSION}\`](${REPO_URL}/releases/tag/${VERSION}) |"
+            elif [ "$IS_MANUAL" = "true" ] || [ "$NEEDS_TAG" = "true" ]; then
+              echo "| Tag | ❌ Failed |"
+            else
+              echo "| Tag | ⏭️ Skipped |"
+            fi
+
+            if [ -n "$ISSUES" ]; then
+              ISSUE_LINKS=$(echo "$ISSUES" | tr ',' '\n' | sed "s|.*|[#&](${REPO_URL}/issues/&)|" | paste -sd ' ' -)
+              if [ "$LABEL_OUTCOME" = "success" ]; then
+                echo "| Issues labeled | ✅ ${ISSUE_LINKS} |"
+              else
+                echo "| Issues labeled | ⚠️ ${ISSUE_LINKS} |"
+              fi
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

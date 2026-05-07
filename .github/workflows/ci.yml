@@ -1,0 +1,169 @@
+name: 🚦 PR Quality Check
+
+on:
+  pull_request:
+    branches: ['master']
+    paths-ignore:
+      - '**.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: 🔎 Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      lockfile: ${{ steps.check.outputs.lockfile }}
+    steps:
+      - name: 🔎 Check for lockfile changes
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          CHANGED=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
+            --paginate -q '.[].filename' | grep -c '^yarn\.lock$' || true)
+          echo "lockfile=$( [ "$CHANGED" -gt 0 ] && echo true || echo false )" >> "$GITHUB_OUTPUT"
+
+  lint:
+    name: 📝 Lint Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout Code
+        uses: actions/checkout@v6
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🔍 Run ESLint
+        run: yarn lint
+
+  typecheck:
+    name: 🧷 Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout Code
+        uses: actions/checkout@v6
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🧷 Run Astro Check
+        run: yarn typecheck
+
+  format:
+    name: 🎨 Format Check
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: 🛎️ Checkout Code
+        uses: actions/checkout@v6
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🎨 Run Prettier
+        run: yarn format:check
+
+  build:
+    name: 🏗️ Build Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout Code
+        uses: actions/checkout@v6
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🏗️ Build Project
+        run: yarn build
+
+      - name: ✅ Verify Build Output
+        run: |
+          if [ ! -d "dist/client" ]; then
+            echo "❌ Build failed: dist/client directory not created"
+            exit 1
+          fi
+          if [ ! -f "dist/server/entry.mjs" ]; then
+            echo "❌ Build failed: SSR entry not found"
+            exit 1
+          fi
+          echo "✅ Build successful"
+
+  docker-smoke:
+    name: 🐳 Docker Smoke Test
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: 🛎️ Checkout Code
+        uses: actions/checkout@v6
+
+      - name: 🐳 Build Docker Image
+        run: docker build -t web-check:test .
+        timeout-minutes: 10
+
+      - name: 🧪 Verify Container Starts
+        run: |
+          docker run -d --name wc-test -p 3000:3000 web-check:test
+          sleep 5
+          STATUS=$(docker inspect -f '{{.State.Running}}' wc-test)
+          if [ "$STATUS" != "true" ]; then
+            echo "❌ Container failed to start"
+            docker logs wc-test
+            exit 1
+          fi
+          HTTP_CODE=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/check || true)
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Health check failed (HTTP $HTTP_CODE)"
+            docker logs wc-test
+            exit 1
+          fi
+          echo "✅ Container running and responding"
+          docker stop wc-test && docker rm wc-test
+
+  # security:
+  #   name: 🔒 Security Audit
+  #   runs-on: ubuntu-latest
+  #   needs: changes
+  #   if: needs.changes.outputs.lockfile == 'true'
+  #   continue-on-error: true
+  #   steps:
+  #     - name: 🛎️ Checkout Code
+  #       uses: actions/checkout@v6
+
+  #     - name: 🔧 Setup Node.js
+  #       uses: actions/setup-node@v6
+  #       with:
+  #         node-version: '22'
+  #         cache: 'yarn'
+
+  #     - name: 📦 Install Dependencies
+  #       run: yarn install --frozen-lockfile
+
+  #     - name: 🔒 Run Security Audit
+  #       run: yarn audit --level high

@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
-import { type ChangeEvent, type FormEvent, useState, useEffect } from 'react';
+import { type ChangeEvent, type SyntheticEvent, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation, type NavigateOptions } from 'react-router-dom';
 
 import Heading from 'web-check-live/components/Form/Heading';
-import Input from 'web-check-live/components/Form/Input'
+import Input from 'web-check-live/components/Form/Input';
 import Button from 'web-check-live/components/Form/Button';
 import { StyledCard } from 'web-check-live/components/Form/Card';
 import Footer from 'web-check-live/components/misc/Footer';
@@ -76,7 +76,9 @@ const SponsorCard = styled.div`
   }
   .cta {
     font-size: 0.78rem;
-    a { color: ${colors.primary}; }
+    a {
+      color: ${colors.primary};
+    }
   }
 `;
 
@@ -109,7 +111,7 @@ const SiteFeaturesWrapper = styled(StyledCard)`
         width: calc(100% - 2rem);
       }
     }
-    @media(max-width: 600px) {
+    @media (max-width: 600px) {
       flex-wrap: wrap;
     }
   }
@@ -158,9 +160,9 @@ const Home = (): JSX.Element => {
 
   /* Check is valid address, either show err or redirect to results page */
   const submit = () => {
-    let address = userInput.endsWith("/") ? userInput.slice(0, -1) : userInput;
+    let address = userInput.endsWith('/') ? userInput.slice(0, -1) : userInput;
     const addressType = determineAddressType(address);
-  
+
     if (addressType === 'empt') {
       setErrMsg('Field must not be empty');
     } else if (addressType === 'err') {
@@ -174,7 +176,6 @@ const Home = (): JSX.Element => {
       navigate(`/check/${encodeURIComponent(address)}`, resultRouteParams);
     }
   };
-  
 
   /* Update user input state, and hide error message if field is valid */
   const inputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -190,10 +191,10 @@ const Home = (): JSX.Element => {
     }
   };
 
-  const formSubmitEvent = (event: FormEvent<HTMLFormElement>) => {
+  const formSubmitEvent = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     submit();
-  }
+  };
 
   // const findIpAddress = () => {
   //   setUserInput('');
@@ -211,7 +212,6 @@ const Home = (): JSX.Element => {
   //       console.log('Failed to get IP address :\'(', error)
   //     });
   // };
-
 
   return (
     <HomeContainer>
@@ -236,11 +236,15 @@ const Home = (): JSX.Element => {
           handleKeyDown={handleKeyPress}
         />
         {/* <FindIpButton onClick={findIpAddress}>Or, find my IP</FindIpButton> */}
-        { errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
-        <Button type="submit" styles="width: calc(100% - 1rem);" size="large" onClick={submit}>Analyze!</Button>
+        {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
+        <Button type="submit" styles="width: calc(100% - 1rem);" size="large" onClick={submit}>
+          Analyze!
+        </Button>
       </UserInputMain>
       <SponsorCard>
-        <Heading as="h2" size="small" color={colors.primary}>Sponsored by</Heading>
+        <Heading as="h2" size="small" color={colors.primary}>
+          Sponsored by
+        </Heading>
         <div className="inner">
           <p>
             <a
@@ -249,46 +253,69 @@ const Home = (): JSX.Element => {
               href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh"
             >
               Terminal Trove
-            </a> - The $HOME of all things in the terminal.
+            </a>{' '}
+            - The $HOME of all things in the terminal.
             <br />
             <span className="cta">
-              Get updates on the latest CLI/TUI tools via
-              the <a
+              Get updates on the latest CLI/TUI tools via the{' '}
+              <a
                 target="_blank"
                 rel="noreferrer"
                 className="cta"
                 href="https://terminaltrove.com/newsletter?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh"
-                >
+              >
                 Terminal Trove newsletter
               </a>
             </span>
-            
           </p>
           <a
             target="_blank"
             rel="noreferrer"
-            href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
-            <img width="120" alt="Terminal Trove" src="https://i.ibb.co/NKtYjJ1/terminal-trove-web-check.png" />
+            href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh"
+          >
+            <img
+              width="120"
+              alt="Terminal Trove"
+              src="https://i.ibb.co/NKtYjJ1/terminal-trove-web-check.png"
+            />
           </a>
         </div>
-
       </SponsorCard>
       <SiteFeaturesWrapper>
         <div className="features">
-          <Heading as="h2" size="small" color={colors.primary}>Supported Checks</Heading>
+          <Heading as="h2" size="small" color={colors.primary}>
+            Supported Checks
+          </Heading>
           <ul>
-            {docs.map((doc, index) => (<li key={index}>{doc.title}</li>))}
-            <li><Link to="/check/about">+ more!</Link></li>
+            {docs.map((doc, index) => (
+              <li key={index}>{doc.title}</li>
+            ))}
+            <li>
+              <Link to="/check/about">+ more!</Link>
+            </li>
           </ul>
         </div>
         <div className="links">
-          <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check" title="Check out the source code and documentation on GitHub, and get support or contribute">
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://github.com/lissy93/web-check"
+            title="Check out the source code and documentation on GitHub, and get support or contribute"
+          >
             <Button>View on GitHub</Button>
           </a>
-          <a target="_blank" rel="noreferrer" href="https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check" title="Deploy your own private or public instance of Web-Check to Netlify">
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check"
+            title="Deploy your own private or public instance of Web-Check to Netlify"
+          >
             <Button>Deploy your own</Button>
           </a>
-          <Link to="/check/about#api-documentation" title="View the API documentation, to use Web-Check programmatically">
+          <Link
+            to="/check/about#api-documentation"
+            title="View the API documentation, to use Web-Check programmatically"
+          >
             <Button>API Docs</Button>
           </Link>
         </div>
@@ -296,6 +323,6 @@ const Home = (): JSX.Element => {
       <Footer isFixed={true} />
     </HomeContainer>
   );
-}
+};
 
 export default Home;

@@ -7,29 +7,33 @@ import Icon from '@components/molecules/Icon.svelte';
 const cardData = [
   {
     title: 'Deploy with Docker',
-    description: 'Just one command, and you\'ll have your own Web Check instance running on your server in minutes.',
+    description:
+      "Just one command, and you'll have your own Web Check instance running on your server in minutes.",
     command: 'docker run -p 3000:3000 lissy93/web-check',
   },
   {
     title: '1-Click Deploy',
-    description: 'Don\'t have a server? Not a problem! Deploy Web Check with one click on Vercel or Netlify.',
+    description:
+      "Don't have a server? Not a problem! Deploy Web Check with one click on Vercel or Netlify.",
     buttons: [
       {
         name: 'Vercel',
         image: '/assets/images/vercel.svg',
-        link: 'https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.'
-        +'com%2Fxray-web%2Fweb-check-free&project-name=web-check-free&repository'
-        + '-name=web-check-free&demo-title=Web%20Check&demo-description=Try%20ou'
-        + 't%20the%20live%20demo&demo-url=https%3A%2F%2Fweb-check.xyz%2F&demo-ima'
-        + 'ge=https%3A%2F%2Fi.ibb.co%2Fr0jXN6s%2Fweb-check.png'
+        link:
+          'https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.' +
+          'com%2Fxray-web%2Fweb-check-free&project-name=web-check-free&repository' +
+          '-name=web-check-free&demo-title=Web%20Check&demo-description=Try%20ou' +
+          't%20the%20live%20demo&demo-url=https%3A%2F%2Fweb-check.xyz%2F&demo-ima' +
+          'ge=https%3A%2F%2Fi.ibb.co%2Fr0jXN6s%2Fweb-check.png',
       },
       {
         name: 'Netlify',
         image: '/assets/images/netlify.svg',
-        link: 'https://app.netlify.com/start/deploy?repository='
-        + 'https://github.com/xray-web/web-check-free',
-      }
-    ]
+        link:
+          'https://app.netlify.com/start/deploy?repository=' +
+          'https://github.com/xray-web/web-check-free',
+      },
+    ],
   },
   {
     title: 'Build from Source',
@@ -39,11 +43,10 @@ const cardData = [
         name: 'GitHub',
         image: '/assets/images/github.svg',
         link: '',
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];
-
 ---
 
 <BaseLayout
@@ -54,44 +57,44 @@ const cardData = [
     <NavBar />
     <main>
       <h1>Self-Hosted Setup</h1>
-      <p>
-        Get your own free instance of Web Check, running locally or on your server.
-      </p>
-    
-      <div class="option-cards">
+      <p>Get your own free instance of Web Check, running locally or on your server.</p>
 
-        { cardData.map((card, cardIndex) => (
-          <div class="card">
-            <span class="option">Option #{cardIndex + 1}</span>
-            <h3>{card.title}</h3>
-            <p>{card.description}</p>
-            { card.buttons && (
-              <div class="buttons">
-                { card.buttons.map(button => (
-                  <a href={button.link}>
-                    <img src={button.image} />
-                    {button.name}
-                  </a>
-                ))}
-              </div>
-            )}
-            { card.command && (
-              <div class="shaddow docker-command">
-                <code>{card.command}</code>
-                <button><Icon name="copy" size={0.8} /></button>
-              </div>
-            )}
-          </div>
-        ))}
-    </div>
+      <div class="option-cards">
+        {
+          cardData.map((card, cardIndex) => (
+            <div class="card">
+              <span class="option">Option #{cardIndex + 1}</span>
+              <h3>{card.title}</h3>
+              <p>{card.description}</p>
+              {card.buttons && (
+                <div class="buttons">
+                  {card.buttons.map((button) => (
+                    <a href={button.link}>
+                      <img src={button.image} />
+                      {button.name}
+                    </a>
+                  ))}
+                </div>
+              )}
+              {card.command && (
+                <div class="shaddow docker-command">
+                  <code>{card.command}</code>
+                  <button>
+                    <Icon name="copy" size={0.8} />
+                  </button>
+                </div>
+              )}
+            </div>
+          ))
+        }
+      </div>
     </main>
     <Footer />
   </div>
 </BaseLayout>
 
-
 <style lang="scss">
-  @import '@styles/global.scss';
+  @use '@styles/global.scss' as *;
   .web-check-page {
     padding-top: 2rem;
     margin: 0 auto;
@@ -112,8 +115,8 @@ const cardData = [
       padding: 5rem 0 2rem 0;
       max-width: 1200px;
       @include mobile-down {
-      padding: 1rem 0;
-    }
+        padding: 1rem 0;
+      }
     }
     .option-cards {
       display: grid;
@@ -196,7 +199,6 @@ const cardData = [
           }
         }
       }
-      
     }
   }
   .shaddow {
@@ -228,7 +230,7 @@ const cardData = [
     width: fit-content;
     &:before,
     &:after {
-      content: "";
+      content: '';
       position: absolute;
       top: -1px;
       left: -1px;
@@ -272,6 +274,4 @@ const cardData = [
       }
     }
   }
-
-
 </style>

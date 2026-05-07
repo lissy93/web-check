@@ -1,4 +1,3 @@
-
 import styled from '@emotion/styled';
 import type { ServerLocation } from 'web-check-live/utils/result-processor';
 import { Card } from 'web-check-live/components/Form/Card';
@@ -26,12 +25,24 @@ const CountryValue = styled.span`
   gap: 0.5rem;
 `;
 
-const ServerLocationCard = (props: { data: ServerLocation, title: string, actionButtons: any }): JSX.Element => {
+const ServerLocationCard = (props: {
+  data: ServerLocation;
+  title: string;
+  actionButtons: any;
+}): JSX.Element => {
   const location = props.data;
   const {
-    city, region, country,
-    postCode, countryCode, coords,
-    isp, timezone, languages, currency, currencyCode,
+    city,
+    region,
+    country,
+    postCode,
+    countryCode,
+    coords,
+    isp,
+    timezone,
+    languages,
+    currency,
+    currencyCode,
   } = location;
 
   return (
@@ -41,7 +52,7 @@ const ServerLocationCard = (props: { data: ServerLocation, title: string, action
         <b>Country</b>
         <CountryValue>
           {country}
-          { countryCode && <Flag countryCode={countryCode} width={28} /> }
+          {countryCode && <Flag countryCode={countryCode} width={28} />}
         </CountryValue>
       </Row>
       <Row lbl="Timezone" val={timezone} />
@@ -49,10 +60,12 @@ const ServerLocationCard = (props: { data: ServerLocation, title: string, action
       <Row lbl="Currency" val={`${currency} (${currencyCode})`} />
       <MapRow>
         <LocationMap lat={coords.latitude} lon={coords.longitude} label={`Server (${isp})`} />
-        <SmallText>Latitude: {coords.latitude}, Longitude: {coords.longitude} </SmallText>
+        <SmallText>
+          Latitude: {coords.latitude}, Longitude: {coords.longitude}{' '}
+        </SmallText>
       </MapRow>
     </Card>
   );
-}
+};
 
 export default ServerLocationCard;

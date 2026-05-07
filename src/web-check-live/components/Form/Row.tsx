@@ -4,15 +4,15 @@ import colors from 'web-check-live/styles/colors';
 import Heading from 'web-check-live/components/Form/Heading';
 
 export interface RowProps {
-  lbl: string,
-  val: string,
-  key?: string | number,
-  children?: ReactNode,
-  rowList?: RowProps[],
-  title?: string,
-  open?: boolean,
-  plaintext?: string,
-  listResults?: string[],
+  lbl: string;
+  val: string;
+  key?: string | number;
+  children?: ReactNode;
+  rowList?: RowProps[];
+  title?: string;
+  open?: boolean;
+  plaintext?: string;
+  listResults?: string[];
 }
 
 export const StyledRow = styled.div`
@@ -20,9 +20,19 @@ export const StyledRow = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 0.25rem;
-  &li { border-bottom: 1px dashed ${colors.primaryTransparent} !important; }
-  &:not(:last-child) { border-bottom: 1px solid ${colors.primaryTransparent}; }
-  span.lbl { font-weight: bold; }
+  &li {
+    border-bottom: 1px dashed ${colors.primaryTransparent} !important;
+  }
+  &:not(:last-child) {
+    border-bottom: 1px solid ${colors.primaryTransparent};
+  }
+  span.lbl {
+    font-weight: bold;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   span.val {
     max-width: 16rem;
     white-space: nowrap;
@@ -31,7 +41,7 @@ export const StyledRow = styled.div`
     a {
       color: ${colors.primary};
     }
-  }  
+  }
 `;
 
 export const Details = styled.details`
@@ -41,14 +51,14 @@ export const Details = styled.details`
     cursor: pointer;
   }
   summary:before {
-    content: "►";
+    content: '►';
     position: absolute;
     margin-left: -1rem;
     color: ${colors.primary};
     cursor: pointer;
   }
   &[open] summary:before {
-    content: "▼";
+    content: '▼';
   }
 `;
 
@@ -80,8 +90,8 @@ const List = styled.ul`
     // overflow: hidden;
     text-overflow: ellipsis;
     list-style: circle;
-    &:first-letter{
-      text-transform: capitalize
+    &:first-letter {
+      text-transform: capitalize;
     }
     &::marker {
       color: ${colors.primary};
@@ -115,22 +125,22 @@ const isValidDate = (date: any): boolean => {
   return false;
 };
 
-
 const formatDate = (dateString: string): string => {
   return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric', month: 'long', year: 'numeric'
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
   }).format(new Date(dateString));
-}
+};
 const formatValue = (value: any): string => {
   if (isValidDate(new Date(value))) return formatDate(value);
   if (typeof value === 'boolean') return value ? '✅' : '❌';
   return value;
 };
 
-
 const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text);
-}
+};
 
 const snip = (text: string, length: number = 80) => {
   if (text.length < length) return text;
@@ -142,65 +152,87 @@ export const ExpandableRow = (props: RowProps) => {
   return (
     <Details open={open}>
       <StyledRow as="summary" key={`${lbl}-${val}`}>
-        <span className="lbl" title={title?.toString()}>{lbl}</span>
-        <span className="val" title={val?.toString()}>{val.toString()}</span>
+        <span className="lbl" title={title?.toString()}>
+          {lbl}
+        </span>
+        <span className="val" title={val?.toString()}>
+          {val.toString()}
+        </span>
       </StyledRow>
-      { rowList &&
+      {rowList && (
         <SubRowList>
-          { rowList?.map((row: RowProps, index: number) => {
+          {rowList?.map((row: RowProps, index: number) => {
             return (
               <StyledRow as="li" key={`${row.lbl}-${index}`}>
-                <span className="lbl" title={row.title?.toString()}>{row.lbl}</span>
-                <span className="val" title={row.val?.toString()} onClick={() => copyToClipboard(row.val)}>
+                <span className="lbl" title={row.title?.toString()}>
+                  {row.lbl}
+                </span>
+                <span
+                  className="val"
+                  title={row.val?.toString()}
+                  onClick={() => copyToClipboard(row.val)}
+                >
                   {formatValue(row.val)}
                 </span>
-                { row.plaintext && <PlainText>{row.plaintext}</PlainText> }
-                { row.listResults && (<List>
-                  {row.listResults.map((listItem: string, listIndex: number) => (
-                    <li key={listItem}>{snip(listItem)}</li>
-                  ))}
-                </List>)}
+                {row.plaintext && <PlainText>{row.plaintext}</PlainText>}
+                {row.listResults && (
+                  <List>
+                    {row.listResults.map((listItem: string) => (
+                      <li key={listItem}>{snip(listItem)}</li>
+                    ))}
+                  </List>
+                )}
               </StyledRow>
-            )
+            );
           })}
         </SubRowList>
-      }
+      )}
     </Details>
   );
 };
 
-export const ListRow = (props: { list: string[], title: string }) => {
+export const ListRow = (props: { list: string[]; title: string }) => {
   const { list, title } = props;
   return (
-  <>
-    <Heading as="h4" size="small" align="left" color={colors.primary}>{title}</Heading>
-    { list.map((entry: string, index: number) => {
-      return (
-      <Row lbl="" val="" key={`${entry}-${title.toLocaleLowerCase()}-${index}`}>
-        <span>{ entry }</span>
-      </Row>
-      )}
-    )}
-  </>
-);
-}
+    <>
+      <Heading as="h4" size="small" align="left" color={colors.primary}>
+        {title}
+      </Heading>
+      {list.map((entry: string, index: number) => {
+        return (
+          <Row lbl="" val="" key={`${entry}-${title.toLocaleLowerCase()}-${index}`}>
+            <span>{entry}</span>
+          </Row>
+        );
+      })}
+    </>
+  );
+};
 
 const Row = (props: RowProps) => {
   const { lbl, val, title, plaintext, listResults, children } = props;
   if (children) return <StyledRow key={`${lbl}-${val}`}>{children}</StyledRow>;
   return (
-  <StyledRow key={`${lbl}-${val}`}>
-    { lbl && <span className="lbl" title={title?.toString()}>{lbl}</span> }
-    <span className="val" title={val} onClick={() => copyToClipboard(val)}>
-      {formatValue(val)}
-    </span>
-    { plaintext && <PlainText>{plaintext}</PlainText> }
-    { listResults && (<List>
-      {listResults.map((listItem: string, listIndex: number) => (
-        <li key={listIndex} title={listItem}>{snip(listItem)}</li>
-      ))}
-    </List>)}
-  </StyledRow>
+    <StyledRow key={`${lbl}-${val}`}>
+      {lbl && (
+        <span className="lbl" title={title?.toString()}>
+          {lbl}
+        </span>
+      )}
+      <span className="val" title={val} onClick={() => copyToClipboard(val)}>
+        {formatValue(val)}
+      </span>
+      {plaintext && <PlainText>{plaintext}</PlainText>}
+      {listResults && (
+        <List>
+          {listResults.map((listItem: string, listIndex: number) => (
+            <li key={listIndex} title={listItem}>
+              {snip(listItem)}
+            </li>
+          ))}
+        </List>
+      )}
+    </StyledRow>
   );
 };
 

@@ -1,9 +1,11 @@
+import { bracketIPv6 } from './parse-target.js';
+
 const normalizeUrl = (url) => {
-  return url.startsWith('http') ? url : `https://${url}`;
+  const withScheme = url.startsWith('http') ? url : `https://${url}`;
+  return bracketIPv6(withScheme);
 };
 
-// If present, set a shorter timeout for API requests
-const TIMEOUT = process.env.API_TIMEOUT_LIMIT ? parseInt(process.env.API_TIMEOUT_LIMIT, 10) : 60000;
+const TIMEOUT = parseInt(process.env.PUBLIC_API_TIMEOUT_LIMIT || '40000', 10);
 
 // If present, set CORS allowed origins for responses
 const ALLOWED_ORIGINS = process.env.API_CORS_ORIGIN || '*';
@@ -13,9 +15,13 @@ const DISABLE_EVERYTHING = !!process.env.VITE_DISABLE_EVERYTHING;
 
 // Set the platform currently being used
 let PLATFORM = 'NETLIFY';
-if (process.env.PLATFORM) { PLATFORM = process.env.PLATFORM.toUpperCase(); }
-else if (process.env.VERCEL) { PLATFORM = 'VERCEL'; }
-else if (process.env.WC_SERVER) { PLATFORM = 'NODE'; }
+if (process.env.PLATFORM) {
+  PLATFORM = process.env.PLATFORM.toUpperCase();
+} else if (process.env.VERCEL) {
+  PLATFORM = 'VERCEL';
+} else if (process.env.WC_SERVER) {
+  PLATFORM = 'NODE';
+}
 
 // Define the headers to be returned with each response
 const headers = {
@@ -24,26 +30,25 @@ const headers = {
   'Content-Type': 'application/json;charset=UTF-8',
 };
 
-const timeoutErrorMsg = 'You can re-trigger this request, by clicking "Retry"\n'
-+ 'If you\'re running your own instance of Web Check, then you can '
-+ 'resolve this issue, by increasing the timeout limit in the '
-+ '`API_TIMEOUT_LIMIT` environmental variable to a higher value (in milliseconds), '
-+ 'or if you\'re hosting on Vercel increase the maxDuration in vercel.json.\n\n'
-+ `The public instance currently has a lower timeout of ${TIMEOUT}ms `
-+ 'in order to keep running costs affordable, so that Web Check can '
-+ 'remain freely available for everyone.';
+const timeoutErrorMsg =
+  'You can re-trigger this request, by clicking "Retry"\n' +
+  "If you're running your own instance of Web Check, then you can " +
+  'resolve this issue, by increasing the timeout limit in the ' +
+  '`PUBLIC_API_TIMEOUT_LIMIT` environmental variable to a higher value (in milliseconds), ' +
+  "or if you're hosting on Vercel increase the maxDuration in vercel.json.\n\n" +
+  `The public instance currently has a lower timeout of ${TIMEOUT}ms ` +
+  'in order to keep running costs affordable, so that Web Check can ' +
+  'remain freely available for everyone.';
 
-const disabledErrorMsg = 'Error - WebCheck Temporarily Disabled.\n\n'
-+ 'We\'re sorry, but due to the increased cost of running Web Check '
-+ 'we\'ve had to temporatily disable the public instand. '
-+ 'We\'re activley looking for affordable ways to keep Web Check running, '
-+ 'while free to use for everybody.\n'
-+ 'In the meantime, since we\'ve made our code free and open source, '
-+ 'you can get Web Check running on your own system, by following the instructions in our GitHub repo';
+const disabledMsg =
+  'WebCheck is temporarily disabled.\n\n' +
+  'Due to the increased cost of running Web Check, the public instance has been ' +
+  'paused while we look for affordable ways to keep it free for everyone.\n' +
+  'Since the code is free and open source, you can run your own instance by ' +
+  'following the instructions in the GitHub repo.';
 
 // A middleware function used by all API routes on all platforms
 const commonMiddleware = (handler) => {
-
   // Create a timeout promise, to throw an error if a request takes too long
   const createTimeoutPromise = (timeoutMs) => {
     return new Promise((_, reject) => {
@@ -55,9 +60,8 @@ const commonMiddleware = (handler) => {
 
   // Vercel
   const vercelHandler = async (request, response) => {
-
     if (DISABLE_EVERYTHING) {
-      response.status(503).json({ error: disabledErrorMsg });
+      return response.status(200).json({ skipped: disabledMsg });
     }
 
     const queryParams = request.query || {};
@@ -70,81 +74,45 @@ const commonMiddleware = (handler) => {
     const url = normalizeUrl(rawUrl);
 
     try {
-      // Race the handler against the timeout
-      const handlerResponse = await Promise.race([
-        handler(url, request),
-        createTimeoutPromise(TIMEOUT)
-      ]);
-
-      if (handlerResponse.body && handlerResponse.statusCode) {
-        response.status(handlerResponse.statusCode).json(handlerResponse.body);
-      } else {
-        response.status(200).json(
-          typeof handlerResponse === 'object' ? handlerResponse : JSON.parse(handlerResponse)
-        );
-      }
+      const result = await Promise.race([handler(url, request), createTimeoutPromise(TIMEOUT)]);
+      response.status(200).json(typeof result === 'object' ? result : JSON.parse(result));
     } catch (error) {
-      let errorCode = 500;
-      if (error.message.includes('timed-out') || response.statusCode === 504) {
-        errorCode = 408;
-        error.message = `${error.message}\n\n${timeoutErrorMsg}`;
-      }
-      response.status(errorCode).json({ error: error.message });
+      const isTimeout = error.message.includes('timed-out') || response.statusCode === 504;
+      const message = isTimeout ? `${error.message}\n\n${timeoutErrorMsg}` : error.message;
+      response.status(isTimeout ? 408 : 500).json({ error: message });
     }
   };
 
   // Netlify
-  const netlifyHandler = async (event, context, callback) => {
+  const netlifyHandler = async (event, context) => {
     const queryParams = event.queryStringParameters || event.query || {};
     const rawUrl = queryParams.url;
 
     if (DISABLE_EVERYTHING) {
-      callback(null, {
-        statusCode: 503,
-        body: JSON.stringify({ error: 'Web-Check is temporarily disabled. Please try again later.' }),
-        headers,
-      });
-      return;
+      return { statusCode: 200, body: JSON.stringify({ skipped: disabledMsg }), headers };
     }
-
     if (!rawUrl) {
-      callback(null, {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'No URL specified' }),
-        headers,
-      });
-      return;
+      return { statusCode: 500, body: JSON.stringify({ error: 'No URL specified' }), headers };
     }
 
     const url = normalizeUrl(rawUrl);
-
     try {
-      // Race the handler against the timeout
-      const handlerResponse = await Promise.race([
+      const result = await Promise.race([
         handler(url, event, context),
-        createTimeoutPromise(TIMEOUT)
+        createTimeoutPromise(TIMEOUT),
       ]);
-
-      if (handlerResponse.body && handlerResponse.statusCode) {
-        callback(null, handlerResponse);
-      } else {
-        callback(null, {
-          statusCode: 200,
-          body: typeof handlerResponse === 'object' ? JSON.stringify(handlerResponse) : handlerResponse,
-          headers,
-        });
-      }
-    } catch (error) {
-      callback(null, {
-        statusCode: 500,
-        body: JSON.stringify({ error: error.message }),
+      return {
+        statusCode: 200,
+        body: typeof result === 'object' ? JSON.stringify(result) : result,
         headers,
-      });
+      };
+    } catch (error) {
+      return { statusCode: 500, body: JSON.stringify({ error: error.message }), headers };
     }
   };
 
   // The format of the handlers varies between platforms
-  const nativeMode = (['VERCEL', 'NODE'].includes(PLATFORM));
+  const nativeMode = ['VERCEL', 'NODE'].includes(PLATFORM);
   return nativeMode ? vercelHandler : netlifyHandler;
 };
 

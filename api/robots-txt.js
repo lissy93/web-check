@@ -1,69 +1,31 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
+import { parseTarget } from './_common/parse-target.js';
+import { upstreamError } from './_common/upstream.js';
 
+// Extract User-agent / Allow / Disallow rules from a robots.txt body
 const parseRobotsTxt = (content) => {
-  const lines = content.split('\n');
   const rules = [];
-
-  lines.forEach(line => {
-    line = line.trim();  // This removes trailing and leading whitespaces
-
-    let match = line.match(/^(Allow|Disallow):\s*(\S*)$/i);
-    if (match) {
-      const rule = {
-        lbl: match[1],
-        val: match[2],
-      };
-      
-      rules.push(rule);
-    } else {
-      match = line.match(/^(User-agent):\s*(\S*)$/i);
-      if (match) {
-        const rule = {
-          lbl: match[1],
-          val: match[2],
-        };
-        
-        rules.push(rule);
-      }
-    }
-  });
-  return { robots: rules };
-}
-
-const robotsHandler = async function(url) {
-  let parsedURL;
-  try {
-    parsedURL = new URL(url);
-  } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Invalid url query parameter' }),
-    };
+  for (let line of content.split('\n')) {
+    line = line.trim();
+    const ruleMatch = line.match(/^(Allow|Disallow|User-agent):\s*(\S*)$/i);
+    if (ruleMatch) rules.push({ lbl: ruleMatch[1], val: ruleMatch[2] });
   }
+  return { robots: rules };
+};
 
-  const robotsURL = `${parsedURL.protocol}//${parsedURL.hostname}/robots.txt`;
-
+const robotsHandler = async (url) => {
+  const { protocol, hostname } = parseTarget(url);
+  const host = hostname.includes(':') ? `[${hostname}]` : hostname;
   try {
-    const response = await axios.get(robotsURL);
-
-    if (response.status === 200) {
-      const parsedData = parseRobotsTxt(response.data);
-      if (!parsedData.robots || parsedData.robots.length === 0) {
-        return { skipped: 'No robots.txt file present, unable to continue' };
-      }
-      return parsedData;
-    } else {
-      return {
-        statusCode: response.status,
-        body: JSON.stringify({ error: 'Failed to fetch robots.txt', statusCode: response.status }),
-      };
-    }
+    const res = await httpGet(`${protocol}//${host}/robots.txt`);
+    const parsed = parseRobotsTxt(res.data || '');
+    return parsed.robots.length ? parsed : { skipped: 'No robots.txt rules found for this host' };
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: `Error fetching robots.txt: ${error.message}` }),
-    };
+    if (error.response?.status === 404) {
+      return { skipped: 'No robots.txt file present on this host' };
+    }
+    return upstreamError(error, 'robots.txt fetch');
   }
 };
 

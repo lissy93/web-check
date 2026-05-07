@@ -11,8 +11,18 @@ html {
 
 body {
   margin: 0;
-  font-family: 'PTMono', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family:
+    'PTMono',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -21,17 +31,16 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
-#fancy-background { color: var(--background, #141517); }
-
+#fancy-background {
+  color: var(--background, #141517);
+}
 
 ::selection {
   background: var(--primary, #d6fb41);
   color: var(--background, #141517);
 }
-
 
 svg.rsm-svg {
   background: #141517;

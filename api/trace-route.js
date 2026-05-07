@@ -1,30 +1,56 @@
-import url from 'url';
-import traceroute from 'traceroute';
+import { execFile } from 'child_process';
 import middleware from './_common/middleware.js';
+import { parseTarget } from './_common/parse-target.js';
 
-const traceRouteHandler = async (urlString, context) => {
-  // Parse the URL and get the hostname
-  const urlObject = url.parse(urlString);
-  const host = urlObject.hostname;
+const LOCAL_TIMEOUT = 8000;
 
-  if (!host) {
-    throw new Error('Invalid URL provided');
+// Parse traceroute -n output into [{ip, time}] entries, skipping unanswered hops
+const parseHops = (stdout) => {
+  const hops = [];
+  for (const line of stdout.split('\n')) {
+    const m = line.match(/^\s*\d+\s+([\d.]+|\S*::\S*)\s+([\d.]+)\s*ms/);
+    if (m) hops.push({ ip: m[1], time: Number(m[2]) });
   }
+  return hops;
+};
 
-  // Traceroute with callback
-  const result = await new Promise((resolve, reject) => {
-    traceroute.trace(host, (err, hops) => {
-      if (err || !hops) {
-        reject(err || new Error('No hops found'));
-      } else {
-        resolve(hops);
-      }
-    });
+// Run the system traceroute binary via execFile (no shell, no injection)
+const runTraceroute = (host) =>
+  new Promise((resolve, reject) => {
+    execFile(
+      'traceroute',
+      ['-q', '1', '-n', '-w', '2', host],
+      { timeout: LOCAL_TIMEOUT },
+      (err, stdout) => (err ? reject(err) : resolve(parseHops(stdout))),
+    );
   });
 
+const isMissingBinary = (err) =>
+  err?.code === 'ENOENT' || /command not found|not installed/i.test(err?.message || '');
+
+const traceRouteHandler = async (url) => {
+  const start = Date.now();
+  const { hostname } = parseTarget(url);
+  let hops;
+  try {
+    hops = await runTraceroute(hostname);
+  } catch (err) {
+    if (isMissingBinary(err)) {
+      return {
+        skipped:
+          'Traceroute is not installed in this environment. ' +
+          'Install via your package manager, or run web-check via Docker.',
+      };
+    }
+    return { error: `Traceroute failed: ${err.message}` };
+  }
+  if (!hops.length) {
+    return { skipped: 'Traceroute returned no answered hops for this host' };
+  }
   return {
-    message: "Traceroute completed!",
-    result,
+    message: 'Traceroute completed!',
+    result: hops.map(({ ip, time }) => ({ [ip]: [time] })),
+    timeTaken: Date.now() - start,
   };
 };
 

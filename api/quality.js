@@ -1,21 +1,27 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
+import { requireEnv, upstreamError } from './_common/upstream.js';
 
-const qualityHandler = async (url, event, context) => {
-  const apiKey = process.env.GOOGLE_CLOUD_API_KEY;
+const qualityHandler = async (url) => {
+  const auth = requireEnv('GOOGLE_CLOUD_API_KEY', 'Quality check');
+  if (auth.skipped) return auth;
+  const endpoint =
+    `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?` +
+    `url=${encodeURIComponent(url)}&category=PERFORMANCE&category=ACCESSIBILITY` +
+    `&category=BEST_PRACTICES&category=SEO&category=PWA&strategy=mobile` +
+    `&key=${auth.value}`;
 
-  if (!apiKey) {
-    throw new Error(
-      'Missing Google API. You need to set the `GOOGLE_CLOUD_API_KEY` environment variable'
-    );
+  let data;
+  try {
+    data = (await httpGet(endpoint)).data;
+  } catch (error) {
+    return upstreamError(error, 'Quality check');
   }
-
-  const endpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?`
-  + `url=${encodeURIComponent(url)}&category=PERFORMANCE&category=ACCESSIBILITY`
-  + `&category=BEST_PRACTICES&category=SEO&category=PWA&strategy=mobile`
-  + `&key=${apiKey}`;
-
-  return (await axios.get(endpoint)).data;
+  const result = data.lighthouseResult || data;
+  if (!result?.categories || !Object.keys(result.categories).length) {
+    return { skipped: 'No quality report available for this URL' };
+  }
+  return result;
 };
 
 export const handler = middleware(qualityHandler);

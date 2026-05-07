@@ -1,4 +1,3 @@
-
 import { Card } from 'web-check-live/components/Form/Card';
 import Row, { type RowProps } from 'web-check-live/components/Form/Row';
 
@@ -20,7 +19,7 @@ const parseHeader = (headerString: string): RowProps[] => {
   });
 };
 
-const HstsCard = (props: {data: any, title: string, actionButtons: any }): JSX.Element => {
+const HstsCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
   const hstsResults = props.data;
   const hstsHeaders = hstsResults?.hstsHeader ? parseHeader(hstsResults.hstsHeader) : [];
   return (
@@ -28,15 +27,13 @@ const HstsCard = (props: {data: any, title: string, actionButtons: any }): JSX.E
       {typeof hstsResults.compatible === 'boolean' && (
         <Row lbl="HSTS Enabled?" val={hstsResults.compatible ? '✅ Yes' : '❌ No'} />
       )}
-      {hstsHeaders.length > 0 && hstsHeaders.map((header: RowProps, index: number) => {
-        return (
-          <Row lbl={header.lbl} val={header.val} key={`hsts-${index}`} />
-        );
-      })
-      }
-      {hstsResults.message && (<p>{hstsResults.message}</p>)}
+      {hstsHeaders.length > 0 &&
+        hstsHeaders.map((header: RowProps, index: number) => {
+          return <Row lbl={header.lbl} val={header.val} key={`hsts-${index}`} />;
+        })}
+      {hstsResults.message && <p>{hstsResults.message}</p>}
     </Card>
   );
-}
+};
 
 export default HstsCard;

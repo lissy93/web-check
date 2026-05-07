@@ -2,30 +2,23 @@
 import BaseLayout from '@layouts/Base.astro';
 import NavBar from '@components/scafold/Nav.astro';
 import Footer from '@components/scafold/Footer.astro';
-import Icon from '@components/molecules/Icon.svelte';
-
 ---
 
-<BaseLayout
-  title="API | Web Check"
-  description="Get started with the Web Check API."
->
+<BaseLayout title="API | Web Check" description="Get started with the Web Check API.">
   <div class="web-check-page">
     <NavBar />
     <main>
       <h1>Web Check API</h1>
       <p class="intro">
         The Web Check API gives you programatic access to over 30 categories of web metrics.<br />
-        Integrate into your own workflows and applications, to monitor any website's performance, SEO, security, and more.
+        Integrate into your own workflows and applications, to monitor any website's performance, SEO,
+        security, and more.
       </p>
-    
-      <div class="option-cards">
 
+      <div class="option-cards">
         <div class="card">
           <h3>API Documentation</h3>
-          <p>
-            View listing of all available endpoints, their usage, output and examples.
-          </p>
+          <p>View listing of all available endpoints, their usage, output and examples.</p>
           <div class="buttons">
             <a href="/web-check-api/spec">
               <img src="/assets/images/swagger.svg" />
@@ -35,9 +28,7 @@ import Icon from '@components/molecules/Icon.svelte';
         </div>
         <div class="card">
           <h3>API Key</h3>
-          <p>
-            Get your API key, and start using the API.
-          </p>
+          <p>Get your API key, and start using the API.</p>
           <div class="buttons">
             <a href="/account">
               <img src="/assets/images/webauthn.svg" />
@@ -47,9 +38,7 @@ import Icon from '@components/molecules/Icon.svelte';
         </div>
         <div class="card">
           <h3>API Source</h3>
-          <p>
-            View, edit, download or deploy the API from source.
-          </p>
+          <p>View, edit, download or deploy the API from source.</p>
           <div class="buttons">
             <a href="https://github.com/xray-web/web-check-api">
               <img src="/assets/images/github.svg" />
@@ -57,7 +46,6 @@ import Icon from '@components/molecules/Icon.svelte';
             </a>
           </div>
         </div>
-
 
         <!-- { cardData.map((card, cardIndex) => (
           <div class="card">
@@ -82,15 +70,14 @@ import Icon from '@components/molecules/Icon.svelte';
             )}
           </div>
         ))} -->
-    </div>
+      </div>
     </main>
     <Footer />
   </div>
 </BaseLayout>
 
-
 <style lang="scss">
-  @import '@styles/global.scss';
+  @use '@styles/global.scss' as *;
   .web-check-page {
     padding-top: 2rem;
     margin: 0 auto;
@@ -200,7 +187,6 @@ import Icon from '@components/molecules/Icon.svelte';
           }
         }
       }
-      
     }
   }
   .shaddow {
@@ -232,7 +218,7 @@ import Icon from '@components/molecules/Icon.svelte';
     width: fit-content;
     &:before,
     &:after {
-      content: "";
+      content: '';
       position: absolute;
       top: -1px;
       left: -1px;
@@ -276,6 +262,4 @@ import Icon from '@components/molecules/Icon.svelte';
       }
     }
   }
-
-
 </style>

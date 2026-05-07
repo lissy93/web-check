@@ -1,22 +1,18 @@
 import { URL } from 'url';
-import followRedirects from 'follow-redirects';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 
-const { https } = followRedirects;
-
-const SECURITY_TXT_PATHS = [
-  '/security.txt',
-  '/.well-known/security.txt',
-];
+// RFC 9116 recommends .well-known first, legacy /security.txt as fallback
+const SECURITY_TXT_PATHS = ['/.well-known/security.txt', '/security.txt'];
 
 const parseResult = (result) => {
   let output = {};
   let counts = {};
   const lines = result.split('\n');
   const regex = /^([^:]+):\s*(.+)$/;
-  
+
   for (const line of lines) {
-    if (!line.startsWith("#") && !line.startsWith("-----") && line.trim() !== '') {
+    if (!line.startsWith('#') && !line.startsWith('-----') && line.trim() !== '') {
       const match = line.match(regex);
       if (match && match.length > 2) {
         let key = match[1].trim();
@@ -29,7 +25,7 @@ const parseResult = (result) => {
       }
     }
   }
-  
+
   return output;
 };
 
@@ -41,7 +37,6 @@ const isPgpSigned = (result) => {
 };
 
 const securityTxtHandler = async (urlParam) => {
-
   let url;
   try {
     url = new URL(urlParam.includes('://') ? urlParam : 'https://' + urlParam);
@@ -49,11 +44,11 @@ const securityTxtHandler = async (urlParam) => {
     throw new Error('Invalid URL format');
   }
   url.pathname = '';
-  
+
   for (let path of SECURITY_TXT_PATHS) {
     try {
       const result = await fetchSecurityTxt(url, path);
-      if (result && result.includes('<html')) continue;
+      if (result && result.toLowerCase().includes('<html')) continue;
       if (result) {
         return {
           isPresent: true,
@@ -67,30 +62,19 @@ const securityTxtHandler = async (urlParam) => {
       throw new Error(error.message);
     }
   }
-  
+
   return { isPresent: false };
 };
 
-async function fetchSecurityTxt(baseURL, path) {
-  return new Promise((resolve, reject) => {
-    const url = new URL(path, baseURL);
-    https.get(url.toString(), { headers: { 'User-Agent': 'curl/8.0.0' } }, (res) => {
-      if (res.statusCode === 200) {
-        let data = '';
-        res.on('data', (chunk) => {
-          data += chunk;
-        });
-        res.on('end', () => {
-          resolve(data);
-        });
-      } else {
-        resolve(null);
-      }
-    }).on('error', (err) => {
-      reject(err);
-    });
+// Returns the file body when the path 200s, else null so the next path is tried
+const fetchSecurityTxt = async (baseURL, path) => {
+  const url = new URL(path, baseURL);
+  const res = await httpGet(url.toString(), {
+    headers: { 'User-Agent': 'curl/8.0.0' },
+    validateStatus: () => true,
   });
-}
+  return res.status === 200 ? res.data : null;
+};
 
 export const handler = middleware(securityTxtHandler);
 export default handler;

@@ -1,5 +1,5 @@
 # Specify the Node.js version to use
-ARG NODE_VERSION=21
+ARG NODE_VERSION=22
 
 # Specify the Debian version to use, the default is "bullseye"
 ARG DEBIAN_VERSION=bullseye
@@ -55,8 +55,10 @@ RUN apt-get update && \
 # Exposed container port, the default is 3000, which can be modified through the environment variable PORT
 EXPOSE ${PORT:-3000}
 
-# Set the environment variable CHROME_PATH to specify the path to the Chromium binaries
-ENV CHROME_PATH='/usr/bin/chromium'
+# Point Chromium-using libs at the system binary, skip puppeteer's bundled download
+ENV CHROME_PATH='/usr/bin/chromium' \
+    PUPPETEER_EXECUTABLE_PATH='/usr/bin/chromium' \
+    PUPPETEER_SKIP_DOWNLOAD='true'
 
 # Define the command executed when the container starts and start the server.js of the Node.js application
 CMD ["yarn", "start"]
