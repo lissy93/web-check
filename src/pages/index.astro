@@ -14,7 +14,7 @@ const disableEverything = import.meta.env.VITE_DISABLE_EVERYTHING === true;
 
 <BaseLayout>
   <Fragment slot="head">
-    <!-- {!isBossServer && (<meta http-equiv="refresh" content="0; url=/check" />)} -->
+    {!isBossServer && (<meta http-equiv="refresh" content="0; url=/check" />)}
   </Fragment>
   { disableEverything && <TempDisabled />}
   <main>
