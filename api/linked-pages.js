@@ -20,7 +20,7 @@ const linkedPagesHandler = async (url) => {
   $('a[href]').each((i, link) => {
     const href = $(link).attr('href');
     const absoluteUrl = urlLib.resolve(url, href);
-    
+
     // Check if absolute / relative, append to appropriate map or increment occurrence count
     if (absoluteUrl.startsWith(url)) {
       const count = internalLinksMap.get(absoluteUrl) || 0;
@@ -32,12 +32,19 @@ const linkedPagesHandler = async (url) => {
   });
 
   // Sort by most occurrences, remove supplicates, and convert to array
-  const internalLinks = [...internalLinksMap.entries()].sort((a, b) => b[1] - a[1]).map(entry => entry[0]);
-  const externalLinks = [...externalLinksMap.entries()].sort((a, b) => b[1] - a[1]).map(entry => entry[0]);
+  const internalLinks = [...internalLinksMap.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map((entry) => entry[0]);
+  const externalLinks = [...externalLinksMap.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map((entry) => entry[0]);
 
   if (!internalLinks.length && !externalLinks.length) {
-    return { skipped: 'No internal or external links found in the page HTML. '
-      + 'This often happens with single-page apps that render content client-side.' };
+    return {
+      skipped:
+        'No internal or external links found in the page HTML. ' +
+        'This often happens with single-page apps that render content client-side.',
+    };
   }
   return { internal: internalLinks, external: externalLinks };
 };

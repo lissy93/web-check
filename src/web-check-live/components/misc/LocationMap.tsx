@@ -1,18 +1,13 @@
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-  Annotation,
-} from 'react-simple-maps';
+import { ComposableMap, Geographies, Geography, Annotation } from 'react-simple-maps';
 
 import colors from 'web-check-live/styles/colors';
 import MapFeatures from 'web-check-live/assets/data/map-features.json';
 
 interface Props {
-  lat: number,
-  lon: number,
-  label?: string,
-};
+  lat: number;
+  lon: number;
+  label?: string;
+}
 
 const MapChart = (location: Props) => {
   const { lat, lon, label } = location;
@@ -23,7 +18,7 @@ const MapChart = (location: Props) => {
       projectionConfig={{
         rotate: [0, 0, 0],
         center: [lon + 5, lat - 25],
-        scale: 200
+        scale: 200,
       }}
     >
       <Geographies
@@ -33,9 +28,7 @@ const MapChart = (location: Props) => {
         strokeWidth={0.5}
       >
         {({ geographies }: any) =>
-          geographies.map((geo: any) => (
-            <Geography key={geo.rsmKey} geography={geo} />
-          ))
+          geographies.map((geo: any) => <Geography key={geo.rsmKey} geography={geo} />)
         }
       </Geographies>
       <Annotation
@@ -45,11 +38,11 @@ const MapChart = (location: Props) => {
         connectorProps={{
           stroke: colors.textColor,
           strokeWidth: 3,
-          strokeLinecap: "round"
+          strokeLinecap: 'round',
         }}
       >
         <text x="-8" textAnchor="end" fill={colors.textColor} fontSize={25}>
-          {label || "Server"}
+          {label || 'Server'}
         </text>
       </Annotation>
     </ComposableMap>

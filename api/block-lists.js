@@ -18,20 +18,18 @@ const DNS_SERVERS = [
 ];
 
 // Sink IPs used by blocking DNS servers
-const SINK_IPS = new Set([
-  '0.0.0.0', '127.0.0.1',
-  '::1', '::', '0:0:0:0:0:0:0:0',
-]);
+const SINK_IPS = new Set(['0.0.0.0', '127.0.0.1', '::1', '::', '0:0:0:0:0:0:0:0']);
 
 // Resolve a domain via a specific DNS server
-const queryServer = (domain, serverIp) => new Promise((resolve) => {
-  const resolver = new dns.Resolver({ timeout: 3000, tries: 1 });
-  resolver.setServers([serverIp]);
-  resolver.resolve4(domain, (err, addrs) => {
-    if (err) return resolve({ err: err.code });
-    resolve({ addrs });
+const queryServer = (domain, serverIp) =>
+  new Promise((resolve) => {
+    const resolver = new dns.Resolver({ timeout: 3000, tries: 1 });
+    resolver.setServers([serverIp]);
+    resolver.resolve4(domain, (err, addrs) => {
+      if (err) return resolve({ err: err.code });
+      resolve({ addrs });
+    });
   });
-});
 
 // A domain is blocked if the resolver returns a sink IP or refuses
 // to resolve a domain that a neutral resolver can resolve

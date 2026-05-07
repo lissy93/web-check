@@ -15,14 +15,15 @@ const parseHops = (stdout) => {
 };
 
 // Run the system traceroute binary via execFile (no shell, no injection)
-const runTraceroute = (host) => new Promise((resolve, reject) => {
-  execFile(
-    'traceroute',
-    ['-q', '1', '-n', '-w', '2', host],
-    { timeout: LOCAL_TIMEOUT },
-    (err, stdout) => err ? reject(err) : resolve(parseHops(stdout)),
-  );
-});
+const runTraceroute = (host) =>
+  new Promise((resolve, reject) => {
+    execFile(
+      'traceroute',
+      ['-q', '1', '-n', '-w', '2', host],
+      { timeout: LOCAL_TIMEOUT },
+      (err, stdout) => (err ? reject(err) : resolve(parseHops(stdout))),
+    );
+  });
 
 const isMissingBinary = (err) =>
   err?.code === 'ENOENT' || /command not found|not installed/i.test(err?.message || '');
@@ -36,8 +37,9 @@ const traceRouteHandler = async (url) => {
   } catch (err) {
     if (isMissingBinary(err)) {
       return {
-        skipped: 'Traceroute is not installed in this environment. '
-          + 'Install via your package manager, or run web-check via Docker.',
+        skipped:
+          'Traceroute is not installed in this environment. ' +
+          'Install via your package manager, or run web-check via Docker.',
       };
     }
     return { error: `Traceroute failed: ${err.message}` };

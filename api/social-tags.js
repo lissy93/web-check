@@ -12,7 +12,7 @@ const socialTagsHandler = async (url) => {
   }
   try {
     const $ = cheerio.load(response.data);
-    
+
     const metadata = {
       // Basic meta tags
       title: $('head title').text(),
@@ -27,7 +27,7 @@ const socialTagsHandler = async (url) => {
       ogUrl: $('meta[property="og:url"]').attr('content'),
       ogDescription: $('meta[property="og:description"]').attr('content'),
       ogSiteName: $('meta[property="og:site_name"]').attr('content'),
-      
+
       // Twitter Cards
       twitterCard: $('meta[name="twitter:card"]').attr('content'),
       twitterSite: $('meta[name="twitter:site"]').attr('content'),
@@ -44,16 +44,26 @@ const socialTagsHandler = async (url) => {
       viewport: $('meta[name="viewport"]').attr('content'),
       author: $('meta[name="author"]').attr('content'),
       publisher: $('link[rel="publisher"]').attr('href'),
-      favicon: $('link[rel="icon"]').attr('href')
+      favicon: $('link[rel="icon"]').attr('href'),
     };
 
     const SOCIAL_FIELDS = [
-      'title', 'description', 'keywords', 'canonicalUrl',
-      'ogTitle', 'ogImage', 'ogDescription', 'ogSiteName',
-      'twitterTitle', 'twitterDescription', 'twitterImage',
-      'author', 'publisher', 'themeColor',
+      'title',
+      'description',
+      'keywords',
+      'canonicalUrl',
+      'ogTitle',
+      'ogImage',
+      'ogDescription',
+      'ogSiteName',
+      'twitterTitle',
+      'twitterDescription',
+      'twitterImage',
+      'author',
+      'publisher',
+      'themeColor',
     ];
-    if (!SOCIAL_FIELDS.some(f => metadata[f])) {
+    if (!SOCIAL_FIELDS.some((f) => metadata[f])) {
       return { skipped: 'No social tags found on this page' };
     }
     return metadata;

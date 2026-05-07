@@ -33,7 +33,10 @@ const firewallHandler = async (url) => {
       return hasWaf('Barracuda WAF');
     }
 
-    if (headers['server'] && (headers['server'].includes('F5 BIG-IP') || headers['server'].includes('BIG-IP'))) {
+    if (
+      headers['server'] &&
+      (headers['server'].includes('F5 BIG-IP') || headers['server'].includes('BIG-IP'))
+    ) {
       return hasWaf('F5 BIG-IP');
     }
 
@@ -99,7 +102,7 @@ const firewallHandler = async (url) => {
 
     return {
       hasWaf: false,
-    }
+    };
   } catch (error) {
     return upstreamError(error, 'Firewall check');
   }

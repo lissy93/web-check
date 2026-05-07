@@ -3,9 +3,9 @@ import Row from 'web-check-live/components/Form/Row';
 
 const yes = '✅ Yes';
 const no = '❌ No';
-const check = (v: any) => v ? yes : no;
+const check = (v: any) => (v ? yes : no);
 
-const HttpSecurityCard = (props: { data: any, title: string, actionButtons: any }): JSX.Element => {
+const HttpSecurityCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
   const d = props.data;
   return (
     <Card heading={props.title} actionButtons={props.actionButtons}>
@@ -20,6 +20,6 @@ const HttpSecurityCard = (props: { data: any, title: string, actionButtons: any 
       <Row lbl="Cross-Origin-Embedder-Policy" val={check(d.crossOriginEmbedderPolicy)} />
     </Card>
   );
-}
+};
 
 export default HttpSecurityCard;

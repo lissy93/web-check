@@ -11,9 +11,11 @@ const formatEphemeralKey = (k: any): string => {
   return parts.join(' ');
 };
 
-const TlsConnectionCard = (
-  props: { data: any; title: string; actionButtons: any },
-): JSX.Element => {
+const TlsConnectionCard = (props: {
+  data: any;
+  title: string;
+  actionButtons: any;
+}): JSX.Element => {
   const d = props.data || {};
   const cipherName = d.cipher?.standardName || d.cipher?.name || '';
   const ephemeral = formatEphemeralKey(d.ephemeralKey);

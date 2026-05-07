@@ -1,7 +1,7 @@
-import type { ReactNode } from "react";
-import styled from "@emotion/styled";
-import colors from "web-check-live/styles/colors";
-import Heading from "web-check-live/components/Form/Heading";
+import type { ReactNode } from 'react';
+import styled from '@emotion/styled';
+import colors from 'web-check-live/styles/colors';
+import Heading from 'web-check-live/components/Form/Heading';
 
 export interface RowProps {
   lbl: string;
@@ -51,14 +51,14 @@ export const Details = styled.details`
     cursor: pointer;
   }
   summary:before {
-    content: "►";
+    content: '►';
     position: absolute;
     margin-left: -1rem;
     color: ${colors.primary};
     cursor: pointer;
   }
   &[open] summary:before {
-    content: "▼";
+    content: '▼';
   }
 `;
 
@@ -102,17 +102,17 @@ const List = styled.ul`
 const isValidDate = (date: any): boolean => {
   // Checks if a date is within reasonable range
   const isInRange = (date: Date): boolean => {
-    return date >= new Date("1995-01-01") && date <= new Date("2030-12-31");
+    return date >= new Date('1995-01-01') && date <= new Date('2030-12-31');
   };
 
   // Check if input is a timestamp
-  if (typeof date === "number") {
+  if (typeof date === 'number') {
     const timestampDate = new Date(date);
     return !isNaN(timestampDate.getTime()) && isInRange(timestampDate);
   }
 
   // Check if input is a date string
-  if (typeof date === "string") {
+  if (typeof date === 'string') {
     const dateStringDate = new Date(date);
     return !isNaN(dateStringDate.getTime()) && isInRange(dateStringDate);
   }
@@ -126,15 +126,15 @@ const isValidDate = (date: any): boolean => {
 };
 
 const formatDate = (dateString: string): string => {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
+  return new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
   }).format(new Date(dateString));
 };
 const formatValue = (value: any): string => {
   if (isValidDate(new Date(value))) return formatDate(value);
-  if (typeof value === "boolean") return value ? "✅" : "❌";
+  if (typeof value === 'boolean') return value ? '✅' : '❌';
   return value;
 };
 
@@ -200,11 +200,7 @@ export const ListRow = (props: { list: string[]; title: string }) => {
       </Heading>
       {list.map((entry: string, index: number) => {
         return (
-          <Row
-            lbl=""
-            val=""
-            key={`${entry}-${title.toLocaleLowerCase()}-${index}`}
-          >
+          <Row lbl="" val="" key={`${entry}-${title.toLocaleLowerCase()}-${index}`}>
             <span>{entry}</span>
           </Row>
         );

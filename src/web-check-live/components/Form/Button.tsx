@@ -10,21 +10,21 @@ type LoadState = 'loading' | 'success' | 'error';
 interface ButtonProps {
   children: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
-  size?: InputSize,
-  bgColor?: string,
-  fgColor?: string,
-  styles?: string,
-  title?: string,
-  type?: 'button' | 'submit' | 'reset' | undefined,
-  loadState?: LoadState,
-};
+  size?: InputSize;
+  bgColor?: string;
+  fgColor?: string;
+  styles?: string;
+  title?: string;
+  type?: 'button' | 'submit' | 'reset' | undefined;
+  loadState?: LoadState;
+}
 
 const StyledButton = styled.button<ButtonProps>`
   cursor: pointer;
   border: none;
   border-radius: 0.25rem;
   font-family: PTMono;
-  box-sizing: border-box; 
+  box-sizing: border-box;
   width: -moz-available;
   display: flex;
   justify-content: center;
@@ -36,16 +36,11 @@ const StyledButton = styled.button<ButtonProps>`
   &:active {
     box-shadow: -3px -3px 0px ${colors.fgShadowColor};
   }
-  ${props => applySize(props.size)};
-  ${(props) => props.bgColor ?
-    `background: ${props.bgColor};` : `background: ${colors.primary};`
-  }
-  ${(props) => props.fgColor ?
-    `color: ${props.fgColor};` : `color: ${colors.background};`
-  }
-  ${props => props.styles}
+  ${(props) => applySize(props.size)};
+  ${(props) => (props.bgColor ? `background: ${props.bgColor};` : `background: ${colors.primary};`)}
+  ${(props) => (props.fgColor ? `color: ${props.fgColor};` : `color: ${colors.background};`)}
+  ${(props) => props.styles}
 `;
-
 
 const spinAnimation = keyframes`
   0% { transform: rotate(0deg); }
@@ -61,9 +56,9 @@ const SimpleLoader = styled.div`
 `;
 
 const Loader = (props: { loadState: LoadState }) => {
-  if (props.loadState === 'loading') return <SimpleLoader />
-  if (props.loadState === 'success') return <span>✔</span>
-  if (props.loadState === 'error') return <span>✗</span>
+  if (props.loadState === 'loading') return <SimpleLoader />;
+  if (props.loadState === 'success') return <span>✔</span>;
+  if (props.loadState === 'error') return <span>✗</span>;
   return <span></span>;
 };
 
@@ -71,15 +66,15 @@ const Button = (props: ButtonProps): JSX.Element => {
   const { children, size, bgColor, fgColor, onClick, styles, title, loadState, type } = props;
   return (
     <StyledButton
-      onClick={onClick || (() => null) }
+      onClick={onClick || (() => null)}
       size={size}
       bgColor={bgColor}
       fgColor={fgColor}
       styles={styles}
       title={title?.toString()}
       type={type || 'button'}
-      >
-      { loadState && <Loader loadState={loadState} /> }
+    >
+      {loadState && <Loader loadState={loadState} />}
       {children}
     </StyledButton>
   );

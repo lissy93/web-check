@@ -17,8 +17,9 @@ const tlsLabsHandler = async (url) => {
     const data = res.data;
     if (!data || data.status !== 'READY' || !data.endpoints?.length) {
       return {
-        skipped: 'No cached SSL Labs report for this host. '
-          + 'Run a fresh scan at https://www.ssllabs.com/ssltest/',
+        skipped:
+          'No cached SSL Labs report for this host. ' +
+          'Run a fresh scan at https://www.ssllabs.com/ssltest/',
       };
     }
     return data;

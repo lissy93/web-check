@@ -5,7 +5,7 @@ name: 🪞 Mirror to Codeberg
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 3 * * 0" # At 03:30 on Sunday
+    - cron: '30 3 * * 0' # At 03:30 on Sunday
 jobs:
   codeberg:
     runs-on: ubuntu-latest

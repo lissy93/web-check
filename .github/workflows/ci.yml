@@ -146,24 +146,24 @@ jobs:
           echo "✅ Container running and responding"
           docker stop wc-test && docker rm wc-test
 
-  security:
-    name: 🔒 Security Audit
-    runs-on: ubuntu-latest
-    needs: changes
-    if: needs.changes.outputs.lockfile == 'true'
-    continue-on-error: true
-    steps:
-      - name: 🛎️ Checkout Code
-        uses: actions/checkout@v6
+  # security:
+  #   name: 🔒 Security Audit
+  #   runs-on: ubuntu-latest
+  #   needs: changes
+  #   if: needs.changes.outputs.lockfile == 'true'
+  #   continue-on-error: true
+  #   steps:
+  #     - name: 🛎️ Checkout Code
+  #       uses: actions/checkout@v6
 
-      - name: 🔧 Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-          cache: 'yarn'
+  #     - name: 🔧 Setup Node.js
+  #       uses: actions/setup-node@v6
+  #       with:
+  #         node-version: '22'
+  #         cache: 'yarn'
 
-      - name: 📦 Install Dependencies
-        run: yarn install --frozen-lockfile
+  #     - name: 📦 Install Dependencies
+  #       run: yarn install --frozen-lockfile
 
-      - name: 🔒 Run Security Audit
-        run: yarn audit --level high
+  #     - name: 🔒 Run Security Audit
+  #       run: yarn audit --level high

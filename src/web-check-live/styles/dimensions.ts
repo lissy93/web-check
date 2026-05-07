@@ -22,9 +22,13 @@ export const applySize = (inputSize?: InputSize) => {
     `,
   };
   switch (inputSize) {
-    case 'small': return sizeSpecificStyles.small;
-    case 'medium': return sizeSpecificStyles.medium;
-    case 'large': return sizeSpecificStyles.large;
-    default: return sizeSpecificStyles.small;
+    case 'small':
+      return sizeSpecificStyles.small;
+    case 'medium':
+      return sizeSpecificStyles.medium;
+    case 'large':
+      return sizeSpecificStyles.large;
+    default:
+      return sizeSpecificStyles.small;
   }
 };

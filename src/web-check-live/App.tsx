@@ -10,12 +10,12 @@ import GlobalStyles from './styles/globals.tsx';
 
 const Layout = () => {
   return (
-  <>
-    <GlobalStyles />
-    <Outlet />
-  </>
+    <>
+      <GlobalStyles />
+      <Outlet />
+    </>
   );
-}
+};
 
 export default function App() {
   return (

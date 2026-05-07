@@ -3,19 +3,16 @@ import middleware from './_common/middleware.js';
 import { httpGet } from './_common/http.js';
 
 // RFC 9116 recommends .well-known first, legacy /security.txt as fallback
-const SECURITY_TXT_PATHS = [
-  '/.well-known/security.txt',
-  '/security.txt',
-];
+const SECURITY_TXT_PATHS = ['/.well-known/security.txt', '/security.txt'];
 
 const parseResult = (result) => {
   let output = {};
   let counts = {};
   const lines = result.split('\n');
   const regex = /^([^:]+):\s*(.+)$/;
-  
+
   for (const line of lines) {
-    if (!line.startsWith("#") && !line.startsWith("-----") && line.trim() !== '') {
+    if (!line.startsWith('#') && !line.startsWith('-----') && line.trim() !== '') {
       const match = line.match(regex);
       if (match && match.length > 2) {
         let key = match[1].trim();
@@ -28,7 +25,7 @@ const parseResult = (result) => {
       }
     }
   }
-  
+
   return output;
 };
 
@@ -40,7 +37,6 @@ const isPgpSigned = (result) => {
 };
 
 const securityTxtHandler = async (urlParam) => {
-
   let url;
   try {
     url = new URL(urlParam.includes('://') ? urlParam : 'https://' + urlParam);
@@ -48,7 +44,7 @@ const securityTxtHandler = async (urlParam) => {
     throw new Error('Invalid URL format');
   }
   url.pathname = '';
-  
+
   for (let path of SECURITY_TXT_PATHS) {
     try {
       const result = await fetchSecurityTxt(url, path);
@@ -66,7 +62,7 @@ const securityTxtHandler = async (urlParam) => {
       throw new Error(error.message);
     }
   }
-  
+
   return { isPresent: false };
 };
 

@@ -23,9 +23,7 @@ const hsts = (policy?: any): string => {
   if (!policy || policy.status !== 'present') return '❌ Not set';
   const days = Math.round((policy.maxAge || 0) / 86400);
   const sub = policy.includeSubDomains ? ' + includeSubDomains' : '';
-  return days >= 365
-    ? `✅ ${days} days${sub}`
-    : `⚠️ ${days} days${sub} (recommend >= 365)`;
+  return days >= 365 ? `✅ ${days} days${sub}` : `⚠️ ${days} days${sub} (recommend >= 365)`;
 };
 
 const reneg = (n?: number): string => {
@@ -38,31 +36,27 @@ const reneg = (n?: number): string => {
 };
 
 const sessionResumption = (n?: number): string =>
-  n === 1 ? '✅ Tickets'
-    : n === 2 ? '✅ Tickets (no client cert)'
-    : '❌ Disabled';
+  n === 1 ? '✅ Tickets' : n === 2 ? '✅ Tickets (no client cert)' : '❌ Disabled';
 
-const compression = (n?: number): string =>
-  n ? '⚠️ Supported (CRIME risk)' : '✅ Disabled';
+const compression = (n?: number): string => (n ? '⚠️ Supported (CRIME risk)' : '✅ Disabled');
 
 // Each entry returns the value string, or null/undefined to hide the row entirely
 const POSTURE: Array<[string, (d: any) => string | null | undefined]> = [
-  ['Forward Secrecy', d => fwdSecrecy(d.forwardSecrecy)],
-  ['HSTS', d => hsts(d.hstsPolicy)],
-  ['Session Resumption', d => sessionResumption(d.sessionResumption)],
-  ['OCSP Stapling', d => yesNo(d.ocspStapling)],
-  ['Renegotiation', d => reneg(d.renegSupport)],
-  ['Fallback SCSV (downgrade protection)', d => yesNo(d.fallbackScsv)],
-  ['Certificate Transparency', d => yesNo(d.hasSct)],
-  ['HTTP -> HTTPS Forwarding',
-    d => d.httpForwarding == null ? null : yesNo(d.httpForwarding)],
-  ['ChaCha20 Preferred', d => yesNo(d.chaCha20Preference)],
-  ['AEAD Cipher Support', d => yesNo(d.supportsAead)],
-  ['Legacy CBC Cipher Support', d => yesNoVuln(d.supportsCBC)],
-  ['TLS Compression', d => compression(d.compressionMethods)],
-  ['Static DH Key Reuse', d => yesNoVuln(d.dhYsReuse)],
-  ['Weak DH Primes', d => yesNoVuln(d.dhUsesKnownPrimes)],
-  ['Static ECDH Parameter Reuse', d => yesNoVuln(d.ecdhParameterReuse)],
+  ['Forward Secrecy', (d) => fwdSecrecy(d.forwardSecrecy)],
+  ['HSTS', (d) => hsts(d.hstsPolicy)],
+  ['Session Resumption', (d) => sessionResumption(d.sessionResumption)],
+  ['OCSP Stapling', (d) => yesNo(d.ocspStapling)],
+  ['Renegotiation', (d) => reneg(d.renegSupport)],
+  ['Fallback SCSV (downgrade protection)', (d) => yesNo(d.fallbackScsv)],
+  ['Certificate Transparency', (d) => yesNo(d.hasSct)],
+  ['HTTP -> HTTPS Forwarding', (d) => (d.httpForwarding == null ? null : yesNo(d.httpForwarding))],
+  ['ChaCha20 Preferred', (d) => yesNo(d.chaCha20Preference)],
+  ['AEAD Cipher Support', (d) => yesNo(d.supportsAead)],
+  ['Legacy CBC Cipher Support', (d) => yesNoVuln(d.supportsCBC)],
+  ['TLS Compression', (d) => compression(d.compressionMethods)],
+  ['Static DH Key Reuse', (d) => yesNoVuln(d.dhYsReuse)],
+  ['Weak DH Primes', (d) => yesNoVuln(d.dhUsesKnownPrimes)],
+  ['Static ECDH Parameter Reuse', (d) => yesNoVuln(d.ecdhParameterReuse)],
 ];
 
 const VULNS: Array<[string, string]> = [
@@ -82,14 +76,15 @@ const VULNS: Array<[string, string]> = [
   ['ticketbleed', 'Ticketbleed'],
 ];
 
-const TlsSecurityAuditCard = (
-  props: { data: any; title: string; actionButtons: any },
-): JSX.Element | null => {
+const TlsSecurityAuditCard = (props: {
+  data: any;
+  title: string;
+  actionButtons: any;
+}): JSX.Element | null => {
   const ep = props.data?.endpoints?.[0];
   if (!ep?.details) return null;
   const d = ep.details;
-  const protocols = (d.protocols || [])
-    .map((p: any) => `${p.name} ${p.version}`).join(', ');
+  const protocols = (d.protocols || []).map((p: any) => `${p.name} ${p.version}`).join(', ');
   return (
     <Card heading={props.title} actionButtons={props.actionButtons}>
       {ep.grade && <Row lbl="Grade" val={ep.grade} />}
@@ -102,11 +97,7 @@ const TlsSecurityAuditCard = (
         return val ? <Row key={label} lbl={label} val={val} /> : null;
       })}
       {VULNS.map(([key, label]) => (
-        <Row
-          key={key}
-          lbl={label}
-          val={isVulnerable(d[key]) ? '⚠️ Vulnerable' : '✅ Safe'}
-        />
+        <Row key={key} lbl={label} val={isVulnerable(d[key]) ? '⚠️ Vulnerable' : '✅ Safe'} />
       ))}
     </Card>
   );

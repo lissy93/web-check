@@ -3,13 +3,21 @@ import middleware from './_common/middleware.js';
 import { parseTarget } from './_common/parse-target.js';
 
 // Safely query TXT, returning [] on ENODATA/ENOTFOUND
-const safeTxt = (name) =>
-  dns.resolveTxt(name).catch(() => []);
+const safeTxt = (name) => dns.resolveTxt(name).catch(() => []);
 
 // Try common DKIM selectors to detect if DKIM is configured
 const DKIM_SELECTORS = [
-  'default', 'google', 'selector1', 'selector2',
-  'k1', 'k2', 'k3', 's1', 's2', 'dkim', 'mail',
+  'default',
+  'google',
+  'selector1',
+  'selector2',
+  'k1',
+  'k2',
+  'k3',
+  's1',
+  's2',
+  'dkim',
+  'mail',
 ];
 const findDkim = async (domain) => {
   const checks = DKIM_SELECTORS.map((s) =>
@@ -57,14 +65,13 @@ const detectProviders = (mxRecords) => {
 const mailConfigHandler = async (url) => {
   const { hostname: domain } = parseTarget(url);
   try {
-    const [mxRecords, rootTxt, dmarcTxt, bimiTxt, dkimResults] =
-      await Promise.all([
-        dns.resolveMx(domain),
-        safeTxt(domain),
-        safeTxt(`_dmarc.${domain}`),
-        safeTxt(`default._bimi.${domain}`),
-        findDkim(domain),
-      ]);
+    const [mxRecords, rootTxt, dmarcTxt, bimiTxt, dkimResults] = await Promise.all([
+      dns.resolveMx(domain),
+      safeTxt(domain),
+      safeTxt(`_dmarc.${domain}`),
+      safeTxt(`default._bimi.${domain}`),
+      findDkim(domain),
+    ]);
 
     // Collect email-relevant TXT records
     const emailTxt = rootTxt.filter((r) => {

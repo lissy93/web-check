@@ -1,7 +1,5 @@
 import { parseJson } from 'web-check-live/utils/parse-json';
-import {
-  getLocation, parseShodanResults,
-} from 'web-check-live/utils/result-processor';
+import { getLocation, parseShodanResults } from 'web-check-live/utils/result-processor';
 
 import ServerLocationCard from 'web-check-live/components/Results/ServerLocation';
 import ServerInfoCard from 'web-check-live/components/Results/ServerInfo';
@@ -45,16 +43,15 @@ import type { JobSpec, JobContext, JobsState } from './types';
 const URL_ONLY = ['url'] as const;
 
 // Build a fetcher that hits a local /api path then maps the success body
-const fetchAndProcess = (
-  path: string,
-  process: (raw: any) => any = r => r,
-) => async (ctx: JobContext) => {
-  const target = path.includes('${ip}') ? (ctx.ipAddress || '') : ctx.address;
-  const url = path.replace(/\$\{(ip|url)\}/g, target);
-  const res = await fetch(`${ctx.api}/${url}`, { signal: ctx.signal });
-  const raw = await parseJson(res);
-  return raw?.error ? raw : process(raw);
-};
+const fetchAndProcess =
+  (path: string, process: (raw: any) => any = (r) => r) =>
+  async (ctx: JobContext) => {
+    const target = path.includes('${ip}') ? ctx.ipAddress || '' : ctx.address;
+    const url = path.replace(/\$\{(ip|url)\}/g, target);
+    const res = await fetch(`${ctx.api}/${url}`, { signal: ctx.signal });
+    const raw = await parseJson(res);
+    return raw?.error ? raw : process(raw);
+  };
 
 const card = (
   id: string,
@@ -72,13 +69,14 @@ export const jobs: JobSpec[] = [
     id: 'get-ip',
     cards: [],
     expectedAddressTypes: [...URL_ONLY],
-    fetcher: fetchAndProcess('get-ip?url=${url}', r => r.ip),
+    fetcher: fetchAndProcess('get-ip?url=${url}', (r) => r.ip),
   },
   {
     id: 'location',
     needsIp: true,
-    cards: [card('location', 'Server Location', ['server'], ServerLocationCard,
-      { pick: getLocation })],
+    cards: [
+      card('location', 'Server Location', ['server'], ServerLocationCard, { pick: getLocation }),
+    ],
     fetcher: fetchAndProcess('location?url=${ip}'),
   },
   {
@@ -113,8 +111,7 @@ export const jobs: JobSpec[] = [
     needsIp: true,
     cards: [
       card('hosts', 'Host Names', ['server'], HostNamesCard, { pick: at('hostnames') }),
-      card('server-info', 'Server Info', ['server'], ServerInfoCard,
-        { pick: at('serverInfo') }),
+      card('server-info', 'Server Info', ['server'], ServerInfoCard, { pick: at('serverInfo') }),
     ],
     fetcher: fetchAndProcess('shodan?url=${ip}', parseShodanResults),
   },
@@ -211,27 +208,25 @@ export const jobs: JobSpec[] = [
   {
     id: 'screenshot',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [card('screenshot', 'Screenshot', ['client', 'meta'], ScreenshotCard, {
-      fallback: (state: JobsState) =>
-        state.quality?.raw?.fullPageScreenshot?.screenshot,
-    })],
+    cards: [
+      card('screenshot', 'Screenshot', ['client', 'meta'], ScreenshotCard, {
+        fallback: (state: JobsState) => state.quality?.raw?.fullPageScreenshot?.screenshot,
+      }),
+    ],
     fetcher: fetchAndProcess('screenshot?url=${url}'),
   },
   {
     id: 'tls-connection',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [card('tls-connection', 'TLS Connection',
-      ['server', 'security'], TlsConnectionCard)],
+    cards: [card('tls-connection', 'TLS Connection', ['server', 'security'], TlsConnectionCard)],
     fetcher: fetchAndProcess('tls-connection?url=${url}'),
   },
   {
     id: 'tls-labs',
     expectedAddressTypes: [...URL_ONLY],
     cards: [
-      card('tls-security-audit', 'TLS Security Audit',
-        ['security'], TlsSecurityAuditCard),
-      card('tls-client-compat', 'TLS Client Compatibility',
-        ['security'], TlsClientCompatCard),
+      card('tls-security-audit', 'TLS Security Audit', ['security'], TlsSecurityAuditCard),
+      card('tls-client-compat', 'TLS Client Compatibility', ['security'], TlsClientCompatCard),
     ],
     fetcher: fetchAndProcess('tls-labs?url=${url}'),
   },
@@ -292,7 +287,8 @@ export const jobs: JobSpec[] = [
 ];
 
 // Flat list of every card id (1+ per job). Used by ProgressBar and the result grid
-export const allCardIds: string[] = jobs.flatMap(j => j.cards.map(c => c.id));
+export const allCardIds: string[] = jobs.flatMap((j) => j.cards.map((c) => c.id));
 
-export const allCards: Array<{ jobId: string; card: JobSpec['cards'][number] }> =
-  jobs.flatMap(j => j.cards.map(card => ({ jobId: j.id, card })));
+export const allCards: Array<{ jobId: string; card: JobSpec['cards'][number] }> = jobs.flatMap(
+  (j) => j.cards.map((card) => ({ jobId: j.id, card })),
+);

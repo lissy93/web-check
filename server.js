@@ -1,4 +1,3 @@
-
 import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
@@ -16,9 +15,11 @@ const trustProxy = process.env.TRUST_PROXY;
 if (trustProxy) {
   const parsed = /^\d+$/.test(trustProxy)
     ? parseInt(trustProxy, 10)
-    : trustProxy === 'true' ? true
-    : trustProxy === 'false' ? false
-    : trustProxy;
+    : trustProxy === 'true'
+      ? true
+      : trustProxy === 'false'
+        ? false
+        : trustProxy;
   app.set('trust proxy', parsed);
 }
 
@@ -34,9 +35,11 @@ const handlers = {}; // Will store list of API endpoints
 process.env.WC_SERVER = 'true'; // Tells middleware to return in non-lambda mode
 
 // Enable CORS
-app.use(cors({
-  origin: process.env.API_CORS_ORIGIN || '*',
-}));
+app.use(
+  cors({
+    origin: process.env.API_CORS_ORIGIN || '*',
+  }),
+);
 
 // Define max requests within each time frame
 const limits = [
@@ -47,19 +50,22 @@ const limits = [
 
 // Construct a message to be returned if the user has been rate-limited
 const makeLimiterResponseMsg = (retryAfter) => {
-  const why = 'This keeps the service running smoothly for everyone. '
-  + 'You can get around these limits by running your own instance of Web Check.';
+  const why =
+    'This keeps the service running smoothly for everyone. ' +
+    'You can get around these limits by running your own instance of Web Check.';
   return `You've been rate-limited, please try again in ${retryAfter} seconds.\n${why}`;
 };
 
 // Create rate limiters for each time frame
-const limiters = limits.map(limit => rateLimit({
-  windowMs: limit.timeFrame * 1000,
-  limit: limit.max,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: makeLimiterResponseMsg(limit.messageTime) }
-}));
+const limiters = limits.map((limit) =>
+  rateLimit({
+    windowMs: limit.timeFrame * 1000,
+    limit: limit.max,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: makeLimiterResponseMsg(limit.messageTime) },
+  }),
+);
 
 // If rate-limiting enabled, then apply the limiters to the /api endpoint
 if (process.env.API_ENABLE_RATE_LIMIT === 'true') {
@@ -68,8 +74,8 @@ if (process.env.API_ENABLE_RATE_LIMIT === 'true') {
 
 // Read and register each API function as an Express routes
 fs.readdirSync(dirPath, { withFileTypes: true })
-  .filter(dirent => dirent.isFile() && dirent.name.endsWith('.js'))
-  .forEach(async dirent => {
+  .filter((dirent) => dirent.isFile() && dirent.name.endsWith('.js'))
+  .forEach(async (dirent) => {
     const routeName = dirent.name.split('.')[0];
     const route = `${API_DIR}/${routeName}`;
     // const handler = require(path.join(dirPath, dirent.name));
@@ -89,17 +95,20 @@ fs.readdirSync(dirPath, { withFileTypes: true })
 
 const renderPlaceholderPage = async (res, msgId, logs) => {
   const errorMessages = {
-    notCompiled: 'Looks like the GUI app has not yet been compiled.<br />'
-    + 'Run <code>yarn build</code> to continue, then restart the server.',
-    notCompiledSsrHandler: 'Server-side rendering failed to initiate, as SSR handler not found.<br />'
-    + 'This can be fixed by running <code>yarn build</code>, then restarting the server.<br />',
-    disabledGui:  'Web-Check API is up and running!<br />Access the endpoints at '
-    + `<a href="${API_DIR}"><code>${API_DIR}</code></a>`,
+    notCompiled:
+      'Looks like the GUI app has not yet been compiled.<br />' +
+      'Run <code>yarn build</code> to continue, then restart the server.',
+    notCompiledSsrHandler:
+      'Server-side rendering failed to initiate, as SSR handler not found.<br />' +
+      'This can be fixed by running <code>yarn build</code>, then restarting the server.<br />',
+    disabledGui:
+      'Web-Check API is up and running!<br />Access the endpoints at ' +
+      `<a href="${API_DIR}"><code>${API_DIR}</code></a>`,
   };
   const logOutput = logs ? `<div class="logs"><code>${logs}</code></div>` : '';
   const errorMessage = (errorMessages[msgId] || 'An mystery error occurred.') + logOutput;
   const placeholderContent = await fs.promises.readFile(placeholderFilePath, 'utf-8');
-  const htmlContent = placeholderContent.replace('<!-- CONTENT -->', errorMessage );
+  const htmlContent = placeholderContent.replace('<!-- CONTENT -->', errorMessage);
   res.status(500).send(htmlContent);
 };
 
@@ -126,9 +135,11 @@ app.get(API_DIR, async (req, res) => {
   const timeout = (ms, jobName = null) => {
     return new Promise((_, reject) => {
       setTimeout(() => {
-        reject(new Error(
-          `Timed out after ${ms/1000} seconds${jobName ? `, when executing ${jobName}` : ''}`
-        ));
+        reject(
+          new Error(
+            `Timed out after ${ms / 1000} seconds${jobName ? `, when executing ${jobName}` : ''}`,
+          ),
+        );
       }, ms);
     });
   };
@@ -139,7 +150,7 @@ app.get(API_DIR, async (req, res) => {
     try {
       const result = await Promise.race([
         executeHandler(handler, req, res),
-        timeout(maxExecutionTime, routeName)
+        timeout(maxExecutionTime, routeName),
       ]);
       results[routeName] = result.body;
     } catch (err) {
@@ -168,15 +179,18 @@ if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
   app.get('/', async (req, res) => {
     renderPlaceholderPage(res, 'notCompiled');
   });
-} else { // GUI enabled, and build files present, let's go!!
+} else {
+  // GUI enabled, and build files present, let's go!!
   app.use(express.static('dist/client/'));
   app.use(async (req, res, next) => {
     const ssrHandlerPath = path.join(__dirname, 'dist', 'server', 'entry.mjs');
-    import(ssrHandlerPath).then(({ handler: ssrHandler }) => {
-      ssrHandler(req, res, next);
-    }).catch(async err => {
-      renderPlaceholderPage(res, 'notCompiledSsrHandler', err.message);
-    });
+    import(ssrHandlerPath)
+      .then(({ handler: ssrHandler }) => {
+        ssrHandler(req, res, next);
+      })
+      .catch(async (err) => {
+        renderPlaceholderPage(res, 'notCompiledSsrHandler', err.message);
+      });
   });
 }
 
@@ -193,16 +207,16 @@ app.use((req, res, next) => {
 const printMessage = () => {
   console.log(
     `\x1b[36m\n` +
-    '    __      __   _         ___ _           _   \n' +
-    '    \\ \\    / /__| |__ ___ / __| |_  ___ __| |__\n' +
-    '     \\ \\/\\/ / -_) \'_ \\___| (__| \' \\/ -_) _| / /\n' +
-    '      \\_/\\_/\\___|_.__/    \\___|_||_\\___\\__|_\\_\\\n' +
-    `\x1b[0m\n`,
+      '    __      __   _         ___ _           _   \n' +
+      '    \\ \\    / /__| |__ ___ / __| |_  ___ __| |__\n' +
+      "     \\ \\/\\/ / -_) '_ \\___| (__| ' \\/ -_) _| / /\n" +
+      '      \\_/\\_/\\___|_.__/    \\___|_||_\\___\\__|_\\_\\\n' +
+      `\x1b[0m\n`,
     `\x1b[1m\x1b[32m🚀 Web-Check is up and running at http://localhost:${port} \x1b[0m\n\n`,
     `\x1b[2m\x1b[36m🛟 For documentation and support, visit the GitHub repo: ` +
-    `https://github.com/lissy93/web-check \n`,
+      `https://github.com/lissy93/web-check \n`,
     `💖 Found Web-Check useful? Consider sponsoring us on GitHub ` +
-    `to help fund maintenance & development.\x1b[0m`
+      `to help fund maintenance & development.\x1b[0m`,
   );
 };
 
@@ -210,4 +224,3 @@ const printMessage = () => {
 app.listen(port, () => {
   printMessage();
 });
-

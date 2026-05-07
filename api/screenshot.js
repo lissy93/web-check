@@ -28,9 +28,9 @@ const directChromiumScreenshot = async (url) => {
       if (error) return reject(error);
       try {
         const buf = await fs.readFile(screenshotPath);
-        await fs.unlink(screenshotPath).catch(err =>
-          log.warn(`temp cleanup failed: ${err.message}`)
-        );
+        await fs
+          .unlink(screenshotPath)
+          .catch((err) => log.warn(`temp cleanup failed: ${err.message}`));
         resolve(buf.toString('base64'));
       } catch (readError) {
         reject(readError);
@@ -46,7 +46,7 @@ const puppeteerScreenshot = async (targetUrl) => {
     browser = await puppeteer.launch({
       args: [...chromium.args, '--no-sandbox'],
       defaultViewport: { width: 800, height: 600 },
-      executablePath: process.env.CHROME_PATH || await chromium.executablePath(),
+      executablePath: process.env.CHROME_PATH || (await chromium.executablePath()),
       headless: true,
       acceptInsecureCerts: true,
       ignoreDefaultArgs: ['--disable-extensions'],
@@ -69,8 +69,11 @@ const puppeteerScreenshot = async (targetUrl) => {
 
 const screenshotHandler = async (targetUrl) => {
   if (!targetUrl) throw new Error('URL is missing from queryStringParameters');
-  try { new URL(targetUrl); }
-  catch { throw new Error('URL provided is invalid'); }
+  try {
+    new URL(targetUrl);
+  } catch {
+    throw new Error('URL provided is invalid');
+  }
 
   log.debug(`request received: ${targetUrl}`);
   try {

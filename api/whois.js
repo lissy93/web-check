@@ -64,12 +64,12 @@ const rdapToWhoiserShape = (data) => {
     'Updated Date': evt('last changed') || evt('last update of RDAP database'),
     'Expiry Date': evt('expiration'),
     'Registry Domain ID': data.handle,
-    'Registrar': vcardFn(registrar?.vcardArray),
+    Registrar: vcardFn(registrar?.vcardArray),
     'Registrar IANA ID': ianaId,
     'Registrar URL': registrarUrlEntry?.href,
     'Domain Status': data.status,
     'Name Server': (data.nameservers || []).map((n) => n.ldhName).filter(Boolean),
-    'DNSSEC': data.secureDNS?.delegationSigned ? 'signed' : 'unsigned',
+    DNSSEC: data.secureDNS?.delegationSigned ? 'signed' : 'unsigned',
   };
 };
 
@@ -88,11 +88,12 @@ const fetchRdapFallback = async (domain) => {
 
 // Whether a parsed result set has anything worth returning to the frontend
 const hasUsefulData = (r) =>
-  r && (pick(r, 'Created Date', 'Creation Date')
-    || pick(r, 'Updated Date')
-    || pick(r, 'Expiry Date', 'Registry Expiry Date')
-    || pick(r, 'Registrar')
-    || cleanNs(pick(r, 'Name Server')));
+  r &&
+  (pick(r, 'Created Date', 'Creation Date') ||
+    pick(r, 'Updated Date') ||
+    pick(r, 'Expiry Date', 'Registry Expiry Date') ||
+    pick(r, 'Registrar') ||
+    cleanNs(pick(r, 'Name Server')));
 
 // Resolve domain registration data via whoiser, with rdap.org as a fallback for TLD gaps
 const whoisHandler = async (url) => {

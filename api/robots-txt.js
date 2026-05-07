@@ -20,9 +20,7 @@ const robotsHandler = async (url) => {
   try {
     const res = await httpGet(`${protocol}//${host}/robots.txt`);
     const parsed = parseRobotsTxt(res.data || '');
-    return parsed.robots.length
-      ? parsed
-      : { skipped: 'No robots.txt rules found for this host' };
+    return parsed.robots.length ? parsed : { skipped: 'No robots.txt rules found for this host' };
   } catch (error) {
     if (error.response?.status === 404) {
       return { skipped: 'No robots.txt file present on this host' };

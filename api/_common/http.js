@@ -35,13 +35,16 @@ const parseBody = async (response) => {
   const text = await response.text();
   if (!text) return ct.includes('json') ? null : '';
   if (ct.includes('json')) {
-    try { return JSON.parse(text); } catch { return text; }
+    try {
+      return JSON.parse(text);
+    } catch {
+      return text;
+    }
   }
   return text;
 };
 
-const isOk = (status, validate) =>
-  validate ? validate(status) : (status >= 200 && status < 300);
+const isOk = (status, validate) => (validate ? validate(status) : status >= 200 && status < 300);
 
 const wrapNetworkError = (error) => {
   if (error.name === 'TimeoutError' || error.name === 'AbortError') {
@@ -75,7 +78,7 @@ const send = async (method, url, body, opts = {}) => {
   if (body !== undefined && body !== null) {
     if (typeof body === 'object') {
       init.body = JSON.stringify(body);
-      const hasCt = Object.keys(headers).some(k => k.toLowerCase() === 'content-type');
+      const hasCt = Object.keys(headers).some((k) => k.toLowerCase() === 'content-type');
       if (!hasCt) init.headers['content-type'] = 'application/json';
     } else {
       init.body = body;

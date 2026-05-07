@@ -9,13 +9,7 @@ import Nav from 'web-check-live/components/Form/Nav';
 import Button from 'web-check-live/components/Form/Button';
 import AdditionalResources from 'web-check-live/components/misc/AdditionalResources';
 import { StyledCard } from 'web-check-live/components/Form/Card';
-import docs, {
-  about,
-  featureIntro,
-  license,
-  fairUse,
-  supportUs,
-} from 'web-check-live/utils/docs';
+import docs, { about, featureIntro, license, fairUse, supportUs } from 'web-check-live/utils/docs';
 
 const AboutContainer = styled.div`
 width: 95vw;
@@ -155,11 +149,7 @@ const About = (): JSX.Element => {
       <AboutContainer>
         <Nav>
           <HeaderLinkContainer>
-            <a
-              target="_blank"
-              rel="noreferrer"
-              href="https://github.com/lissy93/web-check"
-            >
+            <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check">
               <Button>View on GitHub</Button>
             </a>
           </HeaderLinkContainer>
@@ -222,27 +212,18 @@ const About = (): JSX.Element => {
             >
               MIT license
             </a>
-            , and is completely free to use, modify and distribute in both
-            personal and commercial settings.
+            , and is completely free to use, modify and distribute in both personal and commercial
+            settings.
             <br />
             Source code and self-hosting docs are available on{' '}
-            <a
-              target="_blank"
-              rel="noreferrer"
-              href="https://github.com/lissy93/web-check"
-            >
+            <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check">
               GitHub
             </a>
             . If you've found this service useful, consider{' '}
-            <a
-              target="_blank"
-              rel="noreferrer"
-              href="https://github.com/sponsors/Lissy93"
-            >
+            <a target="_blank" rel="noreferrer" href="https://github.com/sponsors/Lissy93">
               sponsoring me
             </a>{' '}
-            from $1/month, to help with the ongoing hosting and development
-            costs.
+            from $1/month, to help with the ongoing hosting and development costs.
           </p>
         </Section>
 
@@ -254,12 +235,7 @@ const About = (): JSX.Element => {
             <p key={i}>{fi}</p>
           ))}
           <div className="contents">
-            <Heading
-              as="h3"
-              size="small"
-              id="#feature-contents"
-              color={colors.primary}
-            >
+            <Heading as="h3" size="small" id="#feature-contents" color={colors.primary}>
               Contents
             </Heading>
             <ul>
@@ -275,12 +251,7 @@ const About = (): JSX.Element => {
           {docs.map((section, sectionIndex: number) => (
             <section key={section.title}>
               {sectionIndex > 0 && <hr />}
-              <Heading
-                as="h3"
-                size="small"
-                id={makeAnchor(section.title)}
-                color={colors.primary}
-              >
+              <Heading as="h3" size="small" id={makeAnchor(section.title)} color={colors.primary}>
                 {section.title}
               </Heading>
               {section.screenshot && (
@@ -318,10 +289,7 @@ const About = (): JSX.Element => {
                   </Heading>
                   <ul>
                     {section.resources.map(
-                      (
-                        link: string | { title: string; link: string },
-                        linkIndx: number,
-                      ) =>
+                      (link: string | { title: string; link: string }, linkIndx: number) =>
                         typeof link === 'string' ? (
                           <li key={`link-${linkIndx}`} id={`link-${linkIndx}`}>
                             <a target="_blank" rel="noreferrer" href={link}>
@@ -330,11 +298,7 @@ const About = (): JSX.Element => {
                           </li>
                         ) : (
                           <li key={`link-${linkIndx}`} id={`link-${linkIndx}`}>
-                            <a
-                              target="_blank"
-                              rel="noreferrer"
-                              href={link.link}
-                            >
+                            <a target="_blank" rel="noreferrer" href={link.link}>
                               {link.title}
                             </a>
                           </li>
@@ -361,10 +325,7 @@ const About = (): JSX.Element => {
             rel="noreferrer"
             href="https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check"
           >
-            <img
-              src="https://www.netlify.com/img/deploy/button.svg"
-              alt="Deploy to Netlify"
-            />
+            <img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" />
           </a>
 
           <Heading as="h3" size="small" color={colors.primary}>
@@ -384,11 +345,7 @@ const About = (): JSX.Element => {
           </Heading>
           <p>
             A Docker container is published to{' '}
-            <a
-              target="_blank"
-              rel="noreferrer"
-              href="https://hub.docker.com/r/lissy93/web-check"
-            >
+            <a target="_blank" rel="noreferrer" href="https://hub.docker.com/r/lissy93/web-check">
               DockerHub
             </a>
             <br />
@@ -416,13 +373,9 @@ const About = (): JSX.Element => {
             Further Docs
           </Heading>
           <p>
-            More detailed installation and setup instructions can be found in
-            the GitHub repository -{' '}
-            <a
-              target="_blank"
-              rel="noreferrer"
-              href="https://github.com/lissy93/web-check#readme"
-            >
+            More detailed installation and setup instructions can be found in the GitHub repository
+            -{' '}
+            <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check#readme">
               github.com/lissy93/web-check
             </a>
           </p>
@@ -431,9 +384,8 @@ const About = (): JSX.Element => {
             Configuring
           </Heading>
           <p>
-            There are some optional environmental variables you can specify to
-            give you access to some additional Web-Checks. See the README for
-            full list of options.
+            There are some optional environmental variables you can specify to give you access to
+            some additional Web-Checks. See the README for full list of options.
           </p>
 
           <ul>
@@ -450,11 +402,7 @@ const About = (): JSX.Element => {
             </li>
             <li>
               <code>REACT_APP_SHODAN_API_KEY</code>:{' '}
-              <a
-                target="_blank"
-                rel="noreferrer"
-                href="https://account.shodan.io/"
-              >
+              <a target="_blank" rel="noreferrer" href="https://account.shodan.io/">
                 A Shodan API key
               </a>
               <i> To show associated hosts for a domain</i>
@@ -498,11 +446,7 @@ const About = (): JSX.Element => {
             License
           </Heading>
           <b>
-            <a
-              target="_blank"
-              rel="noreferrer"
-              href="https://github.com/lissy93/web-check"
-            >
+            <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check">
               Web-Check
             </a>{' '}
             is distributed under the MIT license, ©{' '}
@@ -514,11 +458,7 @@ const About = (): JSX.Element => {
           <br />
           <small>
             For more info, see{' '}
-            <a
-              target="_blank"
-              rel="noreferrer"
-              href="https://tldrlegal.com/license/mit-license"
-            >
+            <a target="_blank" rel="noreferrer" href="https://tldrlegal.com/license/mit-license">
               TLDR Legal → MIT
             </a>
           </small>
@@ -537,16 +477,14 @@ const About = (): JSX.Element => {
             Privacy
           </Heading>
           <p>
-            Analytics are used on the demo instance (via a self-hosted Plausible
-            instance), this only records the URL you visited but no personal
-            data. There's also some basic error logging (via a self-hosted
-            GlitchTip instance), this is only used to help me fix bugs.
+            Analytics are used on the demo instance (via a self-hosted Plausible instance), this
+            only records the URL you visited but no personal data. There's also some basic error
+            logging (via a self-hosted GlitchTip instance), this is only used to help me fix bugs.
             <br />
             <br />
-            Neither your IP address, browser/OS/hardware info, nor any other
-            data will ever be collected or logged. (You may verify this
-            yourself, either by inspecting the source code or the using
-            developer tools)
+            Neither your IP address, browser/OS/hardware info, nor any other data will ever be
+            collected or logged. (You may verify this yourself, either by inspecting the source code
+            or the using developer tools)
           </p>
         </Section>
       </AboutContainer>

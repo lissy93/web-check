@@ -58,14 +58,19 @@ const Container = styled.div`
   z-index: 1;
   top: 0;
   left: 0;
-  background: radial-gradient(circle at center top, transparent, transparent 60%, var(--background) 100%);
+  background: radial-gradient(
+    circle at center top,
+    transparent,
+    transparent 60%,
+    var(--background) 100%
+  );
 `;
 
 const generateMeteor = (id: number, gridSizeX: number, gridSizeY: number) => {
   const column = Math.floor(Math.random() * gridSizeX);
   const startRow = Math.floor(Math.random() * (gridSizeY - 12));
   const travelDistance = distanceBase + Math.floor(Math.random() * distanceVariance);
-  const duration = durationBase +  Math.floor(Math.random() * durationVariance);
+  const duration = durationBase + Math.floor(Math.random() * durationVariance);
 
   return {
     id,
@@ -81,8 +86,9 @@ const generateMeteor = (id: number, gridSizeX: number, gridSizeY: number) => {
 
 const generateInitialMeteors = (gridSizeX: number, gridSizeY: number) => {
   const seen = new Set();
-  return Array.from({ length: meteorCount }, (_, index) => generateMeteor(index, gridSizeX, gridSizeY))
-    .filter(item => !seen.has(item.column) && seen.add(item.column));
+  return Array.from({ length: meteorCount }, (_, index) =>
+    generateMeteor(index, gridSizeX, gridSizeY),
+  ).filter((item) => !seen.has(item.column) && seen.add(item.column));
 };
 
 const WebCheckHomeBackground = () => {
@@ -91,8 +97,8 @@ const WebCheckHomeBackground = () => {
   const [meteors, setMeteors] = useState(() => generateInitialMeteors(gridSizeX, gridSizeY));
 
   const handleAnimationComplete = (id: number) => {
-    setMeteors(current =>
-      current.map(meteor => {
+    setMeteors((current) =>
+      current.map((meteor) => {
         if (meteor.id === id) {
           if (meteor.animationStage === 'traveling') {
             // Transition to retracting tail
@@ -102,15 +108,18 @@ const WebCheckHomeBackground = () => {
             return { ...meteor, animationStage: 'resetting', opacity: 0 };
           } else if (meteor.animationStage === 'resetting') {
             // Respawn the meteor after a delay
-            setTimeout(() => {
-              setMeteors(current =>
-                current.map(m => m.id === id ? generateMeteor(id, gridSizeX, gridSizeY) : m)
-              );
-            }, delayBase + Math.random() * delayVariance);
+            setTimeout(
+              () => {
+                setMeteors((current) =>
+                  current.map((m) => (m.id === id ? generateMeteor(id, gridSizeX, gridSizeY) : m)),
+                );
+              },
+              delayBase + Math.random() * delayVariance,
+            );
           }
         }
         return meteor;
-      })
+      }),
     );
   };
 
@@ -128,7 +137,12 @@ const WebCheckHomeBackground = () => {
       <Container />
       <StyledSvg>
         <defs>
-          <pattern id="dot-pattern" width={dotSpacing} height={dotSpacing} patternUnits="userSpaceOnUse">
+          <pattern
+            id="dot-pattern"
+            width={dotSpacing}
+            height={dotSpacing}
+            patternUnits="userSpaceOnUse"
+          >
             <circle cx={1} cy={1} r={2} />
           </pattern>
         </defs>
@@ -137,33 +151,36 @@ const WebCheckHomeBackground = () => {
 
       {meteors.map(({ id, column, startRow, endRow, duration, tailVisible, animationStage }) => {
         return (
-        <MeteorContainer
-          key={id}
-          initial={{
-            x: column * dotSpacing,
-            y: startRow * dotSpacing,
-            opacity: 1,
-          }}
-          animate={{
-            opacity: tailVisible ? 1 : 0,
-            y: animationStage === 'resetting' ? startRow * dotSpacing : endRow * dotSpacing,
-          }}
-          transition={{
-            duration: animationStage === 'resetting' ? 0 : duration,
-            ease: headEasing,
-          }}
-          onAnimationComplete={() => handleAnimationComplete(id)}
-        >
-          <Tail
-            initial={{ top: `-${tailLength}px`, height: `${tailLength}px` }}
-            animate={{ top: tailVisible ? `-${tailLength}px` : 0, height: tailVisible ? `${tailLength}px` : 0 }}
-            transition={{
-              duration: tailDuration,
-              ease: tailEasing,
+          <MeteorContainer
+            key={id}
+            initial={{
+              x: column * dotSpacing,
+              y: startRow * dotSpacing,
+              opacity: 1,
             }}
-          />
-        </MeteorContainer>
-      );
+            animate={{
+              opacity: tailVisible ? 1 : 0,
+              y: animationStage === 'resetting' ? startRow * dotSpacing : endRow * dotSpacing,
+            }}
+            transition={{
+              duration: animationStage === 'resetting' ? 0 : duration,
+              ease: headEasing,
+            }}
+            onAnimationComplete={() => handleAnimationComplete(id)}
+          >
+            <Tail
+              initial={{ top: `-${tailLength}px`, height: `${tailLength}px` }}
+              animate={{
+                top: tailVisible ? `-${tailLength}px` : 0,
+                height: tailVisible ? `${tailLength}px` : 0,
+              }}
+              transition={{
+                duration: tailDuration,
+                ease: tailEasing,
+              }}
+            />
+          </MeteorContainer>
+        );
       })}
     </>
   );

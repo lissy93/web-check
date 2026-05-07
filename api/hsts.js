@@ -3,8 +3,11 @@ import middleware from './_common/middleware.js';
 
 const MIN_MAX_AGE = 10886400;
 
-const verdict = (message, compatible = false, hstsHeader = null) =>
-  ({ message, compatible, hstsHeader });
+const verdict = (message, compatible = false, hstsHeader = null) => ({
+  message,
+  compatible,
+  hstsHeader,
+});
 
 const evaluate = (header) => {
   if (!header) return verdict('Site does not serve any HSTS headers.');
@@ -21,18 +24,19 @@ const evaluate = (header) => {
 
 const REQUEST_TIMEOUT = 5000;
 
-const hstsHandler = async (url) => new Promise((resolve) => {
-  const req = https.request(url, (res) => {
-    resolve(evaluate(res.headers['strict-transport-security']));
-    res.resume();
+const hstsHandler = async (url) =>
+  new Promise((resolve) => {
+    const req = https.request(url, (res) => {
+      resolve(evaluate(res.headers['strict-transport-security']));
+      res.resume();
+    });
+    req.setTimeout(REQUEST_TIMEOUT, () => {
+      req.destroy();
+      resolve({ error: 'HSTS check timed out' });
+    });
+    req.on('error', (e) => resolve({ error: `HSTS check failed: ${e.message}` }));
+    req.end();
   });
-  req.setTimeout(REQUEST_TIMEOUT, () => {
-    req.destroy();
-    resolve({ error: 'HSTS check timed out' });
-  });
-  req.on('error', (e) => resolve({ error: `HSTS check failed: ${e.message}` }));
-  req.end();
-});
 
 export const handler = middleware(hstsHandler);
 export default handler;

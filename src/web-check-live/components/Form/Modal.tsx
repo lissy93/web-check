@@ -22,10 +22,14 @@ const Overlay = styled.div`
   align-items: center;
   background-color: rgba(0, 0, 0, 0.5);
   animation: fadeIn 0.5s;
-  
+
   @keyframes fadeIn {
-    0% {opacity: 0;}
-    100% {opacity: 1;}
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 `;
 
@@ -43,8 +47,14 @@ const ModalWindow = styled.div`
   max-height: 80%;
   overflow-y: auto;
   @keyframes appear {
-    0% {opacity: 0; transform: scale(0.9);}
-    100% {opacity: 1; transform: scale(1);}
+    0% {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
   pre {
     white-space: break-spaces;
@@ -82,7 +92,9 @@ const Modal: React.FC<ModalProps> = ({ children, isOpen, closeModal }) => {
     <Overlay onClick={handleOverlayClick}>
       <ModalWindow>
         {children}
-        <Button onClick={closeModal} styles="width: fit-content;float: right;">Close</Button>
+        <Button onClick={closeModal} styles="width: fit-content;float: right;">
+          Close
+        </Button>
       </ModalWindow>
     </Overlay>,
     document.body,
