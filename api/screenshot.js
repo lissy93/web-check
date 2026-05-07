@@ -84,6 +84,9 @@ const screenshotHandler = async (targetUrl) => {
   try {
     return { image: await puppeteerScreenshot(targetUrl) };
   } catch (error) {
+    if (/ENOENT|Browser was not found|Could not find Chromium/i.test(error.message)) {
+      return { skipped: error.message };
+    }
     log.error(`puppeteer screenshot failed: ${error.message}`);
     throw error;
   }

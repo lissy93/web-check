@@ -34,6 +34,9 @@ const techStackHandler = async (url) => {
     }
     return results;
   } catch (error) {
+    if (/ENOENT|Browser was not found|Could not find Chromium/i.test(error.message)) {
+      return { skipped: error.message };
+    }
     throw new Error(error.message);
   } finally {
     await wappalyzer.destroy();

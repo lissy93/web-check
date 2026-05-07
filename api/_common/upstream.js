@@ -2,8 +2,7 @@
 export const upstreamError = (error, context = 'Lookup') => {
   const status = error.response?.status;
   if (status === 404 || status === 410) return { skipped: `No ${context} data for this host` };
-  if (status === 401 || status === 403)
-    return { error: `${context} authentication failed (check API key)` };
+  if (status === 401 || status === 403) return { error: `${context} blocked (HTTP ${status})` };
   if (status === 429) return { error: `${context} rate-limited by upstream` };
   if (status && status >= 500) return { error: `${context} upstream is unavailable` };
   if (error.code === 'ECONNABORTED') return { error: `${context} timed out` };
