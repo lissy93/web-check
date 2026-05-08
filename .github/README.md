@@ -8,30 +8,36 @@
 
 </p>
 
----
-
-<p align="center">
-  <sup>Kindly supported by:</sup><br>
-<a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
-  <img src="https://pixelflare.cc/alicia/sponsors/terminal-trove" width="300" alt="Terminal Trove">
-  <br>
-  <strong>The $HOME of all things in the terminal.</strong>
-</a>
-<br>
-<a href="https://terminaltrove.com/newsletter?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
-  <sub>Find your next CLI / TUI tool and more at Terminal Trove,</sub>
-  <br>
-  <sup>Get updates on new tools on our newsletter.</sup>
-</a>
-</p>
-
-<p align="center">
-	<sup>Kindly supported by:</sup><br>
-	<a href="https://go.warp.dev/web-check"><b>Warp</b>, built for coding with multiple AI agents</a><br><br>
-	<a href="https://go.warp.dev/web-check"><img width="640" src="https://github.com/warpdotdev/brand-assets/blob/main/Github/Sponsor/Warp-Github-LG-02.png?raw=true" /></a>
-</p>
 
 ---
+
+<p align="center">Kindly supported by:</p>
+
+<table align="center">
+  <tr>
+    <td align="center" width="33%">
+      <a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
+        <img src="https://pixelflare.cc/alicia/sponsors/terminal-trove.png" width="260" alt="Terminal Trove"><br>
+        <b>Terminal Trove</b>
+      </a><br>
+      <sub>The $HOME of all things in the terminal</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="https://go.warp.dev/web-check">
+        <img src="https://github.com/warpdotdev/brand-assets/blob/main/Github/Sponsor/Warp-Github-LG-02.png?raw=true" width="260" alt="Warp"><br>
+        <b>Warp</b>
+      </a><br>
+      <sub>Built for coding with multiple AI agents</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="https://uruky.com?ref=lissy93">
+	  <img src="https://pixelflare.cc/alicia/sponsors/uruky/w512" width="260" alt="Uruky"><br>
+	  <b>Uruky</b>
+	  </a><br>
+	  <sub>Private EU-based search, no ads or logs</sub>
+    </td>
+  </tr>
+</table>
 
 #### Contents
 
