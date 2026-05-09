@@ -229,7 +229,7 @@ const ShowLoadStateButton = styled.button`
   border: none;
   padding: 0.3rem 0.7rem;
   border-radius: 4px;
-  font-family: PTMono;
+  font-family: var(--font-mono);
   font-size: 0.9rem;
   cursor: pointer;
   box-shadow: 2px 2px 0px ${colors.bgShadowColor};
@@ -254,7 +254,7 @@ const DismissButton = styled.button`
   border: none;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  font-family: PTMono;
+  font-family: var(--font-mono);
   cursor: pointer;
   &:hover {
     color: ${colors.primary};
@@ -268,7 +268,7 @@ const FailedJobActionButton = styled.button`
   border: 1px solid ${colors.textColorSecondary};
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  font-family: PTMono;
+  font-family: var(--font-mono);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   &:hover {

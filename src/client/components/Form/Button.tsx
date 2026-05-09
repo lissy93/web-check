@@ -23,7 +23,7 @@ const StyledButton = styled.button<ButtonProps>`
   cursor: pointer;
   border: none;
   border-radius: 0.25rem;
-  font-family: PTMono;
+  font-family: var(--font-mono);
   box-sizing: border-box;
   width: -moz-available;
   display: flex;

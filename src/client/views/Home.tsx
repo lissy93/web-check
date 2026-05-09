@@ -19,7 +19,7 @@ const HomeContainer = styled.section`
   justify-content: center;
   align-items: center;
   height: 100%;
-  font-family: 'PTMono';
+  font-family: var(--font-mono);
   padding: 1.5rem 1rem 4rem 1rem;
   footer {
     z-index: 1;

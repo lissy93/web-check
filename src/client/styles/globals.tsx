@@ -17,7 +17,7 @@ const GlobalStyles = () => (
       h4,
       button,
       section {
-        font-family: PTMono;
+        font-family: var(--font-mono);
         color: #fff;
       }
       #fancy-background p span {

@@ -12,14 +12,14 @@ interface Props {
   description?: string;
   keywords?: string;
   customSchemaJson?: any;
-  preloadHeadingFont?: boolean;
+  preloadBodyFont?: boolean;
   breadcrumbs?: Array<{
     name: string;
     item: string;
   }>;
 }
 
-const { preloadHeadingFont = true } = Astro.props;
+const { preloadBodyFont = true } = Astro.props;
 ---
 
 <!doctype html>
@@ -29,7 +29,7 @@ const { preloadHeadingFont = true } = Astro.props;
     <MetaTags {...Astro.props} />
     <slot name="head" />
     {
-      preloadHeadingFont && (
+      preloadBodyFont && (
         <link
           href="/fonts/Hubot-Sans/WOFF2/HubotSans-Regular.woff2"
           as="font"

@@ -25,7 +25,7 @@ const ResourceListOuter = styled.ul`
     cursor: pointer;
     border: none;
     border-radius: 0.25rem;
-    font-family: PTMono;
+    font-family: var(--font-mono);
     box-sizing: border-box;
     width: -moz-available;
     box-shadow: 3px 3px 0px ${colors.backgroundDarker};
