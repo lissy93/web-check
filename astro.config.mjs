@@ -1,9 +1,9 @@
 import { defineConfig } from 'astro/config';
+import { loadEnv } from 'vite';
 
 // Integrations
 import svelte from '@astrojs/svelte';
 import react from '@astrojs/react';
-import partytown from '@astrojs/partytown';
 import sitemap from '@astrojs/sitemap';
 
 // Adapters
@@ -12,12 +12,12 @@ import netlifyAdapter from '@astrojs/netlify';
 import nodeAdapter from '@astrojs/node';
 import cloudflareAdapter from '@astrojs/cloudflare';
 
-// Helper function to unwrap both Vite and Node environment variables
-const unwrapEnvVar = (varName, fallbackValue) => {
-  const classicEnvVar = process?.env && process.env[varName];
-  const viteEnvVar = import.meta.env[varName];
-  return classicEnvVar || viteEnvVar || fallbackValue;
-};
+// Pre-load .env so values are available in this config, before Vite
+const fileEnv = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
+
+// Read an env var, preferring shell over .env, with a final fallback
+const unwrapEnvVar = (varName, fallbackValue) =>
+  process.env[varName] ?? fileEnv[varName] ?? fallbackValue;
 
 // Determine the deploy target (vercel, netlify, cloudflare, node)
 const deployTarget = unwrapEnvVar('PLATFORM', 'node').toLowerCase();
@@ -35,7 +35,7 @@ const base = unwrapEnvVar('BASE_URL', '/');
 const isBossServer = unwrapEnvVar('BOSS_SERVER', false);
 
 // Initialize Astro integrations
-const integrations = [svelte(), react(), partytown(), sitemap()];
+const integrations = [svelte(), react(), sitemap()];
 
 // Set the appropriate adapter, based on the deploy target
 function getAdapter(target) {

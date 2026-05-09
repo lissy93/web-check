@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { ToastContainer } from 'react-toastify';
-import Masonry from 'react-masonry-css';
 
 import colors from 'client/styles/colors';
 import Heading from 'client/components/Form/Heading';
@@ -18,98 +17,40 @@ import ProgressBar, {
 } from 'client/components/misc/ProgressBar';
 import ActionButtons from 'client/components/misc/ActionButtons';
 import AdditionalResources from 'client/components/misc/AdditionalResources';
+import AdvisoryPanel from 'client/components/misc/AdvisoryPanel';
+import ResultsMasonryGrid from 'client/components/misc/ResultsMasonryGrid';
 import ViewRaw from 'client/components/misc/ViewRaw';
 
 import { determineAddressType, type AddressType } from 'client/utils/address-type-checker';
 import { hasData } from 'client/utils/result-processor';
 import useJobs from 'client/hooks/useJobs';
 import { jobs, allCards, allCardIds } from 'client/jobs/registry';
+import { runAnalysis } from 'client/analysis/registry';
 
 const ResultsOuter = styled.div`
   display: flex;
   flex-direction: column;
-  .masonry-grid {
-    display: flex;
-    width: auto;
-  }
-  .masonry-grid-col section {
-    margin: 1rem 0.5rem;
-  }
+  gap: 1rem;
+  padding-top: 1rem;
 `;
 
 const ResultsContent = styled.section`
   width: 95vw;
-  display: grid;
-  grid-auto-flow: dense;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1rem;
-  margin: auto;
-  width: calc(100% - 2rem);
-  padding-bottom: 1rem;
-`;
-
-const FilterButtons = styled.div`
-  width: 95vw;
-  margin: auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1rem;
-  .one-half {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-  }
-  button,
-  input,
-  .toggle-filters {
-    background: ${colors.backgroundLighter};
-    color: ${colors.textColor};
-    border: none;
-    border-radius: 4px;
-    font-family: 'PTMono';
-    padding: 0.25rem 0.5rem;
-    border: 1px solid transparent;
-    transition: all 0.2s ease-in-out;
-  }
-  button,
-  .toggle-filters {
-    cursor: pointer;
-    text-transform: capitalize;
-    box-shadow: 2px 2px 0px ${colors.bgShadowColor};
-    transition: all 0.2s ease-in-out;
-    &:hover {
-      box-shadow: 4px 4px 0px ${colors.bgShadowColor};
-      color: ${colors.primary};
+  margin: 0 auto;
+  @keyframes cardFlash {
+    0%,
+    30% {
+      outline: 2px solid ${colors.primary};
+      outline-offset: 4px;
     }
-    &.selected {
-      border: 1px solid ${colors.primary};
-      color: ${colors.primary};
+    100% {
+      outline: 2px solid transparent;
+      outline-offset: 4px;
     }
   }
-  input:focus {
-    border: 1px solid ${colors.primary};
-    outline: none;
-  }
-  .clear {
-    color: ${colors.textColor};
-    text-decoration: underline;
-    cursor: pointer;
-    font-size: 0.8rem;
-    opacity: 0.8;
-  }
-  .toggle-filters {
-    font-size: 0.8rem;
-  }
-  .control-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-    a {
-      text-decoration: none;
-    }
+  .flash > section {
+    animation: cardFlash 1.2s ease-out;
+    border-radius: 8px;
   }
 `;
 
@@ -135,9 +76,6 @@ const Results = (props: { address?: string }): JSX.Element => {
   const [addressType, setAddressType] = useState<AddressType>('empt');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(<></>);
-  const [showFilters, setShowFilters] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
     if (addressType === 'empt') setAddressType(determineAddressType(address));
@@ -186,14 +124,6 @@ const Results = (props: { address?: string }): JSX.Element => {
     setModalOpen(true);
   };
 
-  const updateTags = (tag: string) =>
-    setTags(tags.includes(tag) ? tags.filter((t) => t !== tag) : [tag]);
-
-  const clearFilters = () => {
-    setTags([]);
-    setSearchTerm('');
-  };
-
   // Resolve each card's data, applying picker and falling back when needed
   const renderable = allCards.map(({ jobId, card }) => {
     const entry = jobsState[card.id];
@@ -203,11 +133,19 @@ const Results = (props: { address?: string }): JSX.Element => {
     return { jobId, card, data, entry };
   });
 
-  const cardsToShow = renderable.filter(({ card, data, entry }) => {
-    const tagMatch = tags.length === 0 || card.tags.some((t) => tags.includes(t));
-    const searchMatch = card.title.toLowerCase().includes(searchTerm.toLowerCase());
-    return tagMatch && searchMatch && hasData(data) && !entry?.error;
-  });
+  const cardsToShow = renderable.filter(({ data, entry }) => hasData(data) && !entry?.error);
+
+  const findings = useMemo(() => runAnalysis(jobsState), [jobsState]);
+
+  const jumpToCard = (id: string) => {
+    const el = document.getElementById(`card-${id}`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+    window.setTimeout(() => el.classList.remove('flash'), 1300);
+  };
 
   return (
     <ResultsOuter>
@@ -225,91 +163,26 @@ const Results = (props: { address?: string }): JSX.Element => {
       </Nav>
       <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
       <Loader show={loadingJobs.filter((j) => j.state !== 'loading').length < 5} />
-      <FilterButtons>
-        {showFilters ? (
-          <>
-            <div className="one-half">
-              <span className="group-label">Filter by</span>
-              {['server', 'client', 'meta'].map((tag) => (
-                <button
-                  key={tag}
-                  className={tags.includes(tag) ? 'selected' : ''}
-                  onClick={() => updateTags(tag)}
-                >
-                  {tag}
-                </button>
-              ))}
-              {(tags.length > 0 || searchTerm.length > 0) && (
-                <span onClick={clearFilters} className="clear">
-                  Clear Filters
-                </span>
-              )}
-            </div>
-            <div className="one-half">
-              <span className="group-label">Search</span>
-              <input
-                type="text"
-                placeholder="Filter Results"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <span className="toggle-filters" onClick={() => setShowFilters(false)}>
-                Hide
-              </span>
-            </div>
-          </>
-        ) : (
-          <div className="control-options">
-            <span className="toggle-filters" onClick={() => setShowFilters(true)}>
-              Show Filters
-            </span>
-            <a href="#view-download-raw-data">
-              <span className="toggle-filters">Export Data</span>
-            </a>
-            <a href="/about">
-              <span className="toggle-filters">Learn about the Results</span>
-            </a>
-            <a href="/about#additional-resources">
-              <span className="toggle-filters">More tools</span>
-            </a>
-            <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check">
-              <span className="toggle-filters">View GitHub</span>
-            </a>
-          </div>
-        )}
-      </FilterButtons>
+      <AdvisoryPanel findings={findings} onJumpTo={jumpToCard} />
       <ResultsContent>
-        <Masonry
-          breakpointCols={{
-            10000: 12,
-            4000: 9,
-            3600: 8,
-            3200: 7,
-            2800: 6,
-            2400: 5,
-            2000: 4,
-            1600: 3,
-            1200: 2,
-            800: 1,
-          }}
-          className="masonry-grid"
-          columnClassName="masonry-grid-col"
-        >
+        <ResultsMasonryGrid minColWidth={336}>
           {cardsToShow.map(({ card, data }) => (
-            <ErrorBoundary title={card.title} key={`eb-${card.id}`}>
-              <card.Component
-                key={card.id}
-                data={data}
-                title={card.title}
-                actionButtons={makeActionButtons(
-                  card.title,
-                  () => retry(card.id),
-                  () => showInfo(card.id),
-                )}
-              />
-            </ErrorBoundary>
+            <div id={`card-${card.id}`} key={`eb-${card.id}`}>
+              <ErrorBoundary title={card.title}>
+                <card.Component
+                  key={card.id}
+                  data={data}
+                  title={card.title}
+                  actionButtons={makeActionButtons(
+                    card.title,
+                    () => retry(card.id),
+                    () => showInfo(card.id),
+                  )}
+                />
+              </ErrorBoundary>
+            </div>
           ))}
-        </Masonry>
+        </ResultsMasonryGrid>
       </ResultsContent>
       <ViewRaw
         everything={renderable.map((r) => ({
@@ -319,7 +192,6 @@ const Results = (props: { address?: string }): JSX.Element => {
         }))}
       />
       <AdditionalResources url={address} />
-      <Footer />
       <Modal isOpen={modalOpen} closeModal={() => setModalOpen(false)}>
         {modalContent}
       </Modal>
@@ -330,6 +202,7 @@ const Results = (props: { address?: string }): JSX.Element => {
         theme="dark"
         position="bottom-right"
       />
+      <Footer />
     </ResultsOuter>
   );
 };

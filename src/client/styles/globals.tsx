@@ -3,12 +3,6 @@ import { Global, css } from '@emotion/react';
 const GlobalStyles = () => (
   <Global
     styles={css`
-      @font-face {
-        font-family: PTMono;
-        font-style: normal;
-        font-weight: 400;
-        src: url('/fonts/PTMono.ttf') format('ttf');
-      }
       body,
       div,
       a,
@@ -23,7 +17,7 @@ const GlobalStyles = () => (
       h4,
       button,
       section {
-        font-family: PTMono;
+        font-family: var(--font-mono);
         color: #fff;
       }
       #fancy-background p span {

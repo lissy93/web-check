@@ -116,14 +116,6 @@
     send "^1.2.1"
     server-destroy "^1.0.1"
 
-"@astrojs/partytown@^2.1.7":
-  version "2.1.7"
-  resolved "https://registry.npmjs.org/@astrojs/partytown/-/partytown-2.1.7.tgz"
-  integrity sha512-dbffmNmJ+sAJ0/aXSaLX4aI04EZS/2C6Mm/+fmd4ikqWO7hV6nIi0sug8Z3c+yqedJNi1swFvpwluWmGjLHNzw==
-  dependencies:
-    "@qwik.dev/partytown" "^0.13.2"
-    mrmime "^2.0.1"
-
 "@astrojs/prism@4.0.1":
   version "4.0.1"
   resolved "https://registry.npmjs.org/@astrojs/prism/-/prism-4.0.1.tgz"
@@ -1860,13 +1852,6 @@
     semver "^7.7.4"
     tar-fs "^3.1.1"
     yargs "^17.7.2"
-
-"@qwik.dev/partytown@^0.13.2":
-  version "0.13.2"
-  resolved "https://registry.npmjs.org/@qwik.dev/partytown/-/partytown-0.13.2.tgz"
-  integrity sha512-Umls4bSkuzqLVcGvf8OgwIn/OldproSAbaQ/iYGe8VPYBpl2CaOSxabWwkeC72LDFqxVL0b0q8XlI8MuChDyzg==
-  dependencies:
-    dotenv "^16.4.7"
 
 "@reduxjs/toolkit@^1.9.0 || 2.x.x":
   version "2.11.2"
@@ -4251,7 +4236,7 @@ dot-prop@9.0.0, dot-prop@^9.0.0:
   dependencies:
     type-fest "^4.18.2"
 
-dotenv@^16.3.1, dotenv@^16.4.7:
+dotenv@^16.3.1:
   version "16.6.1"
   resolved "https://registry.npmjs.org/dotenv/-/dotenv-16.6.1.tgz"
   integrity sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==
@@ -7975,11 +7960,6 @@ react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
-
-react-masonry-css@^1.0.16:
-  version "1.0.16"
-  resolved "https://registry.npmjs.org/react-masonry-css/-/react-masonry-css-1.0.16.tgz"
-  integrity sha512-KSW0hR2VQmltt/qAa3eXOctQDyOu7+ZBevtKgpNDSzT7k5LA/0XntNa9z9HKCdz3QlxmJHglTZ18e4sX4V8zZQ==
 
 "react-redux@8.x.x || 9.x.x":
   version "9.2.0"

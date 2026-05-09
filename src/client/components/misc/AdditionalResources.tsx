@@ -25,7 +25,7 @@ const ResourceListOuter = styled.ul`
     cursor: pointer;
     border: none;
     border-radius: 0.25rem;
-    font-family: PTMono;
+    font-family: var(--font-mono);
     box-sizing: border-box;
     width: -moz-available;
     box-shadow: 3px 3px 0px ${colors.backgroundDarker};
@@ -86,10 +86,11 @@ const Note = styled.small`
 `;
 
 const CardStyles = `
-  margin: 0 auto 1rem auto;
+  margin: 0 auto;
   width: 95vw;
   position: relative;
   transition: all 0.2s ease-in-out;
+  max-height: 100%;
 `;
 
 const resources = [
@@ -316,7 +317,10 @@ const AdditionalResources = (props: { url?: string }): JSX.Element => {
         <br />
         At the time of listing, all of the above were available and free to use - if this changes,
         please report it via GitHub (
-        <a href="https://github.com/lissy93/web-check">lissy93/web-check</a>).
+        <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check">
+          lissy93/web-check
+        </a>
+        ).
       </Note>
     </Card>
   );

@@ -140,10 +140,19 @@ export const jobs: JobSpec[] = [
     fetcher: fetchAndProcess('http-security?url=${url}'),
   },
   {
-    id: 'social-tags',
+    id: 'tls-connection',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [card('social-tags', 'Social Tags', ['client', 'meta'], SocialTagsCard)],
-    fetcher: fetchAndProcess('social-tags?url=${url}'),
+    cards: [card('tls-connection', 'TLS Connection', ['server', 'security'], TlsConnectionCard)],
+    fetcher: fetchAndProcess('tls-connection?url=${url}'),
+  },
+  {
+    id: 'tls-labs',
+    expectedAddressTypes: [...URL_ONLY],
+    cards: [
+      card('tls-security-audit', 'TLS Security Audit', ['security'], TlsSecurityAuditCard),
+      card('tls-client-compat', 'TLS Client Compatibility', ['security'], TlsClientCompatCard),
+    ],
+    fetcher: fetchAndProcess('tls-labs?url=${url}'),
   },
   {
     id: 'trace-route',
@@ -206,31 +215,6 @@ export const jobs: JobSpec[] = [
     fetcher: fetchAndProcess('rank?url=${url}'),
   },
   {
-    id: 'screenshot',
-    expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      card('screenshot', 'Screenshot', ['client', 'meta'], ScreenshotCard, {
-        fallback: (state: JobsState) => state.quality?.raw?.fullPageScreenshot?.screenshot,
-      }),
-    ],
-    fetcher: fetchAndProcess('screenshot?url=${url}'),
-  },
-  {
-    id: 'tls-connection',
-    expectedAddressTypes: [...URL_ONLY],
-    cards: [card('tls-connection', 'TLS Connection', ['server', 'security'], TlsConnectionCard)],
-    fetcher: fetchAndProcess('tls-connection?url=${url}'),
-  },
-  {
-    id: 'tls-labs',
-    expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      card('tls-security-audit', 'TLS Security Audit', ['security'], TlsSecurityAuditCard),
-      card('tls-client-compat', 'TLS Client Compatibility', ['security'], TlsClientCompatCard),
-    ],
-    fetcher: fetchAndProcess('tls-labs?url=${url}'),
-  },
-  {
     id: 'redirects',
     expectedAddressTypes: [...URL_ONLY],
     cards: [card('redirects', 'Redirects', ['meta'], RedirectsCard)],
@@ -277,6 +261,22 @@ export const jobs: JobSpec[] = [
     expectedAddressTypes: [...URL_ONLY],
     cards: [card('sitemap', 'Pages', ['meta'], SitemapCard)],
     fetcher: fetchAndProcess('sitemap?url=${url}'),
+  },
+  {
+    id: 'screenshot',
+    expectedAddressTypes: [...URL_ONLY],
+    cards: [
+      card('screenshot', 'Screenshot', ['client', 'meta'], ScreenshotCard, {
+        fallback: (state: JobsState) => state.quality?.raw?.fullPageScreenshot?.screenshot,
+      }),
+    ],
+    fetcher: fetchAndProcess('screenshot?url=${url}'),
+  },
+  {
+    id: 'social-tags',
+    expectedAddressTypes: [...URL_ONLY],
+    cards: [card('social-tags', 'Social Tags', ['client', 'meta'], SocialTagsCard)],
+    fetcher: fetchAndProcess('social-tags?url=${url}'),
   },
   {
     id: 'carbon',

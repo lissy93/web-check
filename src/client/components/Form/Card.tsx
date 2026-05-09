@@ -12,8 +12,7 @@ export const StyledCard = styled.section<{ styles?: string }>`
   border-radius: 8px;
   padding: 1rem;
   position: relative;
-  margin 0.5rem;
-  max-height: 64rem;
+  max-height: 54rem;
   overflow: auto;
   ${(props) => props.styles}
 `;

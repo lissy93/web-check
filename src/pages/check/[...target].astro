@@ -14,7 +14,15 @@ if (searchUrl) {
 }
 ---
 
-<BaseLayout>
+<BaseLayout preloadBodyFont={false}>
+  <link
+    slot="head"
+    href="/fonts/PTMono-Regular.woff2"
+    as="font"
+    rel="preload"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
   <Main client:only="react" />
 </BaseLayout>
 

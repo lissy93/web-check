@@ -6,7 +6,7 @@ import Heading from 'client/components/Form/Heading';
 import colors from 'client/styles/colors';
 
 const Header = styled(StyledCard)`
-  margin: 1rem auto;
+  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;

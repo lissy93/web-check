@@ -25,7 +25,7 @@ html {
 }
 
 body {
-  font-family: 'Hubot Sans', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-sans);
   line-height: 1;
   color: var(--text-color);
   background: var(--background);
