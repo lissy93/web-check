@@ -34,20 +34,20 @@ const CookiesCard = (props: { data: any; title: string; actionButtons: any }): J
         });
         return (
           <ExpandableRow
-            key={`cookie-${index}`}
+            key={`header-cookie-${index}-${cookie.name}`}
             lbl={cookie.name}
             val={cookie.value}
             rowList={attributes}
           />
         );
       })}
-      {clientCookies.map((cookie: any) => {
+      {clientCookies.map((cookie: any, index: number) => {
         const nameValPairs = Object.keys(cookie).map((key: string) => {
           return { lbl: key, val: cookie[key] };
         });
         return (
           <ExpandableRow
-            key={`cookie-${cookie.name}`}
+            key={`client-cookie-${index}-${cookie.name}`}
             lbl={cookie.name}
             val=""
             rowList={nameValPairs}

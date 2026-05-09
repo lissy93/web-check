@@ -316,7 +316,10 @@ const AdditionalResources = (props: { url?: string }): JSX.Element => {
         <br />
         At the time of listing, all of the above were available and free to use - if this changes,
         please report it via GitHub (
-        <a href="https://github.com/lissy93/web-check">lissy93/web-check</a>).
+        <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check">
+          lissy93/web-check
+        </a>
+        ).
       </Note>
     </Card>
   );

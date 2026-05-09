@@ -219,7 +219,7 @@ const Row = (props: RowProps) => {
           {lbl}
         </span>
       )}
-      <span className="val" title={val} onClick={() => copyToClipboard(val)}>
+      <span className="val" title={val?.toString()} onClick={() => copyToClipboard(val)}>
         {formatValue(val)}
       </span>
       {plaintext && <PlainText>{plaintext}</PlainText>}

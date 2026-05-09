@@ -223,7 +223,6 @@ const Results = (props: { address?: string }): JSX.Element => {
         }))}
       />
       <AdditionalResources url={address} />
-      <Footer />
       <Modal isOpen={modalOpen} closeModal={() => setModalOpen(false)}>
         {modalContent}
       </Modal>
@@ -234,6 +233,7 @@ const Results = (props: { address?: string }): JSX.Element => {
         theme="dark"
         position="bottom-right"
       />
+      <Footer />
     </ResultsOuter>
   );
 };
