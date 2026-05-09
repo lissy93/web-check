@@ -7,23 +7,35 @@ import type { Finding, Severity } from 'client/analysis/types';
 
 const ORDER: Severity[] = ['critical', 'issue', 'warning', 'info', 'pass'];
 
-const META: Record<Severity, { label: string; color: string; defaultOpen: boolean }> = {
-  critical: { label: 'Critical', color: colors.danger, defaultOpen: true },
-  issue: { label: 'Issues', color: colors.error, defaultOpen: true },
-  warning: { label: 'Warnings', color: colors.warning, defaultOpen: true },
-  info: { label: 'Informational', color: colors.info, defaultOpen: false },
-  pass: { label: 'Passes', color: colors.success, defaultOpen: false },
+interface SevMeta {
+  label: string;
+  color: string;
+  glyph: string;
+  defaultOpen: boolean;
+}
+
+const META: Record<Severity, SevMeta> = {
+  critical: { label: 'Critical', color: colors.danger, glyph: '✕', defaultOpen: true },
+  issue: { label: 'Issues', color: colors.error, glyph: '!', defaultOpen: true },
+  warning: { label: 'Warnings', color: colors.warning, glyph: '△', defaultOpen: false },
+  info: { label: 'Informational', color: colors.info, glyph: 'ⓘ', defaultOpen: false },
+  pass: { label: 'Passes', color: colors.success, glyph: '✓', defaultOpen: false },
 };
 
 const Wrapper = styled(Card)`
   margin: 0 auto 1rem auto;
   width: 95vw;
+  h2 {
+    margin: 0 0 0.75rem 0;
+  }
   details {
-    margin: 0.25rem 0;
+    border-radius: 4px;
+    margin: 0.4rem 0;
+    padding: 0.25rem 0.5rem;
     summary {
       cursor: pointer;
-      font-weight: bold;
-      padding: 0.25rem 0;
+      font-weight: 600;
+      padding: 0.35rem 0;
       list-style: none;
       display: flex;
       align-items: center;
@@ -33,30 +45,34 @@ const Wrapper = styled(Card)`
       }
       &:before {
         content: '►';
-        color: ${colors.primary};
-        font-size: 0.75rem;
+        color: currentColor;
+        font-size: 0.85rem;
+      }
+      .count {
+        color: ${colors.textColorSecondary};
+        font-weight: 400;
+        font-size: 0.9rem;
       }
     }
     &[open] summary:before {
       content: '▼';
     }
   }
-  ul {
+  ul.findings {
     list-style: none;
     margin: 0.25rem 0 0.5rem 0;
-    padding: 0 0 0 1rem;
+    padding: 0;
     li {
-      padding: 0.25rem 0;
       display: grid;
-      grid-template-columns: 0.5rem 1fr;
+      grid-template-columns: 1.25rem 1fr;
       gap: 0.5rem;
       align-items: baseline;
-      .dot {
-        width: 0.5rem;
-        height: 0.5rem;
-        border-radius: 50%;
-        display: inline-block;
-        margin-top: 0.4rem;
+      padding: 0.3rem 0;
+      .glyph {
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        align-self: center;
       }
       .body {
         button.jump {
@@ -68,8 +84,10 @@ const Wrapper = styled(Card)`
           padding: 0;
           text-align: left;
           cursor: pointer;
-          &:hover {
+          &:hover,
+          &:focus-visible {
             color: ${colors.primary};
+            outline: none;
           }
         }
         .detail {
@@ -80,11 +98,6 @@ const Wrapper = styled(Card)`
       }
     }
   }
-  .count {
-    color: ${colors.textColorSecondary};
-    font-weight: normal;
-    font-size: 0.9rem;
-  }
 `;
 
 interface Props {
@@ -92,41 +105,47 @@ interface Props {
   onJumpTo: (cardId: string) => void;
 }
 
-// Group findings by severity, render collapsible sections, hide when empty
+// Group findings by severity, render summary + collapsible sections, hide when empty
 const AdvisoryPanel = ({ findings, onJumpTo }: Props): ReactNode => {
-  const grouped = useMemo(() => {
-    const map: Record<Severity, Finding[]> = {
+  const { grouped, visible } = useMemo(() => {
+    const grouped: Record<Severity, Finding[]> = {
       critical: [],
       issue: [],
       warning: [],
       info: [],
       pass: [],
     };
-    for (const f of findings) map[f.severity].push(f);
-    return map;
+    for (const f of findings) grouped[f.severity].push(f);
+    return { grouped, visible: ORDER.filter((sev) => grouped[sev].length) };
   }, [findings]);
 
   if (!findings.length) return null;
 
   return (
     <Wrapper>
-      <Heading as="h3" align="left" color={colors.primary}>
+      <Heading as="h2" align="left" color={colors.primary}>
         Advisory
       </Heading>
-      {ORDER.map((sev) => {
-        const items = grouped[sev];
-        if (!items.length) return null;
+      {visible.map((sev) => {
         const meta = META[sev];
+        const items = grouped[sev];
         return (
-          <details key={sev} open={meta.defaultOpen}>
+          <details
+            key={sev}
+            id={`advisory-${sev}`}
+            open={meta.defaultOpen}
+            style={{ background: `${meta.color}0D` }}
+          >
             <summary style={{ color: meta.color }}>
               {meta.label}
               <span className="count">({items.length})</span>
             </summary>
-            <ul>
+            <ul className="findings">
               {items.map((f, i) => (
-                <li key={`${f.cardId}-${sev}-${i}`}>
-                  <span className="dot" style={{ background: meta.color }} aria-label={sev} />
+                <li key={`${f.cardId}-${i}`}>
+                  <span className="glyph" style={{ color: meta.color }} aria-label={meta.label}>
+                    {meta.glyph}
+                  </span>
                   <span className="body">
                     <button type="button" className="jump" onClick={() => onJumpTo(f.cardId)}>
                       {f.title}

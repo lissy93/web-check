@@ -48,6 +48,21 @@ const ResultsContent = styled.section`
   margin: auto;
   width: calc(100% - 2rem);
   padding-bottom: 1rem;
+  @keyframes cardFlash {
+    0%,
+    30% {
+      outline: 2px solid ${colors.primary};
+      outline-offset: 4px;
+    }
+    100% {
+      outline: 2px solid transparent;
+      outline-offset: 4px;
+    }
+  }
+  .flash > section {
+    animation: cardFlash 1.2s ease-out;
+    border-radius: 8px;
+  }
 `;
 
 const FilterButtons = styled.div`
@@ -215,7 +230,12 @@ const Results = (props: { address?: string }): JSX.Element => {
 
   const jumpToCard = (id: string) => {
     const el = document.getElementById(`card-${id}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+    window.setTimeout(() => el.classList.remove('flash'), 1300);
   };
 
   return (
