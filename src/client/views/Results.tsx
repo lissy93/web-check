@@ -18,12 +18,14 @@ import ProgressBar, {
 } from 'client/components/misc/ProgressBar';
 import ActionButtons from 'client/components/misc/ActionButtons';
 import AdditionalResources from 'client/components/misc/AdditionalResources';
+import AdvisoryPanel from 'client/components/misc/AdvisoryPanel';
 import ViewRaw from 'client/components/misc/ViewRaw';
 
 import { determineAddressType, type AddressType } from 'client/utils/address-type-checker';
 import { hasData } from 'client/utils/result-processor';
 import useJobs from 'client/hooks/useJobs';
 import { jobs, allCards, allCardIds } from 'client/jobs/registry';
+import { runAnalysis } from 'client/analysis/registry';
 
 const ResultsOuter = styled.div`
   display: flex;
@@ -209,6 +211,13 @@ const Results = (props: { address?: string }): JSX.Element => {
     return tagMatch && searchMatch && hasData(data) && !entry?.error;
   });
 
+  const findings = useMemo(() => runAnalysis(jobsState), [jobsState]);
+
+  const jumpToCard = (id: string) => {
+    const el = document.getElementById(`card-${id}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <ResultsOuter>
       <Nav>
@@ -225,6 +234,7 @@ const Results = (props: { address?: string }): JSX.Element => {
       </Nav>
       <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
       <Loader show={loadingJobs.filter((j) => j.state !== 'loading').length < 5} />
+      <AdvisoryPanel findings={findings} onJumpTo={jumpToCard} />
       <FilterButtons>
         {showFilters ? (
           <>
@@ -296,18 +306,20 @@ const Results = (props: { address?: string }): JSX.Element => {
           columnClassName="masonry-grid-col"
         >
           {cardsToShow.map(({ card, data }) => (
-            <ErrorBoundary title={card.title} key={`eb-${card.id}`}>
-              <card.Component
-                key={card.id}
-                data={data}
-                title={card.title}
-                actionButtons={makeActionButtons(
-                  card.title,
-                  () => retry(card.id),
-                  () => showInfo(card.id),
-                )}
-              />
-            </ErrorBoundary>
+            <div id={`card-${card.id}`} key={`eb-${card.id}`}>
+              <ErrorBoundary title={card.title}>
+                <card.Component
+                  key={card.id}
+                  data={data}
+                  title={card.title}
+                  actionButtons={makeActionButtons(
+                    card.title,
+                    () => retry(card.id),
+                    () => showInfo(card.id),
+                  )}
+                />
+              </ErrorBoundary>
+            </div>
           ))}
         </Masonry>
       </ResultsContent>

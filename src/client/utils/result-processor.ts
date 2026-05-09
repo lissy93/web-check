@@ -106,12 +106,18 @@ export const getHostNames = (response: any): HostNames | null => {
 export interface ShodanResults {
   hostnames: HostNames | null;
   serverInfo: ServerInfo | null;
+  vulns: string[];
 }
 
 export const parseShodanResults = (response: any): ShodanResults => {
   return {
     hostnames: getHostNames(response),
     serverInfo: getServerInfo(response),
+    vulns: Array.isArray(response?.vulns)
+      ? response.vulns
+      : response?.vulns && typeof response.vulns === 'object'
+        ? Object.keys(response.vulns)
+        : [],
   };
 };
 
