@@ -54,7 +54,7 @@ const stateToPercent = (jobs: LoadingJob[]): Record<LoadingState, number> => {
 };
 
 const LoadCard = styled(Card)`
-  margin: 0 auto 1rem auto;
+  margin: 0 auto;
   width: 95vw;
   position: relative;
 `;
@@ -196,7 +196,7 @@ const SummaryContainer = styled.div`
 `;
 
 const ReShowRow = styled.div`
-  margin: 0 auto 1rem auto;
+  margin: 0 auto;
   width: 95vw;
   display: flex;
   justify-content: space-between;
@@ -467,7 +467,7 @@ const ProgressLoader = ({ loadStatus, showModal, showJobDocs }: ProgressLoaderPr
   };
 
   return (
-    <>
+    <div>
       <Collapsible className={!hideLoader ? 'collapsed' : ''} aria-hidden={!hideLoader}>
         <div className="inner">
           <ReShowRow>
@@ -529,7 +529,7 @@ const ProgressLoader = ({ loadStatus, showModal, showJobDocs }: ProgressLoaderPr
           </LoadCard>
         </div>
       </Collapsible>
-    </>
+    </div>
   );
 };
 

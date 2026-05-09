@@ -5,7 +5,7 @@ import Heading from 'client/components/Form/Heading';
 import colors from 'client/styles/colors';
 
 const LoaderContainer = styled(StyledCard)`
-  margin: 0 auto 1rem auto;
+  margin: 0 auto;
   width: 95vw;
   position: relative;
   transition: all 0.2s ease-in-out;
@@ -29,7 +29,7 @@ const LoaderContainer = styled(StyledCard)`
     height: 0;
     overflow: hidden;
     opacity: 0;
-    margin: 0;
+    margin: -1rem 0 0 0;
     padding: 0;
     svg {
       width: 0;

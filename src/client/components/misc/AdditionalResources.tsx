@@ -86,7 +86,7 @@ const Note = styled.small`
 `;
 
 const CardStyles = `
-  margin: 0 auto 1rem auto;
+  margin: 0 auto;
   width: 95vw;
   position: relative;
   transition: all 0.2s ease-in-out;

@@ -30,12 +30,18 @@ import { runAnalysis } from 'client/analysis/registry';
 const ResultsOuter = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
   .masonry-grid {
     display: flex;
-    width: auto;
+    gap: 1rem;
+    width: 95vw;
+    margin: 0 auto;
   }
-  .masonry-grid-col section {
-    margin: 1rem 0.5rem;
+  .masonry-grid-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 `;
 
@@ -43,11 +49,10 @@ const ResultsContent = styled.section`
   width: 95vw;
   display: grid;
   grid-auto-flow: dense;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
   gap: 1rem;
   margin: auto;
   width: calc(100% - 2rem);
-  padding-bottom: 1rem;
   @keyframes cardFlash {
     0%,
     30% {
@@ -62,71 +67,6 @@ const ResultsContent = styled.section`
   .flash > section {
     animation: cardFlash 1.2s ease-out;
     border-radius: 8px;
-  }
-`;
-
-const FilterButtons = styled.div`
-  width: 95vw;
-  margin: auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1rem;
-  .one-half {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-  }
-  button,
-  input,
-  .toggle-filters {
-    background: ${colors.backgroundLighter};
-    color: ${colors.textColor};
-    border: none;
-    border-radius: 4px;
-    font-family: 'PTMono';
-    padding: 0.25rem 0.5rem;
-    border: 1px solid transparent;
-    transition: all 0.2s ease-in-out;
-  }
-  button,
-  .toggle-filters {
-    cursor: pointer;
-    text-transform: capitalize;
-    box-shadow: 2px 2px 0px ${colors.bgShadowColor};
-    transition: all 0.2s ease-in-out;
-    &:hover {
-      box-shadow: 4px 4px 0px ${colors.bgShadowColor};
-      color: ${colors.primary};
-    }
-    &.selected {
-      border: 1px solid ${colors.primary};
-      color: ${colors.primary};
-    }
-  }
-  input:focus {
-    border: 1px solid ${colors.primary};
-    outline: none;
-  }
-  .clear {
-    color: ${colors.textColor};
-    text-decoration: underline;
-    cursor: pointer;
-    font-size: 0.8rem;
-    opacity: 0.8;
-  }
-  .toggle-filters {
-    font-size: 0.8rem;
-  }
-  .control-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-    a {
-      text-decoration: none;
-    }
   }
 `;
 
@@ -152,9 +92,6 @@ const Results = (props: { address?: string }): JSX.Element => {
   const [addressType, setAddressType] = useState<AddressType>('empt');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(<></>);
-  const [showFilters, setShowFilters] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
     if (addressType === 'empt') setAddressType(determineAddressType(address));
@@ -203,14 +140,6 @@ const Results = (props: { address?: string }): JSX.Element => {
     setModalOpen(true);
   };
 
-  const updateTags = (tag: string) =>
-    setTags(tags.includes(tag) ? tags.filter((t) => t !== tag) : [tag]);
-
-  const clearFilters = () => {
-    setTags([]);
-    setSearchTerm('');
-  };
-
   // Resolve each card's data, applying picker and falling back when needed
   const renderable = allCards.map(({ jobId, card }) => {
     const entry = jobsState[card.id];
@@ -220,11 +149,7 @@ const Results = (props: { address?: string }): JSX.Element => {
     return { jobId, card, data, entry };
   });
 
-  const cardsToShow = renderable.filter(({ card, data, entry }) => {
-    const tagMatch = tags.length === 0 || card.tags.some((t) => tags.includes(t));
-    const searchMatch = card.title.toLowerCase().includes(searchTerm.toLowerCase());
-    return tagMatch && searchMatch && hasData(data) && !entry?.error;
-  });
+  const cardsToShow = renderable.filter(({ data, entry }) => hasData(data) && !entry?.error);
 
   const findings = useMemo(() => runAnalysis(jobsState), [jobsState]);
 
@@ -255,59 +180,6 @@ const Results = (props: { address?: string }): JSX.Element => {
       <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
       <Loader show={loadingJobs.filter((j) => j.state !== 'loading').length < 5} />
       <AdvisoryPanel findings={findings} onJumpTo={jumpToCard} />
-      <FilterButtons>
-        {showFilters ? (
-          <>
-            <div className="one-half">
-              <span className="group-label">Filter by</span>
-              {['server', 'client', 'meta'].map((tag) => (
-                <button
-                  key={tag}
-                  className={tags.includes(tag) ? 'selected' : ''}
-                  onClick={() => updateTags(tag)}
-                >
-                  {tag}
-                </button>
-              ))}
-              {(tags.length > 0 || searchTerm.length > 0) && (
-                <span onClick={clearFilters} className="clear">
-                  Clear Filters
-                </span>
-              )}
-            </div>
-            <div className="one-half">
-              <span className="group-label">Search</span>
-              <input
-                type="text"
-                placeholder="Filter Results"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <span className="toggle-filters" onClick={() => setShowFilters(false)}>
-                Hide
-              </span>
-            </div>
-          </>
-        ) : (
-          <div className="control-options">
-            <span className="toggle-filters" onClick={() => setShowFilters(true)}>
-              Show Filters
-            </span>
-            <a href="#view-download-raw-data">
-              <span className="toggle-filters">Export Data</span>
-            </a>
-            <a href="/about">
-              <span className="toggle-filters">Learn about the Results</span>
-            </a>
-            <a href="/about#additional-resources">
-              <span className="toggle-filters">More tools</span>
-            </a>
-            <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check">
-              <span className="toggle-filters">View GitHub</span>
-            </a>
-          </div>
-        )}
-      </FilterButtons>
       <ResultsContent>
         <Masonry
           breakpointCols={{

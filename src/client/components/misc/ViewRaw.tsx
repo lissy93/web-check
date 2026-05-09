@@ -5,7 +5,7 @@ import { Card } from 'client/components/Form/Card';
 import Button from 'client/components/Form/Button';
 
 const CardStyles = `
-margin: 0 auto 1rem auto;
+margin: 0 auto;
 width: 95vw;
 position: relative;
 transition: all 0.2s ease-in-out;
