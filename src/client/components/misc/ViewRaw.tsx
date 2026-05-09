@@ -11,6 +11,7 @@ position: relative;
 transition: all 0.2s ease-in-out;
 display: flex;
 flex-direction: column;
+max-height: 100%;
 a {
   color: ${colors.primary};
 }

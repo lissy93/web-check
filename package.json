@@ -46,7 +46,6 @@
     "puppeteer-core": "^24.42.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-masonry-css": "^1.0.16",
     "react-router-dom": "^7.14.2",
     "react-simple-maps": "^3.0.0",
     "react-toastify": "^11.1.0",

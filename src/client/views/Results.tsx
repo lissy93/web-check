@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { ToastContainer } from 'react-toastify';
-import Masonry from 'react-masonry-css';
 
 import colors from 'client/styles/colors';
 import Heading from 'client/components/Form/Heading';
@@ -19,6 +18,7 @@ import ProgressBar, {
 import ActionButtons from 'client/components/misc/ActionButtons';
 import AdditionalResources from 'client/components/misc/AdditionalResources';
 import AdvisoryPanel from 'client/components/misc/AdvisoryPanel';
+import ResultsMasonryGrid from 'client/components/misc/ResultsMasonryGrid';
 import ViewRaw from 'client/components/misc/ViewRaw';
 
 import { determineAddressType, type AddressType } from 'client/utils/address-type-checker';
@@ -32,27 +32,11 @@ const ResultsOuter = styled.div`
   flex-direction: column;
   gap: 1rem;
   padding-top: 1rem;
-  .masonry-grid {
-    display: flex;
-    gap: 1rem;
-    width: 95vw;
-    margin: 0 auto;
-  }
-  .masonry-grid-col {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
 `;
 
 const ResultsContent = styled.section`
   width: 95vw;
-  display: grid;
-  grid-auto-flow: dense;
-  grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
-  gap: 1rem;
-  margin: auto;
-  width: calc(100% - 2rem);
+  margin: 0 auto;
   @keyframes cardFlash {
     0%,
     30% {
@@ -181,22 +165,7 @@ const Results = (props: { address?: string }): JSX.Element => {
       <Loader show={loadingJobs.filter((j) => j.state !== 'loading').length < 5} />
       <AdvisoryPanel findings={findings} onJumpTo={jumpToCard} />
       <ResultsContent>
-        <Masonry
-          breakpointCols={{
-            10000: 12,
-            4000: 9,
-            3600: 8,
-            3200: 7,
-            2800: 6,
-            2400: 5,
-            2000: 4,
-            1600: 3,
-            1200: 2,
-            800: 1,
-          }}
-          className="masonry-grid"
-          columnClassName="masonry-grid-col"
-        >
+        <ResultsMasonryGrid minColWidth={336}>
           {cardsToShow.map(({ card, data }) => (
             <div id={`card-${card.id}`} key={`eb-${card.id}`}>
               <ErrorBoundary title={card.title}>
@@ -213,7 +182,7 @@ const Results = (props: { address?: string }): JSX.Element => {
               </ErrorBoundary>
             </div>
           ))}
-        </Masonry>
+        </ResultsMasonryGrid>
       </ResultsContent>
       <ViewRaw
         everything={renderable.map((r) => ({

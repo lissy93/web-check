@@ -90,6 +90,7 @@ const CardStyles = `
   width: 95vw;
   position: relative;
   transition: all 0.2s ease-in-out;
+  max-height: 100%;
 `;
 
 const resources = [

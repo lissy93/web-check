@@ -38,6 +38,11 @@ const TechStackRow = styled.div`
   .tech-categories {
     font-size: 0.8rem;
     opacity: 0.5;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    flex: 1;
+    text-align: right;
   }
   .tech-confidence {
     display: none;
