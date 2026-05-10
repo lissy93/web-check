@@ -91,13 +91,25 @@ const retrying = (
 
 // Re-run while the body has { pending: true }
 const fetchAndPoll = (path: string) =>
-  retrying(path, (r) => !!r?.pending, 6, 30000, () => ({
-    error: 'Timed-out waiting for assessment',
-  }));
+  retrying(
+    path,
+    (r) => !!r?.pending,
+    6,
+    30000,
+    () => ({
+      error: 'Timed-out waiting for assessment',
+    }),
+  );
 
 // Re-run on transient errors, returning the last error if all attempts fail
 const fetchAndRetry = (path: string) =>
-  retrying(path, (r) => !!r?.error, 3, 2000, (last) => last);
+  retrying(
+    path,
+    (r) => !!r?.error,
+    3,
+    2000,
+    (last) => last,
+  );
 
 const card = (
   id: string,
