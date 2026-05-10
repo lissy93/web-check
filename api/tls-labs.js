@@ -11,7 +11,6 @@ const tlsLabsHandler = async (url) => {
   try {
     const res = await httpGet(SSL_LABS, {
       params: { host: hostname, fromCache: 'on', maxAge: 168, all: 'done' },
-      timeout: 8000,
       headers: { 'User-Agent': 'web-check (https://web-check.xyz)' },
     });
     const data = res.data;

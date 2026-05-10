@@ -7,7 +7,6 @@ const queryDns = async (domain, type) => {
   const res = await httpGet('https://dns.google/resolve', {
     params: { name: domain, type },
     headers: { Accept: 'application/dns-json' },
-    timeout: 5000,
   });
   return res.data;
 };

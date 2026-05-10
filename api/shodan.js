@@ -9,9 +9,7 @@ const shodanHandler = async (url) => {
   if (auth.skipped) return auth;
   const { hostname } = parseTarget(url);
   try {
-    const res = await httpGet(`https://api.shodan.io/shodan/host/${hostname}?key=${auth.value}`, {
-      timeout: 8000,
-    });
+    const res = await httpGet(`https://api.shodan.io/shodan/host/${hostname}?key=${auth.value}`);
     return res.data;
   } catch (error) {
     return upstreamError(error, 'Shodan lookup');
