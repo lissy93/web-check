@@ -28,37 +28,15 @@ import Screenshots from './Screenshots.astro';
 </div>
 
 <script>
-  /**
-   * Form management actions (validation, submission, etc.)
-   * We just use normal, old school JavaScript for this
-   */
+  import { normalizeAddress } from '../../client/utils/address-type-checker';
 
-  // Select the form and input elements from the DOM
   const form = document.getElementById('live-start');
   const urlInput = document.getElementById('url-input') as HTMLInputElement;
 
-  // Submit Event - called when user submits form with a valid URL
-  // Gets and checks the URL, then redirects user to /check/:url
   form?.addEventListener('submit', (event) => {
     event.preventDefault();
-    const url = urlInput.value.trim();
-    if (url) {
-      const encodedUrl = encodeURIComponent(url);
-      window.location.href = `/check/${encodedUrl}`;
-    }
-  });
-
-  // User presses enter, forgets to add protocol
-  // Will add https:// to the URL, and retry form submit
-  urlInput?.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      const url = urlInput.value.trim();
-      const urlWithoutProtocolRegex = /^[a-zA-Z0-9]+[a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$/;
-      if (url && !/^https?:\/\//i.test(url) && urlWithoutProtocolRegex.test(url)) {
-        urlInput.value = 'https://' + url;
-        form?.dispatchEvent(new Event('submit'));
-      }
-    }
+    const target = normalizeAddress(urlInput.value);
+    if (target) window.location.href = `/check/${target}`;
   });
 </script>
 

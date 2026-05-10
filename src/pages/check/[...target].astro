@@ -2,6 +2,7 @@
 import BaseLayout from '@layouts/Base.astro';
 import Main from '../../client/main.tsx';
 import '../../client/styles/index.css';
+import { normalizeAddress } from '../../client/utils/address-type-checker';
 
 export const prerender = false;
 
@@ -10,7 +11,8 @@ const { search } = new URL(Astro.request.url);
 const searchUrl = new URLSearchParams(search).get('url');
 
 if (searchUrl) {
-  Astro.redirect(`/check/${encodeURIComponent(searchUrl)}`);
+  const target = normalizeAddress(searchUrl);
+  if (target) Astro.redirect(`/check/${target}`);
 }
 ---
 
@@ -27,22 +29,21 @@ if (searchUrl) {
 </BaseLayout>
 
 <script>
-  // Fallback, if Astro hasn't initialized the RC comp yet, then check the url
-  // And if form has been submitted with ?url=, redirect to the results page
+  import { normalizeAddress } from '../../client/utils/address-type-checker';
+
   const searchParams = new URL(window.location.href).searchParams;
   if (searchParams.has('url')) {
-    window.location.href = `/check/${encodeURIComponent(searchParams.get('url') || '')}`;
+    const target = normalizeAddress(searchParams.get('url') || '');
+    if (target) window.location.href = `/check/${target}`;
   }
 
-  // And add a manual no-react form submit handler
   const form = document.querySelector<HTMLFormElement>('form');
   if (form) {
     form.addEventListener('submit', function (event: Event) {
       event.preventDefault();
       const input = (this as HTMLFormElement).querySelector<HTMLInputElement>('input[name="url"]');
-      if (input && input.value) {
-        window.location.href = `/check/${encodeURIComponent(input.value)}`;
-      }
+      const target = normalizeAddress(input?.value);
+      if (target) window.location.href = `/check/${target}`;
     });
   }
 </script>

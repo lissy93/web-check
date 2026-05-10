@@ -13,8 +13,10 @@ const threats: Analyzer = (d) => {
   if (Array.isArray(d.urlHaus?.urls) && d.urlHaus.urls.length) {
     out.push({ severity: 'critical', title: 'Listed on URLhaus malware feed' });
   }
-  const phishUrl = d.phishTank?.url0?.in_database;
-  if (phishUrl === 'true' || phishUrl === true) {
+  const phish = d.phishTank?.url0;
+  const inDb = phish?.in_database === 'true' || phish?.in_database === true;
+  const valid = phish?.valid === 'true' || phish?.valid === true;
+  if (inDb && valid) {
     out.push({ severity: 'critical', title: 'Listed on PhishTank' });
   }
   if (d.cloudmersive?.CleanResult === false) {

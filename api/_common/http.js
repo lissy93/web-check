@@ -61,7 +61,9 @@ const wrapNetworkError = (error) => {
   return error;
 };
 
-const UA = 'web-check/1.0 (https://web-check.xyz)';
+export const UA =
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) ' +
+  'Chrome/120.0.0.0 Safari/537.36 (compatible; web-check/1.0; +https://web-check.xyz)';
 
 const send = async (method, url, body, opts = {}) => {
   const finalUrl = appendParams(url, opts.params);

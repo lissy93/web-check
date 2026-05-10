@@ -22,7 +22,8 @@ const robotsHandler = async (url) => {
     const parsed = parseRobotsTxt(res.data || '');
     return parsed.robots.length ? parsed : { skipped: 'No robots.txt rules found for this host' };
   } catch (error) {
-    if (error.response?.status === 404) {
+    const status = error.response?.status;
+    if (status >= 400 && status < 500) {
       return { skipped: 'No robots.txt file present on this host' };
     }
     return upstreamError(error, 'robots.txt fetch');

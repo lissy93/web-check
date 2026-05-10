@@ -5,7 +5,6 @@ const LABELS: Record<string, string> = {
   accessibility: 'Accessibility',
   'best-practices': 'Best Practices',
   seo: 'SEO',
-  pwa: 'PWA',
 };
 
 // Convert a 0..1 lighthouse score to a severity bucket

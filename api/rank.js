@@ -10,10 +10,7 @@ const rankHandler = async (url) => {
     ? { auth: { username: TRANCO_USERNAME, password: TRANCO_API_KEY } }
     : {};
   try {
-    const response = await httpGet(`https://tranco-list.eu/api/ranks/domain/${domain}`, {
-      timeout: 5000,
-      ...auth,
-    });
+    const response = await httpGet(`https://tranco-list.eu/api/ranks/domain/${domain}`, auth);
     if (!response.data?.ranks?.length) {
       return {
         skipped: `${domain} isn't ranked in the top 1 million sites yet`,

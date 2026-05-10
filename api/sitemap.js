@@ -10,11 +10,7 @@ const MAX_DEPTH = 3;
 const MAX_CHILD_SITEMAPS = 25;
 const MAX_URLS = 5000;
 
-// Browser-ish headers so picky CDNs do not return 406/403 to the default Node UA
-const HEADERS = {
-  'user-agent': 'Mozilla/5.0 (compatible; web-check-bot/1.0; +https://web-check.xyz)',
-  accept: 'application/xml, text/xml, application/rss+xml, */*;q=0.1',
-};
+const HEADERS = { accept: 'application/xml, text/xml, application/rss+xml, */*;q=0.1' };
 
 // Reduce a target URL to its origin so child paths resolve cleanly
 const toOrigin = (url) => {

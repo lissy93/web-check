@@ -8,7 +8,7 @@ const qualityHandler = async (url) => {
   const endpoint =
     `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?` +
     `url=${encodeURIComponent(url)}&category=PERFORMANCE&category=ACCESSIBILITY` +
-    `&category=BEST_PRACTICES&category=SEO&category=PWA&strategy=mobile` +
+    `&category=BEST_PRACTICES&category=SEO&strategy=mobile` +
     `&key=${auth.value}`;
 
   let data;

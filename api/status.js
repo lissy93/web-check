@@ -1,6 +1,7 @@
 import https from 'https';
 import { performance, PerformanceObserver } from 'perf_hooks';
 import middleware from './_common/middleware.js';
+import { UA } from './_common/http.js';
 
 const statusHandler = async (url) => {
   if (!url) {
@@ -23,7 +24,7 @@ const statusHandler = async (url) => {
   try {
     startTime = performance.now();
     const response = await new Promise((resolve, reject) => {
-      const req = https.get(url, (res) => {
+      const req = https.get(url, { headers: { 'user-agent': UA } }, (res) => {
         let data = '';
         responseCode = res.statusCode;
         res.on('data', (chunk) => {

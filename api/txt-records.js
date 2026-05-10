@@ -2,9 +2,17 @@ import dns from 'dns/promises';
 import middleware from './_common/middleware.js';
 import { parseTarget } from './_common/parse-target.js';
 
+const NO_RECORDS = new Set(['ENODATA', 'ENOTFOUND', 'NXDOMAIN']);
+
 const txtRecordHandler = async (url) => {
   const { hostname } = parseTarget(url);
-  const txtRecords = await dns.resolveTxt(hostname);
+  let txtRecords;
+  try {
+    txtRecords = await dns.resolveTxt(hostname);
+  } catch (error) {
+    if (NO_RECORDS.has(error.code)) return { skipped: 'No TXT records for this host' };
+    throw error;
+  }
   // Join chunks (DNS splits long records at 255 bytes), then key=value
   const result = {};
   for (const chunks of txtRecords) {

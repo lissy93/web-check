@@ -22,17 +22,11 @@ const evaluate = (header) => {
   return verdict('Site is compatible with the HSTS preload list!', true, header);
 };
 
-const REQUEST_TIMEOUT = 5000;
-
 const hstsHandler = async (url) =>
   new Promise((resolve) => {
     const req = https.request(url, (res) => {
       resolve(evaluate(res.headers['strict-transport-security']));
       res.resume();
-    });
-    req.setTimeout(REQUEST_TIMEOUT, () => {
-      req.destroy();
-      resolve({ error: 'HSTS check timed out' });
     });
     req.on('error', (e) => resolve({ error: `HSTS check failed: ${e.message}` }));
     req.end();

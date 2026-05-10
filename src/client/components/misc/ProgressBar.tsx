@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useRef, useCallback, type ReactNode } from 'react';
 import styled from '@emotion/styled';
 import colors from 'client/styles/colors';
 import Card from 'client/components/Form/Card';
@@ -15,20 +15,12 @@ export interface LoadingJob {
   retry?: () => void;
 }
 
-const STATUS_EMOJI: Record<LoadingState, string> = {
-  success: '✅',
-  loading: '🔄',
-  error: '❌',
-  'timed-out': '⏸️',
-  skipped: '⏭️',
-};
-
-const STATE_COLOR: Record<LoadingState, string> = {
-  success: colors.success,
-  loading: colors.info,
-  error: colors.danger,
-  'timed-out': colors.warning,
-  skipped: colors.neutral,
+const STATE_META: Record<LoadingState, { emoji: string; color: string }> = {
+  success: { emoji: '✅', color: colors.success },
+  loading: { emoji: '🔄', color: colors.info },
+  error: { emoji: '❌', color: colors.danger },
+  'timed-out': { emoji: '⏸️', color: colors.warning },
+  skipped: { emoji: '⏭️', color: colors.neutral },
 };
 
 // Tally jobs by their loading state in a single pass
@@ -56,6 +48,7 @@ const stateToPercent = (jobs: LoadingJob[]): Record<LoadingState, number> => {
 const LoadCard = styled(Card)`
   margin: 0 auto;
   width: 95vw;
+  max-height: 100%;
   position: relative;
 `;
 
@@ -101,6 +94,10 @@ const ProgressBarSegment = styled.div<{ color: string; width: number }>`
     color-mix(in srgb, ${p.color} 92%, #000) 6px
   )`};
   transition: width 0.5s ease-in-out;
+`;
+
+const StateLabel = styled.span<{ color: string }>`
+  color: ${(p) => p.color};
 `;
 
 const Details = styled.details`
@@ -150,21 +147,13 @@ const Details = styled.details`
   }
 `;
 
-const StatusInfoWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  .run-status {
-    color: ${colors.textColorSecondary};
-    margin: 0;
-  }
-`;
-
 const AboutPageLink = styled.a`
   color: ${colors.primary};
 `;
 
 const SummaryContainer = styled.div`
+  display: flex;
+  align-items: center;
   margin: 0.5rem 0;
   &.error-info {
     color: ${colors.danger};
@@ -192,6 +181,10 @@ const SummaryContainer = styled.div`
   }
   .timed-out {
     color: ${colors.error};
+  }
+  .elapsed {
+    color: ${colors.textColorSecondary};
+    margin-left: auto;
   }
 `;
 
@@ -295,129 +288,114 @@ interface JobListItemProps {
   showErrorModal: (job: LoadingJob, isInfo?: boolean) => void;
 }
 
+const REASON_LABEL: Partial<Record<LoadingState, string>> = {
+  error: '■ Show Error',
+  'timed-out': '■ Show Timeout Reason',
+  skipped: '■ Show Skip Reason',
+};
+
 // One row in the details list, showing job state, time and any actions
 const JobListItem = ({ job, showJobDocs, showErrorModal }: JobListItemProps): ReactNode => {
   const { name, state, timeTaken, retry, error } = job;
   const canRetry = retry && state !== 'success' && state !== 'loading';
-  const canShowError = error && (state === 'error' || state === 'timed-out' || state === 'skipped');
-
+  const reasonLabel = error ? REASON_LABEL[state] : undefined;
   return (
     <li>
       <button type="button" className="docs" onClick={() => showJobDocs(name)}>
-        {STATUS_EMOJI[state]} {name}
+        {STATE_META[state].emoji} {name}
       </button>
-      <span style={{ color: STATE_COLOR[state] }}> ({state})</span>.
+      <StateLabel color={STATE_META[state].color}> ({state})</StateLabel>
       <i>{timeTaken && state !== 'loading' ? ` Took ${timeTaken} ms` : ''}</i>
       {canRetry && (
         <FailedJobActionButton type="button" onClick={retry}>
           ↻ Retry
         </FailedJobActionButton>
       )}
-      {canShowError && (
+      {reasonLabel && (
         <FailedJobActionButton
           type="button"
           onClick={() => showErrorModal(job, state === 'skipped')}
         >
-          {state === 'timed-out' ? '■ Show Timeout Reason' : '■ Show Error'}
+          {reasonLabel}
         </FailedJobActionButton>
       )}
     </li>
   );
 };
 
-// Single-line "Running X of Y / Finished in Z" status with shared elapsed time
-const RunningText = ({ jobs, elapsedMs }: { jobs: LoadingJob[]; elapsedMs: number }): ReactNode => {
-  const total = allCardIds.length;
-  const done = total - jobs.filter((j) => j.state === 'loading').length;
-  const isDone = done >= total;
-  return (
-    <p className="run-status">
-      {isDone ? 'Finished in ' : `Running ${done} of ${total} jobs - `}
-      {elapsedMs >= 10_000 ? `${(elapsedMs / 1000).toFixed(1)} s` : `${elapsedMs} ms`}
-    </p>
-  );
-};
-
-// Compact one-liner shown alongside the "Show Load State" button when collapsed
-const LoadSummary = ({
-  jobs,
-  elapsedMs,
-  onOpen,
-}: {
+interface LoadSummaryProps {
   jobs: LoadingJob[];
   elapsedMs: number;
   onOpen: () => void;
-}): ReactNode => {
+}
+
+// Compact one-liner shown alongside the "Show Load State" button when collapsed
+const LoadSummary = ({ jobs, elapsedMs, onOpen }: LoadSummaryProps): ReactNode => {
   const total = allCardIds.length;
-  const counts = countByState(jobs);
-  const extras: string[] = [];
-  if (counts.error) extras.push(`${counts.error} failed`);
-  if (counts['timed-out']) extras.push(`${counts['timed-out']} timed out`);
-  if (counts.skipped) extras.push(`${counts.skipped} skipped`);
+  const c = countByState(jobs);
+  const issues = c.error + c['timed-out'] + c.skipped;
+  const sec = (elapsedMs / 1000).toFixed(1);
+  const text = c.loading
+    ? `Loading ${total - c.loading} of ${total}` + (elapsedMs < 15000 ? ` (${sec}s)` : '')
+    : `Finished ${total} lookups in ${sec}s`;
   return (
     <span className="summary">
-      {counts.success}/{total} lookups complete
-      {extras.length > 0 && (
+      {text}
+      {issues > 0 && (
         <>
-          {' '}
+          {' · '}
           <button type="button" className="extras" onClick={onOpen}>
-            ({extras.join(', ')})
+            {issues} {issues === 1 ? 'issue' : 'issues'}
           </button>
         </>
       )}
-      {elapsedMs ? `, took ${(elapsedMs / 1000).toFixed(1)}s` : ''}
     </span>
   );
 };
 
-const pluralJobs = (n: number) => `${n} ${n === 1 ? 'job' : 'jobs'}`;
+type ChipKey = Exclude<LoadingState, 'loading'>;
 
-type ChipKey = 'success' | 'skipped' | 'timed-out' | 'error';
-
-const CHIPS: Record<ChipKey, { cls: string; label: string }> = {
-  success: { cls: 'success', label: 'successful' },
-  skipped: { cls: 'skipped', label: 'skipped' },
-  'timed-out': { cls: 'timed-out', label: 'timed out' },
-  error: { cls: 'error', label: 'failed' },
+const CHIP_LABEL: Record<ChipKey, string> = {
+  success: 'successful',
+  skipped: 'skipped',
+  'timed-out': 'timed out',
+  error: 'failed',
 };
 
-// Inline tally chip; renders nothing for zero so callers can always include it
-const Chip = ({ count, cls, label }: { count: number; cls: string; label: string }) =>
-  count > 0 ? (
-    <span className={cls}>
-      {pluralJobs(count)} {label}{' '}
-    </span>
-  ) : null;
+interface SummaryTextProps {
+  jobs: LoadingJob[];
+  elapsedMs: number;
+}
 
 // Heading-style summary that adapts to loading, all-success and partial-failure
-const SummaryText = ({ jobs }: { jobs: LoadingJob[] }): ReactNode => {
+const SummaryText = ({ jobs, elapsedMs }: SummaryTextProps): ReactNode => {
   const total = allCardIds.length;
-  const counts = countByState(jobs);
-  const chips = (keys: ChipKey[]) =>
-    keys.map((k) => <Chip key={k} count={counts[k]} {...CHIPS[k]} />);
-
-  if (counts.loading > 0) {
-    return (
-      <SummaryContainer className="loading-info">
-        <b>
-          Loading {total - counts.loading} / {total} Jobs
-        </b>
-        {chips(['skipped', 'timed-out', 'error'])}
-      </SummaryContainer>
+  const c = countByState(jobs);
+  const isDone = c.loading === 0;
+  const hasIssues = c.error > 0 || c['timed-out'] > 0;
+  const elapsed = elapsedMs >= 10_000 ? `${(elapsedMs / 1000).toFixed(1)} s` : `${elapsedMs} ms`;
+  const chip = (k: ChipKey) =>
+    c[k] > 0 && (
+      <span key={k} className={k}>
+        {c[k]} {c[k] === 1 ? 'job' : 'jobs'} {CHIP_LABEL[k]}{' '}
+      </span>
     );
-  }
-  const hasIssues = counts.error > 0 || counts['timed-out'] > 0;
-  if (!hasIssues) {
-    return (
-      <SummaryContainer className="success-info">
-        <b>{counts.success} Jobs Completed Successfully</b>
-        {chips(['skipped'])}
-      </SummaryContainer>
-    );
-  }
+  const cls = !isDone ? 'loading-info' : hasIssues ? 'error-info' : 'success-info';
+  const heading = !isDone
+    ? `Loading ${total - c.loading} / ${total} Jobs`
+    : !hasIssues
+      ? `${c.success} Jobs Completed Successfully`
+      : null;
+  const keys: ChipKey[] = !isDone
+    ? ['skipped', 'timed-out', 'error']
+    : hasIssues
+      ? ['success', 'skipped', 'timed-out', 'error']
+      : ['skipped'];
   return (
-    <SummaryContainer className="error-info">
-      {chips(['success', 'skipped', 'timed-out', 'error'])}
+    <SummaryContainer className={cls}>
+      {heading && <b>{heading}</b>}
+      {keys.map(chip)}
+      <span className="elapsed">{isDone ? `Done in ${elapsed}` : elapsed}</span>
     </SummaryContainer>
   );
 };
@@ -442,24 +420,31 @@ const ProgressLoader = ({ loadStatus, showModal, showJobDocs }: ProgressLoaderPr
     return () => clearInterval(id);
   }, [isDone]);
 
-  // Auto-collapse once all jobs finish, leaving the "Finished in" line briefly visible
+  // Auto-collapse once when 75% of jobs have settled
+  const autoCollapsedRef = useRef(false);
+  const autoCollapse = useCallback(() => {
+    if (autoCollapsedRef.current) return;
+    autoCollapsedRef.current = true;
+    setHideLoader(true);
+  }, []);
+
   useEffect(() => {
-    if (!isDone) return;
-    const t = setTimeout(() => setHideLoader(true), 1500);
-    return () => clearTimeout(t);
-  }, [isDone]);
+    const total = loadStatus.length || 1;
+    const settled = loadStatus.filter((j) => j.state !== 'loading').length;
+    if (settled / total >= 0.75) autoCollapse();
+  }, [loadStatus, autoCollapse]);
 
   const colorFor = (state: LoadingState) =>
-    state === 'success' && isDone ? colors.primary : STATE_COLOR[state];
+    state === 'success' && isDone ? colors.primary : STATE_META[state].color;
 
   const showErrorModal = (job: LoadingJob, isInfo?: boolean) => {
+    const detailsLabel = job.state === 'skipped' ? 'Reason:' : 'Server response:';
     showModal(
       <ErrorModalContent>
-        <Heading as="h3">Error Details for {job.name}</Heading>
+        <Heading as="h3">Details for {job.name}</Heading>
         <p>
-          The {job.name} job failed with an {job.state} state
-          {job.timeTaken !== undefined ? ` after ${job.timeTaken} ms` : ''}. The server responded
-          with the following error:
+          The {job.name} job ended with state '{job.state}'
+          {job.timeTaken !== undefined ? ` after ${job.timeTaken} ms` : ''}. {detailsLabel}
         </p>
         <pre className={isInfo ? 'info' : 'error'}>{job.error}</pre>
       </ErrorModalContent>,
@@ -495,10 +480,7 @@ const ProgressLoader = ({ loadStatus, showModal, showJobDocs }: ProgressLoaderPr
                 />
               ))}
             </ProgressBarContainer>
-            <StatusInfoWrapper>
-              <SummaryText jobs={loadStatus} />
-              <RunningText jobs={loadStatus} elapsedMs={elapsedMs} />
-            </StatusInfoWrapper>
+            <SummaryText jobs={loadStatus} elapsedMs={elapsedMs} />
             <Details>
               <summary>Show Details</summary>
               <ul>

@@ -58,6 +58,7 @@ const apiBase = (import.meta.env.PUBLIC_API_ENDPOINT || '/api') as string;
 const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [ipAddress, setIpAddress] = useState<string | undefined>();
+  const [ipLookupError, setIpLookupError] = useState<string | undefined>();
   const startTime = useRef(Date.now()).current;
   const controllers = useRef<Record<string, AbortController>>({});
   const fired = useRef<Set<string>>(new Set());
@@ -82,8 +83,9 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
         .then((raw: any) => {
           if (controller.signal.aborted) return;
           const timeTaken = Date.now() - startTime;
-          if (job.id === 'get-ip' && typeof raw === 'string') {
-            setIpAddress(raw);
+          if (job.id === 'get-ip') {
+            if (typeof raw === 'string') setIpAddress(raw);
+            else if (raw?.error) setIpLookupError(raw.error);
             return;
           }
           if (raw?.skipped) {
@@ -104,6 +106,7 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
           if (controller.signal.aborted || err?.name === 'AbortError') return;
           const timeTaken = Date.now() - startTime;
           const message = err?.message || 'Unknown error';
+          if (job.id === 'get-ip') return;
           const outcome = isTimeout(message) ? 'timed-out' : 'error';
           dispatch({ type: 'error', cardIds, outcome, error: message, timeTaken });
           cardIds.forEach((id) => logJobOutcome(outcome, id, timeTaken, message));
@@ -112,9 +115,9 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
     [address, startTime],
   );
 
-  const skipJob = useCallback((job: JobSpec) => {
+  const skipJob = useCallback((job: JobSpec, reason?: string) => {
     const cardIds = job.cards.map((c) => c.id);
-    if (cardIds.length) dispatch({ type: 'skipped', cardIds });
+    if (cardIds.length) dispatch({ type: 'skipped', cardIds, reason });
   }, []);
 
   // Decide which jobs are eligible for the current input
@@ -129,21 +132,37 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
     [addressType],
   );
 
+  const skipReason = useCallback(
+    (job: JobSpec): string => {
+      const allowed = job.expectedAddressTypes;
+      if (allowed && !allowed.includes(addressType)) {
+        if (addressType === 'ipV4' || addressType === 'ipV6') {
+          return 'This check requires a domain name and cannot be run against an IP address';
+        }
+        return `This check is only available for ${allowed.join(', ')} input`;
+      }
+      return 'This check is not applicable for the current input';
+    },
+    [addressType],
+  );
+
   // Initial fan-out: fire non-IP jobs immediately, mark unsupported as skipped
   useEffect(() => {
     if (keys.disableEverything) {
-      jobs.forEach((j) => skipJob(j));
+      const reason = 'Web-Check has been temporarily disabled on this instance';
+      jobs.forEach((j) => skipJob(j, reason));
       return;
     }
     if (!address || addressType === 'empt' || addressType === 'err') return;
 
     fired.current.clear();
+    setIpLookupError(undefined);
     if (addressType === 'ipV4' || addressType === 'ipV6') setIpAddress(address);
     else setIpAddress(undefined);
 
     jobs.forEach((job) => {
       if (!eligible(job)) {
-        skipJob(job);
+        skipJob(job, skipReason(job));
         return;
       }
       if (job.needsIp) return;
@@ -154,7 +173,7 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
       Object.values(controllers.current).forEach((c) => c.abort());
       controllers.current = {};
     };
-  }, [address, addressType, jobs, runJob, skipJob, eligible]);
+  }, [address, addressType, jobs, runJob, skipJob, eligible, skipReason]);
 
   // Fire IP-dependent jobs the moment we have an IP, but only once each
   useEffect(() => {
@@ -162,12 +181,12 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
     jobs.forEach((job) => {
       if (!job.needsIp || fired.current.has(job.id)) return;
       if (!eligible(job)) {
-        skipJob(job);
+        skipJob(job, skipReason(job));
         return;
       }
       runJob(job, ipAddress);
     });
-  }, [ipAddress, jobs, runJob, skipJob, eligible]);
+  }, [ipAddress, jobs, runJob, skipJob, eligible, skipReason]);
 
   // Promote any card whose fallback resolves after the primary failed
   useEffect(() => {
@@ -183,11 +202,15 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
 
   // Single client-side budget for stuck jobs, resets on new input
   useEffect(() => {
-    if (!address) return;
+    if (!address || addressType === 'empt' || addressType === 'err') return;
     const budget = parseInt((import.meta.env.PUBLIC_API_TIMEOUT_LIMIT as string) || '45000', 10);
     const timer = setTimeout(() => {
       const stuck = Object.entries(stateRef.current)
-        .filter(([_, e]) => e?.state === 'loading')
+        .filter(([id, e]) => {
+          if (e?.state !== 'loading') return false;
+          const owner = jobs.find((j) => j.cards.some((c) => c.id === id));
+          return !owner?.noClientTimeout;
+        })
         .map(([id]) => id);
       if (!stuck.length) return;
       dispatch({
@@ -215,7 +238,7 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
     [jobs, runJob, state, ipAddress],
   );
 
-  return { state, retry };
+  return { state, retry, ipLookupError };
 };
 
 export default useJobs;

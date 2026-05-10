@@ -47,32 +47,32 @@ const getScanFrequency = (firstScan, lastScan, totalScans, changeCount) => {
 };
 
 const wayBackHandler = async (url) => {
-  const cdxUrl = `https://web.archive.org/cdx/search/cdx?url=${url}&output=json&fl=timestamp,statuscode,digest,length,offset`;
+  // collapse=timestamp:8 returns one row per archived day, slashing payloads
+  // (Wikipedia: 25MB/373k rows -> 428KB/6k rows) without losing first/last/change counts
+  const cdxUrl =
+    `https://web.archive.org/cdx/search/cdx?url=${encodeURIComponent(url)}` +
+    `&output=json&fl=timestamp,statuscode,digest,length&collapse=timestamp:8`;
 
   try {
     const { data } = await httpGet(cdxUrl);
 
-    // Check there's data
     if (!data || !Array.isArray(data) || data.length <= 1) {
       return { skipped: 'Site has never before been archived via the Wayback Machine' };
     }
 
-    // Remove the header row
     data.shift();
 
-    // Process and return the results
     const firstScan = convertTimestampToDate(data[0][0]);
     const lastScan = convertTimestampToDate(data[data.length - 1][0]);
-    const totalScans = data.length;
+    const daysArchived = data.length;
     const changeCount = countPageChanges(data);
     return {
       firstScan,
       lastScan,
-      totalScans,
+      daysArchived,
       changeCount,
       averagePageSize: getAveragePageSize(data),
-      scanFrequency: getScanFrequency(firstScan, lastScan, totalScans, changeCount),
-      scans: data,
+      scanFrequency: getScanFrequency(firstScan, lastScan, daysArchived, changeCount),
       scanUrl: url,
     };
   } catch (err) {

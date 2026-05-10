@@ -42,3 +42,12 @@ export const determineAddressType = (address: string | undefined): AddressType =
   if (isUrl(address)) return 'url';
   return 'err';
 };
+
+// Strip protocol and path/query/hash so the route param stays a bare host
+export const normalizeAddress = (input: string | undefined): string => {
+  if (!input) return '';
+  let s = input.trim().replace(/^https?:\/\//i, '');
+  const stop = s.search(/[/?#]/);
+  if (stop !== -1) s = s.slice(0, stop);
+  return s;
+};

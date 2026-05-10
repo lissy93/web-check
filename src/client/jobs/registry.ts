@@ -53,6 +53,64 @@ const fetchAndProcess =
     return raw?.error ? raw : process(raw);
   };
 
+// Sleep ms, reject AbortError if signal fires
+const sleep = (ms: number, signal: AbortSignal) =>
+  new Promise<void>((resolve, reject) => {
+    if (signal.aborted) return reject(new DOMException('aborted', 'AbortError'));
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(new DOMException('aborted', 'AbortError'));
+    };
+    const remove = () => {
+      signal.removeEventListener('abort', onAbort);
+      resolve();
+    };
+    const timer = setTimeout(remove, ms);
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
+
+// Re-run fetchOnce while shouldRetry(raw) holds, sleeping delay ms between attempts
+const retrying = (
+  path: string,
+  shouldRetry: (raw: any) => boolean,
+  attempts: number,
+  delay: number,
+  onExhausted: (last: any) => any,
+) => {
+  const fetchOnce = fetchAndProcess(path);
+  return async (ctx: JobContext) => {
+    let last: any;
+    for (let i = 0; i < attempts; i++) {
+      last = await fetchOnce(ctx);
+      if (!shouldRetry(last)) return last;
+      if (i < attempts - 1) await sleep(delay, ctx.signal);
+    }
+    return onExhausted(last);
+  };
+};
+
+// Re-run while the body has { pending: true }
+const fetchAndPoll = (path: string) =>
+  retrying(
+    path,
+    (r) => !!r?.pending,
+    6,
+    30000,
+    () => ({
+      error: 'Timed-out waiting for assessment',
+    }),
+  );
+
+// Re-run on transient errors, returning the last error if all attempts fail
+const fetchAndRetry = (path: string) =>
+  retrying(
+    path,
+    (r) => !!r?.error,
+    3,
+    2000,
+    (last) => last,
+  );
+
 const card = (
   id: string,
   title: string,
@@ -98,7 +156,7 @@ export const jobs: JobSpec[] = [
     id: 'quality',
     expectedAddressTypes: [...URL_ONLY],
     cards: [card('quality', 'Quality Summary', ['client'], LighthouseCard)],
-    fetcher: fetchAndProcess('quality?url=${url}'),
+    fetcher: fetchAndRetry('quality?url=${url}'),
   },
   {
     id: 'tech-stack',
@@ -148,11 +206,12 @@ export const jobs: JobSpec[] = [
   {
     id: 'tls-labs',
     expectedAddressTypes: [...URL_ONLY],
+    noClientTimeout: true,
     cards: [
       card('tls-security-audit', 'TLS Security Audit', ['security'], TlsSecurityAuditCard),
       card('tls-client-compat', 'TLS Client Compatibility', ['security'], TlsClientCompatCard),
     ],
-    fetcher: fetchAndProcess('tls-labs?url=${url}'),
+    fetcher: fetchAndPoll('tls-labs?url=${url}'),
   },
   {
     id: 'trace-route',
@@ -206,7 +265,7 @@ export const jobs: JobSpec[] = [
     id: 'archives',
     expectedAddressTypes: [...URL_ONLY],
     cards: [card('archives', 'Archive History', ['meta'], ArchivesCard)],
-    fetcher: fetchAndProcess('archives?url=${url}'),
+    fetcher: fetchAndRetry('archives?url=${url}'),
   },
   {
     id: 'rank',
