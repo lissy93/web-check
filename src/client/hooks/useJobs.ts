@@ -187,7 +187,11 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
     const budget = parseInt((import.meta.env.PUBLIC_API_TIMEOUT_LIMIT as string) || '45000', 10);
     const timer = setTimeout(() => {
       const stuck = Object.entries(stateRef.current)
-        .filter(([_, e]) => e?.state === 'loading')
+        .filter(([id, e]) => {
+          if (e?.state !== 'loading') return false;
+          const owner = jobs.find((j) => j.cards.some((c) => c.id === id));
+          return !owner?.noClientTimeout;
+        })
         .map(([id]) => id);
       if (!stuck.length) return;
       dispatch({

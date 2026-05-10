@@ -24,6 +24,7 @@ export interface JobSpec {
   fetcher: (ctx: JobContext) => Promise<any>;
   expectedAddressTypes?: AddressType[];
   needsIp?: boolean;
+  noClientTimeout?: boolean;
 }
 
 export interface JobEntry {

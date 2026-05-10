@@ -53,6 +53,38 @@ const fetchAndProcess =
     return raw?.error ? raw : process(raw);
   };
 
+// Sleep ms, reject AbortError if signal fires
+const sleep = (ms: number, signal: AbortSignal) =>
+  new Promise<void>((resolve, reject) => {
+    if (signal.aborted) return reject(new DOMException('aborted', 'AbortError'));
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(new DOMException('aborted', 'AbortError'));
+    };
+    const remove = () => {
+      signal.removeEventListener('abort', onAbort);
+      resolve();
+    };
+    const timer = setTimeout(remove, ms);
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
+
+// Build a fetcher that re-runs while the body has { pending: true }
+const fetchAndPoll = (path: string) => {
+  const fetchOnce = fetchAndProcess(path);
+  const maxAttempts = 6;
+  const maxDuration = 30000;
+  return async (ctx: JobContext) => {
+    for (let i = 0; i < maxAttempts; i++) {
+      const raw = await fetchOnce(ctx);
+      if (!raw?.pending) return raw;
+      if (i === maxAttempts - 1) break;
+      await sleep(maxDuration, ctx.signal);
+    }
+    return { error: 'Timed-out waiting for assessment' };
+  };
+};
+
 const card = (
   id: string,
   title: string,
@@ -148,11 +180,12 @@ export const jobs: JobSpec[] = [
   {
     id: 'tls-labs',
     expectedAddressTypes: [...URL_ONLY],
+    noClientTimeout: true,
     cards: [
       card('tls-security-audit', 'TLS Security Audit', ['security'], TlsSecurityAuditCard),
       card('tls-client-compat', 'TLS Client Compatibility', ['security'], TlsClientCompatCard),
     ],
-    fetcher: fetchAndProcess('tls-labs?url=${url}'),
+    fetcher: fetchAndPoll('tls-labs?url=${url}'),
   },
   {
     id: 'trace-route',

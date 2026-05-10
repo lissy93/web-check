@@ -25,6 +25,7 @@ const META: Record<Severity, SevMeta> = {
 const Wrapper = styled(Card)`
   margin: 0 auto;
   width: 95vw;
+  max-height: 100%;
   h2 {
     margin: 0 0 0.75rem 0;
   }

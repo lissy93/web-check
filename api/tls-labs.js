@@ -5,24 +5,24 @@ import { upstreamError } from './_common/upstream.js';
 
 const SSL_LABS = 'https://api.ssllabs.com/api/v3/analyze';
 
-// Pull a cached SSL Labs report; skip if no fresh cache available
+// Return cached report if ready, pending status while a scan is running, else skip
 const tlsLabsHandler = async (url) => {
   const { hostname } = parseTarget(url);
   try {
     const res = await httpGet(SSL_LABS, {
-      params: { host: hostname, fromCache: 'on', maxAge: 24, all: 'done' },
+      params: { host: hostname, fromCache: 'on', maxAge: 168, all: 'done' },
       timeout: 8000,
       headers: { 'User-Agent': 'web-check (https://web-check.xyz)' },
     });
     const data = res.data;
-    if (!data || data.status !== 'READY' || !data.endpoints?.length) {
-      return {
-        skipped:
-          'No cached SSL Labs report for this host. ' +
-          'Run a fresh scan at https://www.ssllabs.com/ssltest/',
-      };
+    if (data?.status === 'READY' && data.endpoints?.length) return data;
+    if (data?.status === 'DNS' || data?.status === 'IN_PROGRESS') {
+      return { pending: true };
     }
-    return data;
+    if (data?.status === 'ERROR') {
+      return { error: `SSL Labs: ${data.statusMessage || 'Assessment failed'}` };
+    }
+    return { skipped: 'No SSL Labs report available for this host' };
   } catch (error) {
     return upstreamError(error, 'SSL Labs lookup');
   }
