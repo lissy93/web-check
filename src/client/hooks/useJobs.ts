@@ -115,9 +115,9 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
     [address, startTime],
   );
 
-  const skipJob = useCallback((job: JobSpec) => {
+  const skipJob = useCallback((job: JobSpec, reason?: string) => {
     const cardIds = job.cards.map((c) => c.id);
-    if (cardIds.length) dispatch({ type: 'skipped', cardIds });
+    if (cardIds.length) dispatch({ type: 'skipped', cardIds, reason });
   }, []);
 
   // Decide which jobs are eligible for the current input
@@ -132,10 +132,25 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
     [addressType],
   );
 
+  const skipReason = useCallback(
+    (job: JobSpec): string => {
+      const allowed = job.expectedAddressTypes;
+      if (allowed && !allowed.includes(addressType)) {
+        if (addressType === 'ipV4' || addressType === 'ipV6') {
+          return 'This check requires a domain name and cannot be run against an IP address';
+        }
+        return `This check is only available for ${allowed.join(', ')} input`;
+      }
+      return 'This check is not applicable for the current input';
+    },
+    [addressType],
+  );
+
   // Initial fan-out: fire non-IP jobs immediately, mark unsupported as skipped
   useEffect(() => {
     if (keys.disableEverything) {
-      jobs.forEach((j) => skipJob(j));
+      const reason = 'Web-Check has been temporarily disabled on this instance';
+      jobs.forEach((j) => skipJob(j, reason));
       return;
     }
     if (!address || addressType === 'empt' || addressType === 'err') return;
@@ -147,7 +162,7 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
 
     jobs.forEach((job) => {
       if (!eligible(job)) {
-        skipJob(job);
+        skipJob(job, skipReason(job));
         return;
       }
       if (job.needsIp) return;
@@ -158,7 +173,7 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
       Object.values(controllers.current).forEach((c) => c.abort());
       controllers.current = {};
     };
-  }, [address, addressType, jobs, runJob, skipJob, eligible]);
+  }, [address, addressType, jobs, runJob, skipJob, eligible, skipReason]);
 
   // Fire IP-dependent jobs the moment we have an IP, but only once each
   useEffect(() => {
@@ -166,12 +181,12 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
     jobs.forEach((job) => {
       if (!job.needsIp || fired.current.has(job.id)) return;
       if (!eligible(job)) {
-        skipJob(job);
+        skipJob(job, skipReason(job));
         return;
       }
       runJob(job, ipAddress);
     });
-  }, [ipAddress, jobs, runJob, skipJob, eligible]);
+  }, [ipAddress, jobs, runJob, skipJob, eligible, skipReason]);
 
   // Promote any card whose fallback resolves after the primary failed
   useEffect(() => {

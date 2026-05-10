@@ -438,12 +438,13 @@ const ProgressLoader = ({ loadStatus, showModal, showJobDocs }: ProgressLoaderPr
     state === 'success' && isDone ? colors.primary : STATE_META[state].color;
 
   const showErrorModal = (job: LoadingJob, isInfo?: boolean) => {
+    const detailsLabel = job.state === 'skipped' ? 'Reason:' : 'Server response:';
     showModal(
       <ErrorModalContent>
         <Heading as="h3">Details for {job.name}</Heading>
         <p>
           The {job.name} job ended with state '{job.state}'
-          {job.timeTaken !== undefined ? ` after ${job.timeTaken} ms` : ''}. Server response:
+          {job.timeTaken !== undefined ? ` after ${job.timeTaken} ms` : ''}. {detailsLabel}
         </p>
         <pre className={isInfo ? 'info' : 'error'}>{job.error}</pre>
       </ErrorModalContent>,
