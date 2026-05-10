@@ -18,14 +18,10 @@ const ArchivesCard = (props: { data: any; title: string; actionButtons: any }): 
     <Card heading={props.title} actionButtons={props.actionButtons}>
       <Row lbl="First Scan" val={data.firstScan} />
       <Row lbl="Last Scan" val={data.lastScan} />
-      <Row lbl="Total Scans" val={data.totalScans} />
+      <Row lbl="Days Archived" val={data.daysArchived} />
       <Row lbl="Change Count" val={data.changeCount} />
       <Row lbl="Avg Size" val={`${data.averagePageSize} bytes`} />
-      {data.scanFrequency?.scansPerDay > 1 ? (
-        <Row lbl="Avg Scans Per Day" val={data.scanFrequency.scansPerDay} />
-      ) : (
-        <Row lbl="Avg Days between Scans" val={data.scanFrequency.daysBetweenScans} />
-      )}
+      <Row lbl="Avg Days between Archives" val={data.scanFrequency.daysBetweenScans} />
 
       <Note>
         View historical versions of this page{' '}

@@ -69,21 +69,35 @@ const sleep = (ms: number, signal: AbortSignal) =>
     signal.addEventListener('abort', onAbort, { once: true });
   });
 
-// Build a fetcher that re-runs while the body has { pending: true }
-const fetchAndPoll = (path: string) => {
+// Re-run fetchOnce while shouldRetry(raw) holds, sleeping delay ms between attempts
+const retrying = (
+  path: string,
+  shouldRetry: (raw: any) => boolean,
+  attempts: number,
+  delay: number,
+  onExhausted: (last: any) => any,
+) => {
   const fetchOnce = fetchAndProcess(path);
-  const maxAttempts = 6;
-  const maxDuration = 30000;
   return async (ctx: JobContext) => {
-    for (let i = 0; i < maxAttempts; i++) {
-      const raw = await fetchOnce(ctx);
-      if (!raw?.pending) return raw;
-      if (i === maxAttempts - 1) break;
-      await sleep(maxDuration, ctx.signal);
+    let last: any;
+    for (let i = 0; i < attempts; i++) {
+      last = await fetchOnce(ctx);
+      if (!shouldRetry(last)) return last;
+      if (i < attempts - 1) await sleep(delay, ctx.signal);
     }
-    return { error: 'Timed-out waiting for assessment' };
+    return onExhausted(last);
   };
 };
+
+// Re-run while the body has { pending: true }
+const fetchAndPoll = (path: string) =>
+  retrying(path, (r) => !!r?.pending, 6, 30000, () => ({
+    error: 'Timed-out waiting for assessment',
+  }));
+
+// Re-run on transient errors, returning the last error if all attempts fail
+const fetchAndRetry = (path: string) =>
+  retrying(path, (r) => !!r?.error, 3, 2000, (last) => last);
 
 const card = (
   id: string,
@@ -130,7 +144,7 @@ export const jobs: JobSpec[] = [
     id: 'quality',
     expectedAddressTypes: [...URL_ONLY],
     cards: [card('quality', 'Quality Summary', ['client'], LighthouseCard)],
-    fetcher: fetchAndProcess('quality?url=${url}'),
+    fetcher: fetchAndRetry('quality?url=${url}'),
   },
   {
     id: 'tech-stack',
@@ -239,7 +253,7 @@ export const jobs: JobSpec[] = [
     id: 'archives',
     expectedAddressTypes: [...URL_ONLY],
     cards: [card('archives', 'Archive History', ['meta'], ArchivesCard)],
-    fetcher: fetchAndProcess('archives?url=${url}'),
+    fetcher: fetchAndRetry('archives?url=${url}'),
   },
   {
     id: 'rank',
