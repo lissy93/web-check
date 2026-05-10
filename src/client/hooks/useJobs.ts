@@ -58,6 +58,7 @@ const apiBase = (import.meta.env.PUBLIC_API_ENDPOINT || '/api') as string;
 const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [ipAddress, setIpAddress] = useState<string | undefined>();
+  const [ipLookupError, setIpLookupError] = useState<string | undefined>();
   const startTime = useRef(Date.now()).current;
   const controllers = useRef<Record<string, AbortController>>({});
   const fired = useRef<Set<string>>(new Set());
@@ -82,8 +83,9 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
         .then((raw: any) => {
           if (controller.signal.aborted) return;
           const timeTaken = Date.now() - startTime;
-          if (job.id === 'get-ip' && typeof raw === 'string') {
-            setIpAddress(raw);
+          if (job.id === 'get-ip') {
+            if (typeof raw === 'string') setIpAddress(raw);
+            else if (raw?.error) setIpLookupError(raw.error);
             return;
           }
           if (raw?.skipped) {
@@ -104,6 +106,7 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
           if (controller.signal.aborted || err?.name === 'AbortError') return;
           const timeTaken = Date.now() - startTime;
           const message = err?.message || 'Unknown error';
+          if (job.id === 'get-ip') return;
           const outcome = isTimeout(message) ? 'timed-out' : 'error';
           dispatch({ type: 'error', cardIds, outcome, error: message, timeTaken });
           cardIds.forEach((id) => logJobOutcome(outcome, id, timeTaken, message));
@@ -138,6 +141,7 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
     if (!address || addressType === 'empt' || addressType === 'err') return;
 
     fired.current.clear();
+    setIpLookupError(undefined);
     if (addressType === 'ipV4' || addressType === 'ipV6') setIpAddress(address);
     else setIpAddress(undefined);
 
@@ -183,7 +187,7 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
 
   // Single client-side budget for stuck jobs, resets on new input
   useEffect(() => {
-    if (!address) return;
+    if (!address || addressType === 'empt' || addressType === 'err') return;
     const budget = parseInt((import.meta.env.PUBLIC_API_TIMEOUT_LIMIT as string) || '45000', 10);
     const timer = setTimeout(() => {
       const stuck = Object.entries(stateRef.current)
@@ -219,7 +223,7 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
     [jobs, runJob, state, ipAddress],
   );
 
-  return { state, retry };
+  return { state, retry, ipLookupError };
 };
 
 export default useJobs;

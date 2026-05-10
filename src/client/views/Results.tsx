@@ -18,11 +18,13 @@ import ProgressBar, {
 import ActionButtons from 'client/components/misc/ActionButtons';
 import AdditionalResources from 'client/components/misc/AdditionalResources';
 import AdvisoryPanel from 'client/components/misc/AdvisoryPanel';
+import NoResults from 'client/components/misc/NoResults';
 import ResultsMasonryGrid from 'client/components/misc/ResultsMasonryGrid';
 import ViewRaw from 'client/components/misc/ViewRaw';
 
 import { determineAddressType, type AddressType } from 'client/utils/address-type-checker';
 import { hasData } from 'client/utils/result-processor';
+import keys from 'client/utils/get-keys';
 import useJobs from 'client/hooks/useJobs';
 import { jobs, allCards, allCardIds } from 'client/jobs/registry';
 import { runAnalysis } from 'client/analysis/registry';
@@ -81,7 +83,7 @@ const Results = (props: { address?: string }): JSX.Element => {
     if (addressType === 'empt') setAddressType(determineAddressType(address));
   }, [address, addressType]);
 
-  const { state: jobsState, retry } = useJobs(address, addressType, jobs);
+  const { state: jobsState, retry, ipLookupError } = useJobs(address, addressType, jobs);
 
   // Shape useJobs state for the existing ProgressBar contract
   const loadingJobs: LoadingJob[] = useMemo(
@@ -137,6 +139,26 @@ const Results = (props: { address?: string }): JSX.Element => {
 
   const findings = useMemo(() => runAnalysis(jobsState), [jobsState]);
 
+  // Detect a catastrophic API outage when the bulk of settled jobs error or time out
+  const apiUnreachable = useMemo(() => {
+    const entries = Object.values(jobsState);
+    const settled = entries.filter((e) => e?.state !== 'loading');
+    const dead = settled.filter((e) => e?.state === 'error' || e?.state === 'timed-out');
+    return settled.length >= entries.length / 2 && dead.length / settled.length >= 0.9;
+  }, [jobsState]);
+
+  // Pick the highest-priority error state, if any
+  let errorKind: 'invalid' | 'unreachable' | 'api-down' | 'disabled' | null = null;
+  if (keys.disableEverything) {
+    errorKind = 'disabled';
+  } else if (addressType === 'err') {
+    errorKind = 'invalid';
+  } else if (ipLookupError) {
+    errorKind = 'unreachable';
+  } else if (apiUnreachable) {
+    errorKind = 'api-down';
+  }
+
   const jumpToCard = (id: string) => {
     const el = document.getElementById(`card-${id}`);
     if (!el) return;
@@ -161,6 +183,7 @@ const Results = (props: { address?: string }): JSX.Element => {
           </Heading>
         )}
       </Nav>
+      {errorKind && <NoResults kind={errorKind} address={address} error={ipLookupError} />}
       <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
       <Loader show={loadingJobs.filter((j) => j.state !== 'loading').length < 5} />
       <AdvisoryPanel findings={findings} onJumpTo={jumpToCard} />
@@ -192,6 +215,7 @@ const Results = (props: { address?: string }): JSX.Element => {
         }))}
       />
       <AdditionalResources url={address} />
+
       <Modal isOpen={modalOpen} closeModal={() => setModalOpen(false)}>
         {modalContent}
       </Modal>

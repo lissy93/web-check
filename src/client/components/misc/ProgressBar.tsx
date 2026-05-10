@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useRef, useCallback, type ReactNode } from 'react';
 import styled from '@emotion/styled';
 import colors from 'client/styles/colors';
 import Card from 'client/components/Form/Card';
@@ -420,16 +420,19 @@ const ProgressLoader = ({ loadStatus, showModal, showJobDocs }: ProgressLoaderPr
     return () => clearInterval(id);
   }, [isDone]);
 
-  // Auto-collapse the full loader after a fixed window so it does not hog the page
-  useEffect(() => {
-    const t = setTimeout(() => setHideLoader(true), 15000);
-    return () => clearTimeout(t);
+  // Auto-collapse once when 75% of jobs have settled
+  const autoCollapsedRef = useRef(false);
+  const autoCollapse = useCallback(() => {
+    if (autoCollapsedRef.current) return;
+    autoCollapsedRef.current = true;
+    setHideLoader(true);
   }, []);
 
-  // Also collapse as soon as every job has reached a terminal state
   useEffect(() => {
-    if (isDone) setHideLoader(true);
-  }, [isDone]);
+    const total = loadStatus.length || 1;
+    const settled = loadStatus.filter((j) => j.state !== 'loading').length;
+    if (settled / total >= 0.75) autoCollapse();
+  }, [loadStatus, autoCollapse]);
 
   const colorFor = (state: LoadingState) =>
     state === 'success' && isDone ? colors.primary : STATE_META[state].color;
