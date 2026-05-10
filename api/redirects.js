@@ -1,9 +1,9 @@
 import middleware from './_common/middleware.js';
+import { UA } from './_common/http.js';
 import { upstreamError } from './_common/upstream.js';
 
 const MAX_REDIRECTS = 12;
 const TIMEOUT_MS = 10000;
-const USER_AGENT = 'Mozilla/5.0 (compatible; WebCheck/2.0; +https://web-check.xyz)';
 
 // Walks the redirect chain manually, recording each Location header as got did
 const redirectsHandler = async (url) => {
@@ -14,7 +14,7 @@ const redirectsHandler = async (url) => {
       const response = await fetch(current, {
         redirect: 'manual',
         signal: AbortSignal.timeout(TIMEOUT_MS),
-        headers: { 'user-agent': USER_AGENT },
+        headers: { 'user-agent': UA },
       });
       if (response.status < 300 || response.status >= 400) {
         if (response.status >= 400) {

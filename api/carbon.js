@@ -1,11 +1,11 @@
 import middleware from './_common/middleware.js';
+import { UA } from './_common/http.js';
 import { createLogger } from './_common/logger.js';
 
 const log = createLogger('carbon');
 
 const TIMEOUT = 8000;
 const MAX_BYTES = 10 * 1024 * 1024;
-const USER_AGENT = 'Mozilla/5.0 (compatible; WebCheck/2.0; +https://web-check.xyz)';
 
 // Sustainable Web Design model v3 constants, matches websitecarbon.com formula
 const KWH_PER_GB = 0.81;
@@ -33,7 +33,7 @@ const fetchByteCount = async (url) => {
   const r = await fetch(url, {
     signal: AbortSignal.timeout(TIMEOUT),
     redirect: 'follow',
-    headers: { 'user-agent': USER_AGENT, accept: 'text/html,*/*;q=0.1' },
+    headers: { 'user-agent': UA, accept: 'text/html,*/*;q=0.1' },
   });
   if (!r.ok) throw new Error(`status ${r.status}`);
   if (!r.body) return 0;
