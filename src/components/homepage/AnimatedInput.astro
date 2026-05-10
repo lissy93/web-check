@@ -11,7 +11,18 @@ const placeholders = [
 ---
 
 <div class="input-container">
-  <input required id="url-input" type="url" name="url" placeholder="E.g. duck.com" />
+  <input
+    required
+    id="url-input"
+    type="text"
+    name="url"
+    inputmode="url"
+    autocapitalize="off"
+    autocomplete="off"
+    autocorrect="off"
+    spellcheck="false"
+    placeholder="E.g. duck.com"
+  />
   <div class="placeholder-container">
     <span class="starter" aria-hidden="true">E.g.</span>
     {

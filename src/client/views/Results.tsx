@@ -58,7 +58,8 @@ const ResultsContent = styled.section`
 
 const makeSiteName = (address: string): string => {
   try {
-    return new URL(address).hostname.replace('www.', '');
+    const withScheme = /^https?:\/\//i.test(address) ? address : `https://${address}`;
+    return new URL(withScheme).hostname.replace(/^www\./, '');
   } catch {
     return address;
   }
@@ -175,7 +176,11 @@ const Results = (props: { address?: string }): JSX.Element => {
         {address && (
           <Heading color={colors.textColor} size="medium">
             {addressType === 'url' && (
-              <a target="_blank" rel="noreferrer" href={address}>
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={/^https?:\/\//i.test(address) ? address : `https://${address}`}
+              >
                 <img width="32px" alt="" src={`https://icon.horse/icon/${makeSiteName(address)}`} />
               </a>
             )}

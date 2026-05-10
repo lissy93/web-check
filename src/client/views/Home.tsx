@@ -11,7 +11,7 @@ import FancyBackground from 'client/components/misc/FancyBackground';
 
 import docs from 'client/utils/docs';
 import colors from 'client/styles/colors';
-import { determineAddressType } from 'client/utils/address-type-checker';
+import { determineAddressType, normalizeAddress } from 'client/utils/address-type-checker';
 
 const HomeContainer = styled.section`
   display: flex;
@@ -140,7 +140,7 @@ const SiteFeaturesWrapper = styled(StyledCard)`
 `;
 
 const Home = (): JSX.Element => {
-  const defaultPlaceholder = 'e.g. https://duck.com/';
+  const defaultPlaceholder = 'e.g. duck.com';
   const [userInput, setUserInput] = useState('');
   const [errorMsg, setErrMsg] = useState('');
   const [placeholder] = useState(defaultPlaceholder);
@@ -149,18 +149,17 @@ const Home = (): JSX.Element => {
 
   const location = useLocation();
 
-  /* Redirect strait to results, if somehow we land on /check?url=[] */
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const urlFromQuery = query.get('url');
     if (urlFromQuery) {
-      navigate(`/check/${encodeURIComponent(urlFromQuery)}`, { replace: true });
+      const target = normalizeAddress(urlFromQuery);
+      if (target) navigate(`/check/${target}`, { replace: true });
     }
   }, [navigate, location.search]);
 
-  /* Check is valid address, either show err or redirect to results page */
   const submit = () => {
-    let address = userInput.endsWith('/') ? userInput.slice(0, -1) : userInput;
+    const address = normalizeAddress(userInput);
     const addressType = determineAddressType(address);
 
     if (addressType === 'empt') {
@@ -168,12 +167,8 @@ const Home = (): JSX.Element => {
     } else if (addressType === 'err') {
       setErrMsg('Must be a valid URL, IPv4 or IPv6 Address');
     } else {
-      // if the addressType is 'url' and address doesn't start with 'http://' or 'https://', prepend 'https://'
-      if (addressType === 'url' && !/^https?:\/\//i.test(address)) {
-        address = 'https://' + address;
-      }
       const resultRouteParams: NavigateOptions = { state: { address, addressType } };
-      navigate(`/check/${encodeURIComponent(address)}`, resultRouteParams);
+      navigate(`/check/${address}`, resultRouteParams);
     }
   };
 
