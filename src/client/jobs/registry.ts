@@ -37,6 +37,7 @@ import ThreatsCard from 'client/components/Results/Threats';
 import TlsConnectionCard from 'client/components/Results/TlsConnection';
 import TlsSecurityAuditCard from 'client/components/Results/TlsSecurityAudit';
 import TlsClientCompatCard from 'client/components/Results/TlsClientCompat';
+import SubdomainsCard from 'client/components/Results/Subdomains';
 
 import type { JobSpec, JobContext, JobsState } from './types';
 
@@ -212,6 +213,12 @@ export const jobs: JobSpec[] = [
       card('tls-client-compat', 'TLS Client Compatibility', ['security'], TlsClientCompatCard),
     ],
     fetcher: fetchAndPoll('tls-labs?url=${url}'),
+  },
+  {
+    id: 'subdomains',
+    expectedAddressTypes: [...URL_ONLY],
+    cards: [card('subdomains', 'Subdomains', ['server', 'meta'], SubdomainsCard)],
+    fetcher: fetchAndRetry('subdomains?url=${url}'),
   },
   {
     id: 'trace-route',
