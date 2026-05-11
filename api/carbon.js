@@ -7,25 +7,23 @@ const log = createLogger('carbon');
 const TIMEOUT = 8000;
 const MAX_BYTES = 10 * 1024 * 1024;
 
-// Sustainable Web Design model v3 constants, matches websitecarbon.com formula
-const KWH_PER_GB = 0.81;
+// Sustainable Web Design model v4 constants, matches websitecarbon.com formula
+const KWH_PER_GB = 0.3;
 const FIRST_VISIT = 0.25;
 const RETURN_VISIT = 0.75;
 const RETURN_DATA_PCT = 0.02;
-const GRID_INTENSITY = 442;
+const GRID_INTENSITY = 494;
 const RENEWABLE_INTENSITY = 50;
 const LITRES_PER_GRAM = 0.5562;
 
-// Reference median grams CO2 per visit, drawn from websitecarbon's published average.
-// Used to estimate a percentile rank since we lack their measured-sites dataset
-const REFERENCE_MEDIAN_GRAMS = 0.8;
+// Median CO2 for an HTML-only fetch at HTTP Archive's ~30 KB median
+const REFERENCE_MEDIAN_GRAMS = 0.001;
 
-// Approximate percentile via log2 distance from the reference median.
-// 1 doubling above median drops 25 points; clamp to [1, 99]
+// Percentile rank via log2 distance from the median, clamped to [1, 95]
 const estimateCleanerThan = (grams) => {
   if (!grams || grams <= 0) return 0;
-  const pct = 50 - 25 * Math.log2(grams / REFERENCE_MEDIAN_GRAMS);
-  return Math.max(1, Math.min(99, Math.round(pct)));
+  const pct = 50 - 15 * Math.log2(grams / REFERENCE_MEDIAN_GRAMS);
+  return Math.max(1, Math.min(95, Math.round(pct)));
 };
 
 // Stream the response, cap at MAX_BYTES so huge pages can't blow memory or time
