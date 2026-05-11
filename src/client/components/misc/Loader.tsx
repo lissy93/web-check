@@ -8,14 +8,15 @@ const LoaderContainer = styled(StyledCard)`
   margin: 0 auto;
   width: 95vw;
   position: relative;
-  transition: all 0.2s ease-in-out;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   gap: 2rem;
   height: 50vh;
-  transition: all 0.3s ease-in-out;
+  transition:
+    height 0.3s ease-in-out,
+    opacity 0.3s ease-in-out;
   p.loadTimeInfo {
     text-align: center;
     margin: 0;
@@ -29,14 +30,9 @@ const LoaderContainer = styled(StyledCard)`
     height: 0;
     overflow: hidden;
     opacity: 0;
-    margin: -1rem 0 0 0;
-    padding: 0;
-    svg {
-      width: 0;
-    }
-    h4 {
-      font-size: 0;
-    }
+    margin-top: -1rem;
+    padding-top: 0;
+    padding-bottom: 0;
   }
   &.hide {
     display: none;
