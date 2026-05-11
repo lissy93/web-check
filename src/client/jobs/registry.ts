@@ -102,11 +102,11 @@ const fetchAndPoll = (path: string) =>
     }),
   );
 
-// Re-run on transient errors, returning the last error if all attempts fail
+// Re-run on transient errors or when the server hints `retryable: true`
 const fetchAndRetry = (path: string) =>
   retrying(
     path,
-    (r) => !!r?.error,
+    (r) => !!r?.error || !!r?.retryable,
     3,
     2000,
     (last) => last,
@@ -207,7 +207,6 @@ export const jobs: JobSpec[] = [
   {
     id: 'tls-labs',
     expectedAddressTypes: [...URL_ONLY],
-    noClientTimeout: true,
     cards: [
       card('tls-security-audit', 'TLS Security Audit', ['security'], TlsSecurityAuditCard),
       card('tls-client-compat', 'TLS Client Compatibility', ['security'], TlsClientCompatCard),

@@ -315,12 +315,16 @@ const FancyBackground = (): JSX.Element => {
   useEffect(() => {
     App.setup();
     App.draw();
-
-    var frame = function () {
-      App.evolve();
+    const frameInterval = 25;
+    let lastTime = 0;
+    const frame = (now: number) => {
+      if (now - lastTime >= frameInterval) {
+        App.evolve();
+        lastTime = now;
+      }
       requestAnimationFrame(frame);
     };
-    frame();
+    requestAnimationFrame(frame);
   }, [App]);
 
   return (
