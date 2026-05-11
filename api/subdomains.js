@@ -45,10 +45,15 @@ const subdomainsHandler = async (url) => {
       params: { q: `%.${domain}`, output: 'json' },
       headers: { Accept: 'application/json' },
     });
-    const rows = Array.isArray(res.data) ? res.data : [];
-    const all = collectSubdomains(rows, domain);
+    if (!Array.isArray(res.data)) {
+      return { error: 'Certificate Transparency lookup returned unexpected data, please retry' };
+    }
+    const all = collectSubdomains(res.data, domain);
     if (!all.length) {
-      return { skipped: `No subdomains found for ${domain} in Certificate Transparency logs` };
+      return {
+        skipped: `No subdomains found for ${domain} in Certificate Transparency logs`,
+        retryable: true,
+      };
     }
     return {
       domain,
