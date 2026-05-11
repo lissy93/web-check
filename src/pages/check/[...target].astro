@@ -14,9 +14,12 @@ if (searchUrl) {
   const target = normalizeAddress(searchUrl);
   if (target) Astro.redirect(`/check/${target}`);
 }
+
+const { target } = Astro.params;
+const pageTitle = target ? `${target} | Web Check` : 'Web Check';
 ---
 
-<BaseLayout preloadBodyFont={false}>
+<BaseLayout preloadBodyFont={false} title={pageTitle}>
   <link
     slot="head"
     href="/fonts/PTMono-Regular.woff2"

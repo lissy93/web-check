@@ -16,7 +16,10 @@ const siteInfo = {
   titleLong: 'Web Check - X-Ray Vision for any Website',
   description:
     'Web Check is the all-in-one OSINT and security tool, for revealing the inner workings of any website',
-  keywords: '',
+  keywords:
+    'web check, OSINT, website security, security audit, DNS lookup, SSL check, ' +
+    'tech stack detection, website analyzer, web tools, open source',
+  themeColor: '#c1fb41',
   author: 'Alicia Sykes',
   twitter: '@Lissy_Sykes',
   site: import.meta.env.SITE_URL || 'https://web-check.xyz',
@@ -27,17 +30,16 @@ const siteInfo = {
   },
 };
 
-// Set values for the meta tags, from props or defaults
-const {
-  title = siteInfo.title,
-  description = siteInfo.description,
-  keywords = siteInfo.keywords,
-  breadcrumbs,
-  customSchemaJson,
-} = Astro.props;
+// Resolve per-page values, falling back to siteInfo defaults
+const { title, description, keywords, breadcrumbs, customSchemaJson } = Astro.props;
+const pageTitle = title ?? siteInfo.title;
+const ogTitle = title ?? siteInfo.titleLong;
+const pageDescription = description ?? siteInfo.description;
+const pageKeywords = keywords ?? siteInfo.keywords;
 
-// Set non-customizable values for meta tags, from the siteInfo
-const { site, author, twitter, analytics, titleLong } = siteInfo;
+const { site, author, twitter, analytics, themeColor } = siteInfo;
+const canonical = new URL(Astro.url.pathname, site).href;
+const ogImage = `${site}/banner.png`;
 
 // Given a map of breadcrumbs, return the JSON-LD for the BreadcrumbList schema
 const makeBreadcrumbs = () => {
@@ -56,10 +58,12 @@ const makeBreadcrumbs = () => {
 ---
 
 <!-- Core info -->
-<title>{title}</title>
-<meta name="description" content={description} />
-<meta name="keywords" content={keywords} />
+<title>{pageTitle}</title>
+<meta name="description" content={pageDescription} />
+{pageKeywords && <meta name="keywords" content={pageKeywords} />}
 <meta name="author" content={author} />
+<meta name="theme-color" content={themeColor} />
+<link rel="canonical" href={canonical} />
 
 <!-- Page info, viewport, Astro credit -->
 <meta charset="UTF-8" />
@@ -73,19 +77,17 @@ const makeBreadcrumbs = () => {
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
 <!-- Social media meta tags (Open Graphh + Twitter) -->
-<meta property="og:site_name" content={title} />
+<meta property="og:site_name" content={siteInfo.title} />
 <meta property="og:type" content="website" />
-<meta property="og:url" content={site} />
-<meta property="og:title" content={titleLong} />
-<meta property="og:description" content={description} />
-<meta property="og:image" content={`${site}/banner.png`} />
-<meta name="twitter:card" content="summary" />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={ogTitle} />
+<meta property="og:description" content={pageDescription} />
+<meta property="og:image" content={ogImage} />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:url" content={site} />
-<meta name="twitter:title" content={titleLong} />
-<meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={`${site}/banner.png`} />
-<link rel="twitter:image" sizes="180x180" href={`${site}/apple-touch-icon.png`} />
+<meta name="twitter:url" content={canonical} />
+<meta name="twitter:title" content={ogTitle} />
+<meta name="twitter:description" content={pageDescription} />
+<meta name="twitter:image" content={ogImage} />
 <meta name="twitter:site" content={twitter} />
 <meta name="twitter:creator" content={twitter} />
 
