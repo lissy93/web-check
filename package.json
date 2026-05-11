@@ -1,7 +1,7 @@
 {
   "name": "web-check",
   "type": "module",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "homepage": "https://web-check.xyz",
   "engines": {
     "node": ">=22"
