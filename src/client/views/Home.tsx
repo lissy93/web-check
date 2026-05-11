@@ -43,42 +43,15 @@ const SponsorCard = styled.div`
   box-shadow: 4px 4px 0px ${colors.bgShadowColor};
   border-radius: 8px;
   padding: 1rem;
-  z-index: 5;
   margin: 1rem;
   width: calc(100% - 2rem);
   max-width: 60rem;
   z-index: 2;
-  .inner {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-    p {
-      margin: 0.25rem 0;
-    }
+  p {
+    margin: 0.25rem 0;
   }
   a {
-    color: ${colors.textColor};
-  }
-  img {
-    border-radius: 0.25rem;
-    box-shadow: 2px 2px 0px ${colors.fgShadowColor};
-    transition: box-shadow 0.2s;
-    margin: 0 auto;
-    display: block;
-    width: 200px;
-    &:hover {
-      box-shadow: 4px 4px 0px ${colors.fgShadowColor};
-    }
-    &:active {
-      box-shadow: -2px -2px 0px ${colors.fgShadowColor};
-    }
-  }
-  .cta {
-    font-size: 0.78rem;
-    a {
-      color: ${colors.primary};
-    }
+    color: ${colors.primary};
   }
 `;
 
@@ -124,20 +97,36 @@ const SiteFeaturesWrapper = styled(StyledCard)`
     font-size: 0.9rem;
     color: ${colors.textColor};
     li {
+      position: relative;
       margin: 0.1rem 0;
-      text-indent: -1.2rem;
+      padding-left: 1.2rem;
       break-inside: avoid-column;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     li:before {
       content: '✓';
       color: ${colors.primary};
-      margin-right: 0.5rem;
+      position: absolute;
+      left: 0;
+    }
+    li:not(:last-child) a {
+      color: inherit;
+      text-decoration: none;
     }
   }
   a {
     color: ${colors.primary};
   }
 `;
+
+// Build a URL-safe anchor id from a section title (e.g. "IP Info" -> "ip-info")
+const makeAnchor = (title: string): string =>
+  title
+    .toLowerCase()
+    .replace(/[^\w\s]|_/g, '')
+    .replace(/\s+/g, '-');
 
 const Home = (): JSX.Element => {
   const defaultPlaceholder = 'e.g. duck.com';
@@ -191,23 +180,6 @@ const Home = (): JSX.Element => {
     submit();
   };
 
-  // const findIpAddress = () => {
-  //   setUserInput('');
-  //   setPlaceholder('Looking up your IP...');
-  //   setInputDisabled(true);
-  //   fetch('https://ipapi.co/json/')
-  //     .then(function(response) {
-  //       response.json().then(jsonData => {
-  //         setUserInput(jsonData.ip);
-  //         setPlaceholder(defaultPlaceholder);
-  //         setInputDisabled(true);
-  //       });
-  //     })
-  //     .catch(function(error) {
-  //       console.log('Failed to get IP address :\'(', error)
-  //     });
-  // };
-
   return (
     <HomeContainer>
       <FancyBackground />
@@ -238,43 +210,16 @@ const Home = (): JSX.Element => {
       </UserInputMain>
       <SponsorCard>
         <Heading as="h2" size="small" color={colors.primary}>
-          Sponsored by
+          Enjoying Web Check?
         </Heading>
-        <div className="inner">
-          <p>
-            <a
-              target="_blank"
-              rel="noreferrer"
-              href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh"
-            >
-              Terminal Trove
-            </a>{' '}
-            - The $HOME of all things in the terminal.
-            <br />
-            <span className="cta">
-              Get updates on the latest CLI/TUI tools via the{' '}
-              <a
-                target="_blank"
-                rel="noreferrer"
-                className="cta"
-                href="https://terminaltrove.com/newsletter?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh"
-              >
-                Terminal Trove newsletter
-              </a>
-            </span>
-          </p>
-          <a
-            target="_blank"
-            rel="noreferrer"
-            href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh"
-          >
-            <img
-              width="120"
-              alt="Terminal Trove"
-              src="https://i.ibb.co/NKtYjJ1/terminal-trove-web-check.png"
-            />
+        <p>
+          It's free, open source, and funded by the community. If it's been useful, you can keep it
+          going (and ad-free) by{' '}
+          <a target="_blank" rel="noreferrer" href="https://github.com/sponsors/Lissy93">
+            sponsoring me on GitHub
           </a>
-        </div>
+          . Every bit genuinely helps, thank you
+        </p>
       </SponsorCard>
       <SiteFeaturesWrapper>
         <div className="features">
@@ -283,7 +228,11 @@ const Home = (): JSX.Element => {
           </Heading>
           <ul>
             {docs.map((doc, index) => (
-              <li key={index}>{doc.title}</li>
+              <li key={index}>
+                <Link to={`/check/about#${makeAnchor(doc.title)}`} title={doc.title}>
+                  {doc.title}
+                </Link>
+              </li>
             ))}
             <li>
               <Link to="/check/about">+ more!</Link>

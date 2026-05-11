@@ -121,12 +121,11 @@ const SponsorshipContainer = styled.div`
   }
 `;
 
-const makeAnchor = (title: string): string => {
-  return title
+const makeAnchor = (title: string): string =>
+  title
     .toLowerCase()
     .replace(/[^\w\s]|_/g, '')
     .replace(/\s+/g, '-');
-};
 
 const About = (): JSX.Element => {
   const location = useLocation();
