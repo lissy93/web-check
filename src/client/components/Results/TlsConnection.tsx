@@ -1,5 +1,6 @@
 import { Card } from 'client/components/Form/Card';
 import Row from 'client/components/Form/Row';
+import colors from 'client/styles/colors';
 
 const yesNo = (v: boolean) => (v ? '✅ Yes' : '❌ No');
 
@@ -28,7 +29,12 @@ const TlsConnectionCard = (props: {
       {d.alpnProtocol && <Row lbl="ALPN" val={d.alpnProtocol} />}
       <Row lbl="Forward Secrecy" val={yesNo(!!d.forwardSecrecy)} />
       <Row lbl="Session Resumption" val={yesNo(!!d.sessionResumption)} />
-      <Row lbl="OCSP Stapling" val={yesNo(!!d.ocspStapled)} />
+      <Row lbl="OCSP Stapling" val="">
+        <span className="lbl">OCSP Stapling</span>
+        <span className="val" style={{ color: colors.info }}>
+          {d.ocspStapled ? 'ⓘ Present' : 'ⓘ Not Present'} — may impact visitor privacy
+        </span>
+      </Row>
       <Row
         lbl="Certificate Trust"
         val={d.authorized ? '✅ Trusted' : `❌ ${d.authError || 'Untrusted'}`}
