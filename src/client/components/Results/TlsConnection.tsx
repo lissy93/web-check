@@ -3,6 +3,8 @@ import Row from 'client/components/Form/Row';
 
 const yesNo = (v: boolean) => (v ? '✅ Yes' : '❌ No');
 
+const ocspStatus = (v: boolean) => (v ? 'Yes' : 'Not enabled');
+
 const formatEphemeralKey = (k: any): string => {
   if (!k?.type) return '';
   const parts = [k.type];
@@ -28,7 +30,7 @@ const TlsConnectionCard = (props: {
       {d.alpnProtocol && <Row lbl="ALPN" val={d.alpnProtocol} />}
       <Row lbl="Forward Secrecy" val={yesNo(!!d.forwardSecrecy)} />
       <Row lbl="Session Resumption" val={yesNo(!!d.sessionResumption)} />
-      <Row lbl="OCSP Stapling" val={yesNo(!!d.ocspStapled)} />
+      <Row lbl="OCSP Stapling" val={ocspStatus(!!d.ocspStapled)} />
       <Row
         lbl="Certificate Trust"
         val={d.authorized ? '✅ Trusted' : `❌ ${d.authError || 'Untrusted'}`}
