@@ -7,6 +7,7 @@ const styles = `
     max-height: 50rem;
     overflow-x: hidden;
     overflow-y: auto;
+    overflow-wrap: anywhere;
   }
 `;
 
