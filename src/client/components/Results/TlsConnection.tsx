@@ -4,6 +4,8 @@ import colors from 'client/styles/colors';
 
 const yesNo = (v: boolean) => (v ? '✅ Yes' : '❌ No');
 
+const ocspStatus = (v: boolean) => (v ? 'Yes' : 'Not enabled');
+
 const formatEphemeralKey = (k: any): string => {
   if (!k?.type) return '';
   const parts = [k.type];

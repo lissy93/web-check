@@ -10,7 +10,7 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS build
 # Set the container's default shell to Bash and enable some options
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
-# Install Chromium browser and Download and verify Google Chrome’s signing key
+# Install Chromium browser and Download and verify Google Chrome's signing key
 RUN apt-get update -qq --fix-missing && \
     apt-get -qqy install --allow-unauthenticated gnupg wget && \
     wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/google-archive.gpg && \
@@ -59,6 +59,13 @@ EXPOSE ${PORT:-3000}
 ENV CHROME_PATH='/usr/bin/chromium' \
     PUPPETEER_EXECUTABLE_PATH='/usr/bin/chromium' \
     PUPPETEER_SKIP_DOWNLOAD='true'
+
+LABEL org.opencontainers.image.title="Web-Check" \
+      org.opencontainers.image.description="All-in-one OSINT tool for analysing any website" \
+      org.opencontainers.image.url="https://web-check.xyz" \
+      org.opencontainers.image.source="https://github.com/lissy93/web-check" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.vendor="Alicia Sykes"
 
 # Define the command executed when the container starts and start the server.js of the Node.js application
 CMD ["yarn", "start"]
