@@ -1,5 +1,6 @@
 import middleware from './_common/middleware.js';
 import { httpGet } from './_common/http.js';
+import { skipIfNonRoutable } from './_common/target-scope.js';
 import { parseTarget } from './_common/parse-target.js';
 import { requireEnv, upstreamError } from './_common/upstream.js';
 
@@ -8,6 +9,8 @@ const shodanHandler = async (url) => {
   const auth = requireEnv('SHODAN_API_KEY', 'Shodan');
   if (auth.skipped) return auth;
   const { hostname } = parseTarget(url);
+  const skip = skipIfNonRoutable(hostname, 'Shodan lookup');
+  if (skip) return skip;
   try {
     const res = await httpGet(`https://api.shodan.io/shodan/host/${hostname}?key=${auth.value}`);
     return res.data;

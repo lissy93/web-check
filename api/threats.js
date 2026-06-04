@@ -1,4 +1,5 @@
 import xml2js from 'xml2js';
+import { skipIfNonRoutable } from './_common/target-scope.js';
 import middleware from './_common/middleware.js';
 import { httpPost } from './_common/http.js';
 import { parseTarget } from './_common/parse-target.js';
@@ -79,6 +80,10 @@ const cloudmersive = async (url) => {
 
 // Aggregate four threat-feed lookups; skip the card if every source failed
 const threatsHandler = async (url) => {
+  const { hostname } = parseTarget(url);
+  const skip = skipIfNonRoutable(hostname, 'Threat intelligence lookup');
+  if (skip) return skip;
+
   const sources = await Promise.all([
     safeBrowsing(url),
     urlHaus(url),

@@ -1,5 +1,7 @@
 import middleware from './_common/middleware.js';
 import { httpGet } from './_common/http.js';
+import { parseTarget } from './_common/parse-target.js';
+import { skipIfNonRoutable } from './_common/target-scope.js';
 
 const convertTimestampToDate = (timestamp) => {
   const [year, month, day, hour, minute, second] = [
@@ -47,6 +49,10 @@ const getScanFrequency = (firstScan, lastScan, totalScans, changeCount) => {
 };
 
 const wayBackHandler = async (url) => {
+  const { hostname } = parseTarget(url);
+  const skip = skipIfNonRoutable(hostname, 'Archive lookup');
+  if (skip) return skip;
+
   // collapse=timestamp:8 returns one row per archived day, slashing payloads
   // (Wikipedia: 25MB/373k rows -> 428KB/6k rows) without losing first/last/change counts
   const cdxUrl =

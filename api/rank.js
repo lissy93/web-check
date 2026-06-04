@@ -1,10 +1,13 @@
 import middleware from './_common/middleware.js';
 import { httpGet } from './_common/http.js';
+import { skipIfNonRoutable } from './_common/target-scope.js';
 import { parseTarget } from './_common/parse-target.js';
 import { upstreamError } from './_common/upstream.js';
 
 const rankHandler = async (url) => {
   const { hostname } = parseTarget(url);
+  const skip = skipIfNonRoutable(hostname, 'Tranco rank lookup');
+  if (skip) return skip;
   const { TRANCO_USERNAME, TRANCO_API_KEY } = process.env;
   const auth = TRANCO_API_KEY
     ? { auth: { username: TRANCO_USERNAME, password: TRANCO_API_KEY } }

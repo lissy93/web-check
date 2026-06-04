@@ -1,4 +1,5 @@
 import { promises as dns } from 'dns';
+import { skipIfNonRoutable } from './_common/target-scope.js';
 import middleware from './_common/middleware.js';
 import { parseTarget } from './_common/parse-target.js';
 import { createLogger } from './_common/logger.js';
@@ -170,6 +171,8 @@ const resolveHost = async (hostname) => {
 // Resolve geographic info for a host via a chain of providers with country enrichment
 const locationHandler = async (url) => {
   const { hostname } = parseTarget(url);
+  const skip = skipIfNonRoutable(hostname, 'IP geolocation lookup');
+  if (skip) return skip;
   const ip = await resolveHost(hostname);
   const geo = await lookupGeo(ip);
   if (!geo) {
