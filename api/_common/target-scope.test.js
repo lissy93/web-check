@@ -4,7 +4,19 @@ import assert from 'node:assert/strict';
 import { isNonRoutableHost, skipIfNonRoutable } from './target-scope.js';
 
 test('isNonRoutableHost flags RFC1918, loopback, link-local, localhost and ULA addresses', () => {
-  for (const host of ['10.0.0.1', '172.16.4.5', '192.168.1.10', '127.0.0.1', '169.254.10.20', 'localhost', 'foo.localhost', 'fc00::1', 'fd12:3456::1', 'fe80::1', '::1']) {
+  for (const host of [
+    '10.0.0.1',
+    '172.16.4.5',
+    '192.168.1.10',
+    '127.0.0.1',
+    '169.254.10.20',
+    'localhost',
+    'foo.localhost',
+    'fc00::1',
+    'fd12:3456::1',
+    'fe80::1',
+    '::1',
+  ]) {
     assert.equal(isNonRoutableHost(host), true, host);
   }
 });
