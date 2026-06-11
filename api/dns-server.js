@@ -1,7 +1,7 @@
 import { promises as dnsPromises } from 'dns';
 import middleware from './_common/middleware.js';
 import { parseTarget } from './_common/parse-target.js';
-import { upstreamError } from './_common/upstream.js';
+import { describeDnsServerLookupError } from './dns-server-error.js';
 
 // Resolve a nameserver hostname to its IP addresses
 const resolveNs = async (ns) => {
@@ -18,7 +18,7 @@ const dnsHandler = async (url) => {
   try {
     nameservers = await dnsPromises.resolveNs(domain);
   } catch (error) {
-    return upstreamError(error, 'DNS server lookup');
+    return describeDnsServerLookupError(error, domain);
   }
   const results = await Promise.all(
     nameservers.map(async (ns) => {
