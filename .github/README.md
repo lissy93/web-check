@@ -29,13 +29,6 @@
       </a><br>
       <sub>Built for coding with multiple AI agents</sub>
     </td>
-    <td align="center" width="33%">
-      <a href="https://uruky.com?ref=lissy93">
-	  <img src="https://pixelflare.cc/alicia/sponsors/uruky/w512" width="260" alt="Uruky"><br>
-	  <b>Uruky</b>
-	  </a><br>
-	  <sub>Private EU-based search, no ads or logs</sub>
-    </td>
   </tr>
 </table>
 
