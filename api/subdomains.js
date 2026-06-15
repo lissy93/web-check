@@ -4,7 +4,7 @@ import { httpGet } from './_common/http.js';
 import { parseTarget } from './_common/parse-target.js';
 
 const MAX_SUBDOMAINS = 500;
-const SOURCE_TIMEOUT = 8000;
+const SOURCE_TIMEOUT = 6000;
 const HOSTNAME_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;
 
 const baseDomain = (host) => psl.parse(host)?.domain || host;
@@ -31,10 +31,27 @@ const crtSh = async (domain) => {
   return res.data.flatMap((row) => String(row?.name_value ?? '').split('\n'));
 };
 
+const hackerTarget = async (domain) => {
+  const res = await httpGet('https://api.hackertarget.com/hostsearch/', {
+    params: { q: domain },
+    timeout: SOURCE_TIMEOUT,
+  });
+  const body = typeof res.data === 'string' ? res.data : '';
+  if (!body || /error|api count|quota/i.test(body)) throw new Error('hackerTarget unavailable');
+  return body.split('\n').map((line) => line.split(',')[0]);
+};
+
 const SOURCES = [
   { name: 'certSpotter', lookup: certSpotter },
   { name: 'crt.sh', lookup: crtSh },
+  { name: 'hackerTarget', lookup: hackerTarget },
 ];
+
+const isTransient = (error) => {
+  const status = error.response?.status;
+  if (status && status < 500) return false;
+  return true;
+};
 
 const subdomainsHandler = async (url) => {
   const { hostname } = parseTarget(url);
@@ -56,11 +73,10 @@ const subdomainsHandler = async (url) => {
     ),
   ].sort();
 
-  let tried = 0;
   let succeeded = 0;
+  const errors = [];
   for (const source of SOURCES) {
     if (source.requires && !process.env[source.requires]) continue;
-    tried += 1;
     try {
       const subdomains = sieve(await source.lookup(domain));
       succeeded += 1;
@@ -73,20 +89,17 @@ const subdomainsHandler = async (url) => {
           source: source.name,
         };
       }
-    } catch {
-      continue;
+    } catch (error) {
+      errors.push(error);
     }
   }
 
-  if (!tried) {
-    return { skipped: 'No subdomain lookup source is configured' };
-  }
-  if (!succeeded) {
-    return { error: 'Subdomain lookup failed across all sources, please retry', retryable: true };
+  if (succeeded) {
+    return { skipped: `No subdomains found for ${domain} in Certificate Transparency logs` };
   }
   return {
-    skipped: `No subdomains found for ${domain} in Certificate Transparency logs`,
-    retryable: true,
+    error: 'Subdomain lookup is temporarily unavailable for this domain',
+    retryable: errors.some(isTransient),
   };
 };
 
