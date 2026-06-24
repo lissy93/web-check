@@ -180,7 +180,7 @@ Cookies can disclose information about how the website tracks and interacts with
 - [HTTP Cookie Docs (Mozilla)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
 - [What are Cookies (via Cloudflare Learning)](https://www.cloudflare.com/learning/privacy/what-are-cookies/)
 - [Testing for Cookie Attributes (OWASP)](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/06-Session_Management_Testing/02-Testing_for_Cookies_Attributes)
-- [RFC-6265 - Coolies](https://tools.ietf.org/html/rfc6265)
+- [RFC-6265 - Cookies](https://tools.ietf.org/html/rfc6265)
 
 </details>
 <details>
@@ -259,7 +259,7 @@ The Server Location task determines the physical location of the server hosting 
 
 ###### Use Cases
 
-Knowing the server location is a good first step in better understanding a website. For site owners this aids in optimizing content delivery, ensuring compliance with data residency requirements, and identifying potential latency issues that may impact user experience in specific geographical regions. And for security researcher, assess the risk posed by specific regions or jurisdictions regarding cyber threats and regulations.
+Knowing the server location is a good first step in better understanding a website. For site owners this aids in optimizing content delivery, ensuring compliance with data residency requirements, and identifying potential latency issues that may impact user experience in specific geographical regions. And for security researchers, it helps assess the risk posed by specific regions or jurisdictions regarding cyber threats and regulations.
 
 ###### Useful Links
 
@@ -377,10 +377,10 @@ In OSINT investigations, traceroute can provide insights about the routing paths
 
 ###### Useful Links
 
-- [undefined](function link() { [native code] })
-- [undefined](function link() { [native code] })
-- [undefined](function link() { [native code] })
-- [undefined](function link() { [native code] })
+- [Traceroute - Wiki](https://en.wikipedia.org/wiki/Traceroute)
+- [What is Traceroute (via Cloudflare Learning)](https://www.cloudflare.com/learning/network-layer/what-is-traceroute/)
+- [How to Use Traceroute (via Linode)](https://www.linode.com/docs/guides/linux-traceroute/)
+- [Visual Traceroute Tool](https://gsuite.tools/traceroute)
 
 </details>
 <details>
