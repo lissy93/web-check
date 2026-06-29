@@ -1,4 +1,5 @@
 import { bracketIPv6 } from './parse-target.js';
+import { assertSafeTarget, UnsafeTargetError } from './safe-target.js';
 
 const normalizeUrl = (url) => {
   const withScheme = url.startsWith('http') ? url : `https://${url}`;
@@ -74,6 +75,15 @@ const commonMiddleware = (handler) => {
     const url = normalizeUrl(rawUrl);
 
     try {
+      await assertSafeTarget(url);
+    } catch (error) {
+      if (error instanceof UnsafeTargetError) {
+        return response.status(400).json({ error: error.message });
+      }
+      throw error;
+    }
+
+    try {
       const result = await Promise.race([handler(url, request), createTimeoutPromise(TIMEOUT)]);
       response.status(200).json(typeof result === 'object' ? result : JSON.parse(result));
     } catch (error) {
@@ -96,6 +106,16 @@ const commonMiddleware = (handler) => {
     }
 
     const url = normalizeUrl(rawUrl);
+
+    try {
+      await assertSafeTarget(url);
+    } catch (error) {
+      if (error instanceof UnsafeTargetError) {
+        return { statusCode: 400, body: JSON.stringify({ error: error.message }), headers };
+      }
+      throw error;
+    }
+
     try {
       const result = await Promise.race([
         handler(url, event, context),
