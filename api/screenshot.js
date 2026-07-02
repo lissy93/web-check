@@ -1,24 +1,20 @@
 import puppeteer from 'puppeteer-core';
-import chromium from 'chrome-aws-lambda';
-import middleware from './_common/middleware.js';
+import chromium from '@sparticuz/chromium';
+import { randomUUID } from 'crypto';
 import { execFile } from 'child_process';
 import { promises as fs } from 'fs';
 import path from 'path';
-import pkg from 'uuid';
+import middleware from './_common/middleware.js';
+import { createLogger } from './_common/logger.js';
 import { assertSafeUrl } from './_common/ssrf.js';
-const { v4: uuidv4 } = pkg;
 
-// Helper function for direct chromium screenshot as fallback
+const log = createLogger('screenshot');
+
 const directChromiumScreenshot = async (url) => {
-  console.log(`[DIRECT-SCREENSHOT] Starting direct screenshot process for URL: ${url}`);
-  
-  // Create a tmp filename
   const tmpDir = '/tmp';
-  const uuid = uuidv4();
-  const screenshotPath = path.join(tmpDir, `screenshot-${uuid}.png`);
-  
-  console.log(`[DIRECT-SCREENSHOT] Will save screenshot to: ${screenshotPath}`);
-  
+  const screenshotPath = path.join(tmpDir, `screenshot-${randomUUID()}.png`);
+  log.debug(`direct method, saving to ${screenshotPath}`);
+
   return new Promise((resolve, reject) => {
     const chromePath = process.env.CHROME_PATH || '/usr/bin/chromium';
     const args = [
@@ -26,179 +22,98 @@ const directChromiumScreenshot = async (url) => {
       '--disable-gpu',
       '--no-sandbox',
       `--screenshot=${screenshotPath}`,
-      url
+      url,
     ];
-
-    console.log(`[DIRECT-SCREENSHOT] Executing: ${chromePath} ${args.join(' ')}`);
-    
-    execFile(chromePath, args, async (error, stdout, stderr) => {
-      if (error) {
-        console.error(`[DIRECT-SCREENSHOT] Chromium error: ${error.message}`);
-        return reject(error);
-      }
-  
+    execFile(chromePath, args, async (error) => {
+      if (error) return reject(error);
       try {
-        // Read the screenshot file
-        const screenshotData = await fs.readFile(screenshotPath);
-        console.log(`[DIRECT-SCREENSHOT] Screenshot read successfully`);
-        
-        // Convert to base64
-        const base64Data = screenshotData.toString('base64');
-  
-        await fs.unlink(screenshotPath).catch(err =>
-          console.warn(`[DIRECT-SCREENSHOT] Failed to delete temp file: ${err.message}`)
-        );
-  
-        resolve(base64Data);
+        const buf = await fs.readFile(screenshotPath);
+        await fs
+          .unlink(screenshotPath)
+          .catch((err) => log.warn(`temp cleanup failed: ${err.message}`));
+        resolve(buf.toString('base64'));
       } catch (readError) {
-        console.error(`[DIRECT-SCREENSHOT] Failed reading screenshot: ${readError.message}`);
         reject(readError);
       }
     });
   });
 };
 
-const screenshotHandler = async (targetUrl) => {
-  console.log(`[SCREENSHOT] Request received for URL: ${targetUrl}`);
-  
-  if (!targetUrl) {
-    console.error('[SCREENSHOT] URL is missing from queryStringParameters');
-    throw new Error('URL is missing from queryStringParameters');
-  }
-  
-  if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
-    targetUrl = 'http://' + targetUrl;
-  }
-  
-  try {
-    new URL(targetUrl);
-  } catch (error) {
-    console.error(`[SCREENSHOT] URL provided is invalid: ${targetUrl}`);
-    throw new Error('URL provided is invalid');
-  }
-
-  const allowDirect = process.env.ALLOW_DIRECT_SCREENSHOT === 'true';
-  if (allowDirect) {
-    try {
-      console.log(`[SCREENSHOT] Using direct Chromium method for URL: ${targetUrl}`);
-      const base64Screenshot = await directChromiumScreenshot(targetUrl);
-      console.log(`[SCREENSHOT] Direct screenshot successful`);
-      return { image: base64Screenshot };
-    } catch (directError) {
-      console.error(`[SCREENSHOT] Direct screenshot method failed: ${directError.message}`);
-      console.log(`[SCREENSHOT] Falling back to puppeteer method...`);
-    }
-  } else {
-    console.log('[SCREENSHOT] Direct Chromium method disabled for SSRF safety');
-  }
-  
-  const chromePath = process.env.CHROME_PATH || '/usr/bin/chromium';
-
-  try {
-    await fs.access(chromePath);
-  } catch (error) {
-    console.error(`[SCREENSHOT] Chromium path not accessible: ${chromePath}`);
-    throw new Error(`Chromium binary not accessible at ${chromePath}`);
-  }
-
-  try {
-    const versionInfo = await new Promise((resolve, reject) => {
-      execFile(chromePath, ['--headless', '--no-sandbox', '--disable-gpu', '--version'], (error, stdout, stderr) => {
-        if (error) {
-          reject(new Error(stderr || error.message));
-          return;
-        }
-        resolve(stdout.trim());
-      });
-    });
-    console.log(`[SCREENSHOT] Chromium version: ${versionInfo}`);
-  } catch (error) {
-    console.error(`[SCREENSHOT] Chromium launch check failed: ${error.message}`);
-    throw new Error(`Chromium launch check failed: ${error.message}`);
-  }
-
-  // fall back puppeteer 
+const puppeteerScreenshot = async (targetUrl) => {
   let browser = null;
   try {
-    console.log(`[SCREENSHOT] Launching puppeteer browser`);
-    const useLambdaArgs = !!(process.env.AWS_EXECUTION_ENV || process.env.AWS_LAMBDA_FUNCTION_NAME);
-    const launchArgs = useLambdaArgs
-      ? [
-        ...chromium.args,
-        '--no-sandbox',
-        '--disable-dev-shm-usage',
-        '--no-zygote',
-      ]
-      : [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--no-zygote',
-        '--use-gl=swiftshader',
-        '--disable-features=UseDBus',
-      ];
-
     browser = await puppeteer.launch({
-      args: launchArgs,
+      args: [...chromium.args, '--no-sandbox'],
       defaultViewport: { width: 800, height: 600 },
-      executablePath: chromePath,
+      executablePath: process.env.CHROME_PATH || (await chromium.executablePath()),
       headless: true,
-      ignoreHTTPSErrors: true,
+      acceptInsecureCerts: true,
       ignoreDefaultArgs: ['--disable-extensions'],
     });
-    
-    console.log(`[SCREENSHOT] Creating new page`);
-    let page = await browser.newPage();
+    const page = await browser.newPage();
 
     await page.setRequestInterception(true);
-    page.on('request', (request) => {
+    page.on('request', async (request) => {
       const requestUrl = request.url();
-      if (requestUrl.startsWith('data:') || requestUrl.startsWith('blob:') || requestUrl.startsWith('about:')) {
+      if (
+        requestUrl.startsWith('data:') ||
+        requestUrl.startsWith('blob:') ||
+        requestUrl.startsWith('about:')
+      ) {
         request.continue();
         return;
       }
 
-      assertSafeUrl(requestUrl)
-        .then(() => request.continue())
-        .catch(() => request.abort());
+      try {
+        await assertSafeUrl(requestUrl);
+        request.continue();
+      } catch {
+        request.abort();
+      }
     });
-    
-    console.log(`[SCREENSHOT] Setting page preferences`);
+
     await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }]);
     page.setDefaultNavigationTimeout(8000);
-    
-    console.log(`[SCREENSHOT] Navigating to URL: ${targetUrl}`);
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
-    
-    console.log(`[SCREENSHOT] Checking if body element exists`);
     await page.evaluate(() => {
-      const selector = 'body';
-      return new Promise((resolve, reject) => {
-        const element = document.querySelector(selector);
-        if (!element) {
-          reject(new Error(`Error: No element found with selector: ${selector}`));
-        }
-        resolve();
-      });
+      if (!document.querySelector('body')) {
+        throw new Error('No body element found on the page');
+      }
     });
-    
-    console.log(`[SCREENSHOT] Taking screenshot`);
-    const screenshotBuffer = await page.screenshot();
-    
-    console.log(`[SCREENSHOT] Converting screenshot to base64`);
-    const base64Screenshot = screenshotBuffer.toString('base64');
-    
-    console.log(`[SCREENSHOT] Screenshot complete, returning image`);
-    return { image: base64Screenshot };
-  } catch (error) {
-    console.error(`[SCREENSHOT] Puppeteer screenshot failed: ${error.message}`);
-    throw error;
+    const buffer = await page.screenshot();
+    return buffer.toString('base64');
   } finally {
-    if (browser !== null) {
-      console.log(`[SCREENSHOT] Closing browser`);
-      await browser.close();
+    if (browser) await browser.close().catch(() => {});
+  }
+};
+
+const screenshotHandler = async (targetUrl) => {
+  if (!targetUrl) throw new Error('URL is missing from queryStringParameters');
+  try {
+    new URL(targetUrl);
+  } catch {
+    throw new Error('URL provided is invalid');
+  }
+
+  log.debug(`request received: ${targetUrl}`);
+  if (process.env.ALLOW_DIRECT_SCREENSHOT === 'true') {
+    try {
+      return { image: await directChromiumScreenshot(targetUrl) };
+    } catch (directError) {
+      log.warn(`direct chromium failed, falling back to puppeteer: ${directError.message}`);
     }
+  } else {
+    log.debug('direct chromium disabled for ssrf safety');
+  }
+
+  try {
+    return { image: await puppeteerScreenshot(targetUrl) };
+  } catch (error) {
+    if (/ENOENT|Browser was not found|Could not find Chromium/i.test(error.message)) {
+      return { skipped: error.message };
+    }
+    log.error(`puppeteer screenshot failed: ${error.message}`);
+    throw error;
   }
 };
 

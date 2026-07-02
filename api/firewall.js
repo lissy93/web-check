@@ -1,18 +1,16 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
+import { parseTarget } from './_common/parse-target.js';
+import { upstreamError } from './_common/upstream.js';
 
-const hasWaf = (waf) => {
-  return {
-    hasWaf: true, waf,
-  }
-};
+const hasWaf = (waf) => ({ hasWaf: true, waf });
 
 const firewallHandler = async (url) => {
-  const fullUrl = url.startsWith('http') ? url : `http://${url}`;
-  
+  const { href } = parseTarget(url);
   try {
-    const response = await axios.get(fullUrl);
-
+    const response = await httpGet(href, {
+      validateStatus: () => true,
+    });
     const headers = response.headers;
 
     if (headers['server'] && headers['server'].includes('cloudflare')) {
@@ -35,7 +33,10 @@ const firewallHandler = async (url) => {
       return hasWaf('Barracuda WAF');
     }
 
-    if (headers['server'] && (headers['server'].includes('F5 BIG-IP') || headers['server'].includes('BIG-IP'))) {
+    if (
+      headers['server'] &&
+      (headers['server'].includes('F5 BIG-IP') || headers['server'].includes('BIG-IP'))
+    ) {
       return hasWaf('F5 BIG-IP');
     }
 
@@ -101,12 +102,9 @@ const firewallHandler = async (url) => {
 
     return {
       hasWaf: false,
-    }
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
     };
+  } catch (error) {
+    return upstreamError(error, 'Firewall check');
   }
 };
 

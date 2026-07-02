@@ -1,102 +1,95 @@
-import axios from 'axios';
 import xml2js from 'xml2js';
 import middleware from './_common/middleware.js';
+import { httpPost } from './_common/http.js';
+import { parseTarget } from './_common/parse-target.js';
+import { requireEnv, upstreamError } from './_common/upstream.js';
 
-const getGoogleSafeBrowsingResult = async (url) => {
+const safeBrowsing = async (url) => {
+  const auth = requireEnv('GOOGLE_CLOUD_API_KEY', 'Google Safe Browsing');
+  if (auth.skipped) return auth;
   try {
-    const apiKey = process.env.GOOGLE_CLOUD_API_KEY;
-    if (!apiKey) {
-      return { error: 'GOOGLE_CLOUD_API_KEY is required for the Google Safe Browsing check' };
-    }
-    const apiEndpoint = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${apiKey}`;
-
-    const requestBody = {
-      threatInfo: {
-        threatTypes: [
-          'MALWARE', 'SOCIAL_ENGINEERING', 'UNWANTED_SOFTWARE', 'POTENTIALLY_HARMFUL_APPLICATION', 'API_ABUSE'
-        ],
-        platformTypes: ["ANY_PLATFORM"],
-        threatEntryTypes: ["URL"],
-        threatEntries: [{ url }]
-      }
-    };
-
-    const response = await axios.post(apiEndpoint, requestBody);
-    if (response.data && response.data.matches) {
-      return {
-        unsafe: true,
-        details: response.data.matches
-      };
-    } else {
-      return { unsafe: false };
-    }
+    const res = await httpPost(
+      `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${auth.value}`,
+      {
+        threatInfo: {
+          threatTypes: [
+            'MALWARE',
+            'SOCIAL_ENGINEERING',
+            'UNWANTED_SOFTWARE',
+            'POTENTIALLY_HARMFUL_APPLICATION',
+            'API_ABUSE',
+          ],
+          platformTypes: ['ANY_PLATFORM'],
+          threatEntryTypes: ['URL'],
+          threatEntries: [{ url }],
+        },
+      },
+    );
+    return res.data?.matches ? { unsafe: true, details: res.data.matches } : { unsafe: false };
   } catch (error) {
-    return { error: `Request failed: ${error.message}` };
+    return upstreamError(error, 'Google Safe Browsing');
   }
 };
 
-const getUrlHausResult = async (url) => {
-  let domain = new URL(url).hostname;
-  return await axios({
-    method: 'post',
-    url: 'https://urlhaus-api.abuse.ch/v1/host/',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    data: `host=${domain}`
-  })
-  .then((x) => x.data)
-  .catch((e) => ({ error: `Request to URLHaus failed, ${e.message}`}));
+const urlHaus = async (url) => {
+  const { hostname } = parseTarget(url);
+  try {
+    const res = await httpPost('https://urlhaus-api.abuse.ch/v1/host/', `host=${hostname}`, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    });
+    return res.data;
+  } catch (error) {
+    return upstreamError(error, 'URLhaus');
+  }
 };
 
-
-const getPhishTankResult = async (url) => {
+const phishTank = async (url) => {
   try {
-    const encodedUrl = Buffer.from(url).toString('base64');
-    const endpoint = `https://checkurl.phishtank.com/checkurl/?url=${encodedUrl}`;
-    const headers = {
-      'User-Agent': 'phishtank/web-check',
-    };
-    const response = await axios.post(endpoint, null, { headers, timeout: 3000 });
-    const parsed = await xml2js.parseStringPromise(response.data, { explicitArray: false });
+    const encoded = Buffer.from(url).toString('base64');
+    const res = await httpPost(`https://checkurl.phishtank.com/checkurl/?url=${encoded}`, null, {
+      headers: { 'User-Agent': 'phishtank/web-check' },
+      timeout: 3000,
+    });
+    const parsed = await xml2js.parseStringPromise(res.data, { explicitArray: false });
     return parsed.response.results;
   } catch (error) {
-    return { error: `Request to PhishTank failed: ${error.message}` };
-  }
-}
-
-const getCloudmersiveResult = async (url) => {
-  const apiKey = process.env.CLOUDMERSIVE_API_KEY;
-  if (!apiKey) {
-    return { error: 'CLOUDMERSIVE_API_KEY is required for the Cloudmersive check' };
-  }
-  try {
-    const endpoint = 'https://api.cloudmersive.com/virus/scan/website';
-    const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Apikey': apiKey,
-    };
-    const data = `Url=${encodeURIComponent(url)}`;
-    const response = await axios.post(endpoint, data, { headers });
-    return response.data;
-  } catch (error) {
-    return { error: `Request to Cloudmersive failed: ${error.message}` };
+    return upstreamError(error, 'PhishTank');
   }
 };
 
-const threatsHandler = async (url) => {
+const cloudmersive = async (url) => {
+  const auth = requireEnv('CLOUDMERSIVE_API_KEY', 'Cloudmersive');
+  if (auth.skipped) return auth;
   try {
-    const urlHaus = await getUrlHausResult(url);
-    const phishTank = await getPhishTankResult(url);
-    const cloudmersive = await getCloudmersiveResult(url);
-    const safeBrowsing = await getGoogleSafeBrowsingResult(url);
-    if (urlHaus.error && phishTank.error && cloudmersive.error && safeBrowsing.error) {
-      throw new Error(`All requests failed - ${urlHaus.error} ${phishTank.error} ${cloudmersive.error} ${safeBrowsing.error}`);
-    }
-    return JSON.stringify({ urlHaus, phishTank, cloudmersive, safeBrowsing });
+    const res = await httpPost(
+      'https://api.cloudmersive.com/virus/scan/website',
+      `Url=${encodeURIComponent(url)}`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Apikey: auth.value,
+        },
+      },
+    );
+    return res.data;
   } catch (error) {
-    throw new Error(error.message);
+    return upstreamError(error, 'Cloudmersive');
   }
+};
+
+// Aggregate four threat-feed lookups; skip the card if every source failed
+const threatsHandler = async (url) => {
+  const sources = await Promise.all([
+    safeBrowsing(url),
+    urlHaus(url),
+    phishTank(url),
+    cloudmersive(url),
+  ]);
+  const [safe, haus, phish, cloud] = sources;
+  if (sources.every((s) => s?.error || s?.skipped)) {
+    return { skipped: 'No threat sources returned data for this host' };
+  }
+  return { safeBrowsing: safe, urlHaus: haus, phishTank: phish, cloudmersive: cloud };
 };
 
 export const handler = middleware(threatsHandler);

@@ -1,17 +1,15 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
+import { upstreamError } from './_common/upstream.js';
 
-const headersHandler = async (url, event, context) => {
+const headersHandler = async (url) => {
   try {
-    const response = await axios.get(url, {
-      validateStatus: function (status) {
-        return status >= 200 && status < 600; // Resolve only if the status code is less than 600
-      },
+    const response = await httpGet(url, {
+      validateStatus: (status) => status >= 200 && status < 600,
     });
-
     return response.headers;
   } catch (error) {
-    throw new Error(error.message);
+    return upstreamError(error, 'Headers fetch');
   }
 };
 

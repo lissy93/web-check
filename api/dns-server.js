@@ -1,46 +1,33 @@
-import { promises as dnsPromises, lookup } from 'dns';
-import axios from 'axios';
+import { promises as dnsPromises } from 'dns';
 import middleware from './_common/middleware.js';
+import { parseTarget } from './_common/parse-target.js';
+import { upstreamError } from './_common/upstream.js';
 
-const dnsHandler = async (url) => {
+// Resolve a nameserver hostname to its IP addresses
+const resolveNs = async (ns) => {
   try {
-    const domain = url.replace(/^(?:https?:\/\/)?/i, "");
-    const addresses = await dnsPromises.resolve4(domain);
-    const results = await Promise.all(addresses.map(async (address) => {
-      const hostname = await dnsPromises.reverse(address).catch(() => null);
-      let dohDirectSupports = false;
-      try {
-        await axios.get(`https://${address}/dns-query`);
-        dohDirectSupports = true;
-      } catch (error) {
-        dohDirectSupports = false;
-      }
-      return {
-        address,
-        hostname,
-        dohDirectSupports,
-      };
-    }));
-
-    // let dohMozillaSupport = false;
-    // try {
-    //   const mozillaList = await axios.get('https://firefox.settings.services.mozilla.com/v1/buckets/security-state/collections/onecrl/records');
-    //   dohMozillaSupport = results.some(({ hostname }) => mozillaList.data.data.some(({ id }) => id.includes(hostname)));
-    // } catch (error) {
-    //   console.error(error);
-    // }
-
-    return {
-      domain,
-      dns: results,
-      // dohMozillaSupport,
-    };
-  } catch (error) {
-    throw new Error(`An error occurred while resolving DNS. ${error.message}`); // This will be caught and handled by the commonMiddleware
+    return (await dnsPromises.resolve4(ns))[0];
+  } catch {
+    return null;
   }
 };
 
+const dnsHandler = async (url) => {
+  const { hostname: domain } = parseTarget(url);
+  let nameservers;
+  try {
+    nameservers = await dnsPromises.resolveNs(domain);
+  } catch (error) {
+    return upstreamError(error, 'DNS server lookup');
+  }
+  const results = await Promise.all(
+    nameservers.map(async (ns) => {
+      const ip = await resolveNs(ns);
+      return { address: ip, hostname: ns };
+    }),
+  );
+  return { domain, dns: results };
+};
 
 export const handler = middleware(dnsHandler);
 export default handler;
-

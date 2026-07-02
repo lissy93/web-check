@@ -1,0 +1,41 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #141517;
+  color: #fff;
+}
+
+code {
+  font-family: var(--font-mono);
+}
+#fancy-background {
+  color: var(--background, #141517);
+}
+
+::selection {
+  background: var(--primary, #d6fb41);
+  color: var(--background, #141517);
+}
+
+svg.rsm-svg {
+  background: #141517;
+  border-radius: 6px;
+}
+
+:root {
+  --toastify-color-dark: #111927 !important;
+  --toastify-color-info: #04e4f4 !important;
+  --toastify-color-success: #20e253 !important;
+  --toastify-color-warning: #f6f000 !important;
+  --toastify-color-error: #f80363 !important;
+}
+
+#fancy-background {
+  position: absolute;
+}

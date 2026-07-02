@@ -1,5 +1,5 @@
-import axios from 'axios';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 
 const convertTimestampToDate = (timestamp) => {
   const [year, month, day, hour, minute, second] = [
@@ -9,10 +9,10 @@ const convertTimestampToDate = (timestamp) => {
     timestamp.slice(8, 10),
     timestamp.slice(10, 12),
     timestamp.slice(12, 14),
-  ].map(num => parseInt(num, 10));
+  ].map((num) => parseInt(num, 10));
 
   return new Date(year, month, day, hour, minute, second);
-}
+};
 
 const countPageChanges = (results) => {
   let prevDigest = null;
@@ -23,17 +23,17 @@ const countPageChanges = (results) => {
     }
     return acc;
   }, -1);
-}
+};
 
 const getAveragePageSize = (scans) => {
-    const totalSize = scans.map(scan => parseInt(scan[3], 10)).reduce((sum, size) => sum + size, 0);
-    return Math.round(totalSize / scans.length);
+  const totalSize = scans.map((scan) => parseInt(scan[3], 10)).reduce((sum, size) => sum + size, 0);
+  return Math.round(totalSize / scans.length);
 };
 
 const getScanFrequency = (firstScan, lastScan, totalScans, changeCount) => {
-  const formatToTwoDecimal = num => parseFloat(num.toFixed(2));
+  const formatToTwoDecimal = (num) => parseFloat(num.toFixed(2));
 
-  const dayFactor = (lastScan - firstScan) / (1000 * 60 * 60 * 24);  
+  const dayFactor = (lastScan - firstScan) / (1000 * 60 * 60 * 24);
   const daysBetweenScans = formatToTwoDecimal(dayFactor / totalScans);
   const daysBetweenChanges = formatToTwoDecimal(dayFactor / changeCount);
   const scansPerDay = formatToTwoDecimal((totalScans - 1) / dayFactor);
@@ -47,32 +47,32 @@ const getScanFrequency = (firstScan, lastScan, totalScans, changeCount) => {
 };
 
 const wayBackHandler = async (url) => {
-  const cdxUrl = `https://web.archive.org/cdx/search/cdx?url=${url}&output=json&fl=timestamp,statuscode,digest,length,offset`;
+  // collapse=timestamp:8 returns one row per archived day, slashing payloads
+  // (Wikipedia: 25MB/373k rows -> 428KB/6k rows) without losing first/last/change counts
+  const cdxUrl =
+    `https://web.archive.org/cdx/search/cdx?url=${encodeURIComponent(url)}` +
+    `&output=json&fl=timestamp,statuscode,digest,length&collapse=timestamp:8`;
 
   try {
-    const { data } = await axios.get(cdxUrl);
-    
-    // Check there's data
+    const { data } = await httpGet(cdxUrl);
+
     if (!data || !Array.isArray(data) || data.length <= 1) {
       return { skipped: 'Site has never before been archived via the Wayback Machine' };
     }
 
-    // Remove the header row
     data.shift();
 
-    // Process and return the results
     const firstScan = convertTimestampToDate(data[0][0]);
     const lastScan = convertTimestampToDate(data[data.length - 1][0]);
-    const totalScans = data.length;
+    const daysArchived = data.length;
     const changeCount = countPageChanges(data);
     return {
       firstScan,
       lastScan,
-      totalScans,
+      daysArchived,
       changeCount,
       averagePageSize: getAveragePageSize(data),
-      scanFrequency: getScanFrequency(firstScan, lastScan, totalScans, changeCount),
-      scans: data,
+      scanFrequency: getScanFrequency(firstScan, lastScan, daysArchived, changeCount),
       scanUrl: url,
     };
   } catch (err) {

@@ -1,21 +1,21 @@
-import axios from 'axios';
 import puppeteer from 'puppeteer';
 import middleware from './_common/middleware.js';
+import { httpGet } from './_common/http.js';
 
 const getPuppeteerCookies = async (url) => {
   const browser = await puppeteer.launch({
-    headless: 'new',
+    headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
   try {
     const page = await browser.newPage();
     const navigationPromise = page.goto(url, { waitUntil: 'networkidle2' });
-        const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Puppeteer took too long!')), 3000)
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Puppeteer took too long!')), 3000),
     );
     await Promise.race([navigationPromise, timeoutPromise]);
-    return await page.cookies();
+    return await browser.cookies();
   } finally {
     await browser.close();
   }
@@ -26,19 +26,13 @@ const cookieHandler = async (url) => {
   let clientCookies = null;
 
   try {
-    const response = await axios.get(url, {
-      withCredentials: true,
-      maxRedirects: 5,
-    });
+    const response = await httpGet(url);
     headerCookies = response.headers['set-cookie'];
   } catch (error) {
     if (error.response) {
       return { error: `Request failed with status ${error.response.status}: ${error.message}` };
-    } else if (error.request) {
-      return { error: `No response received: ${error.message}` };
-    } else {
-      return { error: `Error setting up request: ${error.message}` };
     }
+    return { error: `No response received: ${error.message}` };
   }
 
   try {
@@ -47,11 +41,10 @@ const cookieHandler = async (url) => {
     clientCookies = null;
   }
 
-  if (!headerCookies && (!clientCookies || clientCookies.length === 0)) {
-    return { skipped: 'No cookies' };
-  }
-
-  return { headerCookies, clientCookies };
+  return {
+    headerCookies: headerCookies || [],
+    clientCookies: clientCookies || [],
+  };
 };
 
 export const handler = middleware(cookieHandler);

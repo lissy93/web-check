@@ -1,6 +1,6 @@
 import dns from 'dns';
-import { URL } from 'url';
 import middleware from './_common/middleware.js';
+import { parseTarget } from './_common/parse-target.js';
 
 const DNS_SERVERS = [
   { name: 'AdGuard', ip: '176.103.130.130' },
@@ -12,94 +12,51 @@ const DNS_SERVERS = [
   { name: 'CloudFlare Family', ip: '1.1.1.3' },
   { name: 'Comodo Secure', ip: '8.26.56.26' },
   { name: 'Google DNS', ip: '8.8.8.8' },
-  { name: 'Neustar Family', ip: '156.154.70.3' },
-  { name: 'Neustar Protection', ip: '156.154.70.2' },
-  { name: 'Norton Family', ip: '199.85.126.20' },
   { name: 'OpenDNS', ip: '208.67.222.222' },
   { name: 'OpenDNS Family', ip: '208.67.222.123' },
   { name: 'Quad9', ip: '9.9.9.9' },
-  { name: 'Yandex Family', ip: '77.88.8.7' },
-  { name: 'Yandex Safe', ip: '77.88.8.88' },
-];
-const knownBlockIPs = [
-  '146.112.61.106', // OpenDNS
-  '185.228.168.10', // CleanBrowsing
-  '8.26.56.26',     // Comodo
-  '9.9.9.9',        // Quad9
-  '208.69.38.170',  // Some OpenDNS IPs
-  '208.69.39.170',  // Some OpenDNS IPs
-  '208.67.222.222', // OpenDNS
-  '208.67.222.123', // OpenDNS FamilyShield
-  '199.85.126.10',  // Norton
-  '199.85.126.20',  // Norton Family
-  '156.154.70.22',  // Neustar
-  '77.88.8.7',      // Yandex
-  '77.88.8.8',      // Yandex
-  '::1',              // Localhost IPv6
-  '2a02:6b8::feed:0ff', // Yandex DNS
-  '2a02:6b8::feed:bad', // Yandex Safe
-  '2a02:6b8::feed:a11', // Yandex Family
-  '2620:119:35::35',    // OpenDNS
-  '2620:119:53::53',    // OpenDNS FamilyShield
-  '2606:4700:4700::1111', // Cloudflare
-  '2606:4700:4700::1001', // Cloudflare
-  '2001:4860:4860::8888', // Google DNS
-  '2a0d:2a00:1::',        // AdGuard
-  '2a0d:2a00:2::'         // AdGuard Family
 ];
 
-const isDomainBlocked = async (domain, serverIP) => {
-  return new Promise((resolve) => {
-    dns.resolve4(domain, { server: serverIP }, (err, addresses) => {
-      if (!err) {
-        if (addresses.some(addr => knownBlockIPs.includes(addr))) {
-          resolve(true);
-          return;
-        }
-        resolve(false);
-        return;
-      }
+// Sink IPs used by blocking DNS servers
+const SINK_IPS = new Set(['0.0.0.0', '127.0.0.1', '::1', '::', '0:0:0:0:0:0:0:0']);
 
-      dns.resolve6(domain, { server: serverIP }, (err6, addresses6) => {
-        if (!err6) {
-          if (addresses6.some(addr => knownBlockIPs.includes(addr))) {
-            resolve(true);
-            return;
-          }
-          resolve(false);
-          return;
-        }
-        if (err6.code === 'ENOTFOUND' || err6.code === 'SERVFAIL') {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      });
+// Resolve a domain via a specific DNS server
+const queryServer = (domain, serverIp) =>
+  new Promise((resolve) => {
+    const resolver = new dns.Resolver({ timeout: 3000, tries: 1 });
+    resolver.setServers([serverIp]);
+    resolver.resolve4(domain, (err, addrs) => {
+      if (err) return resolve({ err: err.code });
+      resolve({ addrs });
     });
   });
+
+// A domain is blocked if the resolver returns a sink IP or refuses
+// to resolve a domain that a neutral resolver can resolve
+const isBlocked = (result, refResolved) => {
+  if (!refResolved) return false;
+  if (result.err === 'NXDOMAIN' || result.err === 'SERVFAIL') return true;
+  if (!result.addrs) return false;
+  return result.addrs.every((ip) => SINK_IPS.has(ip));
 };
 
-const checkDomainAgainstDnsServers = async (domain) => {
-  let results = [];
+const blockListHandler = async (url) => {
+  const { hostname: domain } = parseTarget(url);
+  const ref = await queryServer(domain, '8.8.8.8');
+  const refResolved = !!ref.addrs?.length;
 
-  for (let server of DNS_SERVERS) {
-    const isBlocked = await isDomainBlocked(domain, server.ip);
-    results.push({
-      server: server.name,
-      serverIp: server.ip,
-      isBlocked,
-    });
-  }
-
-  return results;
-};
-
-export const blockListHandler = async (url) => {
-  const domain = new URL(url).hostname;
-  const results = await checkDomainAgainstDnsServers(domain);
+  const results = await Promise.all(
+    DNS_SERVERS.map(async ({ name, ip }) => {
+      const result = await queryServer(domain, ip);
+      return {
+        server: name,
+        serverIp: ip,
+        isBlocked: isBlocked(result, refResolved),
+      };
+    }),
+  );
   return { blocklists: results };
 };
 
 export const handler = middleware(blockListHandler);
 export default handler;
-

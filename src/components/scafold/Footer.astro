@@ -27,7 +27,7 @@ const currentYear = new Date().getFullYear();
 </footer>
 
 <style lang="scss">
-  @import '@styles/global.scss';
+  @use '@styles/global.scss' as *;
   footer {
     margin-top: 1rem;
     background: var(--primary);
@@ -37,7 +37,8 @@ const currentYear = new Date().getFullYear();
     justify-content: space-between;
     gap: 1rem;
     flex-wrap: wrap;
-    p, a {
+    p,
+    a {
       margin: 0;
       color: var(--background);
       font-size: 1rem;

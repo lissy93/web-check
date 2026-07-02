@@ -1,16 +1,19 @@
-# Pushes the contents of the repo to the Codeberg mirror
+# Syncs the full source of the Web-Check repo over to our Codeberg mirror
+# For all you non-Microsoft babes!
+# This is then accessible over at https://codeberg.org/alicia/web-check
 name: 🪞 Mirror to Codeberg
 on:
   workflow_dispatch:
   schedule:
-    - cron: '30 0 * * 0'
+    - cron: '30 3 * * 0' # At 03:30 on Sunday
 jobs:
   codeberg:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
-      - uses: pixta-dev/repository-mirroring-action@v1
+      - uses: lissy93/repo-mirror-action@v1.5.0
         with:
-          target_repo_url: git@codeberg.org:alicia/web-check.git
-          ssh_private_key: ${{ secrets.CODEBERG_SSH }}
+          ssh_key: ${{ secrets.CODEBERG_SSH }}
+          host: git@codeberg.org
+          user: alicia
+          repo: web-check
+          force_push: false

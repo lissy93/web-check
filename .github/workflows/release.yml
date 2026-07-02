@@ -1,0 +1,148 @@
+# Publishes GH release for new versions, with compiled app attached
+# - Triggered when a git tag matching X.Y.0 (major or minor) is pushed
+# - Or if manually dispatched with any valid and existing tag specified
+# - Check out the source at the requested tag
+# - Run a clean production build (yarn build → dist/)
+# - Bundle dist/ + server.js + package.json + yarn.lock into tar.gz and zip
+# - Create a DRAFT GH release with auto-gen changelog and bundled artifacts attached
+
+name: 🚀 Release
+
+on:
+  push:
+    tags:
+      - '*.*.0'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing git tag to release (e.g. 2.1.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: 🚀 Build & Publish Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve tag 🏷️
+        id: tag
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            TAG="$INPUT_TAG"
+          else
+            TAG="${REF#refs/tags/}"
+          fi
+          if ! echo "$TAG" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Invalid tag '$TAG'. Expected semver (e.g. 2.1.0)."
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Releasing tag: $TAG"
+
+      - name: Checkout source at tag 🛎️
+        uses: actions/checkout@v6
+        with:
+          ref: refs/tags/${{ steps.tag.outputs.tag }}
+          fetch-depth: 0
+
+      - name: Setup Node.js 🔧
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies 📦
+        run: yarn install --frozen-lockfile
+
+      - name: Build for production 🏗️
+        run: yarn build
+
+      - name: Verify build output ✅
+        run: |
+          if [ ! -d "dist/client" ]; then
+            echo "::error::Build failed: dist/client directory not created"
+            exit 1
+          fi
+          if [ ! -f "dist/server/entry.mjs" ]; then
+            echo "::error::Build failed: SSR entry not found"
+            exit 1
+          fi
+          echo "✅ Build successful"
+
+      - name: Package release artifacts 🗜️
+        id: package
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          STAGING="web-check-${TAG}"
+          rm -rf "$STAGING"
+          mkdir -p "$STAGING"
+          cp -r dist api public "$STAGING/"
+          cp server.js package.json yarn.lock "$STAGING/"
+          [ -f LICENSE ]   && cp LICENSE   "$STAGING/" || true
+          [ -f README.md ] && cp README.md "$STAGING/" || true
+
+          TARBALL="${STAGING}.tar.gz"
+          ZIPFILE="${STAGING}.zip"
+          tar -czf "$TARBALL" "$STAGING"
+          zip -qr "$ZIPFILE" "$STAGING"
+
+          ls -lh "$TARBALL" "$ZIPFILE"
+          echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
+          echo "zipfile=$ZIPFILE" >> "$GITHUB_OUTPUT"
+
+      - name: Create draft release 🚀
+        id: release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: Web-Check v${{ steps.tag.outputs.tag }}
+          draft: true
+          prerelease: false
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            ${{ steps.package.outputs.tarball }}
+            ${{ steps.package.outputs.zipfile }}
+          token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Job summary 📋
+        if: always()
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          RELEASE_URL: ${{ steps.release.outputs.url }}
+          RELEASE_OUTCOME: ${{ steps.release.outcome }}
+        run: |
+          {
+            echo "## 🚀 Release"
+            echo ""
+            echo "| Step | Result |"
+            echo "|------|--------|"
+            if [ -n "$TAG" ]; then
+              echo "| Tag | [\`${TAG}\`](${REPO_URL}/releases/tag/${TAG}) |"
+            else
+              echo "| Tag | ❌ Could not resolve |"
+            fi
+            if [ "$RELEASE_OUTCOME" = "success" ]; then
+              if [ -n "$RELEASE_URL" ]; then
+                echo "| Draft release | ✅ [View draft](${RELEASE_URL}) |"
+              else
+                echo "| Draft release | ✅ [View releases](${REPO_URL}/releases) |"
+              fi
+              echo "| Artifacts | \`web-check-${TAG}.tar.gz\`, \`web-check-${TAG}.zip\` |"
+            else
+              echo "| Draft release | ❌ Failed (outcome: ${RELEASE_OUTCOME:-unknown}) |"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

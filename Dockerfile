@@ -1,5 +1,5 @@
 # Specify the Node.js version to use
-ARG NODE_VERSION=21
+ARG NODE_VERSION=22
 
 # Specify the Debian version to use, the default is "bullseye"
 ARG DEBIAN_VERSION=bullseye
@@ -10,7 +10,7 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS build
 # Set the container's default shell to Bash and enable some options
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
-# Install Chromium browser and Download and verify Google Chrome’s signing key
+# Install Chromium browser and Download and verify Google Chrome's signing key
 RUN apt-get update -qq --fix-missing && \
     apt-get -qqy install --allow-unauthenticated gnupg wget && \
     wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/google-archive.gpg && \
@@ -55,8 +55,17 @@ RUN apt-get update && \
 # Exposed container port, the default is 3000, which can be modified through the environment variable PORT
 EXPOSE ${PORT:-3000}
 
-# Set the environment variable CHROME_PATH to specify the path to the Chromium binaries
-ENV CHROME_PATH='/usr/bin/chromium'
+# Point Chromium-using libs at the system binary, skip puppeteer's bundled download
+ENV CHROME_PATH='/usr/bin/chromium' \
+    PUPPETEER_EXECUTABLE_PATH='/usr/bin/chromium' \
+    PUPPETEER_SKIP_DOWNLOAD='true'
+
+LABEL org.opencontainers.image.title="Web-Check" \
+      org.opencontainers.image.description="All-in-one OSINT tool for analysing any website" \
+      org.opencontainers.image.url="https://web-check.xyz" \
+      org.opencontainers.image.source="https://github.com/lissy93/web-check" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.vendor="Alicia Sykes"
 
 # Define the command executed when the container starts and start the server.js of the Node.js application
 CMD ["yarn", "start"]
