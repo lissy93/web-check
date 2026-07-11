@@ -20,11 +20,11 @@
   # REACT_APP_SHODAN_API_KEY='' # Shodan API key, for using Shodan scan API
   # REACT_APP_WHO_API_KEY=''    # WhoAPI key, for iniiating client-side whois lookup
 
-# Redirect the /api/* path to the lambda functions
+# Rewrite the /api/* path to the lambda functions
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
-  status = 301
+  status = 200
   force = true
 
 # Plugins
