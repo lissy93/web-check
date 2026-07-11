@@ -26,7 +26,7 @@ const hsts = (policy?: any): string => {
   return days >= 365 ? `✅ ${days} days${sub}` : `⚠️ ${days} days${sub} (recommend >= 365)`;
 };
 
-// SSL Labs renegSupport bits: 1 = insecure client-init, 2 = secure, 4 = secure client-init
+// renegSupport bits: 1 insecure client-init, 2 secure, 4 secure client-init, 8 required
 const reneg = (n?: number): string => {
   if (!n) return '✅ Not supported';
   if (n & 1) return '⚠️ Insecure client-initiated';

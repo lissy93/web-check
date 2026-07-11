@@ -31,7 +31,7 @@ const RedirectsCard = (props: { data: any; title: string; actionButtons: any }):
           <p className="redirect-count">
             Followed {count} redirect{count === 1 ? '' : 's'} when contacting host
           </p>
-          {chain.map((redirect: any, index: number) => (
+          {chain.slice(1).map((redirect: any, index: number) => (
             <Row lbl="" val="" key={index}>
               <span className="arrow-thing">↳</span> {redirect}
             </Row>
