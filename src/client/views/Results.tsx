@@ -75,14 +75,15 @@ const makeActionButtons = (title: string, refresh: () => void, showInfo: () => v
 );
 
 const Results = (props: { address?: string }): JSX.Element => {
-  const address = props.address || useParams().urlToScan || '';
+  const { urlToScan } = useParams();
+  const address = props.address || urlToScan || '';
   const [addressType, setAddressType] = useState<AddressType>('empt');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(<></>);
 
   useEffect(() => {
-    if (addressType === 'empt') setAddressType(determineAddressType(address));
-  }, [address, addressType]);
+    setAddressType(determineAddressType(address));
+  }, [address]);
 
   const { state: jobsState, retry, ipLookupError } = useJobs(address, addressType, jobs);
 

@@ -81,7 +81,7 @@ const portsHandler = async (url, event, context) => {
   }
 
   if (timeoutReached) {
-    return errorResponse('The function timed out before completing.');
+    return { error: 'The function timed out before completing.' };
   }
 
   // Sort openPorts and failedPorts before returning
@@ -89,10 +89,6 @@ const portsHandler = async (url, event, context) => {
   failedPorts.sort((a, b) => a - b);
 
   return { openPorts, failedPorts };
-};
-
-const errorResponse = (message, statusCode = 444) => {
-  return { error: message };
 };
 
 export const handler = middleware(portsHandler);

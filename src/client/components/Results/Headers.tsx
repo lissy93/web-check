@@ -11,7 +11,14 @@ const HeadersCard = (props: {
   return (
     <Card heading={props.title} styles="grid-row: span 2;" actionButtons={props.actionButtons}>
       {Object.keys(headers).map((header: string, index: number) => {
-        return <Row key={`header-${index}`} lbl={header} val={headers[header]} />;
+        const val = headers[header];
+        return (
+          <Row
+            key={`header-${index}`}
+            lbl={header}
+            val={Array.isArray(val) ? val.join(', ') : val}
+          />
+        );
       })}
     </Card>
   );

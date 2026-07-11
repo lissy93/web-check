@@ -48,7 +48,7 @@ const fetchAndProcess =
   (path: string, process: (raw: any) => any = (r) => r) =>
   async (ctx: JobContext) => {
     const target = path.includes('${ip}') ? ctx.ipAddress || '' : ctx.address;
-    const url = path.replace(/\$\{(ip|url)\}/g, target);
+    const url = path.replace(/\$\{(ip|url)\}/g, encodeURIComponent(target));
     const res = await fetch(`${ctx.api}/${url}`, { signal: ctx.signal });
     const raw = await parseJson(res);
     return raw?.error ? raw : process(raw);
@@ -234,7 +234,7 @@ export const jobs: JobSpec[] = [
   {
     id: 'dns-server',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [card('dns-server', 'Server Info', ['server'], DnsServerCard)],
+    cards: [card('dns-server', 'DNS Server', ['server'], DnsServerCard)],
     fetcher: fetchAndProcess('dns-server?url=${url}'),
   },
   {

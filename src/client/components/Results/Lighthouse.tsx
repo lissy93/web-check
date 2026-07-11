@@ -15,13 +15,10 @@ interface Audit {
 }
 
 const makeValue = (audit: Audit) => {
-  let score = audit.score;
-  if (audit.displayValue) {
-    score = audit.displayValue;
-  } else if (audit.scoreDisplayMode) {
-    score = audit.score === 1 ? '✅ Pass' : '❌ Fail';
-  }
-  return score;
+  if (audit.displayValue) return audit.displayValue;
+  if (audit.score == null) return 'N/A';
+  if (audit.scoreDisplayMode === 'binary') return audit.score === 1 ? '✅ Pass' : '❌ Fail';
+  return audit.score;
 };
 
 const LighthouseCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
@@ -31,8 +28,8 @@ const LighthouseCard = (props: { data: any; title: string; actionButtons: any })
 
   return (
     <Card heading={props.title} actionButtons={props.actionButtons}>
-      {Object.keys(categories).map((title: string, index: number) => {
-        const scoreIds = categories[title].auditRefs.map((ref: { id: string }) => ref.id);
+      {Object.keys(categories).map((key: string, index: number) => {
+        const scoreIds = categories[key].auditRefs.map((ref: { id: string }) => ref.id);
         const scoreList = scoreIds.map((id: string) => {
           return {
             lbl: audits[id].title,
@@ -44,8 +41,8 @@ const LighthouseCard = (props: { data: any; title: string; actionButtons: any })
         return (
           <ExpandableRow
             key={`lighthouse-${index}`}
-            lbl={title}
-            val={processScore(categories[title].score)}
+            lbl={categories[key].title || key}
+            val={processScore(categories[key].score)}
             rowList={scoreList}
           />
         );

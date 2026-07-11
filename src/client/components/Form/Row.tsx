@@ -99,30 +99,12 @@ const List = styled.ul`
   }
 `;
 
-const isValidDate = (date: any): boolean => {
-  // Checks if a date is within reasonable range
-  const isInRange = (date: Date): boolean => {
-    return date >= new Date('1995-01-01') && date <= new Date('2030-12-31');
-  };
-
-  // Check if input is a timestamp
-  if (typeof date === 'number') {
-    const timestampDate = new Date(date);
-    return !isNaN(timestampDate.getTime()) && isInRange(timestampDate);
-  }
-
-  // Check if input is a date string
-  if (typeof date === 'string') {
-    const dateStringDate = new Date(date);
-    return !isNaN(dateStringDate.getTime()) && isInRange(dateStringDate);
-  }
-
-  // Check if input is a Date object
-  if (date instanceof Date) {
-    return !isNaN(date.getTime()) && isInRange(date);
-  }
-
-  return false;
+// Only date-format strings that actually look like dates, not bare numbers
+const isDateLike = (value: any): boolean => {
+  if (typeof value !== 'string' || value.length < 8 || !/[-/: ]/.test(value)) return false;
+  const date = new Date(value);
+  if (isNaN(date.getTime())) return false;
+  return date >= new Date('1995-01-01') && date <= new Date('2030-12-31');
 };
 
 const formatDate = (dateString: string): string => {
@@ -132,8 +114,9 @@ const formatDate = (dateString: string): string => {
     year: 'numeric',
   }).format(new Date(dateString));
 };
+
 const formatValue = (value: any): string => {
-  if (isValidDate(new Date(value))) return formatDate(value);
+  if (isDateLike(value)) return formatDate(value);
   if (typeof value === 'boolean') return value ? '✅' : '❌';
   return value;
 };

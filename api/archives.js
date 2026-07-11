@@ -11,7 +11,7 @@ const convertTimestampToDate = (timestamp) => {
     timestamp.slice(12, 14),
   ].map((num) => parseInt(num, 10));
 
-  return new Date(year, month, day, hour, minute, second);
+  return new Date(Date.UTC(year, month, day, hour, minute, second));
 };
 
 const countPageChanges = (results) => {
