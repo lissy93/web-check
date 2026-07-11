@@ -23,7 +23,7 @@ const convertToDate = (dateString: string): string => {
   const [date, time] = dateString.split(' ');
   const [year, month, day] = date.split('-').map(Number);
   const [hour, minute, second] = time.split(':').map(Number);
-  const dateObject = new Date(year, month - 1, day, hour, minute, second);
+  const dateObject = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
   if (isNaN(dateObject.getTime())) {
     return dateString;
   }
@@ -43,7 +43,9 @@ const MalwareCard = (props: { data: any; title: string; actionButtons: any }): J
       {((cloudmersive && !cloudmersive.error) || safeBrowsing?.details) && (
         <Row
           lbl="Threat Type"
-          val={safeBrowsing?.details?.threatType || cloudmersive.WebsiteThreatType || 'None :)'}
+          val={
+            safeBrowsing?.details?.[0]?.threatType || cloudmersive.WebsiteThreatType || 'None :)'
+          }
         />
       )}
       {phishTank && !phishTank.error && (
@@ -84,7 +86,11 @@ const MalwareCard = (props: { data: any; title: string; actionButtons: any }): J
               { lbl: 'Date Added', val: convertToDate(urlResult.date_added) },
               { lbl: 'Threat Type', val: urlResult.threat },
               { lbl: 'Reported By', val: urlResult.reporter },
-              { lbl: 'Takedown Time', val: urlResult.takedown_time_seconds },
+              {
+                lbl: 'Takedown Time',
+                val:
+                  urlResult.takedown_time_seconds && `${urlResult.takedown_time_seconds} seconds`,
+              },
               { lbl: 'Larted', val: urlResult.larted },
               { lbl: 'Tags', val: (urlResult.tags || []).join(', ') },
               { lbl: 'Reference', val: urlResult.urlhaus_reference },

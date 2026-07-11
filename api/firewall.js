@@ -3,106 +3,47 @@ import { httpGet } from './_common/http.js';
 import { parseTarget } from './_common/parse-target.js';
 import { upstreamError } from './_common/upstream.js';
 
-const hasWaf = (waf) => ({ hasWaf: true, waf });
+// WAF signatures as [header, needle, name], a null needle matches any value
+const WAF_SIGNATURES = [
+  ['server', 'cloudflare', 'Cloudflare'],
+  ['x-powered-by', 'AWS Lambda', 'AWS WAF'],
+  ['server', 'AkamaiGHost', 'Akamai'],
+  ['server', 'Sucuri', 'Sucuri'],
+  ['server', 'BarracudaWAF', 'Barracuda WAF'],
+  ['server', 'BIG-IP', 'F5 BIG-IP'],
+  ['x-sucuri-id', null, 'Sucuri CloudProxy WAF'],
+  ['x-sucuri-cache', null, 'Sucuri CloudProxy WAF'],
+  ['server', 'FortiWeb', 'Fortinet FortiWeb WAF'],
+  ['server', 'Imperva', 'Imperva SecureSphere WAF'],
+  ['x-protected-by', 'Sqreen', 'Sqreen'],
+  ['x-waf-event-info', null, 'Reblaze WAF'],
+  ['set-cookie', '_citrix_ns_id', 'Citrix NetScaler'],
+  ['x-denied-reason', null, 'WangZhanBao WAF'],
+  ['x-wzws-requested-method', null, 'WangZhanBao WAF'],
+  ['x-webcoment', null, 'Webcoment Firewall'],
+  ['server', 'Yundun', 'Yundun WAF'],
+  ['x-yd-waf-info', null, 'Yundun WAF'],
+  ['x-yd-info', null, 'Yundun WAF'],
+  ['server', 'Safe3WAF', 'Safe3 Web Application Firewall'],
+  ['server', 'NAXSI', 'NAXSI WAF'],
+  ['x-datapower-transactionid', null, 'IBM WebSphere DataPower'],
+  ['server', 'QRATOR', 'QRATOR WAF'],
+  ['server', 'ddos-guard', 'DDoS-Guard WAF'],
+];
+
+// Match a header value (string or array) against a needle
+const matches = (value, needle) => {
+  if (!value) return false;
+  const values = Array.isArray(value) ? value : [value];
+  return values.some((v) => !needle || String(v).includes(needle));
+};
 
 const firewallHandler = async (url) => {
   const { href } = parseTarget(url);
   try {
-    const response = await httpGet(href, {
-      validateStatus: () => true,
-    });
-    const headers = response.headers;
-
-    if (headers['server'] && headers['server'].includes('cloudflare')) {
-      return hasWaf('Cloudflare');
-    }
-
-    if (headers['x-powered-by'] && headers['x-powered-by'].includes('AWS Lambda')) {
-      return hasWaf('AWS WAF');
-    }
-
-    if (headers['server'] && headers['server'].includes('AkamaiGHost')) {
-      return hasWaf('Akamai');
-    }
-
-    if (headers['server'] && headers['server'].includes('Sucuri')) {
-      return hasWaf('Sucuri');
-    }
-
-    if (headers['server'] && headers['server'].includes('BarracudaWAF')) {
-      return hasWaf('Barracuda WAF');
-    }
-
-    if (
-      headers['server'] &&
-      (headers['server'].includes('F5 BIG-IP') || headers['server'].includes('BIG-IP'))
-    ) {
-      return hasWaf('F5 BIG-IP');
-    }
-
-    if (headers['x-sucuri-id'] || headers['x-sucuri-cache']) {
-      return hasWaf('Sucuri CloudProxy WAF');
-    }
-
-    if (headers['server'] && headers['server'].includes('FortiWeb')) {
-      return hasWaf('Fortinet FortiWeb WAF');
-    }
-
-    if (headers['server'] && headers['server'].includes('Imperva')) {
-      return hasWaf('Imperva SecureSphere WAF');
-    }
-
-    if (headers['x-protected-by'] && headers['x-protected-by'].includes('Sqreen')) {
-      return hasWaf('Sqreen');
-    }
-
-    if (headers['x-waf-event-info']) {
-      return hasWaf('Reblaze WAF');
-    }
-
-    if (headers['set-cookie'] && headers['set-cookie'].includes('_citrix_ns_id')) {
-      return hasWaf('Citrix NetScaler');
-    }
-
-    if (headers['x-denied-reason'] || headers['x-wzws-requested-method']) {
-      return hasWaf('WangZhanBao WAF');
-    }
-
-    if (headers['x-webcoment']) {
-      return hasWaf('Webcoment Firewall');
-    }
-
-    if (headers['server'] && headers['server'].includes('Yundun')) {
-      return hasWaf('Yundun WAF');
-    }
-
-    if (headers['x-yd-waf-info'] || headers['x-yd-info']) {
-      return hasWaf('Yundun WAF');
-    }
-
-    if (headers['server'] && headers['server'].includes('Safe3WAF')) {
-      return hasWaf('Safe3 Web Application Firewall');
-    }
-
-    if (headers['server'] && headers['server'].includes('NAXSI')) {
-      return hasWaf('NAXSI WAF');
-    }
-
-    if (headers['x-datapower-transactionid']) {
-      return hasWaf('IBM WebSphere DataPower');
-    }
-
-    if (headers['server'] && headers['server'].includes('QRATOR')) {
-      return hasWaf('QRATOR WAF');
-    }
-
-    if (headers['server'] && headers['server'].includes('ddos-guard')) {
-      return hasWaf('DDoS-Guard WAF');
-    }
-
-    return {
-      hasWaf: false,
-    };
+    const { headers } = await httpGet(href, { validateStatus: () => true });
+    const match = WAF_SIGNATURES.find(([header, needle]) => matches(headers[header], needle));
+    return match ? { hasWaf: true, waf: match[2] } : { hasWaf: false };
   } catch (error) {
     return upstreamError(error, 'Firewall check');
   }

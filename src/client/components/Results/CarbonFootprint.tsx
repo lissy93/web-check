@@ -39,7 +39,10 @@ const CarbonCard = (props: { data: any; title: string; actionButtons: any }): JS
       {!carbons?.adjustedBytes && <p>Unable to calculate carbon footprint for host</p>}
       {carbons?.adjustedBytes > 0 && (
         <>
-          <Row lbl="HTML Initial Size" val={formatBytes(carbons.adjustedBytes)} />
+          {props.data.bytes > 0 && (
+            <Row lbl="HTML Initial Size" val={formatBytes(props.data.bytes)} />
+          )}
+          <Row lbl="Adjusted Transfer Size" val={formatBytes(carbons.adjustedBytes)} />
           <Row lbl="CO2 for Initial Load" val={formatGrams(carbons.co2.grid.grams)} />
           <Row lbl="Energy Usage for Load" val={formatKwh(carbons.energy)} />
           {cleanerThan > 0 && (

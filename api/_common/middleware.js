@@ -26,7 +26,6 @@ if (process.env.PLATFORM) {
 // Define the headers to be returned with each response
 const headers = {
   'Access-Control-Allow-Origin': ALLOWED_ORIGINS,
-  'Access-Control-Allow-Credentials': true,
   'Content-Type': 'application/json;charset=UTF-8',
 };
 

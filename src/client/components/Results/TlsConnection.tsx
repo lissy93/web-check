@@ -4,8 +4,6 @@ import colors from 'client/styles/colors';
 
 const yesNo = (v: boolean) => (v ? '✅ Yes' : '❌ No');
 
-const ocspStatus = (v: boolean) => (v ? 'Yes' : 'Not enabled');
-
 const formatEphemeralKey = (k: any): string => {
   if (!k?.type) return '';
   const parts = [k.type];
@@ -34,7 +32,7 @@ const TlsConnectionCard = (props: {
       <Row lbl="OCSP Stapling" val="">
         <span className="lbl">OCSP Stapling</span>
         <span className="val" style={{ color: colors.info }}>
-          {d.ocspStapled ? 'ⓘ Present' : 'ⓘ Not Present'} — may impact visitor privacy
+          {d.ocspStapled ? 'ⓘ Present' : 'ⓘ Not Present (may impact visitor privacy)'}
         </span>
       </Row>
       <Row
