@@ -26,17 +26,19 @@ const hsts = (policy?: any): string => {
   return days >= 365 ? `✅ ${days} days${sub}` : `⚠️ ${days} days${sub} (recommend >= 365)`;
 };
 
+// SSL Labs renegSupport bits: 1 = insecure client-init, 2 = secure, 4 = secure client-init
 const reneg = (n?: number): string => {
-  if (!n) return '⚠️ Insecure';
+  if (!n) return '✅ Not supported';
+  if (n & 1) return '⚠️ Insecure client-initiated';
   const flags = [];
-  if (n & 1) flags.push('secure');
-  if (n & 2) flags.push('client-init');
-  if (n & 4) flags.push('server-required');
+  if (n & 2) flags.push('secure');
+  if (n & 4) flags.push('secure client-initiated');
+  if (n & 8) flags.push('server-required');
   return `✅ ${flags.join(', ') || 'unknown'}`;
 };
 
 const sessionResumption = (n?: number): string =>
-  n === 1 ? '✅ Tickets' : n === 2 ? '✅ Tickets (no client cert)' : '❌ Disabled';
+  n === 2 ? '✅ Supported' : n === 1 ? '⚠️ IDs returned, not resumed' : '❌ Not enabled';
 
 const compression = (n?: number): string => (n ? '⚠️ Supported (CRIME risk)' : '✅ Disabled');
 
@@ -71,7 +73,7 @@ const VULNS: Array<[string, string]> = [
   ['logjam', 'LOGJAM'],
   ['drownVulnerable', 'DROWN'],
   ['openSslCcs', 'OpenSSL CCS Injection'],
-  ['openSSLLuckyMinus20', 'Lucky13'],
+  ['openSSLLuckyMinus20', 'OpenSSL Padding Oracle'],
   ['bleichenbacher', 'ROBOT (Bleichenbacher)'],
   ['ticketbleed', 'Ticketbleed'],
 ];
