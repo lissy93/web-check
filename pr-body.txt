@@ -1,0 +1,6 @@
+Adds a utility to detect non-routable (private/local) IP addresses and skips external API calls for them. Currently implemented for the Wayback Machine / archives check.
+
+- Added pi/_common/is-non-routable.js - utility to detect private IPv4 ranges (10.x, 172.16-31.x, 192.168.x, 127.x, 169.254.x, 0.x) and IPv6 (loopback, unique-local, link-local)
+- Modified pi/archives.js - skip Wayback Machine lookup for non-routable targets
+
+Closes #302
