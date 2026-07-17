@@ -18,7 +18,7 @@ const dnsHandler = async (url) => {
   try {
     nameservers = await dnsPromises.resolveNs(domain);
   } catch (error) {
-    return upstreamError(error, 'DNS server lookup');
+    return upstreamError(error, `DNS server lookup for ${domain}`);
   }
   const results = await Promise.all(
     nameservers.map(async (ns) => {
