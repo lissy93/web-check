@@ -100,11 +100,19 @@ const Summary = styled.p`
 const percent = (value: number | null | undefined): string =>
   value === null || value === undefined ? 'Unknown' : `${(value * 100).toFixed(1)}%`;
 
-// "HTTPS :443", falling back to the product banner when Shodan has no module
+// "HTTPS :443" — the version Shodan reports belongs to the product behind the
+// service (Apache 2, OpenSSH 9.8), not to the protocol, so it is never appended
+// to a module name here; it goes in the tooltip instead
 const serviceLabel = (service: CveService): string => {
   const name = (service.module || service.product || 'Service').toUpperCase();
-  const version = service.version ? ` ${service.version}` : '';
-  return service.port ? `${name}${version} :${service.port}` : `${name}${version}`;
+  return service.port ? `${name} :${service.port}` : name;
+};
+
+// "Apache httpd 2 · tcp/443", for the hover title
+const serviceDetail = (service: CveService): string => {
+  const banner = [service.product, service.version].filter(Boolean).join(' ');
+  const socket = service.transport && service.port ? `${service.transport}/${service.port}` : null;
+  return [banner, socket].filter(Boolean).join(' · ') || serviceLabel(service);
 };
 
 const CveRow = (props: { cve: CveEntry }): JSX.Element => {
@@ -140,7 +148,9 @@ const CveRow = (props: { cve: CveEntry }): JSX.Element => {
           <span className="lbl">Exposed service</span>
           <Chips>
             {cve.services.map((service, index) => (
-              <span key={`${cve.id}-svc-${index}`}>{serviceLabel(service)}</span>
+              <span key={`${cve.id}-svc-${index}`} title={serviceDetail(service)}>
+                {serviceLabel(service)}
+              </span>
             ))}
           </Chips>
         </Row>
