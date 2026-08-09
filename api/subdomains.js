@@ -64,19 +64,19 @@ const subdomainsHandler = async (url) => {
   }
 
   const suffix = `.${domain}`;
-  const sieve = (names) => [
-    ...new Set(
-      names
-        .filter((n) => typeof n === 'string')
-        .map((n) => n.trim().toLowerCase().replace(/^\*\./, ''))
-        .filter((n) => n && n !== domain && n.endsWith(suffix) && HOSTNAME_RE.test(n)),
-    ),
-  ].sort();
+  const sieve = (names) =>
+    [
+      ...new Set(
+        names
+          .filter((n) => typeof n === 'string')
+          .map((n) => n.trim().toLowerCase().replace(/^\*\./, ''))
+          .filter((n) => n && n !== domain && n.endsWith(suffix) && HOSTNAME_RE.test(n)),
+      ),
+    ].sort();
 
   let succeeded = 0;
   const errors = [];
   for (const source of SOURCES) {
-    if (source.requires && !process.env[source.requires]) continue;
     try {
       const subdomains = sieve(await source.lookup(domain));
       succeeded += 1;

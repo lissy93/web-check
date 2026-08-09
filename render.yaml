@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://render.com/schema/render.yaml.json
+#
+# Web Check on Render — Blueprint deploy
+# Upstream: https://github.com/Lissy93/web-check
+# Image: https://hub.docker.com/r/lissy93/web-check
+#
+# Pattern: image-wrapper (official lissy93/web-check image with Chromium).
+# Optional OSINT API keys: add in Dashboard after deploy (see .env.sample). Do not
+# declare them as sync:false here or Apply will prompt for every key.
+
+previews:
+  generation: off
+
+services:
+  - type: web
+    name: web-check
+    runtime: image
+    plan: standard
+    region: oregon
+    image:
+      url: docker.io/lissy93/web-check:latest
+    healthCheckPath: /
+    autoDeployTrigger: off
+    envVars:
+      - key: PORT
+        value: '3000'
+      - key: TRUST_PROXY
+        value: '1'
+      - key: CHROME_PATH
+        value: '/usr/bin/chromium'
+      - key: PUPPETEER_EXECUTABLE_PATH
+        value: '/usr/bin/chromium'
+      - key: PUPPETEER_SKIP_DOWNLOAD
+        value: 'true'
+      - key: API_ENABLE_RATE_LIMIT
+        value: 'true'

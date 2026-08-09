@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import colors from 'client/styles/colors';
 
 const StyledFooter = styled.footer`

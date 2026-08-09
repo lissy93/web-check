@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import { loadEnv } from 'vite';
 
@@ -10,7 +11,6 @@ import sitemap from '@astrojs/sitemap';
 import vercelAdapter from '@astrojs/vercel';
 import netlifyAdapter from '@astrojs/netlify';
 import nodeAdapter from '@astrojs/node';
-import cloudflareAdapter from '@astrojs/cloudflare';
 
 // Pre-load .env so values are available in this config, before Vite
 const fileEnv = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
@@ -19,7 +19,7 @@ const fileEnv = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), ''
 const unwrapEnvVar = (varName, fallbackValue) =>
   process.env[varName] ?? fileEnv[varName] ?? fallbackValue;
 
-// Determine the deploy target (vercel, netlify, cloudflare, node)
+// Determine the deploy target (vercel, netlify, node)
 const deployTarget = unwrapEnvVar('PLATFORM', 'node').toLowerCase();
 
 // Determine the output mode (static or server). Mixed prerender supported in static mode
@@ -44,8 +44,6 @@ function getAdapter(target) {
       return vercelAdapter();
     case 'netlify':
       return netlifyAdapter();
-    case 'cloudflare':
-      return cloudflareAdapter();
     case 'node':
       return nodeAdapter({ mode: 'middleware' });
     default:
@@ -74,5 +72,16 @@ if (!isBossServer && isBossServer !== true) {
   redirects['/'] = '/check';
 }
 
+// Resolve the @styles alias for sass @use (rolldown-vite needs it set explicitly)
+const stylesDir = fileURLToPath(new URL('./src/styles', import.meta.url));
+
 // Export Astro configuration
-export default defineConfig({ output, base, integrations, site, adapter, redirects });
+export default defineConfig({
+  output,
+  base,
+  integrations,
+  site,
+  adapter,
+  redirects,
+  vite: { resolve: { alias: { '@styles': stylesDir } } },
+});

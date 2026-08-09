@@ -47,12 +47,14 @@ const makeBreadcrumbs = () => {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: breadcrumbs.map((breadcrumb, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: breadcrumb.name,
-      item: `${site}/${breadcrumb.item}`,
-    })),
+    itemListElement: breadcrumbs.map(
+      (breadcrumb: NonNullable<Props['breadcrumbs']>[number], index: number) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: breadcrumb.name,
+        item: `${site}/${breadcrumb.item}`,
+      }),
+    ),
   };
 };
 ---

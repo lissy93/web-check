@@ -10,7 +10,7 @@ const { supportedChecks } = Astro.props;
 
 <ul class="features">
   {
-    supportedChecks.map((check) => (
+    supportedChecks.map((check: string) => (
       <li>
         <Icon name="check" />
         {check}

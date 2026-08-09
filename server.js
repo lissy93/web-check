@@ -5,8 +5,14 @@ import dotenv from 'dotenv';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 
+import { shouldSkip } from './api/_common/check-skipper.js';
+
 // Load environment variables from .env file
 dotenv.config();
+
+// Log unexpected errors, instead of letting em crash everything
+process.on('uncaughtException', (error) => console.error('Uncaught exception:', error));
+process.on('unhandledRejection', (error) => console.error('Unhandled rejection:', error));
 
 // Create the Express app
 const app = express();
@@ -146,6 +152,12 @@ app.get(API_DIR, async (req, res) => {
 
   const handlerPromises = Object.entries(handlers).map(async ([route, handler]) => {
     const routeName = route.replace(`${API_DIR}/`, '');
+
+    const { skip, reason } = shouldSkip(routeName, url);
+    if (skip) {
+      results[routeName] = { skipped: reason };
+      return;
+    }
 
     try {
       const result = await Promise.race([

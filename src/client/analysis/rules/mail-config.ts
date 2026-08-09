@@ -54,8 +54,10 @@ const mailConfig: Analyzer = (d) => {
     }
   }
 
-  // DKIM detection is best-effort: only flag absence as a soft warning
-  const hasDkim = txt.some((r: string[]) => Array.isArray(r) && /v=DKIM1/i.test(r.join('')));
+  // DKIM detection is best-effort: v= is optional so also accept a public key tag
+  const hasDkim = txt.some(
+    (r: string[]) => Array.isArray(r) && /v=DKIM1|(^|;)\s*p=[A-Za-z0-9+/]{20}/i.test(r.join('')),
+  );
   if (!hasDkim) {
     out.push({
       severity: 'warning',

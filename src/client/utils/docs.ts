@@ -287,6 +287,19 @@ const docs: Doc[] = [
     screenshot: 'https://pixelflare.cc/alicia/web-check/wc-server',
   },
   {
+    id: 'vulnerabilities',
+    title: 'Vulnerabilities',
+    description:
+      'This task lists the known CVEs (Common Vulnerabilities and Exposures) that Shodan associates with the services running on the target host, based on their detected product and version. Each entry links to its NVD record. If Shodan has scanned the host and found none, it reports that no known vulnerabilities are on file.',
+    use: "Known CVEs highlight where a host may be exploitable, and are a starting point for assessing its security posture. Bear in mind these are inferred from banner versions, so may include false positives (a patched service still reporting an old version) or miss issues Shodan hasn't catalogued.",
+    resources: [
+      'https://nvd.nist.gov/vuln',
+      'https://cve.mitre.org/',
+      'https://www.shodan.io/',
+      'https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures',
+    ],
+  },
+  {
     id: 'domain',
     title: 'Whois Lookup',
     description:

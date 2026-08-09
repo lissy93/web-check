@@ -241,14 +241,19 @@ const DnsSecCard = (props: { data: any; title: string; actionButtons: any }): JS
               <>
                 <Row lbl={`${key} - Present?`} val="✅ Yes" />
                 {record.answer.map((answer: any, index: number) => {
-                  const keyData = parseDNSKeyData(answer.data);
-                  const dsData = parseDSData(answer.data);
-                  const label = keyData.flags && keyData.flags !== 'Unknown' ? keyData.flags : key;
+                  const parsed: any =
+                    answer.type === 48
+                      ? parseDNSKeyData(answer.data)
+                      : answer.type === 43
+                        ? parseDSData(answer.data)
+                        : {};
+                  const label = parsed.flags && parsed.flags !== 'Unknown' ? parsed.flags : key;
                   return (
                     <ExpandableRow
+                      key={`${key}-${index}`}
                       lbl={`Record #${index + 1}`}
                       val={label}
-                      rowList={makeAnswerList({ ...answer, ...keyData, ...dsData })}
+                      rowList={makeAnswerList({ ...answer, ...parsed })}
                       open
                     />
                   );

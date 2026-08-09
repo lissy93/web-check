@@ -1,18 +1,17 @@
 import type { Analyzer } from '../types';
 
-// Parse Set-Cookie headers into name + attribute map (analysis-local copy)
+// Parse Set-Cookie headers (one per array element) into name + attribute list,
+// skipping nameless entries (empty lines, cookie-deletion stubs like "=; Path=/")
 const parseCookies = (raw: unknown): Array<{ name: string; attrs: string[] }> => {
   if (!Array.isArray(raw)) return [];
-  return raw.flatMap((line) =>
-    String(line)
-      .split(/,(?=\s[A-Za-z0-9]+=)/)
-      .map((cookie) => {
-        const parts = cookie.split('; ').map((p) => p.trim());
-        const name = parts[0]?.split('=')[0] || 'cookie';
-        const attrs = parts.slice(1).map((p) => p.split('=')[0].toLowerCase());
-        return { name, attrs };
-      }),
-  );
+  return raw
+    .map((line) => {
+      const parts = String(line).split(/;\s*/);
+      const name = parts[0].split('=')[0].trim();
+      const attrs = parts.slice(1).map((p) => p.split('=')[0].trim().toLowerCase());
+      return { name, attrs };
+    })
+    .filter((c) => c.name);
 };
 
 // Audit Set-Cookie attributes for Secure, HttpOnly, SameSite

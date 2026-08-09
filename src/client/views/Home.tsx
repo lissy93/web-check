@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { type ChangeEvent, type SyntheticEvent, useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation, type NavigateOptions } from 'react-router-dom';
+import { Link, useNavigate, useLocation, type NavigateOptions } from 'react-router';
 
 import Heading from 'client/components/Form/Heading';
 import Input from 'client/components/Form/Input';

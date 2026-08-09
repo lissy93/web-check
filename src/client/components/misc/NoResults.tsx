@@ -40,7 +40,7 @@ const Wrapper = styled(StyledCard)`
   }
 `;
 
-type Kind = 'unreachable' | 'invalid' | 'api-down' | 'disabled';
+type Kind = 'unreachable' | 'invalid' | 'api-down' | 'disabled' | 'blocked';
 
 const VARIANT: Record<Kind, { title: string; description: string; reasons: string[] }> = {
   unreachable: {
@@ -69,6 +69,15 @@ const VARIANT: Record<Kind, { title: string; description: string; reasons: strin
       'The API may be down, restarting or rate-limited',
       'A self-hosted instance might be misconfigured or offline',
       'A network or firewall issue could be blocking the API',
+    ],
+  },
+  blocked: {
+    title: 'Scanning Not Permitted',
+    description: 'Every check was skipped, as this instance does not allow scanning this host',
+    reasons: [
+      'The administrator may have blocked this domain or IP range',
+      'The instance may be configured to not run these checks',
+      'You can still scan this host from your own instance of Web-Check',
     ],
   },
   disabled: {
@@ -104,7 +113,11 @@ const NoResults = ({ address, error, kind = 'unreachable' }: Props): JSX.Element
           <li key={r}>{r}</li>
         ))}
       </ul>
-      {error && <span className="detail">Lookup error: {error}</span>}
+      {error && (
+        <span className="detail">
+          {kind === 'blocked' ? 'Reason' : 'Lookup error'}: {error}
+        </span>
+      )}
     </Wrapper>
   );
 };

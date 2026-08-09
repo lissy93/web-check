@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router';
 
 import Home from 'client/views/Home.tsx';
 import Results from 'client/views/Results.tsx';

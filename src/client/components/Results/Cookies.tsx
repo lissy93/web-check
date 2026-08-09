@@ -9,7 +9,8 @@ export const parseHeaderCookies = (cookiesHeader: string[]): Cookie[] => {
       const [nameValuePair, ...attributePairs] = cookieString
         .split('; ')
         .map((part) => part.trim());
-      const [name, value] = nameValuePair.split('=');
+      const [name, ...valueParts] = nameValuePair.split('=');
+      const value = valueParts.join('=');
       const attributes: Record<string, string> = {};
       attributePairs.forEach((pair) => {
         const [attributeName, attributeValue = ''] = pair.split('=');
@@ -35,7 +36,7 @@ const CookiesCard = (props: { data: any; title: string; actionButtons: any }): J
         return (
           <ExpandableRow
             key={`header-cookie-${index}-${cookie.name}`}
-            lbl={cookie.name}
+            lbl={cookie.name || '(unnamed)'}
             val={cookie.value}
             rowList={attributes}
           />

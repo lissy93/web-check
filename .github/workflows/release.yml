@@ -115,7 +115,7 @@ jobs:
           files: |
             ${{ steps.package.outputs.tarball }}
             ${{ steps.package.outputs.zipfile }}
-          token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_TOKEN || secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Job summary 📋
         if: always()

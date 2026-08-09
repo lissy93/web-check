@@ -47,17 +47,23 @@ const ServerLocationCard = (props: {
 
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
-      <Row lbl="City" val={`${postCode}, ${city}, ${region}`} />
-      <Row lbl="" val="">
-        <b>Country</b>
-        <CountryValue>
-          {country}
-          {countryCode && <Flag countryCode={countryCode} width={28} />}
-        </CountryValue>
-      </Row>
-      <Row lbl="Timezone" val={timezone} />
-      <Row lbl="Languages" val={languages} />
-      <Row lbl="Currency" val={`${currency} (${currencyCode})`} />
+      {(postCode || city || region) && (
+        <Row lbl="City" val={[postCode, city, region].filter(Boolean).join(', ')} />
+      )}
+      {country && (
+        <Row lbl="" val="">
+          <b>Country</b>
+          <CountryValue>
+            {country}
+            {countryCode && <Flag countryCode={countryCode} width={28} />}
+          </CountryValue>
+        </Row>
+      )}
+      {timezone && <Row lbl="Timezone" val={timezone} />}
+      {languages && <Row lbl="Languages" val={languages} />}
+      {currency && (
+        <Row lbl="Currency" val={currencyCode ? `${currency} (${currencyCode})` : currency} />
+      )}
       <MapRow>
         <LocationMap lat={coords.latitude} lon={coords.longitude} label={`Server (${isp})`} />
         <SmallText>

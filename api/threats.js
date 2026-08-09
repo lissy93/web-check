@@ -45,7 +45,7 @@ const urlHaus = async (url) => {
 
 const phishTank = async (url) => {
   try {
-    const encoded = Buffer.from(url).toString('base64');
+    const encoded = encodeURIComponent(Buffer.from(url).toString('base64'));
     const res = await httpPost(`https://checkurl.phishtank.com/checkurl/?url=${encoded}`, null, {
       headers: { 'User-Agent': 'phishtank/web-check' },
       timeout: 3000,

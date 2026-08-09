@@ -52,6 +52,8 @@ const reducer = (s: JobsState, a: Action): JobsState => {
 
 const isTimeout = (msg = '') => /timed[- ]?out/i.test(msg);
 
+const noIpMsg = "Skipped, because the target's IP address could not be found";
+
 const apiBase = (import.meta.env.PUBLIC_API_ENDPOINT || '/api') as string;
 
 // Drives every job's lifecycle: fetch, retry, abort, fallback promotion
@@ -66,6 +68,17 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
+
+  const skipJob = useCallback((job: JobSpec, reason?: string) => {
+    const cardIds = job.cards.map((c) => c.id);
+    if (cardIds.length) dispatch({ type: 'skipped', cardIds, reason });
+  }, []);
+
+  // When get-ip comes back empty, skip the jobs that needed the IP
+  const skipIpJobs = useCallback(
+    (reason?: string) => jobs.filter((j) => j.needsIp).forEach((j) => skipJob(j, reason)),
+    [jobs, skipJob],
+  );
 
   const runJob = useCallback(
     (job: JobSpec, ip?: string) => {
@@ -84,8 +97,12 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
           if (controller.signal.aborted) return;
           const timeTaken = Date.now() - startTime;
           if (job.id === 'get-ip') {
-            if (typeof raw === 'string') setIpAddress(raw);
-            else if (raw?.error) setIpLookupError(raw.error);
+            if (typeof raw === 'string') {
+              setIpAddress(raw);
+              return;
+            }
+            if (raw?.error) setIpLookupError(raw.error);
+            skipIpJobs(raw?.skipped || noIpMsg);
             return;
           }
           if (raw?.skipped) {
@@ -106,19 +123,17 @@ const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => 
           if (controller.signal.aborted || err?.name === 'AbortError') return;
           const timeTaken = Date.now() - startTime;
           const message = err?.message || 'Unknown error';
-          if (job.id === 'get-ip') return;
+          if (job.id === 'get-ip') {
+            skipIpJobs(noIpMsg);
+            return;
+          }
           const outcome = isTimeout(message) ? 'timed-out' : 'error';
           dispatch({ type: 'error', cardIds, outcome, error: message, timeTaken });
           cardIds.forEach((id) => logJobOutcome(outcome, id, timeTaken, message));
         });
     },
-    [address, startTime],
+    [address, startTime, skipIpJobs],
   );
-
-  const skipJob = useCallback((job: JobSpec, reason?: string) => {
-    const cardIds = job.cards.map((c) => c.id);
-    if (cardIds.length) dispatch({ type: 'skipped', cardIds, reason });
-  }, []);
 
   // Decide which jobs are eligible for the current input
   const eligible = useCallback(

@@ -20,21 +20,24 @@ const cardStyles = `
 `;
 
 const RedirectsCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
-  const redirects = props.data;
+  // The API chain includes the original URL as its first entry
+  const chain = props.data?.redirects || [];
+  const count = Math.max(chain.length - 1, 0);
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
-      {!redirects?.redirects.length && <Row lbl="" val="No redirects" />}
-      <p className="redirect-count">
-        Followed {redirects.redirects.length} redirect{redirects.redirects.length === 1 ? '' : 's'}{' '}
-        when contacting host
-      </p>
-      {redirects.redirects.map((redirect: any, index: number) => {
-        return (
-          <Row lbl="" val="" key={index}>
-            <span className="arrow-thing">↳</span> {redirect}
-          </Row>
-        );
-      })}
+      {!count && <Row lbl="" val="No redirects" />}
+      {count > 0 && (
+        <>
+          <p className="redirect-count">
+            Followed {count} redirect{count === 1 ? '' : 's'} when contacting host
+          </p>
+          {chain.slice(1).map((redirect: any, index: number) => (
+            <Row lbl="" val="" key={index}>
+              <span className="arrow-thing">↳</span> {redirect}
+            </Row>
+          ))}
+        </>
+      )}
     </Card>
   );
 };

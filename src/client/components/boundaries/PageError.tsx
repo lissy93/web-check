@@ -7,7 +7,7 @@ import Footer from 'client/components/misc/Footer';
 import Nav from 'client/components/Form/Nav';
 import Button from 'client/components/Form/Button';
 import { StyledCard } from 'client/components/Form/Card';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 interface ErrorBoundaryState {
   hasError: boolean;

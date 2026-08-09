@@ -1,5 +1,3 @@
-import type { RowProps } from 'client/components/Form/Row';
-
 export interface ServerLocation {
   city: string;
   region: string;
@@ -138,53 +136,8 @@ export interface TechnologyGroup {
   technologies: Technology[];
 }
 
-export const makeTechnologies = (response: any): TechnologyGroup[] => {
-  let flatArray = response.Results[0].Result.Paths.reduce(
-    (accumulator: any, obj: any) => accumulator.concat(obj.Technologies),
-    [],
-  );
-  let technologies = flatArray.reduce((groups: any, item: any) => {
-    let tag = item.Tag;
-    if (!groups[tag]) groups[tag] = [];
-    groups[tag].push(item);
-    return groups;
-  }, {});
-  return technologies;
-};
-
 export type Cookie = {
   name: string;
   value: string;
   attributes: Record<string, string>;
-};
-
-export const parseRobotsTxt = (content: string): { robots: RowProps[] } => {
-  const lines = content.split('\n');
-  const rules: RowProps[] = [];
-
-  lines.forEach((line) => {
-    line = line.trim(); // This removes trailing and leading whitespaces
-
-    let match = line.match(/^(Allow|Disallow):\s*(\S*)$/i);
-    if (match) {
-      const rule: RowProps = {
-        lbl: match[1],
-        val: match[2],
-      };
-
-      rules.push(rule);
-    } else {
-      match = line.match(/^(User-agent):\s*(\S*)$/i);
-      if (match) {
-        const rule: RowProps = {
-          lbl: match[1],
-          val: match[2],
-        };
-
-        rules.push(rule);
-      }
-    }
-  });
-
-  return { robots: rules };
 };
