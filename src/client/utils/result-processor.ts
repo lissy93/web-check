@@ -101,21 +101,122 @@ export const getHostNames = (response: any): HostNames | null => {
   return results;
 };
 
+export type CvePriorityLevel = 'critical' | 'high' | 'medium' | 'low';
+
+export interface CveService {
+  port: number | null;
+  transport: string | null;
+  product: string | null;
+  version: string | null;
+  module: string | null;
+}
+
+export interface CveKev {
+  listed: boolean;
+  name?: string | null;
+  vendor?: string | null;
+  product?: string | null;
+  dateAdded?: string | null;
+  dueDate?: string | null;
+  ransomware?: boolean;
+  requiredAction?: string | null;
+}
+
+export interface CveEpss {
+  score: number;
+  percentile: number | null;
+  date: string | null;
+}
+
+export interface CvePriority {
+  level: CvePriorityLevel;
+  label: string;
+  reason: string;
+}
+
+export interface CveEntry {
+  id: string;
+  cvss: number | null;
+  summary: string | null;
+  references: string[];
+  verified: boolean;
+  services: CveService[];
+  detectedBy: string[];
+  kev: CveKev;
+  epss: CveEpss | null;
+  priority: CvePriority;
+}
+
+export interface CveSummary {
+  total: number;
+  kevCount: number;
+  ransomwareCount: number;
+  maxCvss: number | null;
+  maxEpss: number | null;
+  highestPriority: CvePriorityLevel | null;
+}
+
+export interface CveIntel {
+  vulns: CveEntry[];
+  summary: CveSummary;
+  feeds: {
+    kev?: { ok: boolean; version?: string | null; released?: string | null };
+    epss?: { ok: boolean; date?: string | null };
+  };
+}
+
 export interface ShodanResults {
   hostnames: HostNames | null;
   serverInfo: ServerInfo | null;
-  vulns: string[];
+  vulns: CveIntel;
 }
+
+const bareCveIds = (vulns: any): string[] => {
+  if (Array.isArray(vulns)) return vulns;
+  if (vulns && typeof vulns === 'object') return Object.keys(vulns);
+  return [];
+};
+
+// Older/self-hosted API instances return plain CVE ids with no enrichment, so
+// build the same shape from what we have rather than breaking the card
+const withoutIntel = (ids: string[]): CveIntel => ({
+  vulns: ids.map((id) => ({
+    id,
+    cvss: null,
+    summary: null,
+    references: [],
+    verified: false,
+    services: [],
+    detectedBy: ['Shodan'],
+    kev: { listed: false },
+    epss: null,
+    priority: { level: 'low', label: 'Unranked', reason: 'No KEV or EPSS data available' },
+  })),
+  summary: {
+    total: ids.length,
+    kevCount: 0,
+    ransomwareCount: 0,
+    maxCvss: null,
+    maxEpss: null,
+    highestPriority: null,
+  },
+  feeds: {},
+});
+
+// Accepts either an already-enriched CveIntel or a bare list/map of CVE ids
+export const asCveIntel = (value: any): CveIntel => {
+  if (value && !Array.isArray(value) && Array.isArray(value.vulns)) return value as CveIntel;
+  return withoutIntel(bareCveIds(value));
+};
+
+export const getCveIntel = (response: any): CveIntel =>
+  asCveIntel(response?.cveIntel ?? response?.vulns);
 
 export const parseShodanResults = (response: any): ShodanResults => {
   return {
     hostnames: getHostNames(response),
     serverInfo: getServerInfo(response),
-    vulns: Array.isArray(response?.vulns)
-      ? response.vulns
-      : response?.vulns && typeof response.vulns === 'object'
-        ? Object.keys(response.vulns)
-        : [],
+    vulns: getCveIntel(response),
   };
 };
 
