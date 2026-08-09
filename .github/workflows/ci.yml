@@ -45,6 +45,25 @@ jobs:
       - name: 🔍 Run ESLint
         run: yarn lint
 
+  test:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout Code
+        uses: actions/checkout@v6
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🧪 Run Tests
+        run: yarn test
+
   typecheck:
     name: 🧷 Type Check
     runs-on: ubuntu-latest
