@@ -32,6 +32,8 @@ interface Breach {
 
 interface BreachHistory {
   domain: string;
+  redirectedTo?: string | null;
+  domainsChecked?: string[];
   breaches: Breach[];
   summary: {
     total: number;
@@ -126,6 +128,18 @@ const Caveat = styled.p`
   margin: 0.35rem 0 0 0;
 `;
 
+const RedirectNote = styled.p`
+  color: ${colors.info};
+  font-size: 0.8rem;
+  margin: 0.5rem 0 0 0;
+`;
+
+const RecordedAgainst = styled.p`
+  color: ${colors.textColorSecondary};
+  font-size: 0.75rem;
+  margin: 0.35rem 0 0 0;
+`;
+
 const Description = styled.p`
   color: ${colors.textColorSecondary};
   font-size: 0.8rem;
@@ -162,9 +176,12 @@ const caveatsFor = (breach: Breach): string[] => {
   return caveats;
 };
 
-const BreachRow = (props: { breach: Breach }): JSX.Element => {
-  const { breach } = props;
+const BreachRow = (props: { breach: Breach; scannedDomain: string }): JSX.Element => {
+  const { breach, scannedDomain } = props;
   const caveats = caveatsFor(breach);
+  // Only ever attributed to the domain HIBP recorded it against, so a redirect
+  // never quietly transfers someone else's breach onto the scanned domain
+  const otherDomain = breach.domain && breach.domain !== scannedDomain ? breach.domain : null;
   return (
     <BreachItem tier={breach.severity}>
       <BreachHeader>
@@ -192,6 +209,7 @@ const BreachRow = (props: { breach: Breach }): JSX.Element => {
           </ExposedData>
         </>
       )}
+      {otherDomain && <RecordedAgainst>Recorded against {otherDomain}</RecordedAgainst>}
       {caveats.length > 0 && <Caveat>⚠️ Treat with care — {caveats.join(', ')}</Caveat>}
       {breach.description && <Description>{breach.description}</Description>}
     </BreachItem>
@@ -203,12 +221,25 @@ const BreachHistoryCard = (props: {
   title: string;
   actionButtons: any;
 }): JSX.Element => {
-  const { breaches = [], summary, domain, source } = props.data || ({} as BreachHistory);
+  const {
+    breaches = [],
+    summary,
+    domain,
+    redirectedTo,
+    domainsChecked,
+    source,
+  } = props.data || ({} as BreachHistory);
+  const checked = domainsChecked?.length ? domainsChecked.join(' and ') : domain || 'this domain';
 
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
+      {redirectedTo && (
+        <RedirectNote>
+          ℹ️ {domain} redirects to {redirectedTo}, so both were checked
+        </RedirectNote>
+      )}
       {breaches.length === 0 ? (
-        <AllClear>✅ No known breaches for {domain || 'this domain'}</AllClear>
+        <AllClear>✅ No known breaches for {checked}</AllClear>
       ) : (
         <>
           <Row lbl="Known breaches" val={summary.total.toString()} />
@@ -216,7 +247,7 @@ const BreachHistoryCard = (props: {
           {summary.latestBreachDate && <Row lbl="Most recent" val={summary.latestBreachDate} />}
           <BreachList>
             {breaches.map((breach) => (
-              <BreachRow key={breach.name} breach={breach} />
+              <BreachRow key={breach.name} breach={breach} scannedDomain={domain} />
             ))}
           </BreachList>
         </>

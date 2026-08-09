@@ -3,10 +3,11 @@
 // domain-level catalogue only — no account, email or password is ever sent.
 
 import psl from 'psl';
-import { httpGet } from './http.js';
+import { UA, httpGet } from './http.js';
 
 const HIBP_BREACHES = 'https://haveibeenpwned.com/api/v3/breaches';
 const HIBP_TIMEOUT = 8000;
+const REDIRECT_TIMEOUT = 5000;
 
 // HIBP data is published under CC BY 4.0, so attribution travels with the data
 export const HIBP_SOURCE = {
@@ -207,4 +208,40 @@ export const summariseBreaches = (breaches) => {
 export const fetchBreachesForDomain = async (domain) => {
   const res = await httpGet(HIBP_BREACHES, { params: { domain }, timeout: HIBP_TIMEOUT });
   return res.data;
+};
+
+// Whether a redirect landed on a genuinely different site, and so is worth a
+// second lookup: morele.pl 301s to morele.net, and the breach is catalogued
+// against morele.net, so checking only what the user typed reports it clean
+export const isDifferentSite = (scanned, destination) =>
+  Boolean(scanned && destination && destination.includes('.') && destination !== scanned);
+
+export const dedupeBreaches = (breaches) => {
+  const seen = new Set();
+  return breaches.filter((breach) => {
+    if (seen.has(breach.name)) return false;
+    seen.add(breach.name);
+    return true;
+  });
+};
+
+// Where the browser would actually end up. Best-effort: a site that refuses
+// HEAD, hangs or fails simply yields nothing, and the caller carries on with
+// the domain that was typed.
+export const resolveFinalDomain = async (url) => {
+  for (const method of ['HEAD', 'GET']) {
+    try {
+      const response = await fetch(url, {
+        method,
+        redirect: 'follow',
+        signal: AbortSignal.timeout(REDIRECT_TIMEOUT),
+        headers: { 'user-agent': UA },
+      });
+      if (!response.ok && method === 'HEAD') continue;
+      return registrableDomain(new URL(response.url || url).hostname);
+    } catch {
+      // fall through to the next method, then give up
+    }
+  }
+  return null;
 };

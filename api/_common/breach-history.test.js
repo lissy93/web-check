@@ -8,6 +8,8 @@ import {
   parseBreaches,
   sortBreaches,
   summariseBreaches,
+  isDifferentSite,
+  dedupeBreaches,
 } from './breach-history.js';
 
 // --- registrableDomain -------------------------------------------------------
@@ -263,6 +265,42 @@ test('sortBreaches does not mutate its input', () => {
   const list = [make({ Name: 'B', IsVerified: false }), make({ Name: 'A' })];
   sortBreaches(list);
   assert.equal(list[0].name, 'B');
+});
+
+// --- isDifferentSite ---------------------------------------------------------
+
+// morele.pl 301s to morele.net, and the breach is catalogued against
+// morele.net, so looking up only what the user typed reports a clean domain
+test('isDifferentSite spots a redirect that lands on another registrable domain', () => {
+  assert.equal(isDifferentSite('morele.pl', 'morele.net'), true);
+});
+
+test('isDifferentSite ignores redirects that stay on the same site', () => {
+  assert.equal(isDifferentSite('morele.net', 'morele.net'), false);
+  assert.equal(isDifferentSite('adobe.com', 'adobe.com'), false);
+});
+
+test('isDifferentSite ignores a missing or unusable destination', () => {
+  assert.equal(isDifferentSite('morele.pl', null), false);
+  assert.equal(isDifferentSite('morele.pl', ''), false);
+  assert.equal(isDifferentSite('morele.pl', 'localhost'), false);
+  assert.equal(isDifferentSite('', 'morele.net'), false);
+});
+
+// --- dedupeBreaches ----------------------------------------------------------
+
+test('dedupeBreaches keeps one entry per breach when both domains return it', () => {
+  const list = parseBreaches([adobe, { ...adobe, PwnCount: 1 }, { ...adobe, Name: 'Other' }]);
+  const deduped = dedupeBreaches(list);
+  assert.deepEqual(
+    deduped.map((b) => b.name),
+    ['Adobe', 'Other'],
+  );
+  assert.equal(deduped[0].accounts, 152445165, 'the first occurrence wins');
+});
+
+test('dedupeBreaches handles an empty list', () => {
+  assert.deepEqual(dedupeBreaches([]), []);
 });
 
 // --- summariseBreaches -------------------------------------------------------
