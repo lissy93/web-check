@@ -1,10 +1,8 @@
-import dns from 'dns';
-import dnsPromises from 'dns/promises';
-import http from 'http';
-import https from 'https';
-import net from 'net';
-
-
+import dns from 'node:dns';
+import dnsPromises from 'node:dns/promises';
+import http from 'node:http';
+import https from 'node:https';
+import net from 'node:net';
 
 const DEFAULT_METADATA_HOSTS = [
   'metadata',
@@ -47,91 +45,94 @@ const parseEnvList = (value) => {
     .filter((entry) => entry.length > 0);
 };
 
-const METADATA_HOSTS = new Set([
-  ...DEFAULT_METADATA_HOSTS,
-  ...parseEnvList(process.env.SSRF_METADATA_HOSTS),
-].map((host) => host.toLowerCase()));
+const normalizeHostname = (hostname) =>
+  hostname
+    .toLowerCase()
+    .replace(/^\[|\]$/g, '')
+    .replace(/\.$/, '');
 
-const METADATA_IPS = new Set([
-  ...DEFAULT_METADATA_IPS,
-  ...parseEnvList(process.env.SSRF_METADATA_IPS),
-]);
+const METADATA_HOSTS = new Set(
+  [...DEFAULT_METADATA_HOSTS, ...parseEnvList(process.env.SSRF_METADATA_HOSTS)].map(
+    normalizeHostname,
+  ),
+);
 
-const IPV4_BLOCK_RANGES = [
-  [0x00000000, 0x00ffffff], // 0.0.0.0/8
-  [0x0a000000, 0x0affffff], // 10.0.0.0/8
-  [0x64400000, 0x647fffff], // 100.64.0.0/10
-  [0x7f000000, 0x7fffffff], // 127.0.0.0/8
-  [0xa9fe0000, 0xa9feffff], // 169.254.0.0/16
-  [0xac100000, 0xac1fffff], // 172.16.0.0/12
-  [0xc0a80000, 0xc0a8ffff], // 192.168.0.0/16
-  [0xc0000000, 0xc00000ff], // 192.0.0.0/24
-  [0xc0000200, 0xc00002ff], // 192.0.2.0/24
-  [0xc6120000, 0xc613ffff], // 198.18.0.0/15
-  [0xc6336400, 0xc63364ff], // 198.51.100.0/24
-  [0xcb007100, 0xcb0071ff], // 203.0.113.0/24
-  [0xe0000000, 0xefffffff], // 224.0.0.0/4
-  [0xf0000000, 0xffffffff], // 240.0.0.0/4
+const METADATA_IPS = new Set(
+  [...DEFAULT_METADATA_IPS, ...parseEnvList(process.env.SSRF_METADATA_IPS)].map(normalizeHostname),
+);
+
+const IPV4_BLOCK_SUBNETS = [
+  ['0.0.0.0', 8],
+  ['10.0.0.0', 8],
+  ['100.64.0.0', 10],
+  ['127.0.0.0', 8],
+  ['169.254.0.0', 16],
+  ['172.16.0.0', 12],
+  ['192.0.0.0', 24],
+  ['192.0.2.0', 24],
+  ['192.88.99.0', 24],
+  ['192.168.0.0', 16],
+  ['198.18.0.0', 15],
+  ['198.51.100.0', 24],
+  ['203.0.113.0', 24],
+  ['224.0.0.0', 4],
+  ['240.0.0.0', 4],
 ];
 
-const ipv4ToInt = (ip) => {
-  const parts = ip.split('.').map((part) => Number(part));
-  if (parts.length !== 4 || parts.some((part) => Number.isNaN(part))) {
-    return null;
-  }
+const IPV6_BLOCK_SUBNETS = [
+  ['::', 128],
+  ['::1', 128],
+  ['64:ff9b::', 96],
+  ['64:ff9b:1::', 48],
+  ['100::', 64],
+  ['100:0:0:1::', 64],
+  ['2001::', 23],
+  ['2001:db8::', 32],
+  ['2002::', 16],
+  ['3fff::', 20],
+  ['5f00::', 16],
+  ['fc00::', 7],
+  ['fe80::', 10],
+  ['ff00::', 8],
+];
 
-  return ((parts[0] << 24) >>> 0) + (parts[1] << 16) + (parts[2] << 8) + parts[3];
-};
+const blockedAddresses = new net.BlockList();
+IPV4_BLOCK_SUBNETS.forEach(([address, prefix]) =>
+  blockedAddresses.addSubnet(address, prefix, 'ipv4'),
+);
+IPV6_BLOCK_SUBNETS.forEach(([address, prefix]) =>
+  blockedAddresses.addSubnet(address, prefix, 'ipv6'),
+);
 
-const isPrivateIpv4 = (ip) => {
-  const value = ipv4ToInt(ip);
-  if (value === null) return true;
-  return IPV4_BLOCK_RANGES.some(([start, end]) => value >= start && value <= end);
-};
-
-const isPrivateIpv6 = (ip) => {
-  const normalized = ip.toLowerCase();
-  if (normalized === '::' || normalized === '::1') return true;
-  if (normalized.startsWith('fe80:') || normalized.startsWith('fe80::')) return true;
-  if (normalized.startsWith('fc') || normalized.startsWith('fd')) return true; // Unique local
-  if (normalized.startsWith('ff')) return true; // Multicast
-  if (normalized.startsWith('2001:db8:')) return true; // Documentation
-  if (normalized.startsWith('2001:10:')) return true; // ORCHID (deprecated)
-
-  if (normalized.startsWith('::ffff:')) {
-    const mapped = normalized.replace('::ffff:', '');
-    return net.isIPv4(mapped) ? isPrivateIpv4(mapped) : true;
-  }
-
-  return false;
-};
+const privateTargetsAllowed = () => process.env.ALLOW_PRIVATE_TARGETS === 'true';
 
 const isPrivateIp = (ip) => {
-  if (METADATA_IPS.has(ip)) {
+  const normalized = normalizeHostname(ip);
+  if (METADATA_IPS.has(normalized)) {
     return true;
   }
 
-  if (net.isIPv4(ip)) {
-    return isPrivateIpv4(ip);
+  if (net.isIPv4(normalized)) {
+    return blockedAddresses.check(normalized, 'ipv4');
   }
-  if (net.isIPv6(ip)) {
-    return isPrivateIpv6(ip);
+  if (net.isIPv6(normalized)) {
+    return blockedAddresses.check(normalized, 'ipv6');
   }
 
   return true;
 };
 
 const isDisallowedHostname = (hostname) => {
-  const lower = hostname.toLowerCase();
-  if (METADATA_HOSTS.has(lower)) return true;
-  if (lower === 'localhost' || lower.endsWith('.localhost')) return true;
-  if (lower.endsWith('.local') || lower.endsWith('.localdomain')) return true;
-  if (lower.endsWith('.internal')) return true;
+  const normalized = normalizeHostname(hostname);
+  if (METADATA_HOSTS.has(normalized)) return true;
+  if (normalized === 'localhost' || normalized.endsWith('.localhost')) return true;
+  if (normalized.endsWith('.local') || normalized.endsWith('.localdomain')) return true;
+  if (normalized.endsWith('.internal')) return true;
   return false;
 };
 
-const resolveAndCheck = async (hostname) => {
-  const records = await dnsPromises.lookup(hostname, { all: true });
+const resolveAndCheck = async (hostname, lookup) => {
+  const records = await lookup(hostname, { all: true });
   if (!records.length) {
     throw new Error('Host resolves to no addresses');
   }
@@ -146,8 +147,19 @@ const resolveAndCheck = async (hostname) => {
 const originalLookup = dns.lookup.bind(dns);
 
 export const safeLookup = (hostname, options, callback) => {
-  const opts = typeof options === 'function' ? {} : options || {};
+  const opts =
+    typeof options === 'number'
+      ? { family: options }
+      : typeof options === 'function'
+        ? {}
+        : options || {};
   const cb = typeof options === 'function' ? options : callback;
+
+  if (privateTargetsAllowed()) {
+    return typeof options === 'function'
+      ? originalLookup(hostname, options)
+      : originalLookup(hostname, options, callback);
+  }
 
   originalLookup(hostname, { ...opts, all: true }, (error, addresses) => {
     if (error) {
@@ -178,49 +190,57 @@ export const safeLookup = (hostname, options, callback) => {
 
 const extractHostname = (input, options) => {
   if (input instanceof URL) {
-    return input.hostname;
+    return normalizeHostname(input.hostname);
   }
 
   if (typeof input === 'string') {
     try {
-      return new URL(input).hostname;
+      return normalizeHostname(new URL(input).hostname);
     } catch (_) {
       return null;
     }
   }
 
-  const fromOptions = options || input || {};
+  const fromOptions = options && typeof options === 'object' ? options : input || {};
   let host = fromOptions.hostname || fromOptions.host || null;
   if (!host) return null;
 
   if (host.startsWith('[') && host.includes(']')) {
     host = host.slice(1, host.indexOf(']'));
-  } else if (host.includes(':')) {
+  } else if (!net.isIP(host) && host.indexOf(':') === host.lastIndexOf(':')) {
     host = host.split(':')[0];
   }
 
-  return host;
+  return normalizeHostname(host);
 };
 
 const parseRequestTarget = (input, options) => {
   if (input instanceof URL) {
-    return { hostname: input.hostname, pathname: input.pathname, port: input.port || '' };
+    return {
+      hostname: normalizeHostname(input.hostname),
+      pathname: input.pathname,
+      port: input.port || '',
+    };
   }
 
   if (typeof input === 'string') {
     try {
       const parsed = new URL(input);
-      return { hostname: parsed.hostname, pathname: parsed.pathname, port: parsed.port || '' };
+      return {
+        hostname: normalizeHostname(parsed.hostname),
+        pathname: parsed.pathname,
+        port: parsed.port || '',
+      };
     } catch (_) {
       return null;
     }
   }
 
-  const fromOptions = options || input || {};
+  const fromOptions = options && typeof options === 'object' ? options : input || {};
   const hostname = fromOptions.hostname || fromOptions.host || null;
   const pathname = fromOptions.path || '/';
   const port = fromOptions.port ? String(fromOptions.port) : '';
-  return hostname ? { hostname, pathname, port } : null;
+  return hostname ? { hostname: extractHostname(fromOptions), pathname, port } : null;
 };
 
 const isDevtoolsRequest = (input, options) => {
@@ -237,7 +257,7 @@ const isDevtoolsRequest = (input, options) => {
 };
 
 const assertSafeHostSync = (hostname, input, options) => {
-  if (!hostname) return;
+  if (!hostname || privateTargetsAllowed()) return;
   if (isDisallowedHostname(hostname)) {
     throw new Error('URL hostname is blocked');
   }
@@ -251,7 +271,6 @@ const assertSafeHostSync = (hostname, input, options) => {
 
 let guardsInstalled = false;
 const originalFns = {
-  lookup: dns.lookup.bind(dns),
   httpRequest: http.request.bind(http),
   httpsRequest: https.request.bind(https),
   httpGet: http.get.bind(http),
@@ -264,11 +283,13 @@ export const installSsrfGuards = () => {
 
   dns.lookup = safeLookup;
 
-  const wrapRequest = (original) => (...args) => {
-    const hostname = extractHostname(args[0], args[1]);
-    assertSafeHostSync(hostname, args[0], args[1]);
-    return original(...args);
-  };
+  const wrapRequest =
+    (original) =>
+    (...args) => {
+      const hostname = extractHostname(args[0], args[1]);
+      assertSafeHostSync(hostname, args[0], args[1]);
+      return original(...args);
+    };
 
   http.request = wrapRequest(originalFns.httpRequest);
   https.request = wrapRequest(originalFns.httpsRequest);
@@ -276,7 +297,7 @@ export const installSsrfGuards = () => {
   https.get = wrapRequest(originalFns.httpsGet);
 };
 
-export const assertSafeUrl = async (rawUrl) => {
+export const assertSafeUrl = async (rawUrl, lookup = dnsPromises.lookup) => {
   let parsed;
   try {
     parsed = new URL(rawUrl);
@@ -292,9 +313,13 @@ export const assertSafeUrl = async (rawUrl) => {
     throw new Error('URL credentials are not allowed');
   }
 
-  const hostname = parsed.hostname;
+  const hostname = normalizeHostname(parsed.hostname);
   if (!hostname) {
     throw new Error('URL hostname is missing');
+  }
+
+  if (privateTargetsAllowed()) {
+    return parsed.toString();
   }
 
   if (isDisallowedHostname(hostname)) {
@@ -308,7 +333,7 @@ export const assertSafeUrl = async (rawUrl) => {
     return parsed.toString();
   }
 
-  await resolveAndCheck(hostname);
+  await resolveAndCheck(hostname, lookup);
 
   return parsed.toString();
 };

@@ -2,6 +2,7 @@ import middleware from './_common/middleware.js';
 import { httpGet } from './_common/http.js';
 import { parseTarget } from './_common/parse-target.js';
 
+// Query Google's public DNS JSON API for a given record type
 const queryDns = async (domain, type) => {
   const res = await httpGet('https://dns.google/resolve', {
     params: { name: domain, type },
