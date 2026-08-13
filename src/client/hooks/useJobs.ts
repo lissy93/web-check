@@ -4,7 +4,6 @@ import keys from 'client/utils/get-keys';
 import type { AddressType } from 'client/utils/address-type-checker';
 import type { LoadingState } from 'client/components/misc/ProgressBar';
 import type { JobSpec, JobContext, JobsState } from 'client/jobs/types';
-import { allCardIds } from 'client/jobs/registry';
 
 type Action =
   | { type: 'start'; cardIds: string[] }
@@ -19,9 +18,10 @@ type Action =
   | { type: 'skipped'; cardIds: string[]; reason?: string }
   | { type: 'force'; cardId: string; state: LoadingState };
 
-const initialState: JobsState = Object.fromEntries(
-  allCardIds.map((id) => [id, { state: 'loading' as LoadingState }]),
-);
+const initialState = (jobs: JobSpec[]): JobsState =>
+  Object.fromEntries(
+    jobs.flatMap((j) => j.cards.map((c) => [c.id, { state: 'loading' as LoadingState }])),
+  );
 
 const setMany = (s: JobsState, ids: string[], patch: Partial<JobsState[string]>) =>
   ids.reduce((acc, id) => ({ ...acc, [id]: { ...acc[id], ...patch } }), s);
@@ -58,7 +58,7 @@ const apiBase = (import.meta.env.PUBLIC_API_ENDPOINT || '/api') as string;
 
 // Drives every job's lifecycle: fetch, retry, abort, fallback promotion
 const useJobs = (address: string, addressType: AddressType, jobs: JobSpec[]) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, jobs, initialState);
   const [ipAddress, setIpAddress] = useState<string | undefined>();
   const [ipLookupError, setIpLookupError] = useState<string | undefined>();
   const startTime = useRef(Date.now()).current;

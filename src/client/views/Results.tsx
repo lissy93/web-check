@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, type ReactNode } from 'react';
-import { useParams } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import styled from '@emotion/styled';
 import { ToastContainer } from 'react-toastify';
 
@@ -26,7 +26,8 @@ import { determineAddressType, type AddressType } from 'client/utils/address-typ
 import { hasData } from 'client/utils/result-processor';
 import keys from 'client/utils/get-keys';
 import useJobs from 'client/hooks/useJobs';
-import { jobs, allCards, allCardIds } from 'client/jobs/registry';
+import { isCategory } from 'client/jobs/categories';
+import { jobsForCategory, cardsForCategory } from 'client/jobs/registry';
 import { runAnalysis } from 'client/analysis/registry';
 
 const ResultsOuter = styled.div`
@@ -76,17 +77,27 @@ const makeActionButtons = (title: string, refresh: () => void, showInfo: () => v
 
 const Results = (props: { address?: string }): JSX.Element => {
   const { urlToScan } = useParams();
+  const { search } = useLocation();
   const address = props.address || urlToScan || '';
   const addressType: AddressType = useMemo(() => determineAddressType(address), [address]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(<></>);
 
-  const { state: jobsState, retry, ipLookupError } = useJobs(address, addressType, jobs);
+  // Optional ?category= param narrows the scan; unknown values fall back to everything
+  const category = useMemo(() => {
+    const param = new URLSearchParams(search).get('category') || '';
+    return isCategory(param) ? param : undefined;
+  }, [search]);
+  const activeJobs = useMemo(() => jobsForCategory(category), [category]);
+  const activeCards = useMemo(() => cardsForCategory(category), [category]);
+  const activeCardIds = useMemo(() => activeCards.map(({ card }) => card.id), [activeCards]);
+
+  const { state: jobsState, retry, ipLookupError } = useJobs(address, addressType, activeJobs);
 
   // Shape useJobs state for the existing ProgressBar contract
   const loadingJobs: LoadingJob[] = useMemo(
     () =>
-      allCardIds.map((id) => {
+      activeCardIds.map((id) => {
         const e = jobsState[id] || { state: 'loading' as LoadingState };
         return {
           name: id,
@@ -96,7 +107,7 @@ const Results = (props: { address?: string }): JSX.Element => {
           retry: () => retry(id),
         };
       }),
-    [jobsState, retry],
+    [jobsState, retry, activeCardIds],
   );
 
   // Expose successful job results on window.webCheck for debugging,
@@ -125,7 +136,7 @@ const Results = (props: { address?: string }): JSX.Element => {
   };
 
   // Resolve each card's data, applying picker and falling back when needed
-  const renderable = allCards.map(({ jobId, card }) => {
+  const renderable = activeCards.map(({ jobId, card }) => {
     const entry = jobsState[card.id];
     const raw = entry?.raw;
     let data = raw && card.pick ? card.pick(raw) : raw;
@@ -198,7 +209,11 @@ const Results = (props: { address?: string }): JSX.Element => {
         <NoResults kind={errorKind} address={address} error={ipLookupError || skipReason} />
       )}
       <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
-      <Loader show={loadingJobs.filter((j) => j.state !== 'loading').length < 5} />
+      <Loader
+        show={
+          loadingJobs.filter((j) => j.state !== 'loading').length < Math.min(5, loadingJobs.length)
+        }
+      />
       <AdvisoryPanel findings={findings} onJumpTo={jumpToCard} />
       <ResultsContent>
         <ResultsMasonryGrid minColWidth={336}>

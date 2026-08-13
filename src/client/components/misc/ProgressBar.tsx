@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import colors from 'client/styles/colors';
 import Card from 'client/components/Form/Card';
 import Heading from 'client/components/Form/Heading';
-import { allCardIds } from 'client/jobs/registry';
 
 export type LoadingState = 'success' | 'loading' | 'skipped' | 'error' | 'timed-out';
 
@@ -331,7 +330,7 @@ interface LoadSummaryProps {
 
 // Compact one-liner shown alongside the "Show Load State" button when collapsed
 const LoadSummary = ({ jobs, elapsedMs, onOpen }: LoadSummaryProps): ReactNode => {
-  const total = allCardIds.length;
+  const total = jobs.length;
   const c = countByState(jobs);
   const issues = c.error + c['timed-out'] + c.skipped;
   const sec = (elapsedMs / 1000).toFixed(1);
@@ -369,7 +368,7 @@ interface SummaryTextProps {
 
 // Heading-style summary that adapts to loading, all-success and partial-failure
 const SummaryText = ({ jobs, elapsedMs }: SummaryTextProps): ReactNode => {
-  const total = allCardIds.length;
+  const total = jobs.length;
   const c = countByState(jobs);
   const isDone = c.loading === 0;
   const hasIssues = c.error > 0 || c['timed-out'] > 0;

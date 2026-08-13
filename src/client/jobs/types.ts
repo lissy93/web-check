@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
 import type { AddressType } from 'client/utils/address-type-checker';
 import type { LoadingState } from 'client/components/misc/ProgressBar';
+import type { CategoryId } from './categories';
 
 export interface JobContext {
   address: string;
@@ -12,7 +13,7 @@ export interface JobContext {
 export interface CardSpec {
   id: string;
   title: string;
-  tags: string[];
+  categories: CategoryId[];
   Component: ComponentType<any>;
   pick?: (raw: any) => any;
   fallback?: (state: JobsState) => any;
