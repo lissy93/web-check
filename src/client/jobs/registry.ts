@@ -155,8 +155,13 @@ export const jobs: JobSpec[] = [
     id: 'whois',
     expectedAddressTypes: [...URL_ONLY],
     cards: [
-      { id: 'domain', title: 'Domain Whois', categories: ['server'], Component: DomainLookup },
-      { id: 'whois', title: 'Domain Info', categories: ['server'], Component: WhoIsCard },
+      { id: 'domain', title: 'Domain Whois', categories: ['domain'], Component: DomainLookup },
+      {
+        id: 'whois',
+        title: 'Domain Info',
+        categories: ['domain', 'privacy'],
+        Component: WhoIsCard,
+      },
     ],
     fetcher: fetchAndProcess('whois?url=${url}'),
   },
@@ -164,7 +169,12 @@ export const jobs: JobSpec[] = [
     id: 'quality',
     expectedAddressTypes: [...URL_ONLY],
     cards: [
-      { id: 'quality', title: 'Quality Summary', categories: ['seo'], Component: LighthouseCard },
+      {
+        id: 'quality',
+        title: 'Quality Summary',
+        categories: ['seo', 'performance'],
+        Component: LighthouseCard,
+      },
     ],
     fetcher: fetchAndRetry('quality?url=${url}'),
   },
@@ -172,7 +182,12 @@ export const jobs: JobSpec[] = [
     id: 'tech-stack',
     expectedAddressTypes: [...URL_ONLY],
     cards: [
-      { id: 'tech-stack', title: 'Tech Stack', categories: ['server'], Component: TechStackCard },
+      {
+        id: 'tech-stack',
+        title: 'Tech Stack',
+        categories: ['server', 'privacy'],
+        Component: TechStackCard,
+      },
     ],
     fetcher: fetchAndProcess('tech-stack?url=${url}'),
   },
@@ -206,7 +221,14 @@ export const jobs: JobSpec[] = [
   {
     id: 'cookies',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [{ id: 'cookies', title: 'Cookies', categories: ['security'], Component: CookiesCard }],
+    cards: [
+      {
+        id: 'cookies',
+        title: 'Cookies',
+        categories: ['security', 'privacy'],
+        Component: CookiesCard,
+      },
+    ],
     fetcher: fetchAndProcess('cookies?url=${url}'),
   },
   {
@@ -225,7 +247,14 @@ export const jobs: JobSpec[] = [
   {
     id: 'dns',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [{ id: 'dns', title: 'DNS Records', categories: ['server'], Component: DnsRecordsCard }],
+    cards: [
+      {
+        id: 'dns',
+        title: 'DNS Records',
+        categories: ['domain', 'email'],
+        Component: DnsRecordsCard,
+      },
+    ],
     fetcher: fetchAndProcess('dns?url=${url}'),
   },
   {
@@ -277,7 +306,7 @@ export const jobs: JobSpec[] = [
     id: 'subdomains',
     expectedAddressTypes: [...URL_ONLY],
     cards: [
-      { id: 'subdomains', title: 'Subdomains', categories: ['server'], Component: SubdomainsCard },
+      { id: 'subdomains', title: 'Subdomains', categories: ['domain'], Component: SubdomainsCard },
     ],
     fetcher: fetchAndRetry('subdomains?url=${url}'),
   },
@@ -311,7 +340,7 @@ export const jobs: JobSpec[] = [
     id: 'dns-server',
     expectedAddressTypes: [...URL_ONLY],
     cards: [
-      { id: 'dns-server', title: 'DNS Server', categories: ['server'], Component: DnsServerCard },
+      { id: 'dns-server', title: 'DNS Server', categories: ['domain'], Component: DnsServerCard },
     ],
     fetcher: fetchAndProcess('dns-server?url=${url}'),
   },
@@ -331,7 +360,9 @@ export const jobs: JobSpec[] = [
   {
     id: 'dnssec',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [{ id: 'dnssec', title: 'DNSSEC', categories: ['security'], Component: DnsSecCard }],
+    cards: [
+      { id: 'dnssec', title: 'DNSSEC', categories: ['security', 'domain'], Component: DnsSecCard },
+    ],
     fetcher: fetchAndProcess('dnssec?url=${url}'),
   },
   {
@@ -343,7 +374,14 @@ export const jobs: JobSpec[] = [
   {
     id: 'threats',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [{ id: 'threats', title: 'Threats', categories: ['security'], Component: ThreatsCard }],
+    cards: [
+      {
+        id: 'threats',
+        title: 'Threats',
+        categories: ['security', 'privacy'],
+        Component: ThreatsCard,
+      },
+    ],
     fetcher: fetchAndProcess('threats?url=${url}'),
   },
   {
@@ -353,7 +391,7 @@ export const jobs: JobSpec[] = [
       {
         id: 'mail-config',
         title: 'Email Configuration',
-        categories: ['server'],
+        categories: ['email'],
         Component: MailConfigCard,
       },
     ],
@@ -376,7 +414,14 @@ export const jobs: JobSpec[] = [
   {
     id: 'redirects',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [{ id: 'redirects', title: 'Redirects', categories: ['seo'], Component: RedirectsCard }],
+    cards: [
+      {
+        id: 'redirects',
+        title: 'Redirects',
+        categories: ['seo', 'performance'],
+        Component: RedirectsCard,
+      },
+    ],
     fetcher: fetchAndProcess('redirects?url=${url}'),
   },
   {
@@ -404,21 +449,38 @@ export const jobs: JobSpec[] = [
     id: 'status',
     expectedAddressTypes: [...URL_ONLY],
     cards: [
-      { id: 'status', title: 'Server Status', categories: ['server'], Component: ServerStatusCard },
+      {
+        id: 'status',
+        title: 'Server Status',
+        categories: ['server', 'performance'],
+        Component: ServerStatusCard,
+      },
     ],
     fetcher: fetchAndProcess('status?url=${url}'),
   },
   {
     id: 'ports',
     needsIp: true,
-    cards: [{ id: 'ports', title: 'Open Ports', categories: ['server'], Component: OpenPortsCard }],
+    cards: [
+      {
+        id: 'ports',
+        title: 'Open Ports',
+        categories: ['server', 'security'],
+        Component: OpenPortsCard,
+      },
+    ],
     fetcher: fetchAndProcess('ports?url=${ip}'),
   },
   {
     id: 'txt-records',
     expectedAddressTypes: [...URL_ONLY],
     cards: [
-      { id: 'txt-records', title: 'TXT Records', categories: ['server'], Component: TxtRecordCard },
+      {
+        id: 'txt-records',
+        title: 'TXT Records',
+        categories: ['domain', 'email'],
+        Component: TxtRecordCard,
+      },
     ],
     fetcher: fetchAndProcess('txt-records?url=${url}'),
   },
@@ -429,7 +491,7 @@ export const jobs: JobSpec[] = [
       {
         id: 'block-lists',
         title: 'Block Lists',
-        categories: ['security'],
+        categories: ['security', 'email'],
         Component: BlockListsCard,
       },
     ],
@@ -470,7 +532,7 @@ export const jobs: JobSpec[] = [
       {
         id: 'carbon',
         title: 'Carbon Footprint',
-        categories: ['seo'],
+        categories: ['seo', 'performance'],
         Component: CarbonFootprintCard,
       },
     ],
