@@ -4,55 +4,58 @@ import Features from '@components/homepage/Features.astro';
 import SponsorSegment from '@components/homepage/SponsorSegment.astro';
 
 const supportedChecks = [
-  'Archive History',
-  'Block List Check',
-  'Carbon Footprint',
-  'Cookies',
-  'DNS Server',
-  'DNS Records',
-  'DNSSEC',
-  'Site Features',
-  'Firewall Types',
-  'Get IP Address',
-  'Headers',
-  'HSTS',
-  'HTTP Security',
-  'Linked Pages',
-  'Mail Config',
-  'Open Ports',
-  'Quality Check',
-  'Global Rank',
-  'Redirects',
-  'Robots.txt',
-  'Screenshot',
-  'Security.txt',
-  'Sitemap',
-  'Social Tags',
-  'SSL Certificate',
-  'Uptime Status',
-  'Tech Stack',
-  'Known Threats',
-  'TLS Version',
-  'Trace Route',
-  'TXT Records',
-  'Whois Lookup',
+  { en: 'Archive History', zh: '历史归档' },
+  { en: 'Block List Check', zh: '拦截名单检测' },
+  { en: 'Carbon Footprint', zh: '碳足迹' },
+  { en: 'Cookies', zh: 'Cookie' },
+  { en: 'DNS Server', zh: 'DNS 服务器' },
+  { en: 'DNS Records', zh: 'DNS 记录' },
+  { en: 'DNSSEC', zh: 'DNSSEC' },
+  { en: 'Site Features', zh: '网站特征' },
+  { en: 'Firewall Types', zh: '防火墙类型' },
+  { en: 'Get IP Address', zh: '获取 IP 地址' },
+  { en: 'Headers', zh: '响应头' },
+  { en: 'HSTS', zh: 'HSTS' },
+  { en: 'HTTP Security', zh: 'HTTP 安全' },
+  { en: 'Linked Pages', zh: '页面链接' },
+  { en: 'Mail Config', zh: '邮件配置' },
+  { en: 'Open Ports', zh: '开放端口' },
+  { en: 'Quality Check', zh: '质量检查' },
+  { en: 'Global Rank', zh: '全球排名' },
+  { en: 'Redirects', zh: '重定向' },
+  { en: 'Robots.txt', zh: 'Robots.txt' },
+  { en: 'Screenshot', zh: '网页截图' },
+  { en: 'Security.txt', zh: 'Security.txt' },
+  { en: 'Sitemap', zh: '站点地图' },
+  { en: 'Social Tags', zh: '社交标签' },
+  { en: 'SSL Certificate', zh: 'SSL 证书' },
+  { en: 'Uptime Status', zh: '在线状态' },
+  { en: 'Tech Stack', zh: '技术栈' },
+  { en: 'Known Threats', zh: '已知威胁' },
+  { en: 'TLS Version', zh: 'TLS 版本' },
+  { en: 'Trace Route', zh: '路由追踪' },
+  { en: 'TXT Records', zh: 'TXT 记录' },
+  { en: 'Whois Lookup', zh: 'WHOIS 查询' },
 ];
 
 const links = [
   {
     title: 'View on GitHub',
+    titleZh: '在 GitHub 查看',
     url: 'https://github.com/lissy93/web-check',
     icon: 'github',
     isCta: true,
   },
   {
     title: 'Deploy your Own',
+    titleZh: '部署自己的实例',
     url: '/self-hosted-setup',
     icon: 'rocket',
     isCta: false,
   },
   {
     title: 'Use the API',
+    titleZh: '使用 API',
     url: '/web-check-api',
     icon: 'code',
     isCta: false,
@@ -62,10 +65,15 @@ const links = [
 
 <div class="about-section">
   <div class="features-wrap">
-    <h4>Ready to get started?</h4>
+    <h4>
+      <span class="i18n-en">Ready to get started?</span><span class="i18n-zh">准备开始了吗？</span>
+    </h4>
     <p class="what">
-      With over <span>30 supported checks</span>
-      you can view and analyse key website information in an instant
+      <span class="i18n-en"
+        >With over <em>30 supported checks</em> you can view and analyse key website information in an
+        instant</span
+      >
+      <span class="i18n-zh">提供超过 <em>30 项检查</em>，快速查看并分析网站关键信息</span>
     </p>
   </div>
   <hr />
@@ -98,7 +106,7 @@ const links = [
     text-align: center;
     font-size: 1.2rem;
     line-height: 1.5;
-    span {
+    em {
       color: var(--primary);
       font-style: italic;
     }

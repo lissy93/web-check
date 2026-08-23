@@ -2,23 +2,35 @@
 import AnimatedButton from './AnimatedButton.astro';
 import AnimatedInput from './AnimatedInput.astro';
 import Screenshots from './Screenshots.astro';
+import LanguageSwitcher from '@components/molecules/LanguageSwitcher.astro';
 ---
 
 <div class="hero">
   <div class="left">
-    <h1>
-      <img src="/favicon.svg" alt="Check Web" width="64" />
-      <span class="web">Web</span>
-      <span class="check">Check</span>
-    </h1>
+    <div class="hero-topbar">
+      <h1>
+        <img src="/favicon.svg" alt="Check Web" width="64" />
+        <span class="web">Web</span>
+        <span class="check">Check</span>
+      </h1>
+      <LanguageSwitcher />
+    </div>
     <div class="homepage-action-content">
-      <h2>We give you X-Ray<br />Vision for your Website</h2>
+      <h2>
+        <span class="i18n-en">We give you X-Ray<br />Vision for your Website</span>
+        <span class="i18n-zh">透视网站配置<br />看清潜在风险</span>
+      </h2>
       <h3>
-        In just 20 seconds, you can see
-        <span>what attackers already know</span>
+        <span class="i18n-en"
+          >In just 20 seconds, you can see <em>what attackers already know</em></span
+        >
+        <span class="i18n-zh">只需 20 秒，即可看到 <em>攻击者已经掌握的信息</em></span>
       </h3>
       <form name="live-start" autocomplete="off" action="/check" class="live-start" id="live-start">
-        <label for="url">Enter a URL to start 👇</label>
+        <label for="url">
+          <span class="i18n-en">Enter a URL to start</span>
+          <span class="i18n-zh">输入网址开始检查</span> 👇
+        </label>
         <AnimatedInput />
         <AnimatedButton />
       </form>
@@ -63,6 +75,13 @@ import Screenshots from './Screenshots.astro';
     @include mobile-down {
       gap: 4rem;
     }
+    .hero-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      z-index: 5;
+    }
     h1 {
       margin: 0;
       fontis-size: 3em;
@@ -99,7 +118,7 @@ import Screenshots from './Screenshots.astro';
       h3 {
         font-weight: normal;
         font-size: 1.3rem;
-        span {
+        em {
           color: var(--primary);
           font-style: italic;
         }

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
@@ -29,7 +30,7 @@ if (trustProxy) {
   app.set('trust proxy', parsed);
 }
 
-const __filename = new URL(import.meta.url).pathname;
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const port = process.env.PORT || 3000; // The port to run the server on
@@ -100,7 +101,7 @@ apiFiles.forEach(async (dirent) => {
   const routeName = dirent.name.split('.')[0];
   const route = `${API_DIR}/${routeName}`;
 
-  const handlerModule = await import(path.join(dirPath, dirent.name));
+  const handlerModule = await import(pathToFileURL(path.join(dirPath, dirent.name)).href);
   const handler = handlerModule.default || handlerModule;
   handlers[route] = handler;
 
@@ -210,7 +211,7 @@ if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
   app.use(express.static('dist/client/'));
   app.use(async (req, res, next) => {
     const ssrHandlerPath = path.join(__dirname, 'dist', 'server', 'entry.mjs');
-    import(ssrHandlerPath)
+    import(pathToFileURL(ssrHandlerPath).href)
       .then(({ handler: ssrHandler }) => {
         ssrHandler(req, res, next);
       })

@@ -15,11 +15,12 @@ const currentYear = new Date().getFullYear();
 
 <footer>
   <p>
-    View source at <a href={github}>{repo}</a>
+    <span class="i18n-en">View source at</span><span class="i18n-zh">源代码：</span>
+    <a href={github}>{repo}</a>
   </p>
   <p>
     <a href={aboutLink}>{projectName}</a>
-    is licensed under
+    <span class="i18n-en">is licensed under</span><span class="i18n-zh">采用</span>
     <a href={licenseLink}>{licenseText}</a>
     - © <a href={authorLink}>{authorName}</a>
     {currentYear}

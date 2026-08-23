@@ -28,6 +28,7 @@ import keys from 'client/utils/get-keys';
 import useJobs from 'client/hooks/useJobs';
 import { jobs, allCards, allCardIds } from 'client/jobs/registry';
 import { runAnalysis } from 'client/analysis/registry';
+import { localizeCardTitle, useLanguage } from 'client/i18n';
 
 const ResultsOuter = styled.div`
   display: flex;
@@ -65,16 +66,22 @@ const makeSiteName = (address: string): string => {
   }
 };
 
-const makeActionButtons = (title: string, refresh: () => void, showInfo: () => void): ReactNode => (
+const makeActionButtons = (
+  infoLabel: string,
+  refreshLabel: string,
+  refresh: () => void,
+  showInfo: () => void,
+): ReactNode => (
   <ActionButtons
     actions={[
-      { label: `Info about ${title}`, onClick: showInfo, icon: 'ⓘ' },
-      { label: `Re-fetch ${title} data`, onClick: refresh, icon: '↻' },
+      { label: infoLabel, onClick: showInfo, icon: 'ⓘ' },
+      { label: refreshLabel, onClick: refresh, icon: '↻' },
     ]}
   />
 );
 
 const Results = (props: { address?: string }): JSX.Element => {
+  const { language, t } = useLanguage();
   const { urlToScan } = useParams();
   const address = props.address || urlToScan || '';
   const addressType: AddressType = useMemo(() => determineAddressType(address), [address]);
@@ -115,7 +122,7 @@ const Results = (props: { address?: string }): JSX.Element => {
   }, [jobsState]);
 
   const showInfo = (id: string) => {
-    setModalContent(DocContent(id));
+    setModalContent(<DocContent id={id} />);
     setModalOpen(true);
   };
 
@@ -202,29 +209,33 @@ const Results = (props: { address?: string }): JSX.Element => {
       <AdvisoryPanel findings={findings} onJumpTo={jumpToCard} />
       <ResultsContent>
         <ResultsMasonryGrid minColWidth={336}>
-          {cardsToShow.map(({ card, data }) => (
-            <div id={`card-${card.id}`} key={`eb-${card.id}`}>
-              <ErrorBoundary title={card.title}>
-                <card.Component
-                  key={card.id}
-                  data={data}
-                  title={card.title}
-                  actionButtons={makeActionButtons(
-                    card.title,
-                    () => retry(card.id),
-                    () => showInfo(card.id),
-                  )}
-                />
-              </ErrorBoundary>
-            </div>
-          ))}
+          {cardsToShow.map(({ card, data }) => {
+            const title = localizeCardTitle(card.id, card.title, language);
+            return (
+              <div id={`card-${card.id}`} key={`eb-${card.id}`}>
+                <ErrorBoundary title={title}>
+                  <card.Component
+                    key={card.id}
+                    data={data}
+                    title={title}
+                    actionButtons={makeActionButtons(
+                      t('infoAbout', { title }),
+                      t('refetch', { title }),
+                      () => retry(card.id),
+                      () => showInfo(card.id),
+                    )}
+                  />
+                </ErrorBoundary>
+              </div>
+            );
+          })}
         </ResultsMasonryGrid>
       </ResultsContent>
       {!errorKind && (
         <ViewRaw
           everything={renderable.map((r) => ({
             id: r.card.id,
-            title: r.card.title,
+            title: localizeCardTitle(r.card.id, r.card.title, language),
             result: r.data,
           }))}
         />

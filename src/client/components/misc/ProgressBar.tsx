@@ -4,6 +4,7 @@ import colors from 'client/styles/colors';
 import Card from 'client/components/Form/Card';
 import Heading from 'client/components/Form/Heading';
 import { allCardIds } from 'client/jobs/registry';
+import { localizeCardTitle, localizeText, useLanguage } from 'client/i18n';
 
 export type LoadingState = 'success' | 'loading' | 'skipped' | 'error' | 'timed-out';
 
@@ -288,27 +289,31 @@ interface JobListItemProps {
   showErrorModal: (job: LoadingJob, isInfo?: boolean) => void;
 }
 
-const REASON_LABEL: Partial<Record<LoadingState, string>> = {
-  error: '■ Show Error',
-  'timed-out': '■ Show Timeout Reason',
-  skipped: '■ Show Skip Reason',
-};
-
 // One row in the details list, showing job state, time and any actions
 const JobListItem = ({ job, showJobDocs, showErrorModal }: JobListItemProps): ReactNode => {
+  const { language, t } = useLanguage();
   const { name, state, timeTaken, retry, error } = job;
   const canRetry = retry && state !== 'success' && state !== 'loading';
-  const reasonLabel = error ? REASON_LABEL[state] : undefined;
+  const reasonLabel = error
+    ? state === 'error'
+      ? `■ ${t('showError')}`
+      : state === 'timed-out'
+        ? `■ ${t('showTimeout')}`
+        : state === 'skipped'
+          ? `■ ${t('showSkip')}`
+          : undefined
+    : undefined;
+  const displayName = localizeCardTitle(name, name, language);
   return (
     <li>
       <button type="button" className="docs" onClick={() => showJobDocs(name)}>
-        {STATE_META[state].emoji} {name}
+        {STATE_META[state].emoji} {displayName}
       </button>
-      <StateLabel color={STATE_META[state].color}> ({state})</StateLabel>
-      <i>{timeTaken && state !== 'loading' ? ` Took ${timeTaken} ms` : ''}</i>
+      <StateLabel color={STATE_META[state].color}> ({localizeText(state, language)})</StateLabel>
+      <i>{timeTaken && state !== 'loading' ? ` ${t('took', { time: timeTaken })}` : ''}</i>
       {canRetry && (
         <FailedJobActionButton type="button" onClick={retry}>
-          ↻ Retry
+          ↻ {t('retry')}
         </FailedJobActionButton>
       )}
       {reasonLabel && (
@@ -331,13 +336,15 @@ interface LoadSummaryProps {
 
 // Compact one-liner shown alongside the "Show Load State" button when collapsed
 const LoadSummary = ({ jobs, elapsedMs, onOpen }: LoadSummaryProps): ReactNode => {
+  const { t } = useLanguage();
   const total = allCardIds.length;
   const c = countByState(jobs);
   const issues = c.error + c['timed-out'] + c.skipped;
   const sec = (elapsedMs / 1000).toFixed(1);
   const text = c.loading
-    ? `Loading ${total - c.loading} of ${total}` + (elapsedMs < 15000 ? ` (${sec}s)` : '')
-    : `Finished ${total} lookups in ${sec}s`;
+    ? t('loadingLookups', { done: total - c.loading, total }) +
+      (elapsedMs < 15000 ? ` (${sec}s)` : '')
+    : t('finishedLookups', { total, seconds: sec });
   return (
     <span className="summary">
       {text}
@@ -345,7 +352,7 @@ const LoadSummary = ({ jobs, elapsedMs, onOpen }: LoadSummaryProps): ReactNode =
         <>
           {' · '}
           <button type="button" className="extras" onClick={onOpen}>
-            {issues} {issues === 1 ? 'issue' : 'issues'}
+            {issues} {t(issues === 1 ? 'issue' : 'issues')}
           </button>
         </>
       )}
@@ -369,6 +376,7 @@ interface SummaryTextProps {
 
 // Heading-style summary that adapts to loading, all-success and partial-failure
 const SummaryText = ({ jobs, elapsedMs }: SummaryTextProps): ReactNode => {
+  const { language, t } = useLanguage();
   const total = allCardIds.length;
   const c = countByState(jobs);
   const isDone = c.loading === 0;
@@ -377,14 +385,16 @@ const SummaryText = ({ jobs, elapsedMs }: SummaryTextProps): ReactNode => {
   const chip = (k: ChipKey) =>
     c[k] > 0 && (
       <span key={k} className={k}>
-        {c[k]} {c[k] === 1 ? 'job' : 'jobs'} {CHIP_LABEL[k]}{' '}
+        {language === 'zh-CN'
+          ? `${c[k]} 项${localizeText(CHIP_LABEL[k], language)}`
+          : `${c[k]} ${c[k] === 1 ? 'job' : 'jobs'} ${CHIP_LABEL[k]}`}{' '}
       </span>
     );
   const cls = !isDone ? 'loading-info' : hasIssues ? 'error-info' : 'success-info';
   const heading = !isDone
-    ? `Loading ${total - c.loading} / ${total} Jobs`
+    ? t('loadingJobs', { done: total - c.loading, total })
     : !hasIssues
-      ? `${c.success} Jobs Completed Successfully`
+      ? t('completedJobs', { count: c.success })
       : null;
   const keys: ChipKey[] = !isDone
     ? ['skipped', 'timed-out', 'error']
@@ -395,7 +405,7 @@ const SummaryText = ({ jobs, elapsedMs }: SummaryTextProps): ReactNode => {
     <SummaryContainer className={cls}>
       {heading && <b>{heading}</b>}
       {keys.map(chip)}
-      <span className="elapsed">{isDone ? `Done in ${elapsed}` : elapsed}</span>
+      <span className="elapsed">{isDone ? t('doneIn', { time: elapsed }) : elapsed}</span>
     </SummaryContainer>
   );
 };
@@ -408,6 +418,7 @@ interface ProgressLoaderProps {
 
 // Top-of-results progress bar with collapsible per-job detail and error modals
 const ProgressLoader = ({ loadStatus, showModal, showJobDocs }: ProgressLoaderProps): ReactNode => {
+  const { language, t } = useLanguage();
   const [hideLoader, setHideLoader] = useState(false);
   const [elapsedMs, setElapsedMs] = useState(0);
   const percentages = stateToPercent(loadStatus);
@@ -438,13 +449,15 @@ const ProgressLoader = ({ loadStatus, showModal, showJobDocs }: ProgressLoaderPr
     state === 'success' && isDone ? colors.primary : STATE_META[state].color;
 
   const showErrorModal = (job: LoadingJob, isInfo?: boolean) => {
-    const detailsLabel = job.state === 'skipped' ? 'Reason:' : 'Server response:';
+    const detailsLabel = job.state === 'skipped' ? t('reason') : t('serverResponse');
+    const displayName = localizeCardTitle(job.name, job.name, language);
     showModal(
       <ErrorModalContent>
-        <Heading as="h3">Details for {job.name}</Heading>
+        <Heading as="h3">{t('jobDetails', { name: displayName })}</Heading>
         <p>
-          The {job.name} job ended with state '{job.state}'
-          {job.timeTaken !== undefined ? ` after ${job.timeTaken} ms` : ''}. {detailsLabel}
+          {t('jobEnded', { name: displayName, state: localizeText(job.state, language) })}
+          {job.timeTaken !== undefined ? t('afterMs', { time: job.timeTaken }) : '. '}
+          {detailsLabel}
         </p>
         <pre className={isInfo ? 'info' : 'error'}>{job.error}</pre>
       </ErrorModalContent>,
@@ -462,7 +475,7 @@ const ProgressLoader = ({ loadStatus, showModal, showJobDocs }: ProgressLoaderPr
               onOpen={() => setHideLoader(false)}
             />
             <ShowLoadStateButton type="button" onClick={() => setHideLoader(false)}>
-              Show Load State
+              {t('showLoadState')}
             </ShowLoadStateButton>
           </ReShowRow>
         </div>
@@ -476,13 +489,13 @@ const ProgressLoader = ({ loadStatus, showModal, showJobDocs }: ProgressLoaderPr
                   key={`progress-bar-${state}`}
                   color={colorFor(state)}
                   width={percentages[state]}
-                  title={`${state} (${Math.round(percentages[state])}%)`}
+                  title={`${localizeText(state, language)} (${Math.round(percentages[state])}%)`}
                 />
               ))}
             </ProgressBarContainer>
             <SummaryText jobs={loadStatus} elapsedMs={elapsedMs} />
             <Details>
-              <summary>Show Details</summary>
+              <summary>{t('showDetails')}</summary>
               <ul>
                 {loadStatus.map((job) => (
                   <JobListItem
@@ -495,18 +508,17 @@ const ProgressLoader = ({ loadStatus, showModal, showJobDocs }: ProgressLoaderPr
               </ul>
               {loadStatus.some((j) => j.state === 'error') && (
                 <p className="error">
-                  <b>Check the browser console for logs and more info</b>
+                  <b>{t('checkConsole')}</b>
                   <br />
-                  It's normal for some jobs to fail, either because the host doesn't return the
-                  required info, or restrictions in the lambda function, or hitting an API limit.
+                  {t('normalFailures')}
                 </p>
               )}
               <AboutPageLink href="/check/about" target="_blank" rel="noreferrer">
-                Learn More about Web-Check
+                {t('learnMore')}
               </AboutPageLink>
             </Details>
             <DismissButton type="button" onClick={() => setHideLoader(true)}>
-              Dismiss
+              {t('dismiss')}
             </DismissButton>
           </LoadCard>
         </div>

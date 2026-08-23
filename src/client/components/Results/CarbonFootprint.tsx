@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Card } from 'client/components/Form/Card';
 import Row from 'client/components/Form/Row';
 import colors from 'client/styles/colors';
+import { localizeText, useLanguage } from 'client/i18n';
 
 const LearnMoreInfo = styled.p`
   font-size: 0.8rem;
@@ -31,12 +32,15 @@ const formatKwh = (kwh: number): string => {
 };
 
 const CarbonCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
+  const { language } = useLanguage();
   const carbons = props.data.statistics;
   const cleanerThan = props.data.cleanerThan;
 
   return (
     <Card heading={props.title} actionButtons={props.actionButtons}>
-      {!carbons?.adjustedBytes && <p>Unable to calculate carbon footprint for host</p>}
+      {!carbons?.adjustedBytes && (
+        <p>{localizeText('Unable to calculate carbon footprint for host', language)}</p>
+      )}
       {carbons?.adjustedBytes > 0 && (
         <>
           {props.data.bytes > 0 && (
@@ -52,7 +56,7 @@ const CarbonCard = (props: { data: any; title: string; actionButtons: any }): JS
       )}
       <br />
       <LearnMoreInfo>
-        Calculated using the{' '}
+        {language === 'zh-CN' ? '根据以下模型计算：' : 'Calculated using the '}
         <a
           href="https://sustainablewebdesign.org/estimating-digital-emissions"
           target="_blank"

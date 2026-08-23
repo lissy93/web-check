@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { StyledCard } from 'client/components/Form/Card';
 import Heading from 'client/components/Form/Heading';
 import colors from 'client/styles/colors';
+import { useLanguage } from 'client/i18n';
 
 const LoaderContainer = styled(StyledCard)`
   margin: 0 auto;
@@ -54,10 +55,11 @@ const StyledSvg = styled.svg`
 `;
 
 const Loader = (props: { show: boolean }): JSX.Element => {
+  const { t } = useLanguage();
   return (
     <LoaderContainer className={props.show ? '' : 'finished'}>
       <Heading as="h4" color={colors.primary}>
-        Crunching data...
+        {t('crunching')}
       </Heading>
       <StyledSvg
         version="1.1"
@@ -115,9 +117,9 @@ const Loader = (props: { show: boolean }): JSX.Element => {
         </path>
       </StyledSvg>
       <p className="loadTimeInfo">
-        It may take up-to a minute for all jobs to complete
+        {t('loadWait')}
         <br />
-        You can view preliminary results as they come in below
+        {t('preliminary')}
       </p>
     </LoaderContainer>
   );

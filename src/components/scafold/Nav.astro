@@ -1,5 +1,5 @@
 ---
-
+import LanguageSwitcher from '@components/molecules/LanguageSwitcher.astro';
 ---
 
 <nav class="navbar">
@@ -13,9 +13,14 @@
     </a>
   </div>
   <div class="nav-right">
-    <a href="/check" class="nav-link">Check</a>
+    <a href="/check" class="nav-link">
+      <span class="i18n-en">Check</span><span class="i18n-zh">检查</span>
+    </a>
     <a href="/web-check-api" class="nav-link">API</a>
-    <a href="/account" class="nav-link">Login</a>
+    <a href="/account" class="nav-link">
+      <span class="i18n-en">Login</span><span class="i18n-zh">登录</span>
+    </a>
+    <LanguageSwitcher />
   </div>
 </nav>
 
@@ -69,11 +74,13 @@
 
     .nav-right {
       display: flex;
+      align-items: center;
+      gap: 0.5rem;
 
       .nav-link {
         text-decoration: none;
         color: var(--text-color);
-        margin-left: 1rem;
+        margin-left: 0.5rem;
         padding: 0.5rem;
         transition: background-color 0.3s;
         position: relative;

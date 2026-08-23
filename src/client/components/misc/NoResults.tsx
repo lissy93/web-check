@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import colors from 'client/styles/colors';
 import { StyledCard } from 'client/components/Form/Card';
 import Heading from 'client/components/Form/Heading';
+import { useLanguage } from 'client/i18n';
 
 const Wrapper = styled(StyledCard)`
   margin: 0 auto;
@@ -91,6 +92,55 @@ const VARIANT: Record<Kind, { title: string; description: string; reasons: strin
   },
 };
 
+const VARIANT_ZH: typeof VARIANT = {
+  unreachable: {
+    title: '无法访问该站点',
+    description: '无法解析该主机的 IP 地址，因此不能继续检查',
+    reasons: [
+      '域名可能拼写错误或已注销',
+      '网站可能离线或暂时无法访问',
+      'DNS 解析可能出现问题',
+      '防火墙或地域限制可能阻止访问',
+    ],
+  },
+  invalid: {
+    title: '输入无效',
+    description: '输入内容不是有效的网址或 IP 地址，因此不能继续检查',
+    reasons: [
+      '请输入域名（例如 example.com）或 IPv4 / IPv6 地址',
+      '检查输入中的拼写错误或多余字符',
+      '请勿包含空格或不支持的符号',
+    ],
+  },
+  'api-down': {
+    title: '服务不可用',
+    description: '由于无法连接 Web Check API，大部分检查均失败',
+    reasons: [
+      'API 可能离线、重启中或触发限流',
+      '自托管实例可能配置错误或未运行',
+      '网络或防火墙可能拦截了 API',
+    ],
+  },
+  blocked: {
+    title: '不允许扫描',
+    description: '当前实例不允许扫描该主机，因此所有检查均已跳过',
+    reasons: [
+      '管理员可能已屏蔽该域名或 IP 网段',
+      '实例可能禁用了相关检查',
+      '仍可在自己的 Web Check 实例中扫描该主机',
+    ],
+  },
+  disabled: {
+    title: 'Web Check 已暂停',
+    description: '当前实例已暂时停用，因此不能执行检查',
+    reasons: [
+      '公共实例可能为控制运行成本而暂停',
+      '自托管实例可能正在维护',
+      '可以从 GitHub 开源仓库运行自己的实例',
+    ],
+  },
+};
+
 interface Props {
   address: string;
   error?: string;
@@ -99,7 +149,8 @@ interface Props {
 
 // Surface a friendly explanation when input is invalid or the host is unreachable
 const NoResults = ({ address, error, kind = 'unreachable' }: Props): JSX.Element => {
-  const { title, description, reasons } = VARIANT[kind];
+  const { language, t } = useLanguage();
+  const { title, description, reasons } = (language === 'zh-CN' ? VARIANT_ZH : VARIANT)[kind];
   return (
     <Wrapper role="alert">
       <Heading as="h2" align="left" color={colors.danger}>
@@ -107,7 +158,7 @@ const NoResults = ({ address, error, kind = 'unreachable' }: Props): JSX.Element
       </Heading>
       <p>{description}</p>
       <code className="target">{address}</code>
-      <p>Possible reasons:</p>
+      <p>{t('possibleReasons')}</p>
       <ul className="reasons">
         {reasons.map((r) => (
           <li key={r}>{r}</li>
@@ -115,7 +166,7 @@ const NoResults = ({ address, error, kind = 'unreachable' }: Props): JSX.Element
       </ul>
       {error && (
         <span className="detail">
-          {kind === 'blocked' ? 'Reason' : 'Lookup error'}: {error}
+          {kind === 'blocked' ? t('reason').replace('：', '') : t('lookupError')}: {error}
         </span>
       )}
     </Wrapper>

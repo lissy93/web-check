@@ -7,17 +7,22 @@ import Icon from '@components/molecules/Icon.svelte';
 const cardData = [
   {
     title: 'Deploy with Docker',
+    titleZh: '使用 Docker 部署',
     description:
       "Just one command, and you'll have your own Web Check instance running on your server in minutes.",
+    descriptionZh: '只需一条命令，几分钟内即可在服务器上运行自己的 Web Check 实例。',
     command: 'docker run -p 3000:3000 lissy93/web-check',
   },
   {
     title: '1-Click Deploy',
+    titleZh: '一键部署',
     description:
       "Don't have a server? Not a problem! Deploy Web Check with one click on Vercel, Netlify, or Render.",
+    descriptionZh: '没有服务器也没关系，可以一键部署到 Vercel、Netlify 或 Render。',
     buttons: [
       {
         name: 'Vercel',
+        nameZh: 'Vercel',
         image: '/assets/images/vercel.svg',
         link:
           'https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.' +
@@ -28,6 +33,7 @@ const cardData = [
       },
       {
         name: 'Netlify',
+        nameZh: 'Netlify',
         image: '/assets/images/netlify.svg',
         link:
           'https://app.netlify.com/start/deploy?repository=' +
@@ -35,6 +41,7 @@ const cardData = [
       },
       {
         name: 'Render',
+        nameZh: 'Render',
         image: '/assets/images/render.svg',
         link: 'https://render.com/deploy?repo=https://github.com/Lissy93/web-check',
       },
@@ -42,10 +49,13 @@ const cardData = [
   },
   {
     title: 'Build from Source',
+    titleZh: '从源代码构建',
     description: 'Want to customize Web Check? Clone the repository and deploy it on your server.',
+    descriptionZh: '需要定制 Web Check？克隆代码仓库并部署到自己的服务器。',
     buttons: [
       {
         name: 'GitHub',
+        nameZh: 'GitHub',
         image: '/assets/images/github.svg',
         link: '',
       },
@@ -61,22 +71,43 @@ const cardData = [
   <div class="web-check-page">
     <NavBar />
     <main>
-      <h1>Self-Hosted Setup</h1>
-      <p>Get your own free instance of Web Check, running locally or on your server.</p>
+      <h1><span class="i18n-en">Self-Hosted Setup</span><span class="i18n-zh">自托管部署</span></h1>
+      <p>
+        <span class="i18n-en"
+          >Get your own free instance of Web Check, running locally or on your server.</span
+        ><span class="i18n-zh">在本地或服务器上运行免费的 Web Check 实例。</span>
+      </p>
 
       <div class="option-cards">
         {
           cardData.map((card, cardIndex) => (
             <div class="card">
-              <span class="option">Option #{cardIndex + 1}</span>
-              <h3>{card.title}</h3>
-              <p>{card.description}</p>
+              <span class="option">
+                <>
+                  <span class="i18n-en">Option</span>
+                  <span class="i18n-zh">方式</span>
+                </>{' '}
+                #{cardIndex + 1}
+              </span>
+              <h3>
+                <>
+                  <span class="i18n-en">{card.title}</span>
+                  <span class="i18n-zh">{card.titleZh}</span>
+                </>
+              </h3>
+              <p>
+                <>
+                  <span class="i18n-en">{card.description}</span>
+                  <span class="i18n-zh">{card.descriptionZh}</span>
+                </>
+              </p>
               {card.buttons && (
                 <div class="buttons">
                   {card.buttons.map((button) => (
                     <a href={button.link}>
                       <img src={button.image} />
-                      {button.name}
+                      <span class="i18n-en">{button.name}</span>
+                      <span class="i18n-zh">{button.nameZh}</span>
                     </a>
                   ))}
                 </div>

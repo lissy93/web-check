@@ -6,6 +6,7 @@ import Footer from 'client/components/misc/Footer';
 import Nav from 'client/components/Form/Nav';
 import Button from 'client/components/Form/Button';
 import { StyledCard } from 'client/components/Form/Card';
+import { useLanguage } from 'client/i18n';
 
 const AboutContainer = styled.div`
   width: 95vw;
@@ -46,6 +47,7 @@ const NotFoundInner = styled(StyledCard)`
 `;
 
 const NotFound = (): JSX.Element => {
+  const { t } = useLanguage();
   return (
     <>
       <AboutContainer>
@@ -56,15 +58,15 @@ const NotFound = (): JSX.Element => {
           </Heading>
           <span className="im-drink">🥴</span>
           <Heading as="h3" size="large" color={colors.primary}>
-            Not Found
+            {t('notFound')}
           </Heading>
           <HeaderLinkContainer>
             <a href="/">
-              <Button>Back to Homepage</Button>
+              <Button>{t('backHome')}</Button>
             </a>
           </HeaderLinkContainer>
           <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check">
-            Report Issue
+            {t('reportIssue')}
           </a>
         </NotFoundInner>
       </AboutContainer>

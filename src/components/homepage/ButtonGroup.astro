@@ -4,6 +4,7 @@ import Icon from '@components/molecules/Icon.svelte';
 interface Props {
   links: {
     title: string;
+    titleZh: string;
     url: string;
     icon: string;
     isCta: boolean;
@@ -18,7 +19,10 @@ const { links } = Astro.props;
     links.map((link: Props['links'][number]) => (
       <a href={link.url} class={link.isCta ? 'cta' : ''}>
         <Icon name={link.icon} size={2} />
-        {link.title}
+        <>
+          <span class="i18n-en">{link.title}</span>
+          <span class="i18n-zh">{link.titleZh}</span>
+        </>
       </a>
     ))
   }

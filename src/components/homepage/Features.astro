@@ -2,7 +2,7 @@
 import Icon from '@components/molecules/Icon.svelte';
 
 interface Props {
-  supportedChecks: string[];
+  supportedChecks: { en: string; zh: string }[];
 }
 
 const { supportedChecks } = Astro.props;
@@ -10,14 +10,20 @@ const { supportedChecks } = Astro.props;
 
 <ul class="features">
   {
-    supportedChecks.map((check: string) => (
+    supportedChecks.map((check: Props['supportedChecks'][number]) => (
       <li>
         <Icon name="check" />
-        {check}
+        <>
+          <span class="i18n-en">{check.en}</span>
+          <span class="i18n-zh">{check.zh}</span>
+        </>
       </li>
     ))
   }
-  <li><Icon name="plus" /><a href="/about#features">More</a></li>
+  <li>
+    <Icon name="plus" />
+    <a href="/about#features"><span class="i18n-en">More</span><span class="i18n-zh">更多</span></a>
+  </li>
 </ul>
 
 <style lang="scss">

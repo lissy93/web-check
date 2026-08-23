@@ -8,6 +8,7 @@ import Nav from 'client/components/Form/Nav';
 import Button from 'client/components/Form/Button';
 import { StyledCard } from 'client/components/Form/Card';
 import { Link } from 'react-router';
+import { useLanguage, type Language } from 'client/i18n';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -17,6 +18,10 @@ interface ErrorBoundaryState {
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
+}
+
+interface InnerProps extends ErrorBoundaryProps {
+  language: Language;
 }
 
 const ErrorPageContainer = styled.div`
@@ -63,8 +68,8 @@ const ErrorMessageText = styled.p`
   color: ${colors.danger};
 `;
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
+class ErrorBoundaryInner extends React.Component<InnerProps, ErrorBoundaryState> {
+  constructor(props: InnerProps) {
     super(props);
     this.state = { hasError: false, errorCount: 0, errorMessage: null };
   }
@@ -92,45 +97,53 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
   render() {
     if (this.state.hasError) {
+      const isChinese = this.props.language === 'zh-CN';
       return (
         <ErrorPageContainer>
           <Nav>
             <HeaderLinkContainer>
               <Link to="/">
-                <Button>Go back Home</Button>
+                <Button>{isChinese ? '返回首页' : 'Go back Home'}</Button>
               </Link>
               <a target="_blank" rel="noreferrer" href="https://github.com/lissy93/web-check">
-                <Button>View on GitHub</Button>
+                <Button>{isChinese ? '在 GitHub 查看' : 'View on GitHub'}</Button>
               </a>
             </HeaderLinkContainer>
           </Nav>
           <ErrorInner>
             <Heading as="h1" size="medium" color={colors.primary}>
-              Something's gone wrong
+              {isChinese ? '出现了一些问题' : "Something's gone wrong"}
             </Heading>
             <Heading as="h2" size="small" color={colors.textColor}>
-              An unexpected error occurred.
+              {isChinese ? '发生了意外错误。' : 'An unexpected error occurred.'}
             </Heading>
             <Heading as="h3" size="large" color={colors.textColor}>
               🤯
             </Heading>
             <ErrorDetails>
               <p>
-                We're sorry this happened. Usually reloading the page will resolve this, but if it
-                doesn't, please raise a bug report.
+                {isChinese
+                  ? '很抱歉出现这个问题。重新加载页面通常可以解决；如果仍未恢复，请提交错误报告。'
+                  : "We're sorry this happened. Usually reloading the page will resolve this, but if it doesn't, please raise a bug report."}
               </p>
               {this.state.errorMessage && (
                 <p>
-                  Below is the error message we received:
+                  {isChinese ? '收到的错误消息如下：' : 'Below is the error message we received:'}
                   <br />
                   <br />
                   <ErrorMessageText>{this.state.errorMessage}</ErrorMessageText>
                 </p>
               )}
             </ErrorDetails>
-            <Button onClick={() => window.location.reload()}>Reload Page</Button>
-            <a target="_blank" rel="noreferrer" href="github.com/lissy93/web-check/issues/choose">
-              Report Issue
+            <Button onClick={() => window.location.reload()}>
+              {isChinese ? '重新加载页面' : 'Reload Page'}
+            </Button>
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://github.com/lissy93/web-check/issues/choose"
+            >
+              {isChinese ? '报告问题' : 'Report Issue'}
             </a>
           </ErrorInner>
           <Footer isFixed={true} />
@@ -141,5 +154,10 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     return this.props.children;
   }
 }
+
+const ErrorBoundary = (props: ErrorBoundaryProps) => {
+  const { language } = useLanguage();
+  return <ErrorBoundaryInner {...props} language={language} />;
+};
 
 export default ErrorBoundary;

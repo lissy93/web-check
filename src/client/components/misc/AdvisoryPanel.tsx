@@ -4,6 +4,7 @@ import colors from 'client/styles/colors';
 import Card from 'client/components/Form/Card';
 import Heading from 'client/components/Form/Heading';
 import type { Finding, Severity } from 'client/analysis/types';
+import { localizeText, useLanguage } from 'client/i18n';
 
 const ORDER: Severity[] = ['critical', 'issue', 'warning', 'info', 'pass'];
 
@@ -108,6 +109,7 @@ interface Props {
 
 // Group findings by severity, render summary + collapsible sections, hide when empty
 const AdvisoryPanel = ({ findings, onJumpTo }: Props): ReactNode => {
+  const { language, t } = useLanguage();
   const { grouped, visible } = useMemo(() => {
     const grouped: Record<Severity, Finding[]> = {
       critical: [],
@@ -125,7 +127,7 @@ const AdvisoryPanel = ({ findings, onJumpTo }: Props): ReactNode => {
   return (
     <Wrapper>
       <Heading as="h2" align="left" color={colors.primary}>
-        Advisory
+        {t('advisory')}
       </Heading>
       {visible.map((sev) => {
         const meta = META[sev];
@@ -138,20 +140,24 @@ const AdvisoryPanel = ({ findings, onJumpTo }: Props): ReactNode => {
             style={{ background: `${meta.color}0D` }}
           >
             <summary style={{ color: meta.color }}>
-              {meta.label}
+              {localizeText(meta.label, language)}
               <span className="count">({items.length})</span>
             </summary>
             <ul className="findings">
               {items.map((f, i) => (
                 <li key={`${f.cardId}-${i}`}>
-                  <span className="glyph" style={{ color: meta.color }} aria-label={meta.label}>
+                  <span
+                    className="glyph"
+                    style={{ color: meta.color }}
+                    aria-label={localizeText(meta.label, language)}
+                  >
                     {meta.glyph}
                   </span>
                   <span className="body">
                     <button type="button" className="jump" onClick={() => onJumpTo(f.cardId)}>
-                      {f.title}
+                      {localizeText(f.title, language)}
                     </button>
-                    {f.detail && <span className="detail">{f.detail}</span>}
+                    {f.detail && <span className="detail">{localizeText(f.detail, language)}</span>}
                   </span>
                 </li>
               ))}

@@ -24,6 +24,19 @@ html {
   scroll-behavior: smooth;
 }
 
+.i18n-zh {
+  display: none;
+}
+
+html[lang^='zh'] {
+  .i18n-en {
+    display: none;
+  }
+  .i18n-zh {
+    display: contents;
+  }
+}
+
 body {
   font-family: var(--font-sans);
   line-height: 1;

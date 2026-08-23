@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import colors from 'client/styles/colors';
 import { Card } from 'client/components/Form/Card';
 import Button from 'client/components/Form/Button';
+import { useLanguage } from 'client/i18n';
 
 const CardStyles = `
 margin: 0 auto;
@@ -41,6 +42,7 @@ const StyledIframe = styled.iframe`
 `;
 
 const ViewRaw = (props: { everything: { id: string; result: any }[] }) => {
+  const { language, t } = useLanguage();
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,25 +84,27 @@ const ViewRaw = (props: { everything: { id: string; result: any }[] }) => {
     URL.revokeObjectURL(url);
   };
   return (
-    <Card heading="View / Download Raw Data" styles={CardStyles}>
+    <Card heading={t('rawData')} styles={CardStyles}>
       <div className="controls">
-        <Button onClick={handleDownload}>Download Results</Button>
-        <Button onClick={fetchResultsUrl}>{resultUrl ? 'Update Results' : 'View Results'}</Button>
-        {resultUrl && <Button onClick={() => setResultUrl('')}>Hide Results</Button>}
+        <Button onClick={handleDownload}>{t('downloadResults')}</Button>
+        <Button onClick={fetchResultsUrl}>
+          {resultUrl ? t('updateResults') : t('viewResults')}
+        </Button>
+        {resultUrl && <Button onClick={() => setResultUrl('')}>{t('hideResults')}</Button>}
       </div>
       {resultUrl && !error && (
         <>
-          <StyledIframe title="Results, via JSON Hero" src={resultUrl} />
+          <StyledIframe
+            title={language === 'zh-CN' ? '通过 JSON Hero 查看结果' : 'Results via JSON Hero'}
+            src={resultUrl}
+          />
           <small>
-            Your results are available to view <a href={resultUrl}>here</a>.
+            <a href={resultUrl}>{t('resultsAvailable')}</a>
           </small>
         </>
       )}
       {error && <p className="error">{error}</p>}
-      <small>
-        These are the raw results generated from your URL, and in JSON format. You can import these
-        into your own program, for further analysis.
-      </small>
+      <small>{t('rawHint')}</small>
     </Card>
   );
 };

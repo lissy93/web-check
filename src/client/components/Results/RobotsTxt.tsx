@@ -1,5 +1,6 @@
 import { Card } from 'client/components/Form/Card';
 import Row, { type RowProps } from 'client/components/Form/Row';
+import { localizeText, useLanguage } from 'client/i18n';
 
 const cardStyles = `
   grid-row: span 2;
@@ -14,13 +15,14 @@ const RobotsTxtCard = (props: {
   title: string;
   actionButtons: any;
 }): JSX.Element => {
+  const { language } = useLanguage();
   const { data } = props;
   const robots = data?.robots || [];
 
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       <div className="content">
-        {robots.length === 0 && <p>No crawl rules found.</p>}
+        {robots.length === 0 && <p>{localizeText('No crawl rules found.', language)}</p>}
         {robots.map((row: RowProps, index: number) => {
           return <Row key={`${row.lbl}-${index}`} lbl={row.lbl} val={row.val} />;
         })}

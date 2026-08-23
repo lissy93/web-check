@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import colors from 'client/styles/colors';
 import Heading from 'client/components/Form/Heading';
+import { localizeText, useLanguage, type Language } from 'client/i18n';
 
 export interface RowProps {
   lbl: string;
@@ -107,18 +108,18 @@ const isDateLike = (value: any): boolean => {
   return date >= new Date('1995-01-01') && date <= new Date('2030-12-31');
 };
 
-const formatDate = (dateString: string): string => {
-  return new Intl.DateTimeFormat('en-GB', {
+const formatDate = (dateString: string, language: Language): string => {
+  return new Intl.DateTimeFormat(language === 'zh-CN' ? 'zh-CN' : 'en-GB', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   }).format(new Date(dateString));
 };
 
-const formatValue = (value: any): string => {
-  if (isDateLike(value)) return formatDate(value);
+const formatValue = (value: any, language: Language): string => {
+  if (isDateLike(value)) return formatDate(value, language);
   if (typeof value === 'boolean') return value ? '✅' : '❌';
-  return value;
+  return localizeText(value, language);
 };
 
 const copyToClipboard = (text: string) => {
@@ -131,15 +132,16 @@ const snip = (text: string, length: number = 80) => {
 };
 
 export const ExpandableRow = (props: RowProps) => {
+  const { language } = useLanguage();
   const { lbl, val, title, rowList, open } = props;
   return (
     <Details open={open}>
       <StyledRow as="summary" key={`${lbl}-${val}`}>
         <span className="lbl" title={title?.toString()}>
-          {lbl}
+          {localizeText(lbl, language)}
         </span>
         <span className="val" title={val?.toString()}>
-          {val.toString()}
+          {localizeText(val, language)}
         </span>
       </StyledRow>
       {rowList && (
@@ -148,14 +150,14 @@ export const ExpandableRow = (props: RowProps) => {
             return (
               <StyledRow as="li" key={`${row.lbl}-${index}`}>
                 <span className="lbl" title={row.title?.toString()}>
-                  {row.lbl}
+                  {localizeText(row.lbl, language)}
                 </span>
                 <span
                   className="val"
                   title={row.val?.toString()}
                   onClick={() => copyToClipboard(row.val)}
                 >
-                  {formatValue(row.val)}
+                  {formatValue(row.val, language)}
                 </span>
                 {row.plaintext && <PlainText>{row.plaintext}</PlainText>}
                 {row.listResults && (
@@ -175,11 +177,12 @@ export const ExpandableRow = (props: RowProps) => {
 };
 
 export const ListRow = (props: { list: string[]; title: string }) => {
+  const { language } = useLanguage();
   const { list, title } = props;
   return (
     <>
       <Heading as="h4" size="small" align="left" color={colors.primary}>
-        {title}
+        {localizeText(title, language)}
       </Heading>
       {list.map((entry: string, index: number) => {
         return (
@@ -193,17 +196,18 @@ export const ListRow = (props: { list: string[]; title: string }) => {
 };
 
 const Row = (props: RowProps) => {
+  const { language } = useLanguage();
   const { lbl, val, title, plaintext, listResults, children } = props;
   if (children) return <StyledRow key={`${lbl}-${val}`}>{children}</StyledRow>;
   return (
     <StyledRow key={`${lbl}-${val}`}>
       {lbl && (
         <span className="lbl" title={title?.toString()}>
-          {lbl}
+          {localizeText(lbl, language)}
         </span>
       )}
       <span className="val" title={val?.toString()} onClick={() => copyToClipboard(val)}>
-        {formatValue(val)}
+        {formatValue(val, language)}
       </span>
       {plaintext && <PlainText>{plaintext}</PlainText>}
       {listResults && (

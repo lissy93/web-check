@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import colors from 'client/styles/colors';
 import { Card } from 'client/components/Form/Card';
+import { useLanguage } from 'client/i18n';
 
 const RouteRow = styled.div`
   text-align: center;
@@ -33,6 +34,7 @@ const RouteTimings = styled.div`
 const cardStyles = ``;
 
 const TraceRouteCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
+  const { language } = useLanguage();
   const traceRouteResponse = props.data;
   const routes = traceRouteResponse.result;
   return (
@@ -45,8 +47,12 @@ const TraceRouteCard = (props: { data: any; title: string; actionButtons: any })
             <RouteTimings>
               {route[Object.keys(route)[0]].map((time: any, packetIndex: number) => (
                 <p className="times" key={`timing-${packetIndex}-${time}`}>
-                  {route[Object.keys(route)[0]].length > 1 && <>Packet #{packetIndex + 1}:</>}
-                  Took {time} ms
+                  {route[Object.keys(route)[0]].length > 1 && (
+                    <>
+                      {language === 'zh-CN' ? '数据包' : 'Packet'} #{packetIndex + 1}:{' '}
+                    </>
+                  )}
+                  {language === 'zh-CN' ? `耗时 ${time} 毫秒` : `Took ${time} ms`}
                 </p>
               ))}
               <p className="arrow">↓</p>
@@ -54,7 +60,11 @@ const TraceRouteCard = (props: { data: any; title: string; actionButtons: any })
           </RouteRow>
         ))}
       <RouteTimings>
-        <p className="completed">Round trip completed in {traceRouteResponse.timeTaken} ms</p>
+        <p className="completed">
+          {language === 'zh-CN'
+            ? `往返完成，耗时 ${traceRouteResponse.timeTaken} 毫秒`
+            : `Round trip completed in ${traceRouteResponse.timeTaken} ms`}
+        </p>
       </RouteTimings>
     </Card>
   );

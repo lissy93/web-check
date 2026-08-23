@@ -25,6 +25,18 @@ const { preloadBodyFont = true } = Astro.props;
 <!doctype html>
 <html lang="en" data-theme="dark">
   <head>
+    <script is:inline>
+      (() => {
+        const stored = window.localStorage.getItem('web-check-language');
+        const language =
+          stored === 'en' || stored === 'zh-CN'
+            ? stored
+            : navigator.language.toLowerCase().startsWith('zh')
+              ? 'zh-CN'
+              : 'en';
+        document.documentElement.lang = language;
+      })();
+    </script>
     <ClientRouter />
     <MetaTags {...Astro.props} />
     <slot name="head" />

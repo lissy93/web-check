@@ -8,10 +8,12 @@ import Button from 'client/components/Form/Button';
 import { StyledCard } from 'client/components/Form/Card';
 import Footer from 'client/components/misc/Footer';
 import FancyBackground from 'client/components/misc/FancyBackground';
+import LanguageSwitcher from 'client/components/misc/LanguageSwitcher';
 
 import docs from 'client/utils/docs';
 import colors from 'client/styles/colors';
 import { determineAddressType, normalizeAddress } from 'client/utils/address-type-checker';
+import { localizeDoc, useLanguage } from 'client/i18n';
 
 const HomeContainer = styled.section`
   display: flex;
@@ -24,6 +26,14 @@ const HomeContainer = styled.section`
   footer {
     z-index: 1;
   }
+`;
+
+const LanguagePosition = styled.div`
+  width: calc(100% - 2rem);
+  max-width: 60rem;
+  display: flex;
+  justify-content: flex-end;
+  z-index: 3;
 `;
 
 const UserInputMain = styled.form`
@@ -129,10 +139,12 @@ const makeAnchor = (title: string): string =>
     .replace(/\s+/g, '-');
 
 const Home = (): JSX.Element => {
-  const defaultPlaceholder = 'e.g. duck.com';
+  const { language, t } = useLanguage();
+  const z = (english: string, chinese: string) => (language === 'zh-CN' ? chinese : english);
+  const defaultPlaceholder = language === 'zh-CN' ? '例如：duck.com' : 'e.g. duck.com';
   const [userInput, setUserInput] = useState('');
   const [errorMsg, setErrMsg] = useState('');
-  const [placeholder] = useState(defaultPlaceholder);
+  const placeholder = defaultPlaceholder;
   const [inputDisabled] = useState(false);
   const navigate = useNavigate();
 
@@ -152,9 +164,9 @@ const Home = (): JSX.Element => {
     const addressType = determineAddressType(address);
 
     if (addressType === 'empt') {
-      setErrMsg('Field must not be empty');
+      setErrMsg(t('emptyInput'));
     } else if (addressType === 'err') {
-      setErrMsg('Must be a valid URL, IPv4 or IPv6 Address');
+      setErrMsg(t('invalidInput'));
     } else {
       const resultRouteParams: NavigateOptions = { state: { address, addressType } };
       navigate(`/check/${address}`, resultRouteParams);
@@ -183,17 +195,20 @@ const Home = (): JSX.Element => {
   return (
     <HomeContainer>
       <FancyBackground />
+      <LanguagePosition>
+        <LanguageSwitcher />
+      </LanguagePosition>
       <UserInputMain onSubmit={formSubmitEvent}>
         <a href="/">
           <Heading as="h1" size="xLarge" align="center" color={colors.primary}>
-            <img width="64" src="/web-check.png" alt="Web Check Icon" />
+            <img width="64" src="/web-check.png" alt={z('Web Check icon', 'Web Check 图标')} />
             Web Check
           </Heading>
         </a>
         <Input
           id="user-input"
           value={userInput}
-          label="Enter a URL"
+          label={t('enterUrl')}
           size="large"
           orientation="vertical"
           name="url"
@@ -205,37 +220,40 @@ const Home = (): JSX.Element => {
         {/* <FindIpButton onClick={findIpAddress}>Or, find my IP</FindIpButton> */}
         {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
         <Button type="submit" styles="width: calc(100% - 1rem);" size="large" onClick={submit}>
-          Analyze!
+          {t('analyze')}
         </Button>
       </UserInputMain>
       <SponsorCard>
         <Heading as="h2" size="small" color={colors.primary}>
-          Enjoying Web Check?
+          {t('enjoying')}
         </Heading>
         <p>
-          It's free, open source, and funded by the community. If it's been useful, you can keep it
-          going (and ad-free) by{' '}
+          {t('sponsorBefore')}{' '}
           <a target="_blank" rel="noreferrer" href="https://github.com/sponsors/Lissy93">
-            sponsoring me on GitHub
+            {t('sponsorLink')}
           </a>
-          . Every bit genuinely helps, thank you
+          {language === 'zh-CN' ? '，' : '. '}
+          {t('sponsorAfter')}
         </p>
       </SponsorCard>
       <SiteFeaturesWrapper>
         <div className="features">
           <Heading as="h2" size="small" color={colors.primary}>
-            Supported Checks
+            {t('supportedChecks')}
           </Heading>
           <ul>
             {docs.map((doc, index) => (
               <li key={index}>
-                <Link to={`/check/about#${makeAnchor(doc.title)}`} title={doc.title}>
-                  {doc.title}
+                <Link
+                  to={`/check/about#${makeAnchor(doc.title)}`}
+                  title={localizeDoc(doc, language).title}
+                >
+                  {localizeDoc(doc, language).title}
                 </Link>
               </li>
             ))}
             <li>
-              <Link to="/check/about">+ more!</Link>
+              <Link to="/check/about">{z('+ more!', '+ 更多')}</Link>
             </li>
           </ul>
         </div>
@@ -244,23 +262,32 @@ const Home = (): JSX.Element => {
             target="_blank"
             rel="noreferrer"
             href="https://github.com/lissy93/web-check"
-            title="Check out the source code and documentation on GitHub, and get support or contribute"
+            title={z(
+              'Check out the source code and documentation on GitHub, and get support or contribute',
+              '在 GitHub 查看源代码和文档、获取支持或参与贡献',
+            )}
           >
-            <Button>View on GitHub</Button>
+            <Button>{t('viewGithub')}</Button>
           </a>
           <a
             target="_blank"
             rel="noreferrer"
             href="https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/web-check"
-            title="Deploy your own private or public instance of Web-Check to Netlify"
+            title={z(
+              'Deploy your own private or public instance of Web-Check to Netlify',
+              '在 Netlify 部署自己的私有或公开 Web Check 实例',
+            )}
           >
-            <Button>Deploy your own</Button>
+            <Button>{t('deployOwn')}</Button>
           </a>
           <Link
             to="/check/about#api-documentation"
-            title="View the API documentation, to use Web-Check programmatically"
+            title={z(
+              'View the API documentation, to use Web-Check programmatically',
+              '查看 API 文档，以编程方式使用 Web Check',
+            )}
           >
-            <Button>API Docs</Button>
+            <Button>{t('apiDocs')}</Button>
           </Link>
         </div>
       </SiteFeaturesWrapper>

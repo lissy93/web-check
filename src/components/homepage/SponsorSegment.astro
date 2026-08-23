@@ -13,10 +13,17 @@ const ctaImageSrc = 'https://i.ibb.co/5jJ4bzZ/terminal-trove-cta.png';
 
 <div class="sponsored-but-dont-block">
   <div>
-    <h5>Sponsored by <a href={sponsorLink}>{sponsorName}</a></h5>
+    <h5>
+      <span class="i18n-en">Sponsored by</span><span class="i18n-zh">赞助伙伴</span>
+      <a href={sponsorLink}>{sponsorName}</a>
+    </h5>
     <p>
-      {sponsorTagline}<br />
-      {ctaPreText}
+      <span class="i18n-en">{sponsorTagline}</span><span class="i18n-zh"
+        >终端工具的一站式发现平台。</span
+      ><br />
+      <span class="i18n-en">{ctaPreText}</span><span class="i18n-zh"
+        >通过邮件订阅获取最新 CLI/TUI 工具：</span
+      >
       <a href={ctaLinkHref}>{ctaLinkText}</a>
     </p>
   </div>

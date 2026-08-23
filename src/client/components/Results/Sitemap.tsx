@@ -1,6 +1,7 @@
 import { Card } from 'client/components/Form/Card';
 import Row, { ExpandableRow } from 'client/components/Form/Row';
 import colors from 'client/styles/colors';
+import { localizeText, useLanguage } from 'client/i18n';
 
 const cardStyles = `
   max-height: 50rem;
@@ -17,6 +18,7 @@ const cardStyles = `
 `;
 
 const SitemapCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
+  const { language } = useLanguage();
   const normalSiteMap = props.data.url || props.data.urlset?.url || null;
   const siteMapIndex = props.data.sitemapindex?.sitemap || null;
 
@@ -56,7 +58,14 @@ const SitemapCard = (props: { data: any; title: string; actionButtons: any }): J
             ></ExpandableRow>
           );
         })}
-      {siteMapIndex && <p>This site returns a sitemap index, which is a list of sitemaps.</p>}
+      {siteMapIndex && (
+        <p>
+          {localizeText(
+            'This site returns a sitemap index, which is a list of sitemaps.',
+            language,
+          )}
+        </p>
+      )}
       {siteMapIndex &&
         siteMapIndex.map((subpage: any, index: number) => {
           return (

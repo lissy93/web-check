@@ -1,6 +1,7 @@
 import { Card } from 'client/components/Form/Card';
 import Row, { Details } from 'client/components/Form/Row';
 import colors from 'client/styles/colors';
+import { localizeText, useLanguage } from 'client/i18n';
 
 const cardStyles = `
 small {
@@ -31,6 +32,7 @@ const getPagePath = (url: string): string => {
 };
 
 const SecurityTxtCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
+  const { language } = useLanguage();
   const securityTxt = props.data;
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
@@ -57,15 +59,16 @@ const SecurityTxtCard = (props: { data: any; title: string; actionButtons: any }
               );
             })}
           <Details>
-            <summary>View Full Policy</summary>
+            <summary>{localizeText('View Full Policy', language)}</summary>
             <pre>{securityTxt.content}</pre>
           </Details>
         </>
       )}
       {!securityTxt.isPresent && (
         <small>
-          Having a security.txt ensures security researchers know how and where to safely report
-          vulnerabilities.
+          {language === 'zh-CN'
+            ? '发布 security.txt 可以让安全研究人员知道如何通过正确渠道报告漏洞。'
+            : 'Having a security.txt ensures security researchers know how and where to safely report vulnerabilities.'}
         </small>
       )}
     </Card>

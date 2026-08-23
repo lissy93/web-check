@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { Link } from 'react-router';
 import colors from 'client/styles/colors';
+import { useLanguage } from 'client/i18n';
 
 const StyledFooter = styled.footer`
   bottom: 0;
@@ -41,17 +42,18 @@ const ALink = styled.a`
 `;
 
 const Footer = (props: { isFixed?: boolean }): JSX.Element => {
+  const { t } = useLanguage();
   const licenseUrl = 'https://github.com/lissy93/web-check/blob/master/LICENSE';
   const authorUrl = 'https://aliciasykes.com';
   const githubUrl = 'https://github.com/lissy93/web-check';
   return (
     <StyledFooter style={props.isFixed ? { position: 'fixed' } : {}}>
       <span>
-        View source at <ALink href={githubUrl}>github.com/lissy93/web-check</ALink>
+        {t('sourceAt')} <ALink href={githubUrl}>github.com/lissy93/web-check</ALink>
       </span>
       <span>
-        <Link to="/about">Web-Check</Link> is licensed under <ALink href={licenseUrl}>MIT</ALink> -
-        © <ALink href={authorUrl}>Alicia Sykes</ALink> 2026
+        <Link to="/about">Web-Check</Link> {t('licensed')} <ALink href={licenseUrl}>MIT</ALink> - ©{' '}
+        <ALink href={authorUrl}>Alicia Sykes</ALink> 2026
       </span>
     </StyledFooter>
   );

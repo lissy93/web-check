@@ -24,7 +24,9 @@ const placeholders = [
     placeholder="E.g. duck.com"
   />
   <div class="placeholder-container">
-    <span class="starter" aria-hidden="true">E.g.</span>
+    <span class="starter" aria-hidden="true">
+      <span class="i18n-en">E.g.</span><span class="i18n-zh">例如</span>
+    </span>
     {
       placeholders.map((placeholder, index) => (
         <span class={`placeholder ${index === 0 ? 'active' : ''}`} aria-hidden="true">

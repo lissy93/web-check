@@ -1,0 +1,72 @@
+<div class="language-switcher" role="group" aria-label="Language / 语言">
+  <button type="button" data-language="en" title="English">EN</button>
+  <button type="button" data-language="zh-CN" title="中文">中文</button>
+</div>
+
+<script>
+  const storageKey = 'web-check-language';
+
+  const initializeLanguageSwitcher = () => {
+    document.querySelectorAll<HTMLElement>('.language-switcher').forEach((switcher) => {
+      const buttons = switcher.querySelectorAll<HTMLButtonElement>('button[data-language]');
+      const update = () => {
+        const current = document.documentElement.lang.startsWith('zh') ? 'zh-CN' : 'en';
+        buttons.forEach((button) => {
+          button.setAttribute('aria-pressed', String(button.dataset.language === current));
+        });
+      };
+
+      buttons.forEach((button) => {
+        if (button.dataset.bound === 'true') return;
+        button.dataset.bound = 'true';
+        button.addEventListener('click', () => {
+          const language = button.dataset.language === 'zh-CN' ? 'zh-CN' : 'en';
+          document.documentElement.lang = language;
+          window.localStorage.setItem(storageKey, language);
+          window.dispatchEvent(new CustomEvent('web-check-language-change', { detail: language }));
+          update();
+        });
+      });
+      update();
+      window.addEventListener('web-check-language-change', update);
+    });
+  };
+
+  document.addEventListener('astro:page-load', initializeLanguageSwitcher);
+  initializeLanguageSwitcher();
+</script>
+
+<style>
+  .language-switcher {
+    display: inline-grid;
+    grid-template-columns: repeat(2, minmax(3rem, auto));
+    height: 2rem;
+    padding: 2px;
+    border: 1px solid var(--primary-transparent);
+    border-radius: 4px;
+    background: var(--background);
+    flex: 0 0 auto;
+  }
+  button {
+    min-width: 0;
+    border: 0;
+    border-radius: 2px;
+    padding: 0 0.55rem;
+    background: transparent;
+    color: var(--text-color-secondary);
+    font: inherit;
+    font-size: 0.8rem;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  button[aria-pressed='true'] {
+    background: var(--primary);
+    color: var(--background);
+    font-weight: 700;
+  }
+  button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+</style>

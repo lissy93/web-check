@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import colors from 'client/styles/colors';
 import { Card } from 'client/components/Form/Card';
 import Row from 'client/components/Form/Row';
+import { useLanguage } from 'client/i18n';
 
 const cardStyles = `
   ul {
@@ -32,11 +33,14 @@ const VulnerabilitiesCard = (props: {
   title: string;
   actionButtons: any;
 }): JSX.Element => {
+  const { language } = useLanguage();
   const vulns: string[] = props.data.vulns || [];
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       {vulns.length === 0 ? (
-        <AllClear>✅ No known active vulnerabilities</AllClear>
+        <AllClear>
+          ✅ {language === 'zh-CN' ? '未发现已知的活跃漏洞' : 'No known active vulnerabilities'}
+        </AllClear>
       ) : (
         <>
           <Row lbl="Known CVEs" val={vulns.length.toString()} />

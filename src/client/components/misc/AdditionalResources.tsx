@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import colors from 'client/styles/colors';
 import { Card } from 'client/components/Form/Card';
+import { localizeText, useLanguage } from 'client/i18n';
 
 const ResourceListOuter = styled.ul`
   list-style: none;
@@ -281,8 +282,9 @@ const makeLink = (resource: any, scanUrl: string | undefined): string => {
 };
 
 const AdditionalResources = (props: { url?: string }): JSX.Element => {
+  const { language, t } = useLanguage();
   return (
-    <Card heading="External Tools for Further Research" styles={CardStyles}>
+    <Card heading={t('externalTools')} styles={CardStyles}>
       <ResourceListOuter>
         {resources.map((resource, index) => {
           return (
@@ -304,7 +306,9 @@ const AdditionalResources = (props: { url?: string }): JSX.Element => {
                 <div className="resource-lower">
                   <img src={resource.icon} alt="" />
                   <div className="resource-details">
-                    <p className="resource-description">{resource.description}</p>
+                    <p className="resource-description">
+                      {localizeText(resource.description, language)}
+                    </p>
                   </div>
                 </div>
               </a>
@@ -313,7 +317,7 @@ const AdditionalResources = (props: { url?: string }): JSX.Element => {
         })}
       </ResourceListOuter>
       <Note>
-        These tools are not affiliated with Web-Check. Please use them at your own risk.
+        {t('externalToolsNote')}
         <br />
         At the time of listing, all of the above were available and free to use - if this changes,
         please report it via GitHub (

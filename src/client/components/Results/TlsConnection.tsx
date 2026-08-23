@@ -1,6 +1,7 @@
 import { Card } from 'client/components/Form/Card';
 import Row from 'client/components/Form/Row';
 import colors from 'client/styles/colors';
+import { localizeText, useLanguage } from 'client/i18n';
 
 const yesNo = (v: boolean) => (v ? '✅ Yes' : '❌ No');
 
@@ -17,6 +18,7 @@ const TlsConnectionCard = (props: {
   title: string;
   actionButtons: any;
 }): JSX.Element => {
+  const { language } = useLanguage();
   const d = props.data || {};
   const cipherName = d.cipher?.standardName || d.cipher?.name || '';
   const ephemeral = formatEphemeralKey(d.ephemeralKey);
@@ -30,9 +32,12 @@ const TlsConnectionCard = (props: {
       <Row lbl="Forward Secrecy" val={yesNo(!!d.forwardSecrecy)} />
       <Row lbl="Session Resumption" val={yesNo(!!d.sessionResumption)} />
       <Row lbl="OCSP Stapling" val="">
-        <span className="lbl">OCSP Stapling</span>
+        <span className="lbl">{localizeText('OCSP Stapling', language)}</span>
         <span className="val" style={{ color: colors.info }}>
-          {d.ocspStapled ? 'ⓘ Present' : 'ⓘ Not Present (may impact visitor privacy)'}
+          {localizeText(
+            d.ocspStapled ? 'ⓘ Present' : 'ⓘ Not Present (may impact visitor privacy)',
+            language,
+          )}
         </span>
       </Row>
       <Row

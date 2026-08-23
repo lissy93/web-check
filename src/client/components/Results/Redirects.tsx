@@ -1,6 +1,7 @@
 import colors from 'client/styles/colors';
 import { Card } from 'client/components/Form/Card';
 import Row from 'client/components/Form/Row';
+import { useLanguage } from 'client/i18n';
 
 const cardStyles = `
   div {
@@ -20,6 +21,7 @@ const cardStyles = `
 `;
 
 const RedirectsCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
+  const { language } = useLanguage();
   // The API chain includes the original URL as its first entry
   const chain = props.data?.redirects || [];
   const count = Math.max(chain.length - 1, 0);
@@ -29,7 +31,9 @@ const RedirectsCard = (props: { data: any; title: string; actionButtons: any }):
       {count > 0 && (
         <>
           <p className="redirect-count">
-            Followed {count} redirect{count === 1 ? '' : 's'} when contacting host
+            {language === 'zh-CN'
+              ? `访问目标时经历了 ${count} 次重定向`
+              : `Followed ${count} redirect${count === 1 ? '' : 's'} when contacting host`}
           </p>
           {chain.slice(1).map((redirect: any, index: number) => (
             <Row lbl="" val="" key={index}>

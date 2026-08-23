@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import colors from 'client/styles/colors';
 import { Card } from 'client/components/Form/Card';
 import Row, { ExpandableRow } from 'client/components/Form/Row';
+import { localizeText, useLanguage } from 'client/i18n';
 
 const Expandable = styled.details`
   margin-top: 0.5rem;
@@ -31,6 +32,7 @@ const convertToDate = (dateString: string): string => {
 };
 
 const MalwareCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
+  const { language } = useLanguage();
   const urlHaus = props.data.urlHaus || {};
   const phishTank = props.data.phishTank || {};
   const cloudmersive = props.data.cloudmersive || {};
@@ -60,7 +62,7 @@ const MalwareCard = (props: { data: any; title: string; actionButtons: any }): J
       )}
       {phishTank.url0?.valid === 'true' && phishTank.url0.phish_detail_page && (
         <Row lbl="" val="">
-          <span className="lbl">Phish Info</span>
+          <span className="lbl">{localizeText('Phish Info', language)}</span>
           <span className="val">
             <a href={phishTank.url0.phish_detail_page}>{phishTank.url0.phish_id}</a>
           </span>
@@ -78,7 +80,7 @@ const MalwareCard = (props: { data: any; title: string; actionButtons: any }): J
       )}
       {urlHaus.urls && (
         <Expandable>
-          <summary>Expand Results</summary>
+          <summary>{localizeText('Expand Results', language)}</summary>
           {urlHaus.urls.map((urlResult: any) => {
             const rows = [
               { lbl: 'ID', val: urlResult.id },

@@ -1,6 +1,7 @@
 import { Card } from 'client/components/Form/Card';
 import Row from 'client/components/Form/Row';
 import colors from 'client/styles/colors';
+import { localizeText, useLanguage } from 'client/i18n';
 
 const cardStyles = `
   .banner-image img {
@@ -17,15 +18,17 @@ const cardStyles = `
 `;
 
 const OgBanner = ({ ogImage, ogUrl }: { ogImage: string; ogUrl?: string }): JSX.Element => {
+  const { language } = useLanguage();
   const urlCover = ogImage.startsWith('/') && ogUrl ? `${ogUrl}${ogImage}` : ogImage;
   return (
     <div className="banner-image">
-      <img src={urlCover} alt="Banner" />
+      <img src={urlCover} alt={language === 'zh-CN' ? '社交分享横幅' : 'Social preview banner'} />
     </div>
   );
 };
 
 const SocialTagsCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
+  const { language } = useLanguage();
   const tags = props.data;
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
@@ -35,7 +38,7 @@ const SocialTagsCard = (props: { data: any; title: string; actionButtons: any })
       {tags.canonicalUrl && <Row lbl="Canonical URL" val={tags.canonicalUrl} />}
       {tags.themeColor && (
         <Row lbl="" val="">
-          <span className="lbl">Theme Color</span>
+          <span className="lbl">{localizeText('Theme Color', language)}</span>
           <span className="val color-field" style={{ background: tags.themeColor }}>
             {tags.themeColor}
           </span>
@@ -43,7 +46,7 @@ const SocialTagsCard = (props: { data: any; title: string; actionButtons: any })
       )}
       {tags.twitterSite && (
         <Row lbl="" val="">
-          <span className="lbl">Twitter Site</span>
+          <span className="lbl">{localizeText('Twitter Site', language)}</span>
           <span className="val">
             <a href={`https://x.com/${tags.twitterSite}`}>{tags.twitterSite}</a>
           </span>

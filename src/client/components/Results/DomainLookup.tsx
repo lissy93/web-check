@@ -1,6 +1,7 @@
 import colors from 'client/styles/colors';
 import { Card } from 'client/components/Form/Card';
 import Row from 'client/components/Form/Row';
+import { localizeText, useLanguage } from 'client/i18n';
 
 const cardStyles = `
 span.val {
@@ -10,6 +11,7 @@ span.val {
 `;
 
 const DomainLookupCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
+  const { language } = useLanguage();
   const d = props.data || {};
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
@@ -21,7 +23,7 @@ const DomainLookupCard = (props: { data: any; title: string; actionButtons: any 
       {d.registrarWhoisServer && <Row lbl="Registrar WHOIS Server" val={d.registrarWhoisServer} />}
       {d.registrar && (
         <Row lbl="" val="">
-          <span className="lbl">Registrar</span>
+          <span className="lbl">{localizeText('Registrar', language)}</span>
           <span className="val">
             <a href={d.registrarUrl || '#'}>{d.registrar}</a>
           </span>

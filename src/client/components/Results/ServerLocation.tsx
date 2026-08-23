@@ -5,6 +5,7 @@ import LocationMap from 'client/components/misc/LocationMap';
 import Flag from 'client/components/misc/Flag';
 import { TextSizes } from 'client/styles/typography';
 import Row, { StyledRow } from 'client/components/Form/Row';
+import { localizeText, useLanguage } from 'client/i18n';
 
 const cardStyles = '';
 
@@ -30,6 +31,7 @@ const ServerLocationCard = (props: {
   title: string;
   actionButtons: any;
 }): JSX.Element => {
+  const { language } = useLanguage();
   const location = props.data;
   const {
     city,
@@ -52,7 +54,7 @@ const ServerLocationCard = (props: {
       )}
       {country && (
         <Row lbl="" val="">
-          <b>Country</b>
+          <b>{localizeText('Country', language)}</b>
           <CountryValue>
             {country}
             {countryCode && <Flag countryCode={countryCode} width={28} />}
@@ -67,7 +69,8 @@ const ServerLocationCard = (props: {
       <MapRow>
         <LocationMap lat={coords.latitude} lon={coords.longitude} label={`Server (${isp})`} />
         <SmallText>
-          Latitude: {coords.latitude}, Longitude: {coords.longitude}{' '}
+          {language === 'zh-CN' ? '纬度' : 'Latitude'}: {coords.latitude},{' '}
+          {language === 'zh-CN' ? '经度' : 'Longitude'}: {coords.longitude}{' '}
         </SmallText>
       </MapRow>
     </Card>
