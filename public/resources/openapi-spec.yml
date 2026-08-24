@@ -1781,6 +1781,65 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+  /x-profile:
+    get:
+      summary: Verify one public X profile through Xquik
+      description: >
+        Runs one metered profile lookup for the exact X profile URL. This endpoint
+        requires the server-side XQUIK_API_KEY environment variable. It never runs
+        as part of an automatic website scan.
+      tags:
+        - Quality & Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: An exact x.com or twitter.com profile URL
+          schema:
+            type: string
+            format: uri
+          example: 'https://x.com/duckduckgo'
+      responses:
+        '200':
+          description: A matching public X profile
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - username
+                  - name
+                properties:
+                  id:
+                    type: string
+                  username:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  followers:
+                    type: integer
+                    minimum: 0
+                  following:
+                    type: integer
+                    minimum: 0
+                  statusesCount:
+                    type: integer
+                    minimum: 0
+                  verified:
+                    type: boolean
+                  location:
+                    type: string
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+        '500':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
   /ssl:
     get:
       summary: Retrieve SSL certificate data

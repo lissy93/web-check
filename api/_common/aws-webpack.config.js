@@ -23,6 +23,7 @@ module.exports = {
     'security-txt': './api/security-txt.js',
     sitemap: './api/sitemap.js',
     'social-tags': './api/social-tags.js',
+    'x-profile': './api/x-profile.js',
     ssl: './api/ssl.js',
     status: './api/status.js',
     'tech-stack': './api/tech-stack.js',

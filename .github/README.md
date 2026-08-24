@@ -643,6 +643,11 @@ Websites can include certain meta tags, that tell search engines and social medi
 
 Adding this data to your site will boost SEO, and as an OSINT researcher it can be useful to understand how a given web app describes itself
 
+Web-Check links a valid `twitter:site` handle to its X profile. Self-hosted
+instances can also verify that public profile through Xquik. The lookup shows
+the exact handle first and runs only after a user clicks the verification
+button. It is metered, uses a server-side key, and does not need an X account.
+
 ###### Useful Links
 
 - [SocialSharePreview.com](https://socialsharepreview.com/)
@@ -935,6 +940,7 @@ But there are some optional environmental variables that you can set to give you
 | `GOOGLE_CLOUD_API_KEY`     | A Google API key with the PageSpeed Insights API enabled ([get here](https://developers.google.com/speed/docs/insights/v5/get-started)). This can be used to return quality metrics for a site |
 | `REACT_APP_SHODAN_API_KEY` | A Shodan API key ([get here](https://account.shodan.io/)). This will show associated host names for a given domain                                    |
 | `REACT_APP_WHO_API_KEY`    | A WhoAPI key ([get here](https://whoapi.com/)). This will show more comprehensive WhoIs records than the default job                                  |
+| `XQUIK_API_KEY`             | An Xquik API key ([get here](https://xquik.com)). This verifies a site's declared X profile after the user confirms the exact handle                  |
 
 <details>
   <summary><small>Full / Upcoming Vals</small></summary>
@@ -949,6 +955,7 @@ But there are some optional environmental variables that you can set to give you
 - `URL_SCAN_API_KEY` - A URLScan API key ([get here](https://urlscan.io/)). This will fetch miscalanious info about a site
 - `BUILT_WITH_API_KEY` - A BuiltWith API key ([get here](https://api.builtwith.com/)). This will show the main features of a site
 - `TORRENT_IP_API_KEY` - A torrent API key ([get here](https://iknowwhatyoudownload.com/en/api/)). This will show torrents downloaded by an IP
+- `XQUIK_API_KEY` - An Xquik API key ([get here](https://xquik.com)). This verifies the public X profile declared in `twitter:site` after a user confirms the handle
 
 </details>
 

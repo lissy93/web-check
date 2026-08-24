@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node server",
     "build": "astro check && astro build",
+    "test": "node --test test/*.test.js",
     "dev:vercel": "PLATFORM='vercel' npx vercel dev",
     "dev:netlify": "PLATFORM='netlify' npx netlify dev",
     "dev:api": "DISABLE_GUI='true' PORT='3001' nodemon server",

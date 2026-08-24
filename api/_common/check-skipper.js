@@ -115,6 +115,7 @@ const publicOnlyChecks = [
   'threats',
   'tls-labs',
   'whois',
+  'x-profile',
 ];
 
 /* Returns true if the target is a private IP, localhost or a .local address */
