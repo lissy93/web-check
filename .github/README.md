@@ -53,6 +53,7 @@
     - [Option#3: Docker](#deploying---option-3-docker)
     - [Option#4: Render](#deploying---option-4-render)
     - [Option#5: Source](#deploying---option-5-from-source)
+    - [Option#6: RepoCloud](#deploying---option-6-repocloud)
   - [Configuration Options](#configuring)
   - [Developer Setup](#developing)
 - **[Community](#community)**
@@ -919,6 +920,12 @@ yarn install                                        # Install the NPM dependenci
 yarn build                                          # Build the app for production
 yarn start                                          # Start the app (API and GUI)
 ```
+
+### Deploying - Option #6: RepoCloud
+
+Click the button below, to deploy to RepoCloud 👇
+
+[![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploylobe.svg)](https://repocloud.io/details/Web-Check/)
 
 ---
 
