@@ -6,6 +6,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import middleware from './_common/middleware.js';
 import { createLogger } from './_common/logger.js';
+import { assertSafeUrl } from './_common/ssrf.js';
 
 const log = createLogger('screenshot');
 
@@ -54,6 +55,27 @@ const puppeteerScreenshot = async (targetUrl) => {
       ignoreDefaultArgs: ['--disable-extensions'],
     });
     const page = await browser.newPage();
+
+    await page.setRequestInterception(true);
+    page.on('request', async (request) => {
+      const requestUrl = request.url();
+      if (
+        requestUrl.startsWith('data:') ||
+        requestUrl.startsWith('blob:') ||
+        requestUrl.startsWith('about:')
+      ) {
+        request.continue();
+        return;
+      }
+
+      try {
+        await assertSafeUrl(requestUrl);
+        request.continue();
+      } catch {
+        request.abort();
+      }
+    });
+
     await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }]);
     page.setDefaultNavigationTimeout(8000);
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
@@ -78,11 +100,16 @@ const screenshotHandler = async (targetUrl) => {
   }
 
   log.debug(`request received: ${targetUrl}`);
-  try {
-    return { image: await directChromiumScreenshot(targetUrl) };
-  } catch (directError) {
-    log.warn(`direct chromium failed, falling back to puppeteer: ${directError.message}`);
+  if (process.env.ALLOW_DIRECT_SCREENSHOT === 'true') {
+    try {
+      return { image: await directChromiumScreenshot(targetUrl) };
+    } catch (directError) {
+      log.warn(`direct chromium failed, falling back to puppeteer: ${directError.message}`);
+    }
+  } else {
+    log.debug('direct chromium disabled for ssrf safety');
   }
+
   try {
     return { image: await puppeteerScreenshot(targetUrl) };
   } catch (error) {

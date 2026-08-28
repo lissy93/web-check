@@ -1,4 +1,5 @@
 import { bracketIPv6 } from './parse-target.js';
+import { assertSafeUrl, installSsrfGuards } from './ssrf.js';
 import { shouldSkip } from './check-skipper.js';
 
 const normalizeUrl = (url) => {
@@ -39,6 +40,8 @@ const timeoutErrorMsg =
 
 // A middleware function used by all API routes on all platforms
 const commonMiddleware = (handler) => {
+  installSsrfGuards();
+
   // Create a timeout promise, to throw an error if a request takes too long
   const createTimeoutPromise = (timeoutMs) => {
     return new Promise((_, reject) => {
@@ -62,8 +65,14 @@ const commonMiddleware = (handler) => {
       return response.status(500).json({ error: 'No URL specified' });
     }
 
+    let url = normalizeUrl(rawUrl);
     try {
-      const url = normalizeUrl(rawUrl);
+      url = await assertSafeUrl(url);
+    } catch (error) {
+      return response.status(400).json({ error: error.message });
+    }
+
+    try {
       const result = await Promise.race([handler(url, request), createTimeoutPromise(TIMEOUT)]);
       response.status(200).json(typeof result === 'object' ? result : JSON.parse(result));
     } catch (error) {
@@ -87,8 +96,14 @@ const commonMiddleware = (handler) => {
       return { statusCode: 500, body: JSON.stringify({ error: 'No URL specified' }), headers };
     }
 
+    let url = normalizeUrl(rawUrl);
     try {
-      const url = normalizeUrl(rawUrl);
+      url = await assertSafeUrl(url);
+    } catch (error) {
+      return { statusCode: 400, body: JSON.stringify({ error: error.message }), headers };
+    }
+
+    try {
       const result = await Promise.race([
         handler(url, event, context),
         createTimeoutPromise(TIMEOUT),

@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node server",
+    "test": "node --test",
     "build": "astro check && astro build",
     "dev:vercel": "PLATFORM='vercel' npx vercel dev",
     "dev:netlify": "PLATFORM='netlify' npx netlify dev",
