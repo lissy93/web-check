@@ -290,12 +290,14 @@ const docs: Doc[] = [
     id: 'vulnerabilities',
     title: 'Vulnerabilities',
     description:
-      'This task lists the known CVEs (Common Vulnerabilities and Exposures) that Shodan associates with the services running on the target host, based on their detected product and version. Each entry links to its NVD record. If Shodan has scanned the host and found none, it reports that no known vulnerabilities are on file.',
-    use: "Known CVEs highlight where a host may be exploitable, and are a starting point for assessing its security posture. Bear in mind these are inferred from banner versions, so may include false positives (a patched service still reporting an old version) or miss issues Shodan hasn't catalogued.",
+      "This task lists the known CVEs (Common Vulnerabilities and Exposures) that Shodan associates with the services running on the target host, based on their detected product and version. Each CVE is then enriched with two free threat-intelligence feeds: the CISA Known Exploited Vulnerabilities (KEV) catalog, which records vulnerabilities confirmed to be exploited in the wild, and FIRST's EPSS, a daily-updated model estimating the probability that a CVE will be exploited in the next 30 days. Alongside each entry you also get the exposed service (port, product and version) that reported it, and a resulting patch priority. If Shodan has scanned the host and found none, it reports that no known vulnerabilities are on file.",
+    use: "Known CVEs highlight where a host may be exploitable, and are a starting point for assessing its security posture. A raw CVSS score only tells you how bad exploitation would be, not how likely it is — which is why CISA recommends working the KEV catalog first and using EPSS to rank what is left. That ordering is what the priority column reflects: anything in KEV is confirmed to be under attack, a high EPSS score means attacks are probable, and a severe CVSS with a negligible EPSS can usually wait for the next maintenance window. Bear in mind the CVE list itself is inferred from banner versions, so may include false positives (a patched service still reporting an old version) or miss issues Shodan hasn't catalogued.",
     resources: [
       'https://nvd.nist.gov/vuln',
       'https://cve.mitre.org/',
       'https://www.shodan.io/',
+      'https://www.cisa.gov/known-exploited-vulnerabilities-catalog',
+      'https://www.first.org/epss/',
       'https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures',
     ],
   },
