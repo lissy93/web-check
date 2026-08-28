@@ -629,6 +629,21 @@ const docs: Doc[] = [
     screenshot: 'https://pixelflare.cc/alicia/web-check/wc-threats',
   },
   {
+    id: 'breach-history',
+    title: 'Data Breach History',
+    description:
+      "Checks whether the organisation behind the target domain has itself appeared in a catalogued data breach, using the public Have I Been Pwned breach catalogue. For each incident it shows the date, how many accounts were affected, and which classes of data were exposed, ranked by how damaging they are — credentials and financial records first, plain identifiers last. Only the registrable domain is ever sent upstream: no email address, account or password is submitted, and this makes no claim about any individual user's data.",
+    use: "A breach in a service's own history tells you something no live scan can: that credentials belonging to this site have already circulated, and roughly when. That matters when judging whether password reuse, credential stuffing or account takeover is a live risk for its users, and it is useful background when assessing a vendor. Bear in mind entries are catalogued per organisation, so a clean result means only that no breach has been catalogued against this domain, not that none occurred. HIBP also flags some entries as unverified, fabricated, or sourced from spam lists and stealer malware, and those are marked as unconfirmed here rather than presented as fact.",
+    resources: [
+      { title: 'Have I Been Pwned', link: 'https://haveibeenpwned.com' },
+      { title: 'HIBP API docs', link: 'https://haveibeenpwned.com/API/v3' },
+      {
+        title: 'Credential stuffing (OWASP)',
+        link: 'https://owasp.org/www-community/attacks/Credential_stuffing',
+      },
+    ],
+  },
+  {
     id: 'tls-connection',
     title: 'TLS Connection',
     description:

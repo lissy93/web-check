@@ -40,6 +40,7 @@ import TlsConnectionCard from 'client/components/Results/TlsConnection';
 import TlsSecurityAuditCard from 'client/components/Results/TlsSecurityAudit';
 import TlsClientCompatCard from 'client/components/Results/TlsClientCompat';
 import SubdomainsCard from 'client/components/Results/Subdomains';
+import BreachHistoryCard from 'client/components/Results/BreachHistory';
 
 import type { JobSpec, JobContext, JobsState } from './types';
 
@@ -263,6 +264,12 @@ export const jobs: JobSpec[] = [
     expectedAddressTypes: [...URL_ONLY],
     cards: [card('threats', 'Threats', ['security'], ThreatsCard)],
     fetcher: fetchAndProcess('threats?url=${url}'),
+  },
+  {
+    id: 'breach-history',
+    expectedAddressTypes: [...URL_ONLY],
+    cards: [card('breach-history', 'Data Breach History', ['security', 'meta'], BreachHistoryCard)],
+    fetcher: fetchAndProcess('breach-history?url=${url}'),
   },
   {
     id: 'mail-config',

@@ -26,6 +26,7 @@ import redirects from './rules/redirects';
 import serverInfo from './rules/server-info';
 import robotsTxt from './rules/robots-txt';
 import tlsClientCompat from './rules/tls-client-compat';
+import breachHistory from './rules/breach-history';
 
 /* Map of card id to its pure analyzer */
 export const analyzers: Record<string, Analyzer> = {
@@ -53,6 +54,7 @@ export const analyzers: Record<string, Analyzer> = {
   'server-info': serverInfo,
   'robots-txt': robotsTxt,
   'tls-client-compat': tlsClientCompat,
+  'breach-history': breachHistory,
 };
 
 /* Run each analyzer against successful job state with valid object payload */

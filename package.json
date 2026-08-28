@@ -15,6 +15,7 @@
     "dev:astro": "PUBLIC_API_ENDPOINT=http://localhost:3001/api astro dev",
     "dev": "concurrently -c magenta,cyan -n backend,frontend 'yarn dev:api' 'yarn dev:astro'",
     "typecheck": "astro check",
+    "test": "node --test",
     "lint": "eslint --config .config/eslint.config.js .",
     "format:check": "prettier --check --ignore-unknown '!yarn.lock' '!**/*.md' .",
     "format:fix": "prettier --write --ignore-unknown '!yarn.lock' '!**/*.md' .",
