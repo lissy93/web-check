@@ -1,7 +1,6 @@
 ---
 import ButtonGroup from '@components/homepage/ButtonGroup.astro';
 import Features from '@components/homepage/Features.astro';
-import SponsorSegment from '@components/homepage/SponsorSegment.astro';
 import { checks, checkIds } from '@/data/checks';
 
 const supportedChecks = checkIds.map((id) => checks[id].title);
@@ -39,8 +38,6 @@ const links = [
   <hr />
   <Features supportedChecks={supportedChecks} />
   <ButtonGroup links={links} />
-  <hr />
-  <SponsorSegment />
 </div>
 
 <style lang="scss">
