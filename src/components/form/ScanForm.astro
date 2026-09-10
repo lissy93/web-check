@@ -1,0 +1,76 @@
+---
+import AnimatedInput from '@components/form/AnimatedInput.astro';
+import AnimatedButton from '@components/form/AnimatedButton.astro';
+
+interface Props {
+  category?: string;
+  label: string;
+  buttonLabel?: string;
+}
+
+const { category, label, buttonLabel = 'Analyze' } = Astro.props;
+---
+
+<form class="scan-form" action="/check" autocomplete="off" data-category={category}>
+  <label for="url-input">{label}</label>
+  <div class="controls">
+    <AnimatedInput />
+    <AnimatedButton label={buttonLabel} />
+  </div>
+  {category && <input type="hidden" name="category" value={category} />}
+</form>
+
+<script>
+  import { normalizeAddress } from '../../client/utils/address-type-checker';
+
+  // Send the visitor straight to the results page, keeping any category filter
+  const scan = (form: HTMLFormElement, event: Event) => {
+    event.preventDefault();
+    const input = form.querySelector<HTMLInputElement>('input[name="url"]');
+    const target = normalizeAddress(input?.value);
+    if (!target) return;
+    const { category } = form.dataset;
+    window.location.href = `/check/${target}${category ? `?category=${category}` : ''}`;
+  };
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLFormElement>('form.scan-form').forEach((form) => {
+      if (form.dataset.bound) return;
+      form.dataset.bound = 'true';
+      form.addEventListener('submit', (event) => scan(form, event));
+    });
+  });
+</script>
+
+<style lang="scss">
+  @use '@styles/global.scss' as *;
+
+  .scan-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 46rem;
+
+    label {
+      color: var(--text-color-secondary);
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.75rem;
+
+      :global(.input-container) {
+        flex: 1;
+        min-width: 0;
+      }
+
+      :global(.button) {
+        white-space: nowrap;
+      }
+
+      @include mobile-down {
+        flex-direction: column;
+      }
+    }
+  }
+</style>

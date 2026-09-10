@@ -1,0 +1,94 @@
+---
+import BaseLayout from '@layouts/Base.astro';
+import NavBar from '@components/scafold/Nav.astro';
+import Footer from '@components/scafold/Footer.astro';
+import DotGrid from '@components/scafold/DotGrid.astro';
+import CategoryHero from '@components/category/CategoryHero.astro';
+import CheckList from '@components/category/CheckList.astro';
+import CategoryLinks from '@components/category/CategoryLinks.astro';
+import { categories, categoryIds, type CategoryId } from '@/data/categories';
+import { checksInCategory } from '@/data/checks';
+
+export const prerender = true;
+
+export const getStaticPaths = () =>
+  categoryIds.map((category) => ({ params: { category }, props: { category } }));
+
+interface Props {
+  category: CategoryId;
+}
+
+const { category } = Astro.props;
+const info = categories[category];
+const ids = checksInCategory(category);
+---
+
+<BaseLayout
+  title={`${info.title} | Web Check`}
+  description={info.description}
+  keywords={info.keywords}
+  breadcrumbs={[
+    { name: 'Web Check', item: '' },
+    { name: info.label, item: category },
+  ]}
+>
+  <div class="web-check-page">
+    <DotGrid />
+    <NavBar />
+    <main>
+      <CategoryHero category={category} info={info} count={ids.length} />
+      <CheckList ids={ids} />
+      <section class="why">
+        <h2>What this tells you</h2>
+        {info.why.map((paragraph) => <p>{paragraph}</p>)}
+      </section>
+      <CategoryLinks current={category} />
+    </main>
+    <Footer />
+  </div>
+</BaseLayout>
+
+<style lang="scss">
+  @use '@styles/global.scss' as *;
+
+  .web-check-page {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-top: 2rem;
+
+    @include mobile-down {
+      padding-top: 0.5rem;
+    }
+  }
+
+  main {
+    flex-grow: 1;
+    width: 80vw;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 4rem;
+
+    @include mobile-down {
+      width: 90vw;
+    }
+
+    > :global(section),
+    > :global(nav) {
+      margin-bottom: 4rem;
+    }
+
+    :global(h2) {
+      font-size: 1.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .why p {
+      max-width: 68ch;
+      line-height: 1.65;
+      color: var(--text-color-secondary);
+    }
+  }
+</style>

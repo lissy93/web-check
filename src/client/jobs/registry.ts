@@ -40,8 +40,9 @@ import TlsSecurityAuditCard from 'client/components/Results/TlsSecurityAudit';
 import TlsClientCompatCard from 'client/components/Results/TlsClientCompat';
 import SubdomainsCard from 'client/components/Results/Subdomains';
 
-import type { CategoryId } from './categories';
-import type { JobSpec, JobContext, JobsState } from './types';
+import { checks, type CheckId } from '@/data/checks';
+import type { CategoryId } from '@/data/categories';
+import type { CardSpec, JobSpec, JobContext, JobsState } from './types';
 
 const URL_ONLY = ['url'] as const;
 
@@ -117,6 +118,19 @@ const fetchAndRetry = (path: string) =>
 // Pick a child key of the raw response, null when missing so cards hide cleanly
 const at = (key: string) => (raw: any) => raw?.[key] ?? null;
 
+// Pair a check with the component that renders it
+const card = (
+  id: CheckId,
+  Component: CardSpec['Component'],
+  extra: Partial<CardSpec> = {},
+): CardSpec => ({
+  id,
+  title: checks[id].title,
+  categories: checks[id].categories,
+  Component,
+  ...extra,
+});
+
 export const jobs: JobSpec[] = [
   {
     id: 'get-ip',
@@ -127,415 +141,216 @@ export const jobs: JobSpec[] = [
   {
     id: 'location',
     needsIp: true,
-    cards: [
-      {
-        id: 'location',
-        title: 'Server Location',
-        categories: ['server'],
-        Component: ServerLocationCard,
-        pick: getLocation,
-      },
-    ],
+    cards: [card('location', ServerLocationCard, { pick: getLocation })],
     fetcher: fetchAndProcess('location?url=${ip}'),
   },
   {
     id: 'ssl',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'ssl',
-        title: 'SSL Certificate',
-        categories: ['server', 'security'],
-        Component: SslCertCard,
-      },
-    ],
+    cards: [card('ssl', SslCertCard)],
     fetcher: fetchAndProcess('ssl?url=${url}'),
   },
   {
     id: 'whois',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      { id: 'domain', title: 'Domain Whois', categories: ['domain'], Component: DomainLookup },
-      {
-        id: 'whois',
-        title: 'Domain Info',
-        categories: ['domain', 'privacy'],
-        Component: WhoIsCard,
-      },
-    ],
+    cards: [card('domain', DomainLookup), card('whois', WhoIsCard)],
     fetcher: fetchAndProcess('whois?url=${url}'),
   },
   {
     id: 'quality',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'quality',
-        title: 'Quality Summary',
-        categories: ['seo', 'performance'],
-        Component: LighthouseCard,
-      },
-    ],
+    cards: [card('quality', LighthouseCard)],
     fetcher: fetchAndRetry('quality?url=${url}'),
   },
   {
     id: 'tech-stack',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'tech-stack',
-        title: 'Tech Stack',
-        categories: ['server', 'privacy'],
-        Component: TechStackCard,
-      },
-    ],
+    cards: [card('tech-stack', TechStackCard)],
     fetcher: fetchAndProcess('tech-stack?url=${url}'),
   },
   {
     id: 'shodan',
     needsIp: true,
     cards: [
-      {
-        id: 'hosts',
-        title: 'Host Names',
-        categories: ['server'],
-        Component: HostNamesCard,
-        pick: at('hostnames'),
-      },
-      {
-        id: 'server-info',
-        title: 'Server Info',
-        categories: ['server'],
-        Component: ServerInfoCard,
-        pick: at('serverInfo'),
-      },
-      {
-        id: 'vulnerabilities',
-        title: 'Vulnerabilities',
-        categories: ['server', 'security'],
-        Component: VulnerabilitiesCard,
-      },
+      card('hosts', HostNamesCard, { pick: at('hostnames') }),
+      card('server-info', ServerInfoCard, { pick: at('serverInfo') }),
+      card('vulnerabilities', VulnerabilitiesCard),
     ],
     fetcher: fetchAndProcess('shodan?url=${ip}', parseShodanResults),
   },
   {
     id: 'cookies',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'cookies',
-        title: 'Cookies',
-        categories: ['security', 'privacy'],
-        Component: CookiesCard,
-      },
-    ],
+    cards: [card('cookies', CookiesCard)],
     fetcher: fetchAndProcess('cookies?url=${url}'),
   },
   {
     id: 'headers',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'headers',
-        title: 'Headers',
-        categories: ['server', 'security'],
-        Component: HeadersCard,
-      },
-    ],
+    cards: [card('headers', HeadersCard)],
     fetcher: fetchAndProcess('headers?url=${url}'),
   },
   {
     id: 'dns',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'dns',
-        title: 'DNS Records',
-        categories: ['domain', 'email'],
-        Component: DnsRecordsCard,
-      },
-    ],
+    cards: [card('dns', DnsRecordsCard)],
     fetcher: fetchAndProcess('dns?url=${url}'),
   },
   {
     id: 'http-security',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'http-security',
-        title: 'HTTP Security',
-        categories: ['security'],
-        Component: HttpSecurityCard,
-      },
-    ],
+    cards: [card('http-security', HttpSecurityCard)],
     fetcher: fetchAndProcess('http-security?url=${url}'),
   },
   {
     id: 'tls-connection',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'tls-connection',
-        title: 'TLS Connection',
-        categories: ['server', 'security'],
-        Component: TlsConnectionCard,
-      },
-    ],
+    cards: [card('tls-connection', TlsConnectionCard)],
     fetcher: fetchAndProcess('tls-connection?url=${url}'),
   },
   {
     id: 'tls-labs',
     expectedAddressTypes: [...URL_ONLY],
     cards: [
-      {
-        id: 'tls-security-audit',
-        title: 'TLS Security Audit',
-        categories: ['security'],
-        Component: TlsSecurityAuditCard,
-      },
-      {
-        id: 'tls-client-compat',
-        title: 'TLS Client Compatibility',
-        categories: ['security'],
-        Component: TlsClientCompatCard,
-      },
+      card('tls-security-audit', TlsSecurityAuditCard),
+      card('tls-client-compat', TlsClientCompatCard),
     ],
     fetcher: fetchAndPoll('tls-labs?url=${url}'),
   },
   {
     id: 'subdomains',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      { id: 'subdomains', title: 'Subdomains', categories: ['domain'], Component: SubdomainsCard },
-    ],
+    cards: [card('subdomains', SubdomainsCard)],
     fetcher: fetchAndRetry('subdomains?url=${url}'),
   },
   {
     id: 'trace-route',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'trace-route',
-        title: 'Trace Route',
-        categories: ['server'],
-        Component: TraceRouteCard,
-      },
-    ],
+    cards: [card('trace-route', TraceRouteCard)],
     fetcher: fetchAndProcess('trace-route?url=${url}'),
   },
   {
     id: 'security-txt',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'security-txt',
-        title: 'Security.Txt',
-        categories: ['security'],
-        Component: SecurityTxtCard,
-      },
-    ],
+    cards: [card('security-txt', SecurityTxtCard)],
     fetcher: fetchAndProcess('security-txt?url=${url}'),
   },
   {
     id: 'dns-server',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      { id: 'dns-server', title: 'DNS Server', categories: ['domain'], Component: DnsServerCard },
-    ],
+    cards: [card('dns-server', DnsServerCard)],
     fetcher: fetchAndProcess('dns-server?url=${url}'),
   },
   {
     id: 'firewall',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'firewall',
-        title: 'Firewall',
-        categories: ['server', 'security'],
-        Component: FirewallCard,
-      },
-    ],
+    cards: [card('firewall', FirewallCard)],
     fetcher: fetchAndProcess('firewall?url=${url}'),
   },
   {
     id: 'dnssec',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      { id: 'dnssec', title: 'DNSSEC', categories: ['security', 'domain'], Component: DnsSecCard },
-    ],
+    cards: [card('dnssec', DnsSecCard)],
     fetcher: fetchAndProcess('dnssec?url=${url}'),
   },
   {
     id: 'hsts',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [{ id: 'hsts', title: 'HSTS Check', categories: ['security'], Component: HstsCard }],
+    cards: [card('hsts', HstsCard)],
     fetcher: fetchAndProcess('hsts?url=${url}'),
   },
   {
     id: 'threats',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'threats',
-        title: 'Threats',
-        categories: ['security', 'privacy'],
-        Component: ThreatsCard,
-      },
-    ],
+    cards: [card('threats', ThreatsCard)],
     fetcher: fetchAndProcess('threats?url=${url}'),
   },
   {
     id: 'mail-config',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'mail-config',
-        title: 'Email Configuration',
-        categories: ['email'],
-        Component: MailConfigCard,
-      },
-    ],
+    cards: [card('mail-config', MailConfigCard)],
     fetcher: fetchAndProcess('mail-config?url=${url}'),
   },
   {
     id: 'archives',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      { id: 'archives', title: 'Archive History', categories: ['seo'], Component: ArchivesCard },
-    ],
+    cards: [card('archives', ArchivesCard)],
     fetcher: fetchAndRetry('archives?url=${url}'),
   },
   {
     id: 'rank',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [{ id: 'rank', title: 'Global Ranking', categories: ['seo'], Component: RankCard }],
+    cards: [card('rank', RankCard)],
     fetcher: fetchAndProcess('rank?url=${url}'),
   },
   {
     id: 'redirects',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'redirects',
-        title: 'Redirects',
-        categories: ['seo', 'performance'],
-        Component: RedirectsCard,
-      },
-    ],
+    cards: [card('redirects', RedirectsCard)],
     fetcher: fetchAndProcess('redirects?url=${url}'),
   },
   {
     id: 'linked-pages',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'linked-pages',
-        title: 'Linked Pages',
-        categories: ['seo'],
-        Component: ContentLinksCard,
-      },
-    ],
+    cards: [card('linked-pages', ContentLinksCard)],
     fetcher: fetchAndProcess('linked-pages?url=${url}'),
   },
   {
     id: 'robots-txt',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      { id: 'robots-txt', title: 'Crawl Rules', categories: ['seo'], Component: RobotsTxtCard },
-    ],
+    cards: [card('robots-txt', RobotsTxtCard)],
     fetcher: fetchAndProcess('robots-txt?url=${url}'),
   },
   {
     id: 'status',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'status',
-        title: 'Server Status',
-        categories: ['server', 'performance'],
-        Component: ServerStatusCard,
-      },
-    ],
+    cards: [card('status', ServerStatusCard)],
     fetcher: fetchAndProcess('status?url=${url}'),
   },
   {
     id: 'ports',
     needsIp: true,
-    cards: [
-      {
-        id: 'ports',
-        title: 'Open Ports',
-        categories: ['server', 'security'],
-        Component: OpenPortsCard,
-      },
-    ],
+    cards: [card('ports', OpenPortsCard)],
     fetcher: fetchAndProcess('ports?url=${ip}'),
   },
   {
     id: 'txt-records',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'txt-records',
-        title: 'TXT Records',
-        categories: ['domain', 'email'],
-        Component: TxtRecordCard,
-      },
-    ],
+    cards: [card('txt-records', TxtRecordCard)],
     fetcher: fetchAndProcess('txt-records?url=${url}'),
   },
   {
     id: 'block-lists',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'block-lists',
-        title: 'Block Lists',
-        categories: ['security', 'email'],
-        Component: BlockListsCard,
-      },
-    ],
+    cards: [card('block-lists', BlockListsCard)],
     fetcher: fetchAndProcess('block-lists?url=${url}'),
   },
   {
     id: 'sitemap',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [{ id: 'sitemap', title: 'Pages', categories: ['seo'], Component: SitemapCard }],
+    cards: [card('sitemap', SitemapCard)],
     fetcher: fetchAndProcess('sitemap?url=${url}'),
   },
   {
     id: 'screenshot',
     expectedAddressTypes: [...URL_ONLY],
     cards: [
-      {
-        id: 'screenshot',
-        title: 'Screenshot',
-        categories: ['seo'],
-        Component: ScreenshotCard,
+      card('screenshot', ScreenshotCard, {
         fallback: (state: JobsState) => state.quality?.raw?.fullPageScreenshot?.screenshot,
-      },
+      }),
     ],
     fetcher: fetchAndProcess('screenshot?url=${url}'),
   },
   {
     id: 'social-tags',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      { id: 'social-tags', title: 'Social Tags', categories: ['seo'], Component: SocialTagsCard },
-    ],
+    cards: [card('social-tags', SocialTagsCard)],
     fetcher: fetchAndProcess('social-tags?url=${url}'),
   },
   {
     id: 'carbon',
     expectedAddressTypes: [...URL_ONLY],
-    cards: [
-      {
-        id: 'carbon',
-        title: 'Carbon Footprint',
-        categories: ['seo', 'performance'],
-        Component: CarbonFootprintCard,
-      },
-    ],
+    cards: [card('carbon', CarbonFootprintCard)],
     fetcher: fetchAndProcess('carbon?url=${url}'),
   },
 ];
@@ -543,7 +358,7 @@ export const jobs: JobSpec[] = [
 const inCategory = (card: JobSpec['cards'][number], category?: CategoryId) =>
   !category || card.categories.includes(category);
 
-// Jobs to run for a category filter; cardless jobs (get-ip) always run
+// Jobs to run for a category filter, cardless jobs like get-ip always run
 export const jobsForCategory = (category?: CategoryId): JobSpec[] =>
   jobs.filter((j) => !j.cards.length || j.cards.some((c) => inCategory(c, category)));
 

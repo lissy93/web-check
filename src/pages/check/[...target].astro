@@ -37,7 +37,8 @@ const pageTitle = target ? `${target} | Web Check` : 'Web Check';
   const searchParams = new URL(window.location.href).searchParams;
   if (searchParams.has('url')) {
     const target = normalizeAddress(searchParams.get('url') || '');
-    if (target) window.location.href = `/check/${target}`;
+    const category = searchParams.get('category');
+    if (target) window.location.href = `/check/${target}${category ? `?category=${category}` : ''}`;
   }
 
   const form = document.querySelector<HTMLFormElement>('form');

@@ -1,4 +1,10 @@
 ---
+interface Props {
+  id?: string;
+}
+
+const { id = 'url-input' } = Astro.props;
+
 const placeholders = [
   'duck.com',
   'github.com',
@@ -13,7 +19,7 @@ const placeholders = [
 <div class="input-container">
   <input
     required
-    id="url-input"
+    id={id}
     type="text"
     name="url"
     inputmode="url"
@@ -36,43 +42,36 @@ const placeholders = [
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Grab the DOM elements we need
-    const placeholders = document.querySelectorAll('.placeholder');
-    const starter = document.querySelector('.starter') as HTMLElement;
-    const inputField = document.getElementById('url-input') as HTMLInputElement;
+  const cycleTime = 3000;
 
-    // Variables for the configuring + tracking the placeholder animation
-    let currentIndex = 0;
-    const timeBetweenPlaceholders = 3000;
+  // Cycle the example URLs behind one input, pausing while it holds a value
+  const animatePlaceholders = (container: HTMLElement) => {
+    const input = container.querySelector('input');
+    const reel = container.querySelector<HTMLElement>('.placeholder-container');
+    const starter = container.querySelector<HTMLElement>('.starter');
+    const placeholders = [...container.querySelectorAll<HTMLElement>('.placeholder')];
+    if (!input || !reel || !starter || !placeholders.length) return;
+
+    let index = 0;
     let interval: ReturnType<typeof setInterval>;
 
-    // Function to change which placeholder is currently visible
-    const changePlaceholder = () => {
-      placeholders.forEach((el, index) => {
-        starter.classList.remove('hide');
-        if (index === currentIndex) {
-          el.classList.add('active');
-          el.classList.remove('inactive');
-          el.classList.remove('still-inactive');
-        } else {
-          el.classList.add('inactive');
-          el.classList.remove('active');
-          setTimeout(() => {
-            el.classList.add('still-inactive');
-          }, timeBetweenPlaceholders / 5);
-        }
+    const showNext = () => {
+      starter.classList.remove('hide');
+      placeholders.forEach((el, position) => {
+        el.classList.toggle('active', position === index);
+        el.classList.toggle('inactive', position !== index);
+        if (position === index) el.classList.remove('still-inactive');
+        else setTimeout(() => el.classList.add('still-inactive'), cycleTime / 5);
       });
-      currentIndex = (currentIndex + 1) % placeholders.length;
+      index = (index + 1) % placeholders.length;
     };
 
-    // Begin the placeholder animation
-    const startPlaceholderAnimation = () => {
-      interval = setInterval(changePlaceholder, timeBetweenPlaceholders);
+    const start = () => {
+      clearInterval(interval);
+      interval = setInterval(showNext, cycleTime);
     };
 
-    // Stop the placeholder animation
-    const stopPlaceholderAnimation = () => {
+    const stop = () => {
       clearInterval(interval);
       starter.classList.add('hide');
       placeholders.forEach((el) => {
@@ -81,35 +80,23 @@ const placeholders = [
       });
     };
 
-    // When user focuses on the input field, stop the animation
-    inputField.addEventListener('focus', () => {
-      stopPlaceholderAnimation();
+    input.addEventListener('focus', stop);
+    input.addEventListener('blur', () => !input.value && start());
+    input.addEventListener('input', () => input.value && stop());
+
+    input.setAttribute('placeholder', '');
+    reel.style.display = 'flex';
+    start();
+  };
+
+  // Leaving the animation unstarted keeps the input's own static placeholder
+  document.addEventListener('astro:page-load', () => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll<HTMLElement>('.input-container').forEach((container) => {
+      if (container.dataset.animated) return;
+      container.dataset.animated = 'true';
+      animatePlaceholders(container);
     });
-
-    // And, when user un-focuses on input, resume the placeholder animation
-    inputField.addEventListener('blur', () => {
-      if (!inputField.value) {
-        startPlaceholderAnimation();
-      }
-    });
-
-    // If user types something, stop the animation
-    inputField.addEventListener('input', () => {
-      if (inputField.value) {
-        stopPlaceholderAnimation();
-      } else if (document.activeElement !== inputField) {
-        startPlaceholderAnimation();
-      }
-    });
-
-    // Disable the input's placeholder attribute
-    inputField.setAttribute('placeholder', '');
-
-    // Make visible the placeholder container
-    (document.querySelector('.placeholder-container') as HTMLElement).style.display = 'flex';
-
-    // And finally, start the animation!
-    startPlaceholderAnimation();
   });
 </script>
 

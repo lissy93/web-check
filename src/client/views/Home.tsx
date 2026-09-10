@@ -9,7 +9,7 @@ import { StyledCard } from 'client/components/Form/Card';
 import Footer from 'client/components/misc/Footer';
 import FancyBackground from 'client/components/misc/FancyBackground';
 
-import docs from 'client/utils/docs';
+import { checks } from '@/data/checks';
 import colors from 'client/styles/colors';
 import { determineAddressType, normalizeAddress } from 'client/utils/address-type-checker';
 
@@ -121,13 +121,6 @@ const SiteFeaturesWrapper = styled(StyledCard)`
   }
 `;
 
-// Build a URL-safe anchor id from a section title (e.g. "IP Info" -> "ip-info")
-const makeAnchor = (title: string): string =>
-  title
-    .toLowerCase()
-    .replace(/[^\w\s]|_/g, '')
-    .replace(/\s+/g, '-');
-
 const Home = (): JSX.Element => {
   const defaultPlaceholder = 'e.g. duck.com';
   const [userInput, setUserInput] = useState('');
@@ -227,10 +220,10 @@ const Home = (): JSX.Element => {
             Supported Checks
           </Heading>
           <ul>
-            {docs.map((doc, index) => (
-              <li key={index}>
-                <Link to={`/check/about#${makeAnchor(doc.title)}`} title={doc.title}>
-                  {doc.title}
+            {Object.entries(checks).map(([id, { title }]) => (
+              <li key={id}>
+                <Link to={`/check/about#${id}`} title={title}>
+                  {title}
                 </Link>
               </li>
             ))}

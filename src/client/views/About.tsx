@@ -9,7 +9,8 @@ import Nav from 'client/components/Form/Nav';
 import Button from 'client/components/Form/Button';
 import AdditionalResources from 'client/components/misc/AdditionalResources';
 import { StyledCard } from 'client/components/Form/Card';
-import docs, { about, featureIntro, license, fairUse, supportUs } from 'client/utils/docs';
+import { about, featureIntro, license, fairUse, supportUs } from '@/data/about';
+import { checks } from '@/data/checks';
 
 const AboutContainer = styled.div`
 width: 95vw;
@@ -121,12 +122,6 @@ const SponsorshipContainer = styled.div`
   }
 `;
 
-const makeAnchor = (title: string): string =>
-  title
-    .toLowerCase()
-    .replace(/[^\w\s]|_/g, '')
-    .replace(/\s+/g, '-');
-
 const About = (): JSX.Element => {
   const location = useLocation();
 
@@ -234,23 +229,23 @@ const About = (): JSX.Element => {
             <p key={i}>{fi}</p>
           ))}
           <div className="contents">
-            <Heading as="h3" size="small" id="#feature-contents" color={colors.primary}>
+            <Heading as="h3" size="small" id="feature-contents" color={colors.primary}>
               Contents
             </Heading>
             <ul>
-              {docs.map((section, index: number) => (
-                <li key={index}>
+              {Object.entries(checks).map(([id, section], index) => (
+                <li key={id}>
                   <b>{index + 1}</b>
-                  <a href={`#${makeAnchor(section.title)}`}>{section.title}</a>
+                  <a href={`#${id}`}>{section.title}</a>
                 </li>
               ))}
             </ul>
             <hr />
           </div>
-          {docs.map((section, sectionIndex: number) => (
-            <section key={section.title}>
+          {Object.entries(checks).map(([id, section], sectionIndex) => (
+            <section key={id}>
               {sectionIndex > 0 && <hr />}
-              <Heading as="h3" size="small" id={makeAnchor(section.title)} color={colors.primary}>
+              <Heading as="h3" size="small" id={id} color={colors.primary}>
                 {section.title}
               </Heading>
               {section.screenshot && (
@@ -267,7 +262,7 @@ const About = (): JSX.Element => {
               )}
               {section.description && (
                 <>
-                  <Heading as="h4" size="small">
+                  <Heading as="h4" size="small" id={`${id}-description`}>
                     Description
                   </Heading>
                   <p>{section.description}</p>
@@ -275,7 +270,7 @@ const About = (): JSX.Element => {
               )}
               {section.use && (
                 <>
-                  <Heading as="h4" size="small">
+                  <Heading as="h4" size="small" id={`${id}-use-cases`}>
                     Use Cases
                   </Heading>
                   <p>{section.use}</p>
@@ -283,25 +278,24 @@ const About = (): JSX.Element => {
               )}
               {section.resources && section.resources.length > 0 && (
                 <>
-                  <Heading as="h4" size="small">
+                  <Heading as="h4" size="small" id={`${id}-useful-links`}>
                     Useful Links
                   </Heading>
                   <ul>
-                    {section.resources.map(
-                      (link: string | { title: string; link: string }, linkIndx: number) =>
-                        typeof link === 'string' ? (
-                          <li key={`link-${linkIndx}`} id={`link-${linkIndx}`}>
-                            <a target="_blank" rel="noreferrer" href={link}>
-                              {link}
-                            </a>
-                          </li>
-                        ) : (
-                          <li key={`link-${linkIndx}`} id={`link-${linkIndx}`}>
-                            <a target="_blank" rel="noreferrer" href={link.link}>
-                              {link.title}
-                            </a>
-                          </li>
-                        ),
+                    {section.resources.map((link, linkIndx) =>
+                      typeof link === 'string' ? (
+                        <li key={`link-${linkIndx}`}>
+                          <a target="_blank" rel="noreferrer" href={link}>
+                            {link}
+                          </a>
+                        </li>
+                      ) : (
+                        <li key={`link-${linkIndx}`}>
+                          <a target="_blank" rel="noreferrer" href={link.link}>
+                            {link.title}
+                          </a>
+                        </li>
+                      ),
                     )}
                   </ul>
                 </>
@@ -349,8 +343,8 @@ const About = (): JSX.Element => {
             </a>
             <br />
             Run this command, then open <code>localhost:3000</code>
-            <pre>docker run -p 3000:3000 lissy93/web-check</pre>
           </p>
+          <pre>docker run -p 3000:3000 lissy93/web-check</pre>
 
           <Heading as="h3" size="small" color={colors.primary}>
             Option #4 - Manual
@@ -435,8 +429,8 @@ const About = (): JSX.Element => {
           Support Us
         </Heading>
         <Section>
-          {supportUs.map((para) => (
-            <p dangerouslySetInnerHTML={{ __html: para }} />
+          {supportUs.map((para, index) => (
+            <p key={index} dangerouslySetInnerHTML={{ __html: para }} />
           ))}
         </Section>
 
@@ -470,8 +464,8 @@ const About = (): JSX.Element => {
             Fair Use
           </Heading>
           <ul>
-            {fairUse.map((para) => (
-              <li>{para}</li>
+            {fairUse.map((para, index) => (
+              <li key={index}>{para}</li>
             ))}
           </ul>
           <hr />

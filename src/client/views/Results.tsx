@@ -26,7 +26,7 @@ import { determineAddressType, type AddressType } from 'client/utils/address-typ
 import { hasData } from 'client/utils/result-processor';
 import keys from 'client/utils/get-keys';
 import useJobs from 'client/hooks/useJobs';
-import { isCategory } from 'client/jobs/categories';
+import { isCategory } from '@/data/categories';
 import { jobsForCategory, cardsForCategory } from 'client/jobs/registry';
 import { runAnalysis } from 'client/analysis/registry';
 
@@ -83,31 +83,31 @@ const Results = (props: { address?: string }): JSX.Element => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(<></>);
 
-  // Optional ?category= param narrows the scan; unknown values fall back to everything
+  // Optional ?category= param narrows the scan, unknown values fall back to everything
   const category = useMemo(() => {
     const param = new URLSearchParams(search).get('category') || '';
     return isCategory(param) ? param : undefined;
   }, [search]);
   const activeJobs = useMemo(() => jobsForCategory(category), [category]);
   const activeCards = useMemo(() => cardsForCategory(category), [category]);
-  const activeCardIds = useMemo(() => activeCards.map(({ card }) => card.id), [activeCards]);
 
   const { state: jobsState, retry, ipLookupError } = useJobs(address, addressType, activeJobs);
 
   // Shape useJobs state for the existing ProgressBar contract
   const loadingJobs: LoadingJob[] = useMemo(
     () =>
-      activeCardIds.map((id) => {
+      activeCards.map(({ card: { id, title } }) => {
         const e = jobsState[id] || { state: 'loading' as LoadingState };
         return {
-          name: id,
+          id,
+          name: title,
           state: e.state,
           error: e.error,
           timeTaken: e.timeTaken,
           retry: () => retry(id),
         };
       }),
-    [jobsState, retry, activeCardIds],
+    [jobsState, retry, activeCards],
   );
 
   // Expose successful job results on window.webCheck for debugging,

@@ -78,7 +78,7 @@ const Heading = (props: HeadingProps): JSX.Element => {
       color={color}
       inline={inline}
       className={className}
-      id={id || makeAnchor((children || '')?.toString())}
+      id={id || (typeof children === 'string' ? makeAnchor(children) : undefined)}
     >
       {children}
     </StyledHeading>
