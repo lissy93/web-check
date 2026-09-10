@@ -217,7 +217,7 @@ Note that keys that are prefixed with `REACT_APP_` are used client-side, and as 
 3. Install dependencies: `yarn`
 4. Start the dev server, with `yarn dev`
 
-You'll need [Node.js](https://nodejs.org/en) (v22.12 or later) installed, plus [yarn](https://yarnpkg.com/getting-started/install) as well as [git](https://git-scm.com/).
+You'll need [Node.js](https://nodejs.org/en) (v22.22 or later) installed, plus [yarn](https://yarnpkg.com/getting-started/install) as well as [git](https://git-scm.com/).
 Some checks also require `chromium`, `traceroute` and `dns` to be installed within your environment. These jobs will just be skipped if those packages aren't present.
 
 ---

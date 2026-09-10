@@ -75,6 +75,14 @@ if (!isBossServer && isBossServer !== true) {
 // Resolve the @styles alias for sass @use (rolldown-vite needs it set explicitly)
 const stylesDir = fileURLToPath(new URL('./src/styles', import.meta.url));
 
+// View transition modules ClientRouter loads, for Vite to pre-bundle in dev
+const transitionModules = [
+  'astro/virtual-modules/transitions-events.js',
+  'astro/virtual-modules/transitions-router.js',
+  'astro/virtual-modules/transitions-swap-functions.js',
+  'astro/virtual-modules/transitions-types.js',
+];
+
 // Export Astro configuration
 export default defineConfig({
   output,
@@ -83,5 +91,8 @@ export default defineConfig({
   site,
   adapter,
   redirects,
-  vite: { resolve: { alias: { '@styles': stylesDir } } },
+  vite: {
+    resolve: { alias: { '@styles': stylesDir } },
+    optimizeDeps: { include: transitionModules },
+  },
 });
