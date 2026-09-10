@@ -111,6 +111,7 @@ const publicOnlyChecks = [
   'quality',
   'rank',
   'shodan',
+  'social-presence',
   'subdomains',
   'threats',
   'tls-labs',
@@ -118,14 +119,21 @@ const publicOnlyChecks = [
 ];
 
 /* Returns true if the target is a private IP, localhost or a .local address */
-const isPrivateTarget = (target) => {
+export const isPrivateTarget = (target) => {
   const host = getHost(target);
   if (!host) return false;
   if (host === 'localhost' || host.endsWith('.local')) return true;
-  if (host.includes(':')) return host === '::1' || /^f[cde]/.test(host);
+  if (host.includes(':')) {
+    const embedded = host.match(/^(?:::ffff|64:ff9b:):([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i);
+    if (embedded) {
+      const [high, low] = embedded.slice(1).map((part) => parseInt(part, 16));
+      return isPrivateTarget([high >> 8, high & 255, low >> 8, low & 255].join('.'));
+    }
+    return host === '::' || host === '::1' || /^f[cdef]/.test(host);
+  }
   if (!ipv4.test(host)) return false;
   const [a, b] = host.split('.').map(Number);
-  if (a === 10 || a === 127) return true;
+  if (a === 0 || a === 10 || a === 127) return true;
   if (a === 172 && b >= 16 && b <= 31) return true;
   if (a === 192 && b === 168) return true;
   if (a === 169 && b === 254) return true;

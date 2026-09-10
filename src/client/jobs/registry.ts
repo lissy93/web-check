@@ -28,6 +28,7 @@ import TechStackCard from 'client/components/Results/TechStack';
 import SecurityTxtCard from 'client/components/Results/SecurityTxt';
 import ContentLinksCard from 'client/components/Results/ContentLinks';
 import SocialTagsCard from 'client/components/Results/SocialTags';
+import SocialPresenceCard from 'client/components/Results/SocialPresence';
 import MailConfigCard from 'client/components/Results/MailConfig';
 import HttpSecurityCard from 'client/components/Results/HttpSecurity';
 import FirewallCard from 'client/components/Results/Firewall';
@@ -346,6 +347,12 @@ export const jobs: JobSpec[] = [
     expectedAddressTypes: [...URL_ONLY],
     cards: [card('social-tags', SocialTagsCard)],
     fetcher: fetchAndProcess('social-tags?url=${url}'),
+  },
+  {
+    id: 'social-presence',
+    expectedAddressTypes: [...URL_ONLY],
+    cards: [card('social-presence', SocialPresenceCard, { pick: at('profiles') })],
+    fetcher: fetchAndProcess('social-presence?url=${url}'),
   },
   {
     id: 'carbon',

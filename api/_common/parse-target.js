@@ -1,3 +1,5 @@
+import psl from 'psl';
+
 // Wrap bare IPv6 in brackets for URL parsing (2+ colons = IPv6)
 export const bracketIPv6 = (str) => {
   const bare = str.replace(/^https?:\/\//i, '');
@@ -26,5 +28,8 @@ export const parseTarget = (input) => {
     href: u.href,
   };
 };
+
+// Reduce a hostname to its registrable domain, ignoring subdomains
+export const baseDomain = (host) => psl.parse(host)?.domain || host;
 
 export default parseTarget;

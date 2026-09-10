@@ -1,13 +1,11 @@
-import psl from 'psl';
 import middleware from './_common/middleware.js';
 import { httpGet } from './_common/http.js';
-import { parseTarget } from './_common/parse-target.js';
+import { parseTarget, baseDomain } from './_common/parse-target.js';
 
 const MAX_SUBDOMAINS = 500;
 const SOURCE_TIMEOUT = 6000;
 const HOSTNAME_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;
 
-const baseDomain = (host) => psl.parse(host)?.domain || host;
 const isIpAddress = (host) => /^\d{1,3}(\.\d{1,3}){3}$/.test(host) || host.includes(':');
 
 const certSpotter = async (domain) => {

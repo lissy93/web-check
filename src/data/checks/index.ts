@@ -27,6 +27,7 @@ import sitemap from './sitemap';
 import securityTxt from './security-txt';
 import linkedPages from './linked-pages';
 import socialTags from './social-tags';
+import socialPresence from './social-presence';
 import mailConfig from './mail-config';
 import firewall from './firewall';
 import httpSecurity from './http-security';
@@ -80,6 +81,7 @@ const all = {
   'security-txt': securityTxt,
   'linked-pages': linkedPages,
   'social-tags': socialTags,
+  'social-presence': socialPresence,
   'mail-config': mailConfig,
   firewall,
   'http-security': httpSecurity,

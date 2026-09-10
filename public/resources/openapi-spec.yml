@@ -1691,6 +1691,106 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+  /social-presence:
+    get:
+      summary: Find and verify the site's social media accounts
+      tags:
+        - Quality & Info
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to find social accounts for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  domain:
+                    type: string
+                    description: The registrable domain the profiles were matched against
+                    example: 'mozilla.org'
+                  profiles:
+                    type: array
+                    description: One entry per social account found for the site
+                    items:
+                      type: object
+                      properties:
+                        network:
+                          type: string
+                          description: The social network the account belongs to
+                          example: 'Mastodon'
+                        handle:
+                          type: string
+                          description: The account handle, as the network spells it
+                          example: 'mozilla@mastodon.social'
+                        url:
+                          type: string
+                          description: Link to the profile
+                          example: 'https://mastodon.social/@mozilla'
+                        source:
+                          type: string
+                          description: How the account was found, declared being the site's own claim
+                          enum: [declared, inferred, domain]
+                          example: 'declared'
+                        checked:
+                          type: boolean
+                          description: Only present, and false, when the network could not be reached
+                          example: false
+                        exists:
+                          type: boolean
+                          description: Whether the handle resolves to a live account
+                          example: true
+                        name:
+                          type: string
+                          description: The display name on the profile
+                          example: 'Mozilla'
+                        avatar:
+                          type: string
+                          description: The profile picture URL
+                          example: 'https://files.mastodon.social/accounts/avatars/000/000/001/original/x.png'
+                        joined:
+                          type: string
+                          description: When the account was created
+                          example: '2017-04-20T00:00:00.000Z'
+                        count:
+                          oneOf:
+                            - type: string
+                            - type: integer
+                          description: Posts on the account, or public repositories for GitHub
+                          example: 7
+                        followers:
+                          type: integer
+                          description: Follower count, where the network publishes one
+                          example: 18212
+                        website:
+                          type: string
+                          description: The website listed on the profile
+                          example: 'https://www.mozilla.org'
+                        websiteVerified:
+                          type: boolean
+                          description: Whether the network itself confirmed that website belongs to the account
+                          example: true
+                        linksBack:
+                          type: boolean
+                          description: Whether the profile's website matches the scanned domain
+                          example: true
+                        domainVerified:
+                          type: boolean
+                          description: Whether the handle is the scanned domain, proving control of it
+                          example: true
+        '204':
+          $ref: '#/components/responses/Skipped'
+        '500':
+          $ref: '#/components/responses/Error'
+        '400':
+          $ref: '#/components/responses/MissingParam'
+
   /social-tags:
     get:
       summary: Retrieve social media tags data
@@ -1771,6 +1871,10 @@ paths:
                     type: string
                     description: The viewport settings of the page
                     example: 'width=device-width, initial-scale=1, user-scalable=1 , viewport-fit=auto'
+                  xHandle:
+                    type: string
+                    description: The twitter:site value normalised to a bare X handle
+                    example: 'duckduckgo'
         '204':
           $ref: '#/components/responses/Skipped'
         '500':

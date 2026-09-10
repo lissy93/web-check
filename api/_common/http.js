@@ -74,6 +74,7 @@ const send = async (method, url, body, opts = {}) => {
   const init = {
     method,
     headers,
+    redirect: opts.redirect || 'follow',
     signal: AbortSignal.timeout(opts.timeout || DEFAULT_TIMEOUT),
   };
 

@@ -43,9 +43,15 @@ const SocialTagsCard = (props: { data: any; title: string; actionButtons: any })
       )}
       {tags.twitterSite && (
         <Row lbl="" val="">
-          <span className="lbl">Twitter Site</span>
+          <span className="lbl">X Profile</span>
           <span className="val">
-            <a href={`https://x.com/${tags.twitterSite}`}>{tags.twitterSite}</a>
+            {tags.xHandle ? (
+              <a target="_blank" rel="noreferrer" href={`https://x.com/${tags.xHandle}`}>
+                @{tags.xHandle}
+              </a>
+            ) : (
+              tags.twitterSite
+            )}
           </span>
         </Row>
       )}

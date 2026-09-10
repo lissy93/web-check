@@ -1,8 +1,7 @@
 import net from 'net';
-import psl from 'psl';
 import { whoisDomain } from 'whoiser';
 import middleware from './_common/middleware.js';
-import { parseTarget } from './_common/parse-target.js';
+import { parseTarget, baseDomain } from './_common/parse-target.js';
 import { createLogger } from './_common/logger.js';
 
 const log = createLogger('whois');
@@ -39,9 +38,6 @@ const toIso = (raw) => {
   if (m) return new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00Z`).toISOString();
   return raw;
 };
-
-// Reduce a hostname to its registrable domain so registry WHOIS lookups succeed
-const baseDomain = (host) => psl.parse(host)?.domain || host;
 
 // Pull the formatted-name value out of an RDAP entity vCard
 const vcardFn = (vcard) => {

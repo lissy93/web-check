@@ -2,6 +2,7 @@ import * as cheerio from 'cheerio';
 import middleware from './_common/middleware.js';
 import { httpGet } from './_common/http.js';
 import { upstreamError } from './_common/upstream.js';
+import { normalizeXHandle } from './_common/social.js';
 
 const socialTagsHandler = async (url) => {
   let response;
@@ -66,6 +67,8 @@ const socialTagsHandler = async (url) => {
     if (!SOCIAL_FIELDS.some((f) => metadata[f])) {
       return { skipped: 'No social tags found on this page' };
     }
+    const xHandle = normalizeXHandle(metadata.twitterSite);
+    if (xHandle) metadata.xHandle = xHandle;
     return metadata;
   } catch (error) {
     return { error: `Failed parsing social tags: ${error.message}` };
