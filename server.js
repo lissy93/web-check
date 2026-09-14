@@ -211,7 +211,7 @@ if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
   app.use(express.static('dist/client/'));
   app.use(async (req, res, next) => {
     const ssrHandlerPath = path.join(__dirname, 'dist', 'server', 'entry.mjs');
-    import(ssrHandlerPath)
+    import(pathToFileURL(ssrHandlerPath).href)
       .then(({ handler: ssrHandler }) => {
         ssrHandler(req, res, next);
       })
