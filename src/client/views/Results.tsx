@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, type ReactNode } from 'react';
-import { useLocation, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import styled from '@emotion/styled';
 import { ToastContainer } from 'react-toastify';
 
@@ -76,18 +76,14 @@ const makeActionButtons = (title: string, refresh: () => void, showInfo: () => v
 );
 
 const Results = (props: { address?: string }): JSX.Element => {
-  const { urlToScan } = useParams();
-  const { search } = useLocation();
+  const { urlToScan, category: categoryParam = '' } = useParams();
   const address = props.address || urlToScan || '';
   const addressType: AddressType = useMemo(() => determineAddressType(address), [address]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(<></>);
 
-  // Optional ?category= param narrows the scan, unknown values fall back to everything
-  const category = useMemo(() => {
-    const param = new URLSearchParams(search).get('category') || '';
-    return isCategory(param) ? param : undefined;
-  }, [search]);
+  // Optional category in the path narrows the scan, unknown values fall back to everything
+  const category = isCategory(categoryParam) ? categoryParam : undefined;
   const activeJobs = useMemo(() => jobsForCategory(category), [category]);
   const activeCards = useMemo(() => cardsForCategory(category), [category]);
 

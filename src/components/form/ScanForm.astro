@@ -30,7 +30,7 @@ const { category, label, buttonLabel = 'Analyze' } = Astro.props;
     const target = normalizeAddress(input?.value);
     if (!target) return;
     const { category } = form.dataset;
-    window.location.href = `/check/${target}${category ? `?category=${category}` : ''}`;
+    window.location.href = `/${category || 'check'}/${target}`;
   };
 
   document.addEventListener('astro:page-load', () => {

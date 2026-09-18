@@ -210,6 +210,7 @@ if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
   // GUI enabled, and build files present, let's go!!
   app.use(express.static('dist/client/'));
   app.use(async (req, res, next) => {
+    if (req.path.startsWith(`${API_DIR}/`)) return next();
     const ssrHandlerPath = path.join(__dirname, 'dist', 'server', 'entry.mjs');
     import(ssrHandlerPath)
       .then(({ handler: ssrHandler }) => {

@@ -1,0 +1,22 @@
+---
+import BaseLayout from '@layouts/Base.astro';
+import Main from '../client/main.tsx';
+import '../client/styles/index.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+---
+
+<BaseLayout preloadBodyFont={false} {...Astro.props}>
+  <link
+    slot="head"
+    href="/fonts/PTMono-Regular.woff2"
+    as="font"
+    rel="preload"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+  <Main client:only="react" />
+</BaseLayout>

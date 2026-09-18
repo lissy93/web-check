@@ -1,0 +1,17 @@
+---
+import ResultsLayout from '@layouts/Results.astro';
+import { categories, isCategory } from '@/data/categories';
+
+export const prerender = false;
+
+const { category = '', target } = Astro.params;
+
+if (!isCategory(category)) return new Response(null, { status: 404 });
+
+const info = categories[category];
+---
+
+<ResultsLayout
+  title={`${info.label} check for ${target} | Web Check`}
+  description={info.description}
+/>
