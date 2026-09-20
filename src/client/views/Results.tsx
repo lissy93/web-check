@@ -4,10 +4,9 @@ import styled from '@emotion/styled';
 import { ToastContainer } from 'react-toastify';
 
 import colors from 'client/styles/colors';
-import Heading from 'client/components/Form/Heading';
 import Modal from 'client/components/Form/Modal';
 import Footer from 'client/components/misc/Footer';
-import Nav from 'client/components/Form/Nav';
+import ResultsHeader from 'client/components/misc/ResultsHeader';
 import Loader from 'client/components/misc/Loader';
 import ErrorBoundary from 'client/components/misc/ErrorBoundary';
 import DocContent from 'client/components/misc/DocContent';
@@ -57,15 +56,6 @@ const ResultsContent = styled.section`
   }
 `;
 
-const makeSiteName = (address: string): string => {
-  try {
-    const withScheme = /^https?:\/\//i.test(address) ? address : `https://${address}`;
-    return new URL(withScheme).hostname.replace(/^www\./, '');
-  } catch {
-    return address;
-  }
-};
-
 const makeActionButtons = (title: string, refresh: () => void, showInfo: () => void): ReactNode => (
   <ActionButtons
     actions={[
@@ -106,8 +96,7 @@ const Results = (props: { address?: string }): JSX.Element => {
     [jobsState, retry, activeCards],
   );
 
-  // Expose successful job results on window.webCheck for debugging,
-  // resetting on new input so prior scans cannot accumulate
+  // Expose successful job results on window.webCheck for debugging
   useEffect(() => {
     (window as any).webCheck = {};
   }, [address]);
@@ -185,22 +174,7 @@ const Results = (props: { address?: string }): JSX.Element => {
 
   return (
     <ResultsOuter>
-      <Nav>
-        {address && (
-          <Heading color={colors.textColor} size="medium">
-            {addressType === 'url' && (
-              <a
-                target="_blank"
-                rel="noreferrer"
-                href={/^https?:\/\//i.test(address) ? address : `https://${address}`}
-              >
-                <img width="32px" alt="" src={`https://icon.horse/icon/${makeSiteName(address)}`} />
-              </a>
-            )}
-            {makeSiteName(address)}
-          </Heading>
-        )}
-      </Nav>
+      <ResultsHeader address={address} addressType={addressType} category={category} />
       {errorKind && (
         <NoResults kind={errorKind} address={address} error={ipLookupError || skipReason} />
       )}
