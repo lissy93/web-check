@@ -1,9 +1,12 @@
 ---
-const buttonText = 'Analyze URL';
-const buttonType = 'submit';
+interface Props {
+  label?: string;
+}
+
+const { label = 'Analyze URL' } = Astro.props;
 ---
 
-<button class="button" type={buttonType}>{buttonText}</button>
+<button class="button" type="submit">{label}</button>
 
 <style lang="scss">
   @property --angle {
@@ -55,6 +58,12 @@ const buttonType = 'submit';
     }
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .button {
+      animation: none;
+    }
+  }
+
   @keyframes borderRotate {
     0% {
       --angle: 90deg;
@@ -75,36 +84,26 @@ const buttonType = 'submit';
 </style>
 
 <script>
-  // Workaround to add fancy border animation for users who use a REAL browser
-  // Since CSS @property attribute isn't supported in Firefox yet
-  document.addEventListener('DOMContentLoaded', () => {
-    const isFirefox = typeof (window as any).InstallTrigger !== 'undefined';
-    if (isFirefox) {
-      const button = document.querySelector('.button') as HTMLElement | null;
-      if (button) {
-        const duration = 3500;
-        const startAngle = 90;
-        const endAngle = 420;
-        function animateAngle() {
-          let start: number | null = null;
-          function step(timestamp: number) {
-            if (!start) start = timestamp;
-            const progress = (timestamp - start) / duration;
-            const angle = startAngle + progress * (endAngle - startAngle);
+  const duration = 3500;
+  const canAnimateAngle = typeof CSS !== 'undefined' && 'registerProperty' in CSS;
+  const stillMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
-            button && button.style.setProperty('--angle', `${angle}deg`);
+  // Browsers without @property can't tween --angle in CSS, so drive it by hand
+  const rotateBorder = (button: HTMLElement) => {
+    const step = (timestamp: number) => {
+      if (!button.isConnected) return;
+      button.style.setProperty('--angle', `${90 + ((timestamp % duration) / duration) * 360}deg`);
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
 
-            if (progress < 1) {
-              window.requestAnimationFrame(step);
-            } else {
-              start = null;
-              window.requestAnimationFrame(step);
-            }
-          }
-          window.requestAnimationFrame(step);
-        }
-        animateAngle();
-      }
-    }
+  document.addEventListener('astro:page-load', () => {
+    if (canAnimateAngle || stillMotion.matches) return;
+    document.querySelectorAll<HTMLElement>('.button').forEach((button) => {
+      if (button.dataset.rotating) return;
+      button.dataset.rotating = 'true';
+      rotateBorder(button);
+    });
   });
 </script>

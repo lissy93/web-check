@@ -1,42 +1,9 @@
 ---
 import ButtonGroup from '@components/homepage/ButtonGroup.astro';
 import Features from '@components/homepage/Features.astro';
-import SponsorSegment from '@components/homepage/SponsorSegment.astro';
+import { checks, checkIds } from '@/data/checks';
 
-const supportedChecks = [
-  'Archive History',
-  'Block List Check',
-  'Carbon Footprint',
-  'Cookies',
-  'DNS Server',
-  'DNS Records',
-  'DNSSEC',
-  'Site Features',
-  'Firewall Types',
-  'Get IP Address',
-  'Headers',
-  'HSTS',
-  'HTTP Security',
-  'Linked Pages',
-  'Mail Config',
-  'Open Ports',
-  'Quality Check',
-  'Global Rank',
-  'Redirects',
-  'Robots.txt',
-  'Screenshot',
-  'Security.txt',
-  'Sitemap',
-  'Social Tags',
-  'SSL Certificate',
-  'Uptime Status',
-  'Tech Stack',
-  'Known Threats',
-  'TLS Version',
-  'Trace Route',
-  'TXT Records',
-  'Whois Lookup',
-];
+const supportedChecks = checkIds.map((id) => checks[id].title);
 
 const links = [
   {
@@ -64,15 +31,13 @@ const links = [
   <div class="features-wrap">
     <h4>Ready to get started?</h4>
     <p class="what">
-      With over <span>30 supported checks</span>
+      With <span>{checkIds.length} supported checks</span>
       you can view and analyse key website information in an instant
     </p>
   </div>
   <hr />
   <Features supportedChecks={supportedChecks} />
   <ButtonGroup links={links} />
-  <hr />
-  <SponsorSegment />
 </div>
 
 <style lang="scss">

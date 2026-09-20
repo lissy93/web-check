@@ -47,7 +47,7 @@ export const determineAddressType = (address: string | undefined): AddressType =
 export const normalizeAddress = (input: string | undefined): string => {
   if (!input) return '';
   let s = input.trim().replace(/^https?:\/\//i, '');
-  const stop = s.search(/[/?#]/);
+  const stop = s.search(/[/?#\s]/);
   if (stop !== -1) s = s.slice(0, stop);
   return s;
 };

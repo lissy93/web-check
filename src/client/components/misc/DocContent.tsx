@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import docs, { type Doc } from 'client/utils/docs';
+import { checks, isCheck } from '@/data/checks';
 import colors from 'client/styles/colors';
 import Heading from 'client/components/Form/Heading';
 
@@ -27,7 +27,7 @@ const JobDocsContainer = styled.div`
 `;
 
 const DocContent = (id: string) => {
-  const doc = docs.filter((doc: Doc) => doc.id === id)[0] || null;
+  const doc = isCheck(id) ? checks[id] : null;
   return doc ? (
     <JobDocsContainer>
       <Heading as="h3" size="medium" color={colors.primary}>
@@ -41,34 +41,40 @@ const DocContent = (id: string) => {
         Use Cases
       </Heading>
       <p className="doc-uses">{doc.use}</p>
-      <Heading as="h4" size="small">
-        Links
-      </Heading>
-      <ul>
-        {doc.resources.map((resource: string | { title: string; link: string }, index: number) =>
-          typeof resource === 'string' ? (
-            <li id={`link-${index}`}>
-              <a target="_blank" rel="noreferrer" href={resource}>
-                {resource}
-              </a>
-            </li>
-          ) : (
-            <li id={`link-${index}`}>
-              <a target="_blank" rel="noreferrer" href={resource.link}>
-                {resource.title}
-              </a>
-            </li>
-          ),
-        )}
-      </ul>
-      <details>
-        <summary>
+      {doc.resources.length > 0 && (
+        <>
           <Heading as="h4" size="small">
-            Example
+            Links
           </Heading>
-        </summary>
-        <img width="300" src={doc.screenshot} alt="Screenshot" />
-      </details>
+          <ul>
+            {doc.resources.map((resource, index) =>
+              typeof resource === 'string' ? (
+                <li key={`link-${index}`} id={`link-${index}`}>
+                  <a target="_blank" rel="noreferrer" href={resource}>
+                    {resource}
+                  </a>
+                </li>
+              ) : (
+                <li key={`link-${index}`} id={`link-${index}`}>
+                  <a target="_blank" rel="noreferrer" href={resource.link}>
+                    {resource.title}
+                  </a>
+                </li>
+              ),
+            )}
+          </ul>
+        </>
+      )}
+      {doc.screenshot && (
+        <details>
+          <summary>
+            <Heading as="h4" size="small">
+              Example
+            </Heading>
+          </summary>
+          <img width="300" src={doc.screenshot} alt="Screenshot" />
+        </details>
+      )}
     </JobDocsContainer>
   ) : (
     <JobDocsContainer>

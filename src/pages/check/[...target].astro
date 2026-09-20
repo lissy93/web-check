@@ -1,44 +1,28 @@
 ---
-import BaseLayout from '@layouts/Base.astro';
-import Main from '../../client/main.tsx';
-import '../../client/styles/index.css';
+import ResultsLayout from '@layouts/Results.astro';
 import { normalizeAddress } from '../../client/utils/address-type-checker';
+import { isCategory } from '@/data/categories';
 
 export const prerender = false;
 
-const { search } = new URL(Astro.request.url);
+const { searchParams } = new URL(Astro.request.url);
 
-const searchUrl = new URLSearchParams(search).get('url');
+// Forward ?url= links, and their optional ?category=, to the matching results page
+const searchUrl = normalizeAddress(searchParams.get('url') || '');
+const searchCategory = searchParams.get('category') || '';
+const redirectPath =
+  searchUrl && `/${isCategory(searchCategory) ? searchCategory : 'check'}/${searchUrl}`;
 
-if (searchUrl) {
-  const target = normalizeAddress(searchUrl);
-  if (target) Astro.redirect(`/check/${target}`);
-}
+if (redirectPath) return Astro.redirect(redirectPath);
 
 const { target } = Astro.params;
 const pageTitle = target ? `${target} | Web Check` : 'Web Check';
 ---
 
-<BaseLayout preloadBodyFont={false} title={pageTitle}>
-  <link
-    slot="head"
-    href="/fonts/PTMono-Regular.woff2"
-    as="font"
-    rel="preload"
-    type="font/woff2"
-    crossorigin="anonymous"
-  />
-  <Main client:only="react" />
-</BaseLayout>
+<ResultsLayout title={pageTitle} />
 
 <script>
   import { normalizeAddress } from '../../client/utils/address-type-checker';
-
-  const searchParams = new URL(window.location.href).searchParams;
-  if (searchParams.has('url')) {
-    const target = normalizeAddress(searchParams.get('url') || '');
-    if (target) window.location.href = `/check/${target}`;
-  }
 
   const form = document.querySelector<HTMLFormElement>('form');
   if (form) {

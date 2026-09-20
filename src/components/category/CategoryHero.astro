@@ -1,0 +1,64 @@
+---
+import ScanForm from '@components/form/ScanForm.astro';
+import type { Category, CategoryId } from '@/data/categories';
+
+interface Props {
+  category: CategoryId;
+  info: Category;
+  count: number;
+}
+
+const { category, info, count } = Astro.props;
+const [lead, accent, tail] = info.heading;
+---
+
+<section class="hero">
+  <h1>{lead} <em>{accent}</em> {tail}</h1>
+  <p class="tagline">{info.tagline}</p>
+  <ScanForm category={category} label={`Enter a URL to run all ${count} checks`} />
+  <p class="promise">
+    Checks run in parallel, and slow ones time out rather than hold up the rest.
+  </p>
+</section>
+
+<style lang="scss">
+  @use '@styles/global.scss' as *;
+
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-top: 4rem;
+
+    @include tablet-portrait-down {
+      padding-top: 2rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.5rem, 7vw, 4rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+
+      em {
+        color: var(--primary);
+      }
+    }
+
+    .tagline {
+      margin: 0;
+      max-width: 42rem;
+      font-size: 1.25rem;
+      line-height: 1.5;
+      color: var(--text-color-secondary);
+    }
+
+    .promise {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+    }
+  }
+</style>

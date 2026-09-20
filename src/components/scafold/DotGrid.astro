@@ -1,0 +1,22 @@
+---
+// Static counterpart to the homepage's animated dot field, for content-led pages
+---
+
+<div class="dot-grid" aria-hidden="true"></div>
+
+<style lang="scss">
+  .dot-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(100, 100, 100, 0.5) 2px, transparent 2px);
+    background-size: 32px 32px;
+    background-position: -1px -1px;
+    mask-image: radial-gradient(circle at center top, #000, transparent 75%);
+    -webkit-mask-image: radial-gradient(circle at center top, #000, transparent 75%);
+  }
+</style>

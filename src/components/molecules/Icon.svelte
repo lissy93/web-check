@@ -12,6 +12,13 @@
     code: solidIcons.faCode,
     rocket: solidIcons.faRocket,
     copy: solidIcons.faCopy,
+    shield: solidIcons.faShieldHalved,
+    search: solidIcons.faMagnifyingGlass,
+    server: solidIcons.faServer,
+    globe: solidIcons.faGlobe,
+    envelope: solidIcons.faEnvelope,
+    gauge: solidIcons.faGaugeHigh,
+    fingerprint: solidIcons.faFingerprint,
   };
 
   export let name: string;

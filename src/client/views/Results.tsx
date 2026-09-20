@@ -4,10 +4,9 @@ import styled from '@emotion/styled';
 import { ToastContainer } from 'react-toastify';
 
 import colors from 'client/styles/colors';
-import Heading from 'client/components/Form/Heading';
 import Modal from 'client/components/Form/Modal';
 import Footer from 'client/components/misc/Footer';
-import Nav from 'client/components/Form/Nav';
+import ResultsHeader from 'client/components/misc/ResultsHeader';
 import Loader from 'client/components/misc/Loader';
 import ErrorBoundary from 'client/components/misc/ErrorBoundary';
 import DocContent from 'client/components/misc/DocContent';
@@ -26,7 +25,8 @@ import { determineAddressType, type AddressType } from 'client/utils/address-typ
 import { hasData } from 'client/utils/result-processor';
 import keys from 'client/utils/get-keys';
 import useJobs from 'client/hooks/useJobs';
-import { jobs, allCards, allCardIds } from 'client/jobs/registry';
+import { isCategory } from '@/data/categories';
+import { jobsForCategory, cardsForCategory } from 'client/jobs/registry';
 import { runAnalysis } from 'client/analysis/registry';
 
 const ResultsOuter = styled.div`
@@ -56,15 +56,6 @@ const ResultsContent = styled.section`
   }
 `;
 
-const makeSiteName = (address: string): string => {
-  try {
-    const withScheme = /^https?:\/\//i.test(address) ? address : `https://${address}`;
-    return new URL(withScheme).hostname.replace(/^www\./, '');
-  } catch {
-    return address;
-  }
-};
-
 const makeActionButtons = (title: string, refresh: () => void, showInfo: () => void): ReactNode => (
   <ActionButtons
     actions={[
@@ -75,32 +66,37 @@ const makeActionButtons = (title: string, refresh: () => void, showInfo: () => v
 );
 
 const Results = (props: { address?: string }): JSX.Element => {
-  const { urlToScan } = useParams();
+  const { urlToScan, category: categoryParam = '' } = useParams();
   const address = props.address || urlToScan || '';
   const addressType: AddressType = useMemo(() => determineAddressType(address), [address]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(<></>);
 
-  const { state: jobsState, retry, ipLookupError } = useJobs(address, addressType, jobs);
+  // Optional category in the path narrows the scan, unknown values fall back to everything
+  const category = isCategory(categoryParam) ? categoryParam : undefined;
+  const activeJobs = useMemo(() => jobsForCategory(category), [category]);
+  const activeCards = useMemo(() => cardsForCategory(category), [category]);
+
+  const { state: jobsState, retry, ipLookupError } = useJobs(address, addressType, activeJobs);
 
   // Shape useJobs state for the existing ProgressBar contract
   const loadingJobs: LoadingJob[] = useMemo(
     () =>
-      allCardIds.map((id) => {
+      activeCards.map(({ card: { id, title } }) => {
         const e = jobsState[id] || { state: 'loading' as LoadingState };
         return {
-          name: id,
+          id,
+          name: title,
           state: e.state,
           error: e.error,
           timeTaken: e.timeTaken,
           retry: () => retry(id),
         };
       }),
-    [jobsState, retry],
+    [jobsState, retry, activeCards],
   );
 
-  // Expose successful job results on window.webCheck for debugging,
-  // resetting on new input so prior scans cannot accumulate
+  // Expose successful job results on window.webCheck for debugging
   useEffect(() => {
     (window as any).webCheck = {};
   }, [address]);
@@ -125,7 +121,7 @@ const Results = (props: { address?: string }): JSX.Element => {
   };
 
   // Resolve each card's data, applying picker and falling back when needed
-  const renderable = allCards.map(({ jobId, card }) => {
+  const renderable = activeCards.map(({ jobId, card }) => {
     const entry = jobsState[card.id];
     const raw = entry?.raw;
     let data = raw && card.pick ? card.pick(raw) : raw;
@@ -178,27 +174,16 @@ const Results = (props: { address?: string }): JSX.Element => {
 
   return (
     <ResultsOuter>
-      <Nav>
-        {address && (
-          <Heading color={colors.textColor} size="medium">
-            {addressType === 'url' && (
-              <a
-                target="_blank"
-                rel="noreferrer"
-                href={/^https?:\/\//i.test(address) ? address : `https://${address}`}
-              >
-                <img width="32px" alt="" src={`https://icon.horse/icon/${makeSiteName(address)}`} />
-              </a>
-            )}
-            {makeSiteName(address)}
-          </Heading>
-        )}
-      </Nav>
+      <ResultsHeader address={address} addressType={addressType} category={category} />
       {errorKind && (
         <NoResults kind={errorKind} address={address} error={ipLookupError || skipReason} />
       )}
       <ProgressBar loadStatus={loadingJobs} showModal={showErrorModal} showJobDocs={showInfo} />
-      <Loader show={loadingJobs.filter((j) => j.state !== 'loading').length < 5} />
+      <Loader
+        show={
+          loadingJobs.filter((j) => j.state !== 'loading').length < Math.min(5, loadingJobs.length)
+        }
+      />
       <AdvisoryPanel findings={findings} onJumpTo={jumpToCard} />
       <ResultsContent>
         <ResultsMasonryGrid minColWidth={336}>

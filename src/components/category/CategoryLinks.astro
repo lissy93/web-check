@@ -1,0 +1,74 @@
+---
+import Icon from '@components/molecules/Icon.svelte';
+import { categories, categoryIds, type CategoryId } from '@/data/categories';
+import { checksInCategory } from '@/data/checks';
+
+interface Props {
+  current: CategoryId;
+}
+
+const { current } = Astro.props;
+const others = categoryIds.filter((category) => category !== current);
+---
+
+<nav aria-labelledby="other-checks">
+  <h2 id="other-checks">Other checks</h2>
+  <ul>
+    {
+      others.map((category) => (
+        <li>
+          <a href={`/${category}`}>
+            <Icon name={categories[category].icon} size={1.1} />
+            {categories[category].label}
+            <span class="count">{checksInCategory(category).length}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style lang="scss">
+  @use '@styles/global.scss' as *;
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 44px;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--background-lighter);
+      border-radius: 3px;
+      color: var(--text-color);
+      font-weight: 600;
+      transition:
+        border-color 0.25s ease,
+        color 0.25s ease;
+
+      :global(svg) {
+        color: var(--primary);
+      }
+
+      &:hover,
+      &:focus-visible {
+        border-color: var(--primary);
+        color: var(--primary);
+        text-decoration: none;
+      }
+    }
+
+    .count {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--text-color-secondary);
+    }
+  }
+</style>

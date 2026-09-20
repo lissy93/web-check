@@ -3,11 +3,11 @@ import styled from '@emotion/styled';
 import colors from 'client/styles/colors';
 import Card from 'client/components/Form/Card';
 import Heading from 'client/components/Form/Heading';
-import { allCardIds } from 'client/jobs/registry';
 
 export type LoadingState = 'success' | 'loading' | 'skipped' | 'error' | 'timed-out';
 
 export interface LoadingJob {
+  id: string;
   name: string;
   state: LoadingState;
   error?: string;
@@ -284,7 +284,7 @@ const ErrorModalContent = styled.div`
 
 interface JobListItemProps {
   job: LoadingJob;
-  showJobDocs: (name: string) => void;
+  showJobDocs: (id: string) => void;
   showErrorModal: (job: LoadingJob, isInfo?: boolean) => void;
 }
 
@@ -296,12 +296,12 @@ const REASON_LABEL: Partial<Record<LoadingState, string>> = {
 
 // One row in the details list, showing job state, time and any actions
 const JobListItem = ({ job, showJobDocs, showErrorModal }: JobListItemProps): ReactNode => {
-  const { name, state, timeTaken, retry, error } = job;
+  const { id, name, state, timeTaken, retry, error } = job;
   const canRetry = retry && state !== 'success' && state !== 'loading';
   const reasonLabel = error ? REASON_LABEL[state] : undefined;
   return (
     <li>
-      <button type="button" className="docs" onClick={() => showJobDocs(name)}>
+      <button type="button" className="docs" onClick={() => showJobDocs(id)}>
         {STATE_META[state].emoji} {name}
       </button>
       <StateLabel color={STATE_META[state].color}> ({state})</StateLabel>
@@ -331,7 +331,7 @@ interface LoadSummaryProps {
 
 // Compact one-liner shown alongside the "Show Load State" button when collapsed
 const LoadSummary = ({ jobs, elapsedMs, onOpen }: LoadSummaryProps): ReactNode => {
-  const total = allCardIds.length;
+  const total = jobs.length;
   const c = countByState(jobs);
   const issues = c.error + c['timed-out'] + c.skipped;
   const sec = (elapsedMs / 1000).toFixed(1);
@@ -369,7 +369,7 @@ interface SummaryTextProps {
 
 // Heading-style summary that adapts to loading, all-success and partial-failure
 const SummaryText = ({ jobs, elapsedMs }: SummaryTextProps): ReactNode => {
-  const total = allCardIds.length;
+  const total = jobs.length;
   const c = countByState(jobs);
   const isDone = c.loading === 0;
   const hasIssues = c.error > 0 || c['timed-out'] > 0;
@@ -403,7 +403,7 @@ const SummaryText = ({ jobs, elapsedMs }: SummaryTextProps): ReactNode => {
 interface ProgressLoaderProps {
   loadStatus: LoadingJob[];
   showModal: (err: ReactNode) => void;
-  showJobDocs: (job: string) => void;
+  showJobDocs: (id: string) => void;
 }
 
 // Top-of-results progress bar with collapsible per-job detail and error modals
@@ -486,7 +486,7 @@ const ProgressLoader = ({ loadStatus, showModal, showJobDocs }: ProgressLoaderPr
               <ul>
                 {loadStatus.map((job) => (
                   <JobListItem
-                    key={job.name}
+                    key={job.id}
                     job={job}
                     showJobDocs={showJobDocs}
                     showErrorModal={showErrorModal}

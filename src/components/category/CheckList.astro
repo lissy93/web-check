@@ -1,0 +1,54 @@
+---
+import { checks, type CheckId } from '@/data/checks';
+
+interface Props {
+  ids: CheckId[];
+}
+
+const { ids } = Astro.props;
+---
+
+<section class="checks">
+  <h2>What gets checked</h2>
+  <ul>
+    {
+      ids.map((id) => (
+        <li>
+          <h3>{checks[id].title}</h3>
+          <p>{checks[id].summary}</p>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style lang="scss">
+  @use '@styles/global.scss' as *;
+
+  ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    column-gap: 2rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 1rem 0;
+      border-top: 1px solid var(--primary-transparent);
+    }
+
+    h3 {
+      margin: 0 0 0.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-color-secondary);
+    }
+  }
+</style>
