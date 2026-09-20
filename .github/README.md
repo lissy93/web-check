@@ -22,7 +22,14 @@
       </a><br>
       <sub>API to get a full B2B profiles from any URL</sub>
     </td>
-    <td align="center" width="50%">
+    <td align="center" width="33%">
+      <a href="https://www.hostg.xyz/aff_c?offer_id=48&aff_id=243972&url_id=6826">
+        <img src="https://pixelflare.cc/alicia/sponsors/hostinger-2.png" width="260" alt="Hostinger"><br>
+        <b>Hostinger</b>
+      </a><br>
+      <sub>Deploy Web-Check with one click on Hostinger</sub>
+    </td>
+    <td align="center" width="33%">
       <a href="https://go.warp.dev/web-check">
         <img src="https://github.com/warpdotdev/brand-assets/blob/main/Github/Sponsor/Warp-Github-LG-02.png?raw=true" width="260" alt="Warp"><br>
         <b>Warp</b>
@@ -32,6 +39,7 @@
   </tr>
 </table>
 
+
 #### Contents
 
 - **[About](#about)**
@@ -40,12 +48,13 @@
   - [Mirror](#mirror)
   - [Features](#features)
 - **[Usage](#usage)**
-  - [Deployment](#deployment)
+  - Deployment
     - [Option#1: Netlify](#deploying---option-1-netlify)
     - [Option#2: Vercel](#deploying---option-2-vercel)
-    - [Option#3: Docker](#deploying---option-3-docker)
+    - [Option#3: Hostinger](#deploying---option-3-hostinger)
     - [Option#4: Render](#deploying---option-4-render)
-    - [Option#5: Source](#deploying---option-5-from-source)
+    - [Option#5: Docker](#deploying---option-5-docker)
+    - [Option#6: Source](#deploying---option-6-from-source)
   - [Configuration Options](#configuring)
   - [Developer Setup](#developing)
 - **[Community](#community)**
@@ -99,8 +108,6 @@ See **[web-check.xyz/about](https://web-check.xyz/about)** for the full list of 
 
 ## Usage
 
-### Deployment
-
 ### Deploying - Option #1: Netlify
 
 Click the button below, to deploy to Netlify 👇
@@ -113,7 +120,20 @@ Click the button below, to deploy to Vercel 👇
 
 [![Deploy with Vercel](https://img.shields.io/badge/Deploy-Vercel-%23ffffff?style=for-the-badge&logo=vercel&labelColor=1e0e41)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Flissy93%2Fweb-check&project-name=web-check&repository-name=web-check-fork&demo-title=Web-Check%20Demo&demo-description=Check%20out%20web-check.xyz%20to%20see%20a%20live%20demo%20of%20this%20application%20running.&demo-url=https%3A%2F%2Fweb-check.xyz&demo-image=https%3A%2F%2Fraw.githubusercontent.com%2FLissy93%2Fweb-check%2Fmaster%2F.github%2Fscreenshots%2Fweb-check-screenshot10.png)
 
-### Deploying - Option #3: Docker
+
+### Deploying - Option #3: Hostinger
+
+Deploy Web-Check with a single click on Hostinger – pre-configured and ready to run 👇
+
+<a href="https://www.hostg.xyz/aff_c?offer_id=48&aff_id=243972&url_id=6826"><img height="32" src="https://assets.hostinger.com/vps/deploy.svg"></a>
+
+### Deploying - Option #4: Render
+
+Click the button below, to deploy to Render 👇
+
+[![Deploy to Render](https://img.shields.io/badge/Deploy-Render-%238a05ff?style=for-the-badge&logo=render&labelColor=1e0e41)](https://render.com/deploy?repo=https://github.com/Lissy93/web-check)
+
+### Deploying - Option #5: Docker
 
 Run `docker run -p 3000:3000 lissy93/web-check`, then open [`localhost:3000`](http://localhost:3000)
 
@@ -128,15 +148,7 @@ You can get the Docker image from:
 
 </details>
 
-### Deploying - Option #4: Render
-
-Click the button below, to deploy to Render 👇
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Lissy93/web-check)
-
-Uses the official [`lissy93/web-check`](https://hub.docker.com/r/lissy93/web-check) image on a Standard web service. Optional enrichment API keys can be added after deploy.
-
-### Deploying - Option #5: From Source
+### Deploying - Option #6: From Source
 
 Install the prerequisites listed in the [Developing](#developing) section, then run:
 
