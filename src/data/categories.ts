@@ -142,5 +142,7 @@ export const categories: Record<CategoryId, Category> = all;
 
 export const categoryIds = Object.keys(all) as CategoryId[];
 
+export const toolName = (category: CategoryId): string => `${all[category].label} Checker`;
+
 export const isCategory = (value: string): value is CategoryId =>
   (categoryIds as string[]).includes(value);
