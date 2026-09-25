@@ -2943,7 +2943,7 @@ paths:
       tags:
         - Server Info
       parameters:
-        - name: domain
+        - name: url
           in: query
           required: true
           description: The domain to retrieve WHOIS information for
