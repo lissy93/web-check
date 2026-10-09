@@ -20,40 +20,82 @@
     kleur "^4.1.5"
     yargs "^18.0.0"
 
+"@astrojs/compiler-binding-android-arm64@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-android-arm64/-/compiler-binding-android-arm64-0.4.1.tgz#9c739588452aeaca93793a23e36d653e5f22cbed"
+  integrity sha512-Wtx2DZORuNTLASLLZ8hlrjFaJe1LUloatcCn9EPq7knBhRpjMGXeJANIJMeBZG4igvz7x+3nyAJM2iwCSW9xog==
+
 "@astrojs/compiler-binding-android-arm64@0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-android-arm64/-/compiler-binding-android-arm64-0.5.1.tgz#2b947e7e47bd58469b647133cbe11b72a134231b"
   integrity sha512-nMb2nMIJtcWLNH+fV75Enmi+jp4tIOYOfsv4XtpgdOWkqc9P4uSSdK5u1xb340AzrXo5V18SxLl/nc3vcqtamQ==
+
+"@astrojs/compiler-binding-darwin-arm64@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-darwin-arm64/-/compiler-binding-darwin-arm64-0.4.1.tgz#8da5d9e50aeb5b9e40cca81a0ad6a61188e0c892"
+  integrity sha512-7iwXcU+hB60Y1SvOfnWHNioT72gDsDQKaDipXh2Onwp/TvQMozhbvhy13wJR8Af940a0h6PbddCeJFpj791UDA==
 
 "@astrojs/compiler-binding-darwin-arm64@0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-darwin-arm64/-/compiler-binding-darwin-arm64-0.5.1.tgz#08ae6318365c8ce9d4d0b3e2b5ad4d22552d37c4"
   integrity sha512-5k4+nZ/WRt+dcVow4z7rBuI7iv9A58h/uQ91YJe1PrTivbcCkq3u2Ynx/AZJwII4CsZawBCeGpojkFjutZBhBQ==
 
+"@astrojs/compiler-binding-darwin-x64@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-darwin-x64/-/compiler-binding-darwin-x64-0.4.1.tgz#f3d946c133f0ed57b25d2bfdd4fe7cc2aa730f29"
+  integrity sha512-pifjICos49RXhSVKSDu5gDB0/8j0O7DmxSp1DaWW2PyLG5ekwSkcrfOZto5JqhdI7QYMZB3XOiXpsdOXpS4npA==
+
 "@astrojs/compiler-binding-darwin-x64@0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-darwin-x64/-/compiler-binding-darwin-x64-0.5.1.tgz#1f18593677fd10c980abbecac5139e1aa94d1599"
   integrity sha512-0Buw+YST9Ff2EqQyhRMQujuFq/dijLw3zXWhsvI0dJ2pGrT38iVoxTEca2eBX/PfhlwkVWSRJEKO5gMqKHyeHg==
+
+"@astrojs/compiler-binding-linux-arm64-gnu@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-linux-arm64-gnu/-/compiler-binding-linux-arm64-gnu-0.4.1.tgz#4c08c9f3a6425463ebb908f40cfdb0fac11c71f2"
+  integrity sha512-hsZMlNWc6LqWHh9LlSwTq1/XCY7pxA5rkkKIdZRV8mgbOz9OwLvjEoe5Jry13eIZjMUQO8XnQyzk8o/Pjw2YFA==
 
 "@astrojs/compiler-binding-linux-arm64-gnu@0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-linux-arm64-gnu/-/compiler-binding-linux-arm64-gnu-0.5.1.tgz#d588f499042bf2006ab6f7196cb9f9542ed689f8"
   integrity sha512-x5LRpyCoMKuu3INr18cn42YhwSOaRpp9b5Ny3eJJ/sWVeejC16Zeshu1JlvlSmEZACLeWxU5JM0RX6T6nI+YyA==
 
+"@astrojs/compiler-binding-linux-arm64-musl@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-linux-arm64-musl/-/compiler-binding-linux-arm64-musl-0.4.1.tgz#4b37bad5200d133933223ac942981b1821f0d1bc"
+  integrity sha512-a3EW27f+Z9uf57vYmpLgUriA1y9wDhKz57PT8D8XlFZt2HZEWhUxKuxI1jvKVI9p8okYee11WXEm/FHY1G9yoQ==
+
 "@astrojs/compiler-binding-linux-arm64-musl@0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-linux-arm64-musl/-/compiler-binding-linux-arm64-musl-0.5.1.tgz#6faffa9172bb2bf02fb767eae59adea201b2d3ba"
   integrity sha512-mL7tQEuDk3rGfaKmrO63nw6WBy1TPVioQGmVyjcAr+C+a/k3SVMYBytNSMqH9mZPT/Swj30JaZ2N842Z1NnOEQ==
+
+"@astrojs/compiler-binding-linux-x64-gnu@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-linux-x64-gnu/-/compiler-binding-linux-x64-gnu-0.4.1.tgz#3dc9016f890cee66503e536446af2c8628f91b49"
+  integrity sha512-XruPTKB/SS4DFzeAjQ1ZyM0ieHDjapHkOSnnzRApZ4FXY2YAI7UY3mETjfJiIS/acyZyrnPH5jObv1gATTdUJQ==
 
 "@astrojs/compiler-binding-linux-x64-gnu@0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-linux-x64-gnu/-/compiler-binding-linux-x64-gnu-0.5.1.tgz#3e02cccd48cc26e2b4728d53ba1c86df173a239e"
   integrity sha512-uLGc9jtxwiDe4cQyhNPQim4ECiB/YzbWlXssfLAv8r374kArfTwBHjwR2+j+XVyF71yCx5mF9YNRclRqdNBgeg==
 
+"@astrojs/compiler-binding-linux-x64-musl@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-linux-x64-musl/-/compiler-binding-linux-x64-musl-0.4.1.tgz#009d4066429aea4dfe81457f748976411d3daf8f"
+  integrity sha512-E8j7lGanqNpudtkUbsFaOLJhmwFe4Ecqux7K9hkj4wULIPNZRM2bYZNcMSj8r1oWvaUiwZl8LaaNwv3+14jqhw==
+
 "@astrojs/compiler-binding-linux-x64-musl@0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-linux-x64-musl/-/compiler-binding-linux-x64-musl-0.5.1.tgz#b47b38a3e306cd3ac9fc7fb3b1f762240a0eda59"
   integrity sha512-G0cywinaQUc8v1MrytvYKUX7svTDMmYtOCZfxjwKPbJi59zIqM+Ll0rWgO0GQWLZH3XoPYo19ZwlP3Xt9ep9YA==
+
+"@astrojs/compiler-binding-wasm32-wasi@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-wasm32-wasi/-/compiler-binding-wasm32-wasi-0.4.1.tgz#dbc7663d31de1cb057b3c77d21124b8a39793442"
+  integrity sha512-vNLxIv41ZE+nmPFtw24cRW5ZXG+ZPcAGtgigtjCP8lvcxKI7u2GrXoMsCgEH5fMw8WCEJpwLvsVBg15rJKAkyA==
+  dependencies:
+    "@napi-rs/wasm-runtime" "^1.2.4"
 
 "@astrojs/compiler-binding-wasm32-wasi@0.5.1":
   version "0.5.1"
@@ -64,15 +106,41 @@
     "@emnapi/runtime" "1.11.3"
     "@napi-rs/wasm-runtime" "^1.2.4"
 
+"@astrojs/compiler-binding-win32-arm64-msvc@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-win32-arm64-msvc/-/compiler-binding-win32-arm64-msvc-0.4.1.tgz#f8850bfdc96446330efa16faad0315f0d21f1a65"
+  integrity sha512-/xTDgRsFDoTh0/+KFXJ74DY4Jqn8CoSHwa8UP5RAblHfnRHkenwfSl4zYDET61O9vXKLk09UzHjjq09yP20/AQ==
+
 "@astrojs/compiler-binding-win32-arm64-msvc@0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-win32-arm64-msvc/-/compiler-binding-win32-arm64-msvc-0.5.1.tgz#3dd31fbac0e4aab8faa2e66d3bd17cf2ece57820"
   integrity sha512-aClIG6poFt3Wf/bZykrEAX2nAnKvBHW6RXiKUa69QjBtWH0/FOlOAjnFcxRNlhej2AMWNYFx0o+LGjwMcH8P7Q==
 
+"@astrojs/compiler-binding-win32-x64-msvc@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-win32-x64-msvc/-/compiler-binding-win32-x64-msvc-0.4.1.tgz#58e12c202809417cdf09f3ecffd7363e112160c1"
+  integrity sha512-0x5J6iHZO0Fjo/CVzoIbXKzWnGESftDbEUQ/oXQ61HhUAFoR7+T1jfToZSNAS+gYyBXHSTpMWYC7lzarbhClcg==
+
 "@astrojs/compiler-binding-win32-x64-msvc@0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding-win32-x64-msvc/-/compiler-binding-win32-x64-msvc-0.5.1.tgz#4739a9ad159433707bee12cbedc09be1edafcea0"
   integrity sha512-/E6uBCagY70YpWqssBC+/FuniNSloeQPRgj7l3LDWiqjxIyTLnIgX1sTt18FU7jrigetpSnC9cHAM6b6IxSgPw==
+
+"@astrojs/compiler-binding@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler-binding/-/compiler-binding-0.4.1.tgz#398610ea7b015bc0f3cef1196ddc533a1c5672f7"
+  integrity sha512-ZYVDW1P58OXyxqZbOMp+/2U9KA7y2esIx9r4pWdpZ/l6fCZhaw4ul+D7EgpRVxYLkyTWqzANbTTUFGPFP8zDHA==
+  optionalDependencies:
+    "@astrojs/compiler-binding-android-arm64" "0.4.1"
+    "@astrojs/compiler-binding-darwin-arm64" "0.4.1"
+    "@astrojs/compiler-binding-darwin-x64" "0.4.1"
+    "@astrojs/compiler-binding-linux-arm64-gnu" "0.4.1"
+    "@astrojs/compiler-binding-linux-arm64-musl" "0.4.1"
+    "@astrojs/compiler-binding-linux-x64-gnu" "0.4.1"
+    "@astrojs/compiler-binding-linux-x64-musl" "0.4.1"
+    "@astrojs/compiler-binding-wasm32-wasi" "0.4.1"
+    "@astrojs/compiler-binding-win32-arm64-msvc" "0.4.1"
+    "@astrojs/compiler-binding-win32-x64-msvc" "0.4.1"
 
 "@astrojs/compiler-binding@0.5.1":
   version "0.5.1"
@@ -90,6 +158,13 @@
     "@astrojs/compiler-binding-win32-arm64-msvc" "0.5.1"
     "@astrojs/compiler-binding-win32-x64-msvc" "0.5.1"
 
+"@astrojs/compiler-rs@^0.4.0":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler-rs/-/compiler-rs-0.4.1.tgz#b355c6e2d4fef694fdb897092af14b02047d2069"
+  integrity sha512-//NmAuRhy7eU9iP0ceI5Pymy55M+nUZ//kS6XeOyhBWdDib2KbJOyFaVJ52k7sDkJwTKVox7oPu3SpYiVnGm5A==
+  dependencies:
+    "@astrojs/compiler-binding" "0.4.1"
+
 "@astrojs/compiler-rs@^0.5.0":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@astrojs/compiler-rs/-/compiler-rs-0.5.1.tgz#4c12f7b87b1db8278475fe5fe9142af1e8d1d00d"
@@ -102,7 +177,7 @@
   resolved "https://registry.yarnpkg.com/@astrojs/compiler/-/compiler-3.0.1.tgz#25c041906cdf8e101a595bf29023e7b21e137e53"
   integrity sha512-z97oYbdebO5aoWzuJ/8q5hLK232+17KcLZ7cJ8BCWk6+qNzVxn/gftC0KzMBUTD8WAaBkPpNSQK6PXLnNrZ0CA==
 
-"@astrojs/compiler@^2.13.1", "@astrojs/compiler@^2.9.1":
+"@astrojs/compiler@^2.13.1":
   version "2.13.1"
   resolved "https://registry.yarnpkg.com/@astrojs/compiler/-/compiler-2.13.1.tgz#d3cf26ed98e19d3d100cdbeb661ce7b856719ca7"
   integrity sha512-f3FN83d2G/v32ipNClRKgYv30onQlMZX1vCeZMjPsMMPl1mDpmbl0+N5BYo4S/ofzqJyS5hvwacEo0CCVDn/Qg==
@@ -1914,6 +1989,11 @@
   version "0.3.6"
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.3.6.tgz#3569708bd4be4d8870ba32bf1c456dac81600d97"
   integrity sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==
+
+"@prettier/parse-srcset@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@prettier/parse-srcset/-/parse-srcset-3.1.0.tgz#10a6785b84812b5ec506c16812fc2e3c6bb10b9e"
+  integrity sha512-FIRv2rZotO9NP/r66taYqD1zICpPiBbrECqjKV/xqNotqDxF7fLzzUeK+1RSRx9Tenk0DajR/GcRmTJ2qtHaKQ==
 
 "@puppeteer/browsers@2.13.2":
   version "2.13.2"
@@ -7346,16 +7426,16 @@ prelude-ls@^1.2.1:
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"
   integrity sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==
 
-prettier-plugin-astro@^0.14.1:
-  version "0.14.1"
-  resolved "https://registry.yarnpkg.com/prettier-plugin-astro/-/prettier-plugin-astro-0.14.1.tgz#50bff8a659f2a6a4ff3b1d7ea73f2de93c95b213"
-  integrity sha512-RiBETaaP9veVstE4vUwSIcdATj6dKmXljouXc/DDNwBSPTp8FRkLGDSGFClKsAFeeg+13SB0Z1JZvbD76bigJw==
+prettier-plugin-astro@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/prettier-plugin-astro/-/prettier-plugin-astro-1.1.0.tgz#916e94fc22689872fadf62ea941bdcb782bc2555"
+  integrity sha512-ujJ1VX+iin4eYJPHVCEbmXHzrEVsi1SaVehHtbAteTZv8VTrZyBiZPmYc6Ud6+fkr/UBMXuEu3N3+d49h7YfKw==
   dependencies:
-    "@astrojs/compiler" "^2.9.1"
-    prettier "^3.0.0"
-    sass-formatter "^0.7.6"
+    "@astrojs/compiler-rs" "^0.4.0"
+    "@prettier/parse-srcset" "^3.1.0"
+    sass-formatter "^0.8.0"
 
-prettier@^3.0.0, prettier@^3.8.1, prettier@^3.9.9:
+prettier@^3.8.1, prettier@^3.9.9:
   version "3.9.9"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.9.9.tgz#09b826918c91cd4cbc80e0cbd1d2a922ff04f233"
   integrity sha512-Z/CJHIkdujO/OtN7nXUii0Rf3VT5SRuhjBA82Xvu2XhBUgX3nhP67T0LHceBdQLex7OOFGTox+Q5Yg8Jk2Qivg==
@@ -8001,10 +8081,10 @@ safe-stable-stringify@^2.3.1:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
-sass-formatter@^0.7.6:
-  version "0.7.9"
-  resolved "https://registry.yarnpkg.com/sass-formatter/-/sass-formatter-0.7.9.tgz#cf77e02e98f81daabd91b185192144d29fc04ca5"
-  integrity sha512-CWZ8XiSim+fJVG0cFLStwDvft1VI7uvXdCNJYXhDvowiv+DsbD1nXLiQ4zrE5UBvj5DWZJ93cwN0NX5PMsr1Pw==
+sass-formatter@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/sass-formatter/-/sass-formatter-0.8.0.tgz#bd1df0d141e628c567194a28b283ede3fed80987"
+  integrity sha512-Nf4eMGE2O5vnJG7KPCRyksWS9gVKSYoUWtPeMXRRxwZSPVQhSGtL602xVYS65LvMkHmkvKa7xpauF0+/5pPwrg==
   dependencies:
     suf-log "^2.5.3"
 
