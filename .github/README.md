@@ -210,7 +210,7 @@ Note that values prefixed with `PUBLIC_` are read by the frontend at build time,
 3. Install dependencies: `yarn`
 4. Start the dev server, with `yarn dev`
 
-You'll need [Node.js](https://nodejs.org/en) (v22.22.3+ or v24.16+) installed, plus [yarn](https://yarnpkg.com/getting-started/install) as well as [git](https://git-scm.com/).
+You'll need [Node.js](https://nodejs.org/en) (v22.23.4+ or v24.16+) installed, plus [yarn](https://yarnpkg.com/getting-started/install) as well as [git](https://git-scm.com/).
 Some checks also require `chromium`, `traceroute` and `dns` to be installed within your environment. These jobs will just be skipped if those packages aren't present.
 
 ---

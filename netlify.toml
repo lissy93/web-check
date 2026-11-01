@@ -9,7 +9,7 @@
 [build.environment]
   PLATFORM = "netlify"
   PUBLIC_API_ENDPOINT = "/.netlify/functions"
-  NODE_VERSION = "22"  # Astro 7 needs Node >=22.12, so pin a compatible version
+  NODE_VERSION = "22"  # Astro 7 needs Node >=22.23.4, so pin a compatible version
   # Build configuration env vars (uncomment if you want to configure these)
   # CI="false" # Set CI to false, to prevent warnings from exiting the build
   # CHROME_PATH='/usr/bin/chromium' # Path to Chromium binary

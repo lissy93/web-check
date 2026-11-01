@@ -7,7 +7,7 @@ Hey! Thanks for wanting to help out with Web Check.
 
 ## Getting started
 
-You'll need [Node](https://nodejs.org/) 22.22.3+ or 24.16+, [yarn](https://yarnpkg.com/) and git. Chromium and `traceroute` are optional, since the checks that need them just skip without.
+You'll need [Node](https://nodejs.org/) 22.23.4+ or 24.16+, [yarn](https://yarnpkg.com/) and git. Chromium and `traceroute` are optional, since the checks that need them just skip without.
 
 ```bash
 git clone git@github.com:Lissy93/web-check.git
