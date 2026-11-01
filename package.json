@@ -36,7 +36,7 @@
     "@sparticuz/chromium": "^148.0.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "astro": "^7.3.5",
+    "astro": "^7.4.2",
     "cheerio": "^1.2.0",
     "chromium": "^3.0.3",
     "cookie": "^2.0.1",
