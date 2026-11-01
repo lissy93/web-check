@@ -12,6 +12,9 @@ if (!isCategory(tool) && !isCheck(tool)) return new Response(null, { status: 404
 // Uncategorised checks run the full report instead
 if (isCheck(tool) && !checks[tool].categories.length) return Astro.redirect(`/check/${target}`);
 
+// Never reuse a cached copy, as the scan needs a fresh firewall session
+Astro.response.headers.set('Cache-Control', 'no-store');
+
 const name = isCategory(tool) ? toolName(tool) : checks[tool].title;
 const description = isCategory(tool) ? categories[tool].description : checks[tool].summary;
 ---

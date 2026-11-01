@@ -4,6 +4,9 @@ import ResultsLayout from '@layouts/Results.astro';
 export const prerender = false;
 
 const { target } = Astro.params;
+
+// Never reuse a cached copy, as the scan needs a fresh firewall session
+Astro.response.headers.set('Cache-Control', 'no-store');
 ---
 
 <ResultsLayout title={`${target} | Web Check`} target={target} />
