@@ -1,7 +1,7 @@
 # Creates a new git tag when a PR is merged, or on manual dispatch
 #
 # PR trigger flow:
-# - Triggered whenever a PR is merged, if that PR made code changes
+# - Triggered whenever a PR is merged, if that PR made code or dependency changes
 # - If version wasn't bumped in PR, increment patch version and update package.json
 # - Otherwise (if the PR did bump version) we use the new version from package.json
 # - Creates and pushes a git tag for the new version
@@ -68,7 +68,8 @@ jobs:
               github.rest.pulls.listFiles, { owner, repo, pull_number }
             );
             const codePatterns = [
-              /^src\//, /^api\//, /^public\//, /^Dockerfile$/, /^[^/]+\.(js|mjs)$/,
+              /^src\//, /^api\//, /^public\//,
+              /^Dockerfile$/, /^yarn\.lock$/, /^[^/]+\.(js|mjs)$/,
             ];
             const codeChanged = files.some(f =>
               codePatterns.some(p => p.test(f.filename))
