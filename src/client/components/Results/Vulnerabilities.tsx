@@ -27,9 +27,30 @@ const VulnerabilitiesCard = (props: {
   const vulns: Vuln[] = props.data.vulns || [];
   const exploited = vulns.filter((v) => v.kev).length;
   const [finding] = checkVulns(props.data);
+  // The row's visible value is just the count, but copying only "2" is not useful,
+  // so give the clipboard the same CVE lines that are shown on the card
+  const cveList = vulns
+    .map((v) =>
+      [
+        v.id,
+        v.kev && 'Exploited',
+        v.epss != null && `EPSS ${formatNumber(v.epss * 100, { digits: 1 })}%`,
+        v.cvss != null && `CVSS ${formatNumber(v.cvss, { digits: 1 })}`,
+        v.port && `${v.product || 'Port'} ${v.port}`,
+      ]
+        .filter(Boolean)
+        .join('  ')
+    )
+    .join('\n');
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
-      <Row lbl="Known CVEs" val={vulns.length || 'None'} term="cve" {...fromFinding(finding)} />
+      <Row
+        lbl="Known CVEs"
+        val={vulns.length || 'None'}
+        copyText={vulns.length ? cveList : undefined}
+        term="cve"
+        {...fromFinding(finding)}
+      />
       {exploited > 0 && (
         <Row lbl="Actively exploited" val={exploited} status="error" term="known-exploited" />
       )}
