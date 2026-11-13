@@ -199,10 +199,10 @@
     sitemap "^9.0.0"
     zod "^4.3.6"
 
-"@astrojs/svelte@^9.1.1":
-  version "9.1.1"
-  resolved "https://registry.yarnpkg.com/@astrojs/svelte/-/svelte-9.1.1.tgz#38fbcc2e2b8445981118d05b7f3f51960373edaa"
-  integrity sha512-XLbgJ1B88Oand+6VxpsW4hBbW8MQJz50SyHr2CoFNYaX9Kg3Bm6A4aeC1bzKcYwBCzcqyYuDD1GygP5sgGxIFQ==
+"@astrojs/svelte@^9.1.2":
+  version "9.1.2"
+  resolved "https://registry.yarnpkg.com/@astrojs/svelte/-/svelte-9.1.2.tgz#edba51ea346fad59ce8c2cdf71edf548e1462572"
+  integrity sha512-gLLGQL28CPRC/74REhEmqQNUdjagURcqkSLPgjEZceql7WxdAOXyCD9SFxsl75q4R4ePAWiK7SutfqldC+WNHw==
   dependencies:
     "@sveltejs/vite-plugin-svelte" "^7.3.1"
     svelte2tsx "^0.7.61"

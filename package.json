@@ -72,7 +72,7 @@
   "devDependencies": {
     "@astrojs/netlify": "^8.2.10",
     "@astrojs/sitemap": "^3.7.4",
-    "@astrojs/svelte": "^9.1.1",
+    "@astrojs/svelte": "^9.1.2",
     "@astrojs/ts-plugin": "^1.10.12",
     "@astrojs/vercel": "^11.0.16",
     "@emnapi/runtime": "^1.11.3",
