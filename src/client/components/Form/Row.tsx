@@ -20,6 +20,7 @@ export interface RowProps {
   link?: string;
   plaintext?: string;
   listResults?: string[];
+  copyText?: string;
   children?: ReactNode;
 }
 
@@ -161,12 +162,12 @@ const hint = ({ reason, term }: RowProps, status: Status) =>
 
 // A value's copy button and text, as a link when given one, then its status icon
 const Value = (props: RowProps) => {
-  const { lbl, val, link } = props;
+  const { lbl, val, link, copyText } = props;
   const status = props.status || (typeof val === 'boolean' ? (val ? 'pass' : 'error') : undefined);
   const text = valueText(props);
   return (
     <>
-      {text && typeof val !== 'boolean' && <CopyButton text={text} name={lbl} />}
+      {text && typeof val !== 'boolean' && <CopyButton text={copyText || text} name={lbl} />}
       {link ? (
         <a href={link} target="_blank" rel="noreferrer">
           {text}

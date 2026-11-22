@@ -19,6 +19,15 @@ const cardStyles = `
   small { color: ${colors.textColorSecondary} }
 `;
 
+const cveDetails = (v: Vuln) =>
+  [
+    v.epss != null && `EPSS ${formatNumber(v.epss * 100, { digits: 1 })}%`,
+    v.cvss != null && `CVSS ${formatNumber(v.cvss, { digits: 1 })}`,
+    v.port && `${v.product || 'Port'} ${v.port}`,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
 const VulnerabilitiesCard = (props: {
   data: any;
   title: string;
@@ -27,9 +36,18 @@ const VulnerabilitiesCard = (props: {
   const vulns: Vuln[] = props.data.vulns || [];
   const exploited = vulns.filter((v) => v.kev).length;
   const [finding] = checkVulns(props.data);
+  const cveList = vulns
+    .map((v) => [v.id, v.kev && 'Exploited', cveDetails(v)].filter(Boolean).join(' · '))
+    .join('\n');
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
-      <Row lbl="Known CVEs" val={vulns.length || 'None'} term="cve" {...fromFinding(finding)} />
+      <Row
+        lbl="Known CVEs"
+        val={vulns.length || 'None'}
+        copyText={cveList}
+        term="cve"
+        {...fromFinding(finding)}
+      />
       {exploited > 0 && (
         <Row lbl="Actively exploited" val={exploited} status="error" term="known-exploited" />
       )}
@@ -42,15 +60,7 @@ const VulnerabilitiesCard = (props: {
               </a>{' '}
               {v.kev && <b title="In CISA's Known Exploited Vulnerabilities catalog">Exploited</b>}
             </span>
-            <small>
-              {[
-                v.epss != null && `EPSS ${formatNumber(v.epss * 100, { digits: 1 })}%`,
-                v.cvss != null && `CVSS ${formatNumber(v.cvss, { digits: 1 })}`,
-                v.port && `${v.product || 'Port'} ${v.port}`,
-              ]
-                .filter(Boolean)
-                .join(' · ')}
-            </small>
+            <small>{cveDetails(v)}</small>
           </Row>
         ))}
       </div>
