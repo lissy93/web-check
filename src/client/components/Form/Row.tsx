@@ -165,10 +165,9 @@ const Value = (props: RowProps) => {
   const { lbl, val, link, copyText } = props;
   const status = props.status || (typeof val === 'boolean' ? (val ? 'pass' : 'error') : undefined);
   const text = valueText(props);
-  const copyValue = copyText ?? text;
   return (
     <>
-      {copyValue && typeof val !== 'boolean' && <CopyButton text={copyValue} name={lbl} />}
+      {text && typeof val !== 'boolean' && <CopyButton text={copyText || text} name={lbl} />}
       {link ? (
         <a href={link} target="_blank" rel="noreferrer">
           {text}

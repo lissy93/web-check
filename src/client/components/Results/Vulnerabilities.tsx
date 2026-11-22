@@ -44,7 +44,7 @@ const VulnerabilitiesCard = (props: {
       <Row
         lbl="Known CVEs"
         val={vulns.length || 'None'}
-        copyText={vulns.length ? cveList : undefined}
+        copyText={cveList}
         term="cve"
         {...fromFinding(finding)}
       />
