@@ -19,6 +19,15 @@ const cardStyles = `
   small { color: ${colors.textColorSecondary} }
 `;
 
+const cveDetails = (v: Vuln) =>
+  [
+    v.epss != null && `EPSS ${formatNumber(v.epss * 100, { digits: 1 })}%`,
+    v.cvss != null && `CVSS ${formatNumber(v.cvss, { digits: 1 })}`,
+    v.port && `${v.product || 'Port'} ${v.port}`,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
 const VulnerabilitiesCard = (props: {
   data: any;
   title: string;
@@ -30,17 +39,7 @@ const VulnerabilitiesCard = (props: {
   // The row's visible value is just the count, but copying only "2" is not useful,
   // so give the clipboard the same CVE lines that are shown on the card
   const cveList = vulns
-    .map((v) =>
-      [
-        v.id,
-        v.kev && 'Exploited',
-        v.epss != null && `EPSS ${formatNumber(v.epss * 100, { digits: 1 })}%`,
-        v.cvss != null && `CVSS ${formatNumber(v.cvss, { digits: 1 })}`,
-        v.port && `${v.product || 'Port'} ${v.port}`,
-      ]
-        .filter(Boolean)
-        .join('  ')
-    )
+    .map((v) => [v.id, v.kev && 'Exploited', cveDetails(v)].filter(Boolean).join(' · '))
     .join('\n');
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
@@ -63,15 +62,7 @@ const VulnerabilitiesCard = (props: {
               </a>{' '}
               {v.kev && <b title="In CISA's Known Exploited Vulnerabilities catalog">Exploited</b>}
             </span>
-            <small>
-              {[
-                v.epss != null && `EPSS ${formatNumber(v.epss * 100, { digits: 1 })}%`,
-                v.cvss != null && `CVSS ${formatNumber(v.cvss, { digits: 1 })}`,
-                v.port && `${v.product || 'Port'} ${v.port}`,
-              ]
-                .filter(Boolean)
-                .join(' · ')}
-            </small>
+            <small>{cveDetails(v)}</small>
           </Row>
         ))}
       </div>
