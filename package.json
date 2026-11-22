@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.12",
-    "@astrojs/node": "^11.1.9",
+    "@astrojs/node": "^11.1.12",
     "@astrojs/react": "^7.1.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
