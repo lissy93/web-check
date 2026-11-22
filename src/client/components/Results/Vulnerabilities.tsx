@@ -36,8 +36,6 @@ const VulnerabilitiesCard = (props: {
   const vulns: Vuln[] = props.data.vulns || [];
   const exploited = vulns.filter((v) => v.kev).length;
   const [finding] = checkVulns(props.data);
-  // The row's visible value is just the count, but copying only "2" is not useful,
-  // so give the clipboard the same CVE lines that are shown on the card
   const cveList = vulns
     .map((v) => [v.id, v.kev && 'Exploited', cveDetails(v)].filter(Boolean).join(' · '))
     .join('\n');
