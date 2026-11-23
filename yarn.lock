@@ -130,7 +130,7 @@
     unified "^11.0.5"
     yaml "^2.9.1"
 
-"@astrojs/internal-helpers@^0.13.2":
+"@astrojs/internal-helpers@0.13.2", "@astrojs/internal-helpers@^0.13.2":
   version "0.13.2"
   resolved "https://registry.yarnpkg.com/@astrojs/internal-helpers/-/internal-helpers-0.13.2.tgz#fa0213b8e02a634773cff65b588fe5a327c1fa2d"
   integrity sha512-SWiNS+OMrhwWYzJENTekHUyUCMKB+tdU6D4v1ZNIU1ZHh2mScQ8WIs0J6AJ8KPXkIrs9+EZU7Rm2CstfThyVnw==
@@ -192,12 +192,12 @@
     tinyglobby "^0.2.17"
     vite "^8.3.4"
 
-"@astrojs/node@^11.1.9":
-  version "11.1.9"
-  resolved "https://registry.yarnpkg.com/@astrojs/node/-/node-11.1.9.tgz#e45ddb67cff4022273425d00c9260b37b87185f7"
-  integrity sha512-fmWwCINRIf0gyFZlOlYaJGZnoeB5JJAXJvUXlHorhhemOxkftrOcMalwPIyNG2Q3KhncRvYMiJ8nGHsWrdtrpg==
+"@astrojs/node@^11.1.12":
+  version "11.1.12"
+  resolved "https://registry.yarnpkg.com/@astrojs/node/-/node-11.1.12.tgz#241baff4e98713b45f0d93714e77ad5712ce8809"
+  integrity sha512-DCvbBBzkviLxJGLzS+zh/9zhswM3j7IiYBpHym9pkc9cA3ZnDBcA0Te5xCedUZ7K1Suar1BTOI3aElkgw1YIkQ==
   dependencies:
-    "@astrojs/internal-helpers" "0.13.0"
+    "@astrojs/internal-helpers" "0.13.2"
     send "^1.2.1"
     server-destroy "^1.0.1"
 
